@@ -1,9 +1,9 @@
 # proj-dining
 
-Recommendation Request Manager
+UCSB Dining Hall Menus and Reviews
 
 Sprint Planning Doc for F24:
-* <https://docs.google.com/document/d/1XsaIPgepB4uA3owsH8eszXbW2mHFTuW5_bT49K8PcuU/edit?tab=t.0>
+* <https://docs.google.com/document/d/1prjAP0cBet21_D_l_0oNEOuVAGAE6cI3cO7Or6jXIk4/edit?usp=sharing>
 
 # Versions
 * Java: 21
