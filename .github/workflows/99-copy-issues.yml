@@ -2,7 +2,7 @@ name: 99 - Copy issues from starter repo
 
 env:
     GH_TOKEN: ${{ github.token }}
-    STARTER: https://github.com/ucsb-cs156/proj-rec
+    STARTER: https://github.com/ucsb-cs156/proj-dining
     TAG: ${{vars.QXX}}
 
 on:

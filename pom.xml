@@ -19,7 +19,7 @@
 
   <!-- (3) <artifactId/> -->
 
-  <artifactId>proj-rec</artifactId>
+  <artifactId>proj-dining</artifactId>
 
   <!-- (4) <version/> -->
   <version>1.0.0</version>
@@ -47,8 +47,8 @@
 
   <properties>
     <java.version>21</java.version>
-    <mainClass>edu.ucsb.cs156.rec.ExampleApplication</mainClass>
-    <app.package>edu.ucsb.cs156.rec</app.package>
+    <mainClass>edu.ucsb.cs156.dining.ExampleApplication</mainClass>
+    <app.package>edu.ucsb.cs156.dining</app.package>
     <app.packagePath>edu/ucsb/cs156/example</app.packagePath>
     <targetClasses>${targetClasses:edu.ucsb.cs156.*}</targetClasses>
     <!-- https://mvnrepository.com/artifact/com.github.eirslett/frontend-maven-plugin -->
@@ -318,14 +318,14 @@
             <param>${app.package}.config.SecurityConfig</param>
             <param>${app.package}.config.SpaCsrfTokenRequestHandler</param>
             <param>${app.package}.config.CsrfCookieFilter</param>
-            <param>edu.ucsb.cs156.rec.services.wiremock.WiremockService</param>
-            <param>edu.ucsb.cs156.rec.services.wiremock.WiremockServiceDummy</param>
-            <param>edu.ucsb.cs156.rec.services.wiremock.WiremockServiceImpl</param>
+            <param>edu.ucsb.cs156.dining.services.wiremock.WiremockService</param>
+            <param>edu.ucsb.cs156.dining.services.wiremock.WiremockServiceDummy</param>
+            <param>edu.ucsb.cs156.dining.services.wiremock.WiremockServiceImpl</param>
             <param>${app.package}.services.GrantedAuthoritiesService</param>
           </excludedClasses>
           <excludedTestClasses>
-            <param>edu.ucsb.cs156.rec.web.*</param>
-            <param>edu.ucsb.cs156.rec.integration.*</param>
+            <param>edu.ucsb.cs156.dining.web.*</param>
+            <param>edu.ucsb.cs156.dining.integration.*</param>
           </excludedTestClasses>
           <outputFormats>
             <outputFormat>HTML</outputFormat>

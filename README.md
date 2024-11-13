@@ -1,4 +1,4 @@
-# proj-rec
+# proj-dining
 
 Recommendation Request Manager
 
@@ -129,13 +129,13 @@ This repo has support for partial pitest runs
 For example, to run pitest on just one class, use:
 
 ```
-mvn pitest:mutationCoverage -DtargetClasses=edu.ucsb.cs156.rec.controllers.RestaurantsController
+mvn pitest:mutationCoverage -DtargetClasses=edu.ucsb.cs156.dining.controllers.RestaurantsController
 ```
 
 To run pitest on just one package, use:
 
 ```
-mvn pitest:mutationCoverage -DtargetClasses=edu.ucsb.cs156.rec.controllers.\*
+mvn pitest:mutationCoverage -DtargetClasses=edu.ucsb.cs156.dining.controllers.\*
 ```
 
 To run full mutation test coverage, as usual, use:
