@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantsController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">RestaurantsController.java</span></div><h1>RestaurantsController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import edu.ucsb.cs156.dining.entities.Restaurant;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
+import edu.ucsb.cs156.dining.repositories.RestaurantRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+
+/**
+ * This is a REST controller for Restaurants
+ */
+
+@Tag(name = &quot;Restaurants&quot;)
+@RequestMapping(&quot;/api/restaurants&quot;)
+@RestController
+<span class="fc" id="L31">public class RestaurantsController extends ApiController {</span>
+
+    @Autowired
+    RestaurantRepository restaurantRepository;
+
+    /**
+     * This method returns a list of all restaurants.
+     * @return a list of all restaurants
+     */
+    @Operation(summary = &quot;List all restaurants&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @GetMapping(&quot;/all&quot;)
+    public Iterable&lt;Restaurant&gt; allRestaurants() {
+<span class="fc" id="L44">        Iterable&lt;Restaurant&gt; restaurants = restaurantRepository.findAll();</span>
+<span class="fc" id="L45">        return restaurants;</span>
+    }
+
+    /**
+     * This method returns a single restaurant.
+     * @param id id of the restaurant to get
+     * @return a single restaurant
+     */
+    @Operation(summary = &quot;Get a single restaurant&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @GetMapping(&quot;&quot;)
+    public Restaurant getById(
+            @Parameter(name = &quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L58">        Restaurant restaurant = restaurantRepository.findById(id)</span>
+<span class="fc" id="L59">                .orElseThrow(() -&gt; new EntityNotFoundException(Restaurant.class, id));</span>
+
+<span class="fc" id="L61">        return restaurant;</span>
+    }
+
+    /**
+     * This method creates a new restaurant. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+     * @param name name of the restaurant
+     * @param description description of the restaurant
+     * @return the save restaurant (with it's id field set by the database)
+     */
+    @Operation(summary = &quot;Create a new restaurant&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PostMapping(&quot;/post&quot;)
+    public Restaurant postRestaurant(
+            @Parameter(name = &quot;name&quot;) @RequestParam String name,
+            @Parameter(name = &quot;description&quot;) @RequestParam String description) {
+<span class="fc" id="L76">        Restaurant restaurant = new Restaurant();</span>
+
+<span class="fc" id="L78">        restaurant.setName(name);</span>
+<span class="fc" id="L79">        restaurant.setDescription(description);</span>
+        
+<span class="fc" id="L81">        Restaurant savedrestaurant = restaurantRepository.save(restaurant);</span>
+<span class="fc" id="L82">        return savedrestaurant;</span>
+    }
+
+    /**
+     * Deletes a restaurant. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+     * @param id id of the restaurant to delete
+     * @return a message indicating that the restaurant was deleted
+     */
+    @Operation(summary = &quot;Delete a Restaurant&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @DeleteMapping(&quot;&quot;)
+    public Object deleteRestaurant(
+            @Parameter(name = &quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L95">        Restaurant restaurant = restaurantRepository.findById(id)</span>
+<span class="fc" id="L96">                .orElseThrow(() -&gt; new EntityNotFoundException(Restaurant.class, id));</span>
+
+<span class="fc" id="L98">        restaurantRepository.delete(restaurant);</span>
+<span class="fc" id="L99">        return genericMessage(&quot;Restaurant with id %s deleted&quot;.formatted(id));</span>
+    }
+
+    /**
+     * Update a single restaurant. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+     * @param id id of the restaurant to update
+     * @param incoming the new restaurant contents
+     * @return the updated restaurant object
+     */
+    @Operation(summary = &quot;Update a single restaurant&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;&quot;)
+    public Restaurant updateRestaurant(
+            @Parameter(name = &quot;id&quot;) @RequestParam Long id,
+            @RequestBody @Valid Restaurant incoming) {
+
+<span class="fc" id="L115">        Restaurant restaurant = restaurantRepository.findById(id)</span>
+<span class="fc" id="L116">                .orElseThrow(() -&gt; new EntityNotFoundException(Restaurant.class, id));</span>
+
+<span class="fc" id="L118">        restaurant.setName(incoming.getName());</span>
+<span class="fc" id="L119">        restaurant.setDescription(incoming.getDescription());</span>
+
+<span class="fc" id="L121">        restaurantRepository.save(restaurant);</span>
+
+<span class="fc" id="L123">        return restaurant;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

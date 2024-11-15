@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FrontendProxyController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">FrontendProxyController.java</span></div><h1>FrontendProxyController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.mvc.ProxyExchange;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.ResourceAccessException;
+
+import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
+
+import java.net.ConnectException;
+
+/**
+ * The FrontendProxyController is used to proxy requests to the frontend of the application.
+ * 
+ * This is only used in development where we have a separate frontend server process
+ * listening on port 3000.
+ * 
+ * For production, see the FrontendController.
+ * 
+ * @see edu.ucsb.cs156.dining.controllers.FrontendController
+ */
+
+@Profile(&quot;development&quot;)
+@RestController
+<span class="nc" id="L28">public class FrontendProxyController {</span>
+
+  @Autowired
+  WiremockService wiremockService;
+  
+  /**
+   * This method proxies requests to the frontend server.  It is only used in development.
+   * The regular expression is used to exclude the paths that should NOT be proxied to the
+   * frontend server, such as the endpoints for the api, oauth2, and swagger-ui.
+   * 
+   * @param proxy the proxy exchange, injected by Spring automatically
+   * @return response entity with the response from the frontend server, or a response entity with instructions in case the frontend server cannot be reached.
+   */
+
+  @GetMapping({&quot;/&quot;, &quot;/{path:^(?!api|oauth2|swagger-ui|h2-console).*}/**&quot;})
+  public ResponseEntity&lt;?&gt; proxy(ProxyExchange&lt;byte []&gt; proxy) {
+<span class="nc" id="L44">    String path = proxy.path(&quot;/&quot;);</span>
+    try {
+<span class="nc" id="L46">      return proxy.uri(&quot;http://localhost:3000/&quot; + path).get();</span>
+<span class="nc" id="L47">    } catch (ResourceAccessException e) {</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">      if (e.getCause() instanceof ConnectException) {</span>
+<span class="nc" id="L49">        String instructions = &quot;&quot;&quot;</span>
+                &lt;p&gt;Failed to connect to the frontend server...&lt;/p&gt;
+                &lt;p&gt;On Dokku, be sure that &lt;code&gt;PRODUCTION&lt;/code&gt; is defined.&lt;/p&gt;
+                &lt;p&gt;On localhost, open a second terminal window, cd into &lt;code&gt;frontend&lt;/code&gt; and type: &lt;code&gt;npm install; npm start&lt;/code&gt;&lt;/p&gt;
+                &lt;p&gt;Or, you may click to access: &lt;/p&gt;
+                &lt;ul&gt;
+                  &lt;li&gt;&lt;a href='/swagger-ui/index.html'&gt;/swagger-ui/index.html&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href='/h2-console'&gt;/h2-console&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;&quot;&quot;&quot;;
+
+<span class="nc" id="L59">        return ResponseEntity.ok(instructions);</span>
+      }
+<span class="nc" id="L61">      throw e;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
