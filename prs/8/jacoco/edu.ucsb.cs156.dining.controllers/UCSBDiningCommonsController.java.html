@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UCSBDiningCommonsController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">UCSBDiningCommonsController.java</span></div><h1>UCSBDiningCommonsController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import edu.ucsb.cs156.dining.entities.UCSBDiningCommons;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
+import edu.ucsb.cs156.dining.repositories.UCSBDiningCommonsRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+
+/**
+ * This is a REST controller for UCSBDiningCommons
+ */
+
+@Tag(name = &quot;UCSBDiningCommons&quot;)
+@RequestMapping(&quot;/api/ucsbdiningcommons&quot;)
+@RestController
+<span class="fc" id="L32">@Slf4j</span>
+<span class="fc" id="L33">public class UCSBDiningCommonsController extends ApiController {</span>
+
+    @Autowired
+    UCSBDiningCommonsRepository ucsbDiningCommonsRepository;
+
+    /**
+     * THis method returns a list of all ucsbdiningcommons.
+     * @return a list of all ucsbdiningcommons
+     */
+    @Operation(summary= &quot;List all ucsb dining commons&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @GetMapping(&quot;/all&quot;)
+    public Iterable&lt;UCSBDiningCommons&gt; allCommonss() {
+<span class="fc" id="L46">        Iterable&lt;UCSBDiningCommons&gt; commons = ucsbDiningCommonsRepository.findAll();</span>
+<span class="fc" id="L47">        return commons;</span>
+    }
+
+    /**
+     * This method returns a single diningcommons.
+     * @param code code of the diningcommons
+     * @return a single diningcommons
+     */
+    @Operation(summary= &quot;Get a single commons&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @GetMapping(&quot;&quot;)
+    public UCSBDiningCommons getById(
+            @Parameter(name=&quot;code&quot;) @RequestParam String code) {
+<span class="fc" id="L60">        UCSBDiningCommons commons = ucsbDiningCommonsRepository.findById(code)</span>
+<span class="fc" id="L61">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommons.class, code));</span>
+
+<span class="fc" id="L63">        return commons;</span>
+    }
+
+    /**
+     * This method creates a new diningcommons. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+     * @param code code of the diningcommons
+     * @param name name of the diningcommons
+     * @param hasSackMeal whether or not the commons has sack meals
+     * @param hasTakeOutMeal whether or not the commons has take out meals
+     * @param hasDiningCam whether or not the commons has a dining cam
+     * @param latitude latitude of the commons
+     * @param longitude logitude of the commons
+     * @return the save diningcommons
+     */
+    @Operation(summary= &quot;Create a new commons&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PostMapping(&quot;/post&quot;)
+    public UCSBDiningCommons postCommons(
+        @Parameter(name=&quot;code&quot;) @RequestParam String code,
+        @Parameter(name=&quot;name&quot;) @RequestParam String name,
+        @Parameter(name=&quot;hasSackMeal&quot;) @RequestParam boolean hasSackMeal,
+        @Parameter(name=&quot;hasTakeOutMeal&quot;) @RequestParam boolean hasTakeOutMeal,
+        @Parameter(name=&quot;hasDiningCam&quot;) @RequestParam boolean hasDiningCam,
+        @Parameter(name=&quot;latitude&quot;) @RequestParam double latitude,
+        @Parameter(name=&quot;longitude&quot;) @RequestParam double longitude
+        )
+        {
+
+<span class="fc" id="L91">        UCSBDiningCommons commons = new UCSBDiningCommons();</span>
+<span class="fc" id="L92">        commons.setCode(code);</span>
+<span class="fc" id="L93">        commons.setName(name);</span>
+<span class="fc" id="L94">        commons.setHasSackMeal(hasSackMeal);</span>
+<span class="fc" id="L95">        commons.setHasTakeOutMeal(hasTakeOutMeal);</span>
+<span class="fc" id="L96">        commons.setHasDiningCam(hasDiningCam);</span>
+<span class="fc" id="L97">        commons.setLatitude(latitude);</span>
+<span class="fc" id="L98">        commons.setLongitude(longitude);</span>
+
+<span class="fc" id="L100">        UCSBDiningCommons savedCommons = ucsbDiningCommonsRepository.save(commons);</span>
+
+<span class="fc" id="L102">        return savedCommons;</span>
+    }
+
+    /**
+     * Delete a diningcommons. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+     * @param code code of the commons
+     * @return a message indiciating the commons was deleted
+     */
+    @Operation(summary= &quot;Delete a UCSBDiningCommons&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @DeleteMapping(&quot;&quot;)
+    public Object deleteCommons(
+            @Parameter(name=&quot;code&quot;) @RequestParam String code) {
+<span class="fc" id="L115">        UCSBDiningCommons commons = ucsbDiningCommonsRepository.findById(code)</span>
+<span class="fc" id="L116">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommons.class, code));</span>
+
+<span class="fc" id="L118">        ucsbDiningCommonsRepository.delete(commons);</span>
+<span class="fc" id="L119">        return genericMessage(&quot;UCSBDiningCommons with id %s deleted&quot;.formatted(code));</span>
+    }
+
+    /**
+     * Update a single diningcommons. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+     * @param code code of the diningcommons
+     * @param incoming the new commons contents
+     * @return the updated commons object
+     */
+    @Operation(summary= &quot;Update a single commons&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;&quot;)
+    public UCSBDiningCommons updateCommons(
+            @Parameter(name=&quot;code&quot;) @RequestParam String code,
+            @RequestBody @Valid UCSBDiningCommons incoming) {
+
+<span class="fc" id="L135">        UCSBDiningCommons commons = ucsbDiningCommonsRepository.findById(code)</span>
+<span class="fc" id="L136">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommons.class, code));</span>
+
+
+<span class="fc" id="L139">        commons.setName(incoming.getName());  </span>
+<span class="fc" id="L140">        commons.setHasSackMeal(incoming.getHasSackMeal());</span>
+<span class="fc" id="L141">        commons.setHasTakeOutMeal(incoming.getHasTakeOutMeal());</span>
+<span class="fc" id="L142">        commons.setHasDiningCam(incoming.getHasDiningCam());</span>
+<span class="fc" id="L143">        commons.setLatitude(incoming.getLatitude());</span>
+<span class="fc" id="L144">        commons.setLongitude(incoming.getLongitude());</span>
+
+<span class="fc" id="L146">        ucsbDiningCommonsRepository.save(commons);</span>
+
+<span class="fc" id="L148">        return commons;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
