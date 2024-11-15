@@ -41,26 +41,8 @@
                   },
                   {
                     "column": {
-                      "name": "DINING_COMMONS",
-                      "type": "VARCHAR(255)"
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "MEAL",
-                      "type": "VARCHAR(255)"
-                    }
-                  },
-                  {
-                    "column": {
                       "name": "ITEM_ID",
                       "type": "BIGINT"
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "STATION",
-                      "type": "VARCHAR(255)"
                     }
                   },
                   {

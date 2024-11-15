@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * The RestaurantRepository is a repository for Restaurant entities
+ * The ReviewRepository is a repository for Review entities
  */
 @Repository
 public interface ReviewRepository extends CrudRepository<Review, Long> {

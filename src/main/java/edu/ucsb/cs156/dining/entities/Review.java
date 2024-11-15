@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * This is a JPA entity that represents a restaurant.
+ * This is a JPA entity that represents a review of a dining commons menu item
  */
 
 @Data
@@ -26,10 +26,7 @@ public class Review {
   private long id;
 
   private long reviewerId;
-  private String diningCommons;
-  private String meal;
   private long itemId;
-  private String station;
   private LocalDateTime dateServed;
   private long stars;
   private String reviewText;
