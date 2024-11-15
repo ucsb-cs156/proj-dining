@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 public class DiningCommonsReview {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
+  
   private Long studentUserId;
   private String diningCommons;
   private String meal;
