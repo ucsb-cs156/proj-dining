@@ -25,12 +25,10 @@ public class Review {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
-  private String diningCommons;
-  private String meal;
-  private String menuItem;
-  private String stationName;
-  private String status;
+  private long studentId;
+  private long itemId;
   private LocalDateTime dateItemServed;
+  private String status;
   private long userIdModerator;
   private String moderatorComments;
   private LocalDateTime dateCreated;
