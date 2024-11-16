@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class UCSBAPIDiningCommonsService {
 
-@Value("jb7SJBaLZaEGWGOkJxux41aLAQ4Nbtes")
+  @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
   private final RestTemplate restTemplate;
