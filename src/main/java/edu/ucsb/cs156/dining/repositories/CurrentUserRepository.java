@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * The CurrentUserRepository is a repository for CurrentUser entities
  */
 @Repository
-public interface CurrentUserRepository extends CrudRepository<CurrentUser, Long> {
+public interface CurrentUserRepository extends CrudRepository<CurrentUser, String> {
 }

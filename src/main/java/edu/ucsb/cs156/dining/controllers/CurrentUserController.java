@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
  */
 
 @Tag(name = "CurrentUser")
-@RequestMapping("/api/currentUser")
+@RequestMapping("/api/currentuser")
 @RestController
 @Slf4j
 public class CurrentUserController extends ApiController {
@@ -44,12 +44,14 @@ public class CurrentUserController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/updateAlias")
     public CurrentUser postUser(
-        @Parameter(name="alias") @RequestParam String alias
+        @Parameter(name="alias") @RequestParam String alias,
+        @Parameter(name="modValue") @RequestParam long modValue
         )
         {   
 
         CurrentUser users = new CurrentUser();
         users.setAlias(alias);
+        users.setModValue(modValue);
 
         CurrentUser savedCurrentUsers = currentUserRepository.save(users);
 
@@ -58,7 +60,7 @@ public class CurrentUserController extends ApiController {
 
     /**
      * Update a single users. Accessible only to users with the role "ROLE_ADMIN".
-     * @param modValue alias moderation value of the users
+     * @param alias alias moderation value of the users
      * @param incoming the new users contents
      * @return the updated users object
      */
@@ -66,13 +68,14 @@ public class CurrentUserController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/updateModValue")
     public CurrentUser updateModValue(
-            @Parameter(name="modValue") @RequestParam long modValue,
+            @Parameter(name="alias") @RequestParam String alias,
             @RequestBody @Valid CurrentUser incoming) {
 
-        CurrentUser users = currentUserRepository.findById(modValue)
-                .orElseThrow(() -> new EntityNotFoundException(CurrentUser.class, modValue));
+        CurrentUser users = currentUserRepository.findById(alias)
+                .orElseThrow(() -> new EntityNotFoundException(CurrentUser.class, alias));
 
 
+        //users.setAlias(incoming.getAlias());  
         users.setModValue(incoming.getModValue());  
 
         currentUserRepository.save(users);
