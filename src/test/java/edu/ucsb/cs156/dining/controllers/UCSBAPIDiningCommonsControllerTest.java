@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -27,9 +28,6 @@ import org.springframework.test.web.servlet.MvcResult;
 @Import(SecurityConfig.class)
 @AutoConfigureDataJpa
 public class UCSBAPIDiningCommonsControllerTest extends ControllerTestCase {
-
-    @MockBean
-    UserRepository userRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,7 +39,14 @@ public class UCSBAPIDiningCommonsControllerTest extends ControllerTestCase {
     private ObjectMapper objectMapper;
 
     @Test
-    public void testGetAllDiningCommons() throws Exception {
+    public void logged_out_users_cannot_get_all() throws Exception {
+        mockMvc.perform(get("/api/diningcommons/all"))
+            .andExpect(status().is(403)); // Expect 403 Forbidden for logged-out users
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_users_can_get_all() throws Exception {
         // Arrange: Create a sample list of dining commons
         UCSBAPIDiningCommons carrillo = new UCSBAPIDiningCommons(
             "Carrillo", "carrillo", false, false, true, 
@@ -55,8 +60,9 @@ public class UCSBAPIDiningCommonsControllerTest extends ControllerTestCase {
 
         // Act
         MvcResult response = mockMvc
-            .perform(get("/api/diningcommons/all").contentType("application/json"))
-            .andExpect(status().isOk())
+            .perform(get("/api/diningcommons/all")
+            .contentType("application/json"))
+            .andExpect(status().isOk())  // Expect HTTP 200
             .andReturn();
 
         // Assert

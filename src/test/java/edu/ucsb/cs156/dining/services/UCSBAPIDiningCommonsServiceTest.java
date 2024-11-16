@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.List;
 
 @RestClientTest(UCSBAPIDiningCommonsService.class)
@@ -26,6 +28,9 @@ public class UCSBAPIDiningCommonsServiceTest {
 
     @MockBean
     private edu.ucsb.cs156.dining.services.wiremock.WiremockService wiremockService;
+
+    @Value("${app.ucsb.api.consumer_key}")
+    private String apiKey;
 
     @Test
     public void testGetAllDiningCommons_Success() throws Exception {
@@ -47,7 +52,7 @@ public class UCSBAPIDiningCommonsServiceTest {
         """;
 
         mockServer.expect(requestTo("https://api.ucsb.edu/dining/commons/v1/"))
-                .andExpect(header("ucsb-api-key", "jb7SJBaLZaEGWGOkJxux41aLAQ4Nbtes"))
+                .andExpect(header("ucsb-api-key", apiKey))
                 .andExpect(header("accept", "application/json"))
                 .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
 
