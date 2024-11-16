@@ -77,7 +77,7 @@ public class UCSBAPIDiningCommonsServiceTest {
     public void testGetAllDiningCommons_NullResponse() {
         // Arrange: Mock API response with null body
         mockServer.expect(requestTo("https://api.ucsb.edu/dining/commons/v1/"))
-                  .andExpect(header("ucsb-api-key", "jb7SJBaLZaEGWGOkJxux41aLAQ4Nbtes"))
+                  .andExpect(header("ucsb-api-key", apiKey))
                   .andRespond(withNoContent()); // Simulates a 204 No Content response
 
         // Act & Assert
