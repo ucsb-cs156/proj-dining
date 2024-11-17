@@ -44,11 +44,19 @@ describe("UserTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-code`),
     ).toHaveTextContent("carrillo");
+    const carrilloLink = screen.getByText("carrillo");
+    expect(carrilloLink).toHaveAttribute("href", "/diningcommons/carrillo");
+
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-code`),
     ).toHaveTextContent("de-la-guerra");
+    const dlgLink = screen.getByText("de-la-guerra");
+    expect(dlgLink).toHaveAttribute("href", "/diningcommons/de-la-guerra");
+
     expect(
       screen.getByTestId(`${testId}-cell-row-2-col-code`),
     ).toHaveTextContent("ortega");
+    const ortegaLink = screen.getByText("ortega");
+    expect(ortegaLink).toHaveAttribute("href", "/diningcommons/ortega");
   });
 });

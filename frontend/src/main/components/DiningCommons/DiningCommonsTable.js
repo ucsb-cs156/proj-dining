@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import OurTable from "main/components/OurTable";
 
 export default function DiningCommonsTable({ diningCommonsData }) {
@@ -6,6 +7,7 @@ export default function DiningCommonsTable({ diningCommonsData }) {
     {
       Header: "Code",
       accessor: "code",
+      Cell: ({ value }) => <Link to={`/diningcommons/${value}`}>{value}</Link>,
     },
     {
       Header: "Name",
