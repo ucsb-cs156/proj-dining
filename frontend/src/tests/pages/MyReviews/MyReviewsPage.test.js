@@ -39,6 +39,8 @@ describe("MyReviewsPage tests", () => {
 
     // assert
 
-    await screen.findByText("this page will eventually show all reviews entered by the user");
+    await screen.findByText(
+      "this page will eventually show all reviews entered by the user",
+    );
   });
 });
