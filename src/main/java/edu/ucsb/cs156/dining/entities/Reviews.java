@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity(name = "reviews")
 public class Reviews {
+  
   @Id
   private long id;
   private int student_id;
