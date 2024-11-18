@@ -4,6 +4,7 @@ import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.controllers.ReviewsController;
 import edu.ucsb.cs156.dining.ControllerTestCase;
+import edu.ucsb.cs156.dining.entities.DiningCommons;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
 
@@ -54,11 +55,53 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 mockMvc.perform(get("/api/reviews/all"))
                                 .andExpect(status().is(200)); // logged
         }
-        // @Test
-        // public void logged_out_users_cannot_get_by_id() throws Exception {
-        //         mockMvc.perform(get("/api/diningcommons?code=carrillo"))
-        //                         .andExpect(status().is(403)); // logged out users can't get by id
-        // } 
+        
+        @Test
+        public void logged_in_user_can_get_all_reviews() throws Exception {
+
+                // arrange
+
+                Reviews review1 = Reviews.builder()
+                                .student_id(1)
+                                .item_id("pesto pasta")
+                                .date_served("today")
+                                /*
+                                .status("working")
+                                
+                                .user_id("me")
+                                .moderator_comments("test")
+                                */
+                                .created_date("today")
+                                .last_edited_date("rn")
+                                .build();
+
+                Reviews review2 = Reviews.builder()
+                                .student_id(1)
+                                .item_id("pesto pasta")
+                                .date_served("today")
+                                .status("working")
+                                .user_id("me")
+                                .moderator_comments("test")
+                                .created_date("today")
+                                .last_edited_date("rn")
+                                .build();
+
+                ArrayList<Reviews> expectedReviews = new ArrayList<>();
+                expectedReviews.addAll(Arrays.asList(review1, review2));
+
+                when(reviewsRepository.findAll()).thenReturn(expectedReviews);
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/diningcommons/all"))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+
+                verify(reviewsRepository, times(1)).findAll();
+                String expectedJson = mapper.writeValueAsString(expectedReviews);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
 
         @Test
         public void logged_out_users_cannot_post() throws Exception {
@@ -73,16 +116,52 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(403)); // only admins can post
         }
 
+
+
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void an_admin_user_can_post_a_new_review() throws Exception {
+        public void an_admin_user_can_post_a_new_empty_review() throws Exception {
                 // arrange
 
                 Reviews review = Reviews.builder()
                                 .student_id(1)
                                 .item_id("pesto pasta")
                                 .date_served("today")
-                                .status("pending")
+                                /*
+                                .status("working")
+                                
+                                .user_id("me")
+                                .moderator_comments("test")
+                                */
+                                .created_date("today")
+                                .last_edited_date("rn")
+                                .build();
+
+                when(reviewsRepository.save(eq(review))).thenReturn(review);
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&created_date=today&last_edited_date=rn")
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(reviewsRepository, times(1)).save(review);
+                String expectedJson = mapper.writeValueAsString(review);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_post_a_new_nonempty_review() throws Exception {
+                // arrange
+
+                Reviews review = Reviews.builder()
+                                .student_id(1)
+                                .item_id("pesto pasta")
+                                .date_served("today")
+                                .status("working")
                                 .user_id("me")
                                 .moderator_comments("test")
                                 .created_date("today")
@@ -93,7 +172,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&status=pending&user_id=me&moderator_comments=test&created_date=today&last_edited_date=rn")
+                                post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&status=working&user_id=me&moderator_comments=test&created_date=today&last_edited_date=rn")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 

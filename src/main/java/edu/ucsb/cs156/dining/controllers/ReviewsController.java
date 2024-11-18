@@ -67,9 +67,9 @@ public class ReviewsController extends ApiController {
         @Parameter(name="student_id") @RequestParam int student_id,
         @Parameter(name="item_id") @RequestParam String item_id,
         @Parameter(name="date_served") @RequestParam String date_served,
-        @Parameter(name="status") @RequestParam String status ,
-        @Parameter(name="user_id") @RequestParam String user_id,
-        @Parameter(name="moderator_comments") @RequestParam String moderator_comments,
+        @Parameter(name="status") @RequestParam(required=false) String status,
+        @Parameter(name="user_id") @RequestParam(required=false) String user_id,
+        @Parameter(name="moderator_comments") @RequestParam(required=false) String moderator_comments,
         @Parameter(name="created_date") @RequestParam String created_date,
         @Parameter(name="last_edited_date") @RequestParam String last_edited_date
         )
