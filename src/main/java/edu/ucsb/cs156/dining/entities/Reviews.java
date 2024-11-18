@@ -1,6 +1,8 @@
 package edu.ucsb.cs156.dining.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +21,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity(name = "reviews")
 public class Reviews {
-  
+
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+  
   private int student_id;
   private String item_id;
   private String date_served;
