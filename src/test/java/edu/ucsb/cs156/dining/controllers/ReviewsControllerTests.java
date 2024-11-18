@@ -55,7 +55,8 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 mockMvc.perform(get("/api/reviews/all"))
                                 .andExpect(status().is(200)); // logged
         }
-        
+
+        @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_user_can_get_all_reviews() throws Exception {
 
@@ -76,14 +77,14 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .build();
 
                 Reviews review2 = Reviews.builder()
-                                .student_id(1)
-                                .item_id("pesto pasta")
+                                .student_id(3)
+                                .item_id("pesto sandwich")
                                 .date_served("today")
                                 .status("working")
                                 .user_id("me")
                                 .moderator_comments("test")
                                 .created_date("today")
-                                .last_edited_date("rn")
+                                .last_edited_date("not rn")
                                 .build();
 
                 ArrayList<Reviews> expectedReviews = new ArrayList<>();
@@ -92,8 +93,8 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 when(reviewsRepository.findAll()).thenReturn(expectedReviews);
 
                 // act
-                MvcResult response = mockMvc.perform(get("/api/diningcommons/all"))
-                                .andExpect(status().isOk()).andReturn();
+                MvcResult response = mockMvc.perform(get("/api/reviews/all"))
+                                .andExpect(status().is(200)).andReturn();
 
                 // assert
 
