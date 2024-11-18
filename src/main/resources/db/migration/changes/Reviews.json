@@ -26,7 +26,7 @@
                         "autoIncrement": true,
                         "constraints": {
                             "primaryKey": true,
-                            "primaryKeyName": "CONSTRAINT_6"
+                            "primaryKeyName": "REVIEW_PK"
                         },
                           "name": "ID",
                           "type": "BIGINT"
