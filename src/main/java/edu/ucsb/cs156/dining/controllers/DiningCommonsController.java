@@ -52,7 +52,7 @@ public class DiningCommonsController extends ApiController {
      * @param code code of the diningcommons
      * @return a single diningcommons
      */
-    @Operation(summary= "Get a single commons")
+    @Operation(summary= "Get a single common")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
     public DiningCommons getById(
