@@ -60,5 +60,4 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
 
     assertEquals(expectedResult, responseString);
   }
-
 }

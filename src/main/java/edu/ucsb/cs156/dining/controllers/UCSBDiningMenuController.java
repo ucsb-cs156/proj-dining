@@ -33,7 +33,6 @@ import jakarta.validation.Valid;
 @Slf4j
 public class UCSBDiningMenuController extends ApiController {
 
-  @Autowired UserRepository userRepository;
   @Autowired UCSBDiningMenuService ucsbDiningMenuService;
 
   @Operation(summary = "Get list of meals serving in given dining common on given date")
