@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -33,12 +34,20 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
   @MockBean private UCSBDiningMenuService ucsbDiningMenuService;
 
   @Test
-  public void test_search() throws Exception {
+  public void logged_out_users_cannot_get_meal_times() throws Exception {
+        String dateTime = "2023-10-10";
+        String diningCommonCode = "ortega";
+        mockMvc.perform(get("/api/diningcommons/{dateTime}/{diningCommonsCode}", dateTime, diningCommonCode))
+                        .andExpect(status().is(403)); // logged out users can't get meal times
+  }
+
+  @WithMockUser(roles = { "USER" })
+  @Test
+  public void logged_in_users_can_meal_times() throws Exception {
 
     String expectedResult = "{expectedJSONResult}";
     String url = "/api/diningcommons/2023-10-10/ortega";
-    // when(ucsbDiningMenuService.getJSON("2023-10-10", "ortega"))
-    //     .thenReturn(expectedResult);
+
     when(ucsbDiningMenuService.getJSON(any(String.class), any(String.class)))
         .thenReturn(expectedResult);
 
@@ -51,4 +60,5 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
 
     assertEquals(expectedResult, responseString);
   }
+
 }
