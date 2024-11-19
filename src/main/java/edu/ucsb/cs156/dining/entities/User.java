@@ -34,8 +34,8 @@ public class User {
   private String hostedDomain;
   private boolean admin;
 
-  private String alias;
-  private boolean moderation;
+  // private String alias;
+  // private boolean moderation;
 
 
 

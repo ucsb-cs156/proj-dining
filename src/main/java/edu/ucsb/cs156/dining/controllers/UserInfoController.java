@@ -37,43 +37,43 @@ public class UserInfoController extends ApiController {
         return super.getCurrentUser();
     }
 
-    /**
-     * This method allows the user to update their alias.
-     * @param alias the new alias
-     * @return the updated user
-     */
-    @Operation(summary = "Update alias of the current user")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/updateAlias")
-    public User updateAlias(@RequestParam String alias) {
-        CurrentUser currentUser = super.getCurrentUser();
-        User user = currentUser.getUser();
+    // /**
+    //  * This method allows the user to update their alias.
+    //  * @param alias the new alias
+    //  * @return the updated user
+    //  */
+    // @Operation(summary = "Update alias of the current user")
+    // @PreAuthorize("hasRole('ROLE_USER')")
+    // @PostMapping("/updateAlias")
+    // public User updateAlias(@RequestParam String alias) {
+    //     CurrentUser currentUser = super.getCurrentUser();
+    //     User user = currentUser.getUser();
         
-        user.setAlias(alias);  
-        userRepository.save(user);  
+    //     user.setAlias(alias);  
+    //     userRepository.save(user);  
         
-        return user;
-    }
+    //     return user;
+    // }
 
-    /**
-     * This method allows an admin to update the moderation status of a user.
-     * @param id the id of the user to update
-     * @param moderation the new moderation status
-     * @return the updated user
-     */
-    @Operation(summary = "Update moderation status of a user (admin only)")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/updateAliasModeration")
-    public User updateAliasModeration(
-            @RequestParam long id, 
-            @RequestParam boolean moderation) {
+    // /**
+    //  * This method allows an admin to update the moderation status of a user.
+    //  * @param id the id of the user to update
+    //  * @param moderation the new moderation status
+    //  * @return the updated user
+    //  */
+    // @Operation(summary = "Update moderation status of a user (admin only)")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // @PutMapping("/updateAliasModeration")
+    // public User updateAliasModeration(
+    //         @RequestParam long id, 
+    //         @RequestParam boolean moderation) {
         
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(User.class, id));
+    //     User user = userRepository.findById(id)
+    //         .orElseThrow(() -> new EntityNotFoundException(User.class, id));
         
-        user.setModeration(moderation);  
-        userRepository.save(user);  
+    //     user.setModeration(moderation);  
+    //     userRepository.save(user);  
         
-        return user;
-    }
+    //     return user;
+    // }
 }
