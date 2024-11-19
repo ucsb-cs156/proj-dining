@@ -5,6 +5,9 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import org.springframework.boot.test.mock.mockito.MockBean;
+import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +24,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 @AutoConfigureDataJpa
 @ContextConfiguration(classes = {})
 class DiningCommonsServiceTests {
+
+  @MockBean
+  private WiremockService wiremockService;
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
@@ -59,6 +65,7 @@ class DiningCommonsServiceTests {
         .expect(requestTo(expectedURL))
         .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("ucsb-api-version", "1.0"))
         .andExpect(header("ucsb-api-key", apiKey))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
