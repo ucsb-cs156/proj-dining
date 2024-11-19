@@ -1,5 +1,7 @@
 package edu.ucsb.cs156.dining.services;
 
+import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -29,7 +31,7 @@ public class UCSBDiningMenuServiceTests {
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
   @MockBean
-  private edu.ucsb.cs156.dining.services.wiremock.WiremockService wiremockService;
+  private WiremockService wiremockService;
 
   @Mock private RestTemplate restTemplate;
 
