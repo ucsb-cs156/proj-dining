@@ -1,7 +1,5 @@
 package edu.ucsb.cs156.dining.services;
 
-import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -12,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -29,6 +28,9 @@ public class UCSBDiningMenuServiceTests {
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
+  @MockBean
+  private edu.ucsb.cs156.dining.services.wiremock.WiremockService wiremockService;
+
   @Mock private RestTemplate restTemplate;
 
   @Autowired private UCSBDiningMenuService ucs;
@@ -41,8 +43,8 @@ public class UCSBDiningMenuServiceTests {
     String diningCommonCode = "ortega";
 
     String expectedURL = UCSBDiningMenuService.ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT;
-    expectedURL.replace("{date-time}", dateTime);
-    expectedURL.replace("{dining-common-code}", diningCommonCode);
+    expectedURL = expectedURL.replace("{date-time}", dateTime);
+    expectedURL = expectedURL.replace("{dining-common-code}", diningCommonCode);
 
     this.mockRestServiceServer
         .expect(requestTo(expectedURL))
@@ -56,28 +58,4 @@ public class UCSBDiningMenuServiceTests {
 
     assertEquals(expectedResult, result);
   }
-
-//   @Test
-//   public void test_getSection_not_found() throws Exception {
-//     String expectedResult = "{\"error\": \"Enroll code doesn't exist in that quarter.\"}";
-
-//     String enrollCode = "08268";
-//     String quarter = "00000";
-
-//     String expectedURL =
-//         UCSBCurriculumService.SECTION_ENDPOINT
-//             .replace("{quarter}", quarter)
-//             .replace("{enrollcode}", enrollCode);
-
-//     this.mockRestServiceServer
-//         .expect(requestTo(expectedURL))
-//         .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
-//         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
-//         .andExpect(header("ucsb-api-version", "1.0"))
-//         .andExpect(header("ucsb-api-key", apiKey))
-//         .andRespond(withSuccess("null", MediaType.APPLICATION_JSON));
-
-//     String result = ucs.getSection(enrollCode, quarter);
-//     assertEquals(expectedResult, result);
-//   }
 }
