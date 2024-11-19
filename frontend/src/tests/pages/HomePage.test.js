@@ -26,6 +26,9 @@ describe("HomePage tests", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    await screen.findByText(/Hello, world!/);
+    await screen.findByText(/Dining Commons/);
+    await screen.findByText(/Code/);
+    await screen.findByText(/Name/);
+    expect(await screen.findByTestId("DiningCommonsTable-header-group-0")).toBeInTheDocument();
   });
 });
