@@ -36,7 +36,7 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
   public void test_search() throws Exception {
 
     String expectedResult = "{expectedJSONResult}";
-    String url = "/api.ucsb.edu/dining/menu/v1/2023-10-10/ortega";
+    String url = "/api/diningcommons/2023-10-10/ortega";
     // when(ucsbDiningMenuService.getJSON("2023-10-10", "ortega"))
     //     .thenReturn(expectedResult);
     when(ucsbDiningMenuService.getJSON(any(String.class), any(String.class)))

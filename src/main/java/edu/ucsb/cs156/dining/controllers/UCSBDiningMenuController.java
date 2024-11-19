@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 @Tag(name = "UCSBDiningMenuController")
 @RestController
-@RequestMapping("/api.ucsb.edu/dining/menu/v1")
+@RequestMapping("/api/diningcommons")
 @Slf4j
 public class UCSBDiningMenuController extends ApiController {
 
