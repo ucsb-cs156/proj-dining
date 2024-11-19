@@ -8,7 +8,7 @@ export default function DiningCommonsIndexPage() {
   return (
     <BasicLayout>
       <div className="pt-2">
-        <h1>Dining Commons Page for {diningCommonsCode}</h1>
+        <h1>Placeholder for Dining Commons Page for {diningCommonsCode}</h1>
         <p>This is a placeholder page that will be updated later.</p>
       </div>
     </BasicLayout>
