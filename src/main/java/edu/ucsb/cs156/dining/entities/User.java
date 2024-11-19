@@ -33,4 +33,10 @@ public class User {
   private String locale;
   private String hostedDomain;
   private boolean admin;
+
+  private String alias;
+  private boolean moderation;
+
+
+
 }

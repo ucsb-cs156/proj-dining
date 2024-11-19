@@ -97,6 +97,18 @@
                     "name": "PICTURE_URL",
                     "type": "VARCHAR(255)"
                   }
+                },
+                {
+                  "column": {
+                    "name": "ALIAS",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "MODERATION",
+                    "type": "BOOLEAN"
+                  }
                 }]
               ,
               "tableName": "USERS"
