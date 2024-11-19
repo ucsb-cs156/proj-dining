@@ -4,7 +4,6 @@ import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.controllers.ReviewsController;
 import edu.ucsb.cs156.dining.ControllerTestCase;
-import edu.ucsb.cs156.dining.entities.DiningCommons;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
 
