@@ -1,6 +1,5 @@
 package edu.ucsb.cs156.dining.controllers;
 
-import edu.ucsb.cs156.dining.entities.DiningCommons;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
