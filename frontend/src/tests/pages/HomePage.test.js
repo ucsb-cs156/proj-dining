@@ -1,7 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import HomePage from "main/pages/HomePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
+import mockConsole from "jest-mock-console";
+import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
@@ -29,6 +31,115 @@ describe("HomePage tests", () => {
     await screen.findByText(/Dining Commons/);
     await screen.findByText(/Code/);
     await screen.findByText(/Name/);
-    expect(await screen.findByTestId("DiningCommonsTable-header-group-0")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("DiningCommonsTable-header-group-0"),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("HomePage tests", () => {
+  describe("when the backend doesn't return data", () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    const restoreConsole = mockConsole();
+    beforeEach(() => {
+      axiosMock
+        .onGet("/api/currentUser")
+        .reply(200, apiCurrentUserFixtures.userOnly);
+      axiosMock
+        .onGet("/api/systemInfo")
+        .reply(200, systemInfoFixtures.showingNeither);
+
+      const queryClient = new QueryClient();
+    });
+
+    const queryClient = new QueryClient();
+    test("renders header but table is not present", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+      await screen.findByText("Dining Commons");
+      expect(
+        screen.queryByTestId("DiningCommonsTable-header-group-0"),
+      ).toBeInTheDocument();
+      const errorMessage = console.error.mock.calls[0][0];
+      expect(errorMessage).toMatch(
+        "Error communicating with backend via GET on /api/diningcommons/all",
+      );
+      restoreConsole();
+    });
+  });
+
+  describe("tests where backend is working normally", () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    beforeEach(() => {
+      axiosMock.reset();
+      axiosMock.resetHistory();
+      axiosMock
+        .onGet("/api/currentUser")
+        .reply(200, apiCurrentUserFixtures.userOnly);
+      axiosMock
+        .onGet("/api/systemInfo")
+        .reply(200, systemInfoFixtures.showingNeither);
+      axiosMock
+        .onGet("/api/diningcommons/all", {})
+        .reply(200, diningCommonsFixtures.threeDiningCommons);
+    });
+
+    const queryClient = new QueryClient();
+    test("renders without crashing", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      expect(await screen.findByTestId("DiningCommonsTable-header-group-0"));
+    });
+
+    test("Is populated with the data provided", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      await screen.findByTestId("DiningCommonsTable-header-group-0");
+
+      expect(
+        await screen.getByTestId("DiningCommonsTable-header-code-sort-carets"),
+      ).toBeInTheDocument();
+      expect(
+        await screen.getByTestId("DiningCommonsTable-header-name-sort-carets"),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-0-col-code"),
+      ).toHaveTextContent("carrillo");
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-0-col-name"),
+      ).toHaveTextContent("Carrillo");
+
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-1-col-code"),
+      ).toHaveTextContent("de-la-guerra");
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-1-col-name"),
+      ).toHaveTextContent("De La Guerra");
+
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-2-col-code"),
+      ).toHaveTextContent("ortega");
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-2-col-name"),
+      ).toHaveTextContent("Ortega");
+    });
   });
 });

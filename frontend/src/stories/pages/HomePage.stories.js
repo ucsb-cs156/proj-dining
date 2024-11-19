@@ -17,9 +17,9 @@ export const OneDiningCommons = Template.bind({});
 OneDiningCommons.parameters = {
   msw: [
     http.get("/api/diningcommons/all", () => {
-      return HttpResponse.json(diningCommonsFixtures.oneDiningCommons)
-    })
-  ]
+      return HttpResponse.json(diningCommonsFixtures.oneDiningCommons);
+    }),
+  ],
 };
 
 export const ThreeDiningCommons = Template.bind({});
@@ -27,9 +27,9 @@ export const ThreeDiningCommons = Template.bind({});
 ThreeDiningCommons.parameters = {
   msw: [
     http.get("/api/diningcommons/all", () => {
-      return HttpResponse.json(diningCommonsFixtures.threeDiningCommons)
-    })
-  ]
+      return HttpResponse.json(diningCommonsFixtures.threeDiningCommons);
+    }),
+  ],
 };
 
 export const LoggedOut = Template.bind({});
