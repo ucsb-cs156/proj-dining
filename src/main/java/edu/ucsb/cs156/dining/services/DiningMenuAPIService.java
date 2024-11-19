@@ -1,0 +1,233 @@
+package edu.ucsb.cs156.dining.services;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
+import edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cglib.core.Local;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+/** Service object that wraps the UCSB Academic Curriculum API */
+@Service
+@Slf4j
+public class DiningMenuAPIService {
+  @Value("${app.startDate:2024-01-01T00:00:00}")
+  private LocalDateTime startDate;
+
+  @Value("${app.endDate:2024-12-31T23:59:59}")
+  private LocalDateTime endDate;
+
+  @Autowired private ObjectMapper objectMapper;
+
+  @Autowired edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository diningMenuApiRepository;
+
+  @Value("${app.ucsb.api.consumer_key}")
+  private String apiKey;
+
+  private RestTemplate restTemplate = new RestTemplate();
+
+  public DiningMenuAPIService(RestTemplateBuilder restTemplateBuilder) throws Exception {
+    restTemplate = restTemplateBuilder.build();
+  }
+
+  public static final String GET_MEALS =
+      "https://api.ucsb.edu/dining/menu/v1/{date-time}/{dining-common-code}";
+
+  public static final String GET_COMMONS =
+      "https://api.ucsb.edu/dining/menu/v1/{date-time}";
+
+  public static final String GET_DAYS =
+      "https://api.ucsb.edu/dining/menu/v1/";
+
+  public LocalDateTime getStartDateTime() {
+    return startDate;
+  }
+
+  public LocalDateTime getEndDateTime() {
+    return endDate;
+  }
+
+  public void setStartDateTime(LocalDateTime startDate) {
+    this.startDate = startDate;
+  }
+
+  public void setEndDateTime(LocalDateTime endDate) {
+    this.endDate = endDate;
+  }
+
+  // public String getCurrentQuarterYYYYQ() throws Exception {
+  //   UCSBAPIQuarter quarter = getCurrentQuarter();
+  //   return quarter.getQuarter();
+  // }
+
+  // public UCSBAPIQuarter getCurrentQuarter() throws Exception {
+  //   HttpHeaders headers = new HttpHeaders();
+  //   headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+  //   headers.setContentType(MediaType.APPLICATION_JSON);
+  //   headers.set("ucsb-api-version", "1.0");
+  //   headers.set("ucsb-api-key", this.apiKey);
+
+  //   HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+  //   String url = CURRENT_QUARTER_ENDPOINT;
+
+  //   log.info("url=" + url);
+
+  //   String retVal = "";
+  //   MediaType contentType = null;
+  //   HttpStatus statusCode = null;
+
+  //   ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+  //   contentType = re.getHeaders().getContentType();
+  //   statusCode = (HttpStatus) re.getStatusCode();
+  //   retVal = re.getBody();
+
+  //   log.info(
+  //       "json: {} contentType: {} statusCode: {} entity: {}",
+  //       retVal,
+  //       contentType,
+  //       statusCode,
+  //       entity);
+  //   UCSBAPIQuarter quarter = null;
+  //   quarter = objectMapper.readValue(retVal, UCSBAPIQuarter.class);
+  //   return quarter;
+  // }
+
+  public List<DiningMenuAPI> getDays() throws Exception {
+    List<DiningMenuAPI> days = diningMenuApiRepository.findAll();
+    if (days.isEmpty()) {
+      days = this.loadAllDays();
+    }
+    return days;
+  }
+
+  public List<DiningMenuAPI> getCommons(LocalDateTime dateTime) throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+
+    String formattedDateTime = dateTime.toString(); // ISO format
+
+    String url = GET_COMMONS.replace("{date-time}", formattedDateTime);
+
+    log.info("Fetching commons data from URL: {}", url);
+
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+    if (responseEntity.getStatusCode() != HttpStatus.OK) {
+        log.error("Error fetching commons data: Status = {}", responseEntity.getStatusCode());
+        throw new Exception("Failed to fetch dining commons data");
+    }
+
+    String responseBody = responseEntity.getBody();
+    List<DiningMenuAPI> commons = objectMapper.readValue(responseBody, new TypeReference<List<DiningMenuAPI>>() {});
+
+    log.info("Fetched {} commons from the API", commons.size());
+    return commons;
+  }
+
+  public List<DiningMenuAPI> getMeals(LocalDateTime dateTime, String diningCommonCode) throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+
+    String formattedDateTime = dateTime.toString(); // ISO format
+
+    String url = GET_MEALS
+            .replace("{date-time}", formattedDateTime)
+            .replace("{dining-common-code}", diningCommonCode);
+
+    log.info("Fetching meals data from URL: {}", url);
+
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+    if (responseEntity.getStatusCode() != HttpStatus.OK) {
+        log.error("Error fetching meals data: Status = {}", responseEntity.getStatusCode());
+        throw new Exception("Failed to fetch meals data for dining common: " + diningCommonCode);
+    }
+
+    String responseBody = responseEntity.getBody();
+    List<DiningMenuAPI> meals = objectMapper.readValue(responseBody, new TypeReference<List<DiningMenuAPI>>() {});
+
+    log.info("Fetched {} meals for dining common {} on {}", meals.size(), diningCommonCode, formattedDateTime);
+    return meals;
+}
+
+
+  public List<DiningMenuAPI> getAllDaysFromAPI() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    String url = GET_DAYS;
+
+    log.info("url=" + url);
+
+    String retVal = "";
+    MediaType contentType = null;
+    HttpStatus statusCode = null;
+
+    ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+    contentType = re.getHeaders().getContentType();
+    statusCode = (HttpStatus) re.getStatusCode();
+    retVal = re.getBody();
+
+    log.info(
+        "json: {} contentType: {} statusCode: {} entity: {}",
+        retVal,
+        contentType,
+        statusCode,
+        entity);
+    List<DiningMenuAPI> day = null;
+    day = objectMapper.readValue(retVal, new TypeReference<List<DiningMenuAPI>>() {});
+    return day;
+  }
+
+  public boolean dateInRange(LocalDateTime dateTime) {
+    boolean dateGEStart = dateTime.isAfter(startDate) || dateTime.isEqual(startDate);
+    boolean dateLEEnd = dateTime.isBefore(endDate) || dateTime.isEqual(endDate);
+    return (dateGEStart && dateLEEnd);
+  }
+
+  public List<DiningMenuAPI> loadAllDays() throws Exception {
+    List<DiningMenuAPI> days = this.getAllDaysFromAPI();
+    List<DiningMenuAPI> savedDays = new ArrayList<DiningMenuAPI>();
+    days.forEach(
+        (day) -> {
+          if (dateInRange(day.getDate())) {
+            diningMenuApiRepository.save(day);
+            savedDays.add(day);
+          }
+        });
+    log.info("savedDays.size={}", savedDays.size());
+    return savedDays;
+  }
+}
