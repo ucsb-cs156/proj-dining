@@ -34,7 +34,10 @@ describe("DiningCommonsIndexPage tests", () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/diningcommons/DLG"]}>
           <Routes>
-            <Route path="/diningcommons/:diningCommonsCode" element={<DiningCommonsIndexPage />} />
+            <Route
+              path="/diningcommons/:diningCommonsCode"
+              element={<DiningCommonsIndexPage />}
+            />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,

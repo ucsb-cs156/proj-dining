@@ -22,11 +22,11 @@ function App() {
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
         <>
-            <Route
-              exact
-              path="/diningcommons/:diningCommonsCode"
-              element={<DiningCommonsIndexPage />}
-            />
+          <Route
+            exact
+            path="/diningcommons/:diningCommonsCode"
+            element={<DiningCommonsIndexPage />}
+          />
         </>
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <Route exact path="/admin/users" element={<AdminUsersPage />} />
