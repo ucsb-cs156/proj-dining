@@ -1,7 +1,5 @@
 package edu.ucsb.cs156.dining.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.DiningCommonsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/diningcommons")
 public class DiningCommonsController {
-  private ObjectMapper mapper = new ObjectMapper();
-
-  @Autowired UserRepository userRepository;
 
   @Autowired DiningCommonsService diningCommonsService;
 
