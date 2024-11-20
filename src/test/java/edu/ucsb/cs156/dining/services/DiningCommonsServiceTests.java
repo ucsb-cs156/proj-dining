@@ -69,7 +69,7 @@ class DiningCommonsServiceTests {
         .andExpect(header("ucsb-api-key", apiKey))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
-    String actualResult = diningCommonsService.getJSON();
+    String actualResult = diningCommonsService.getDiningCommonsJSON();
     assertEquals(expectedResult, actualResult);
   }
 }
