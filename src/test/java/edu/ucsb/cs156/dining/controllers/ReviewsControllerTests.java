@@ -63,7 +63,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 Reviews review1 = Reviews.builder()
                                 .student_id(1)
-                                .item_id("pesto pasta")
+                                .item_id(2)
                                 .date_served("today")
                                 /*
                                 .status("working")
@@ -77,10 +77,10 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 Reviews review2 = Reviews.builder()
                                 .student_id(3)
-                                .item_id("pesto sandwich")
+                                .item_id(1)
                                 .date_served("today")
                                 .status("working")
-                                .user_id("me")
+                                //.user_id(1)
                                 .moderator_comments("test")
                                 .created_date("today")
                                 .last_edited_date("not rn")
@@ -125,14 +125,10 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 Reviews review = Reviews.builder()
                                 .student_id(1)
-                                .item_id("pesto pasta")
+                                .item_id(2)
                                 .date_served("today")
-                                /*
-                                .status("working")
-                                
-                                .user_id("me")
-                                .moderator_comments("test")
-                                */
+                                .status("Awaiting Moderation")
+                                .user_id(1)
                                 .created_date("today")
                                 .last_edited_date("rn")
                                 .build();
@@ -141,8 +137,8 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&created_date=today&last_edited_date=rn")
-                                                .with(csrf()).with(anonymous()))
+                                post("/api/reviews/post?student_id=1&item_id=2&date_served=today&created_date=today&last_edited_date=rn")
+                                                .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
@@ -159,10 +155,10 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 Reviews review = Reviews.builder()
                                 .student_id(1)
-                                .item_id("pesto pasta")
+                                .item_id(2)
                                 .date_served("today")
                                 .status("working")
-                                .user_id("me")
+                                .user_id(1)
                                 .moderator_comments("test")
                                 .created_date("today")
                                 .last_edited_date("rn")
@@ -172,7 +168,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&status=working&user_id=me&moderator_comments=test&created_date=today&last_edited_date=rn")
+                                post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
