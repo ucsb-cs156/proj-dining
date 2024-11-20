@@ -26,7 +26,7 @@ public class Review {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   private long studentId;
-  private long itemId;
+  private String itemId;
   private LocalDateTime dateItemServed;
   private String status;
   private long userIdModerator;
