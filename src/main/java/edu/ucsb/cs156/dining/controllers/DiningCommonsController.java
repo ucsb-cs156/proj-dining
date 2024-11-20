@@ -38,4 +38,15 @@ public class DiningCommonsController {
 
         return ResponseEntity.ok().body(body);
   }
+
+  @GetMapping(value = "/{date-time}/{dining-commons-code}/{meal}", produces = "application/json")
+  public ResponseEntity<String> getMenuItemsByMealDateTimeAndDiningCommonsCode(
+    @Parameter(name = "date-time", required = true) @PathVariable("date-time") LocalDateTime date_time,
+    @Parameter(name = "dining-commons-code", required = true) @PathVariable("dining-commons-code") String dining_commons_code,
+    @Parameter(name = "meal", required = true) @PathVariable("meal") String meal) throws Exception {
+        
+        String body = diningCommonsService.getMenuItemsByMealAndDate(date_time, dining_commons_code, meal);
+
+        return ResponseEntity.ok().body(body);
+  }
 }
