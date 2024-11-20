@@ -27,10 +27,10 @@ public class Reviews {
   private long id;
   
   private int student_id;
-  private String item_id;
+  private long item_id;
   private String date_served;
   private String status;
-  private String user_id;
+  private long user_id;
   private String moderator_comments;
   private String created_date;
   private String last_edited_date;

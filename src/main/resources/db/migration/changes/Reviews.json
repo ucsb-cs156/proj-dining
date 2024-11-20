@@ -1,7 +1,7 @@
 { "databaseChangeLog": [
     {
         "changeSet": {
-          "id": "Reviews-1",
+          "id": "Reviews-5",
           "author": "KEVINY",
           "preConditions": [
             {
@@ -26,7 +26,7 @@
                         "autoIncrement": true,
                         "constraints": {
                             "primaryKey": true,
-                            "primaryKeyName": "REVIEW_PK"
+                            "primaryKeyName": "REVIEWS_PK"
                         },
                           "name": "ID",
                           "type": "BIGINT"
@@ -47,7 +47,7 @@
                         "nullable": false
                       },
                       "name": "ITEM_ID",
-                      "type": "VARCHAR(255)"
+                      "type": "INTEGER"
                     }
                   },
                   {
@@ -75,7 +75,7 @@
                         "default": null
                       },
                       "name": "USER_ID",
-                      "type": "VARCHAR(255)"
+                      "type": "BIGINT"
                     }
                   },
                   {
