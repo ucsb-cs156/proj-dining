@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Map;
 
 
 @WebMvcTest(controllers = UserInfoController.class)
@@ -61,7 +62,7 @@ public class UserInfoControllerTests extends ControllerTestCase {
     public void a_user_can_post_a_new_currentUser() throws Exception {
         // arrange
         User currentUser1 = User.builder()
-            .id(1L)  // Set a realistic user ID
+            .id(1L)  
             .email("user@example.org")
             .googleSub("fake_user")
             .pictureUrl("https://example.org/user.jpg")
@@ -72,19 +73,18 @@ public class UserInfoControllerTests extends ControllerTestCase {
             .locale("")
             .hostedDomain("example.org")
             .admin(false)
-            .alias("Chipotle")  // Alias we're updating
+            .alias("Chipotle") 
             .moderation(false)
             .build();
-
-        // Mock the userRepository to return the same user object when saved
+        
+  
         when(userRepository.save(eq(currentUser1))).thenReturn(currentUser1);
 
         // act
         MvcResult response = mockMvc.perform(
-            post("/api/currentUser/updateAlias?alias=Chipotle")  // Corrected URL path
-            .with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
+            post("/api/currentUser/updateAlias?alias=Chipotle") 
+                        .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
 
         // assert
         verify(userRepository, times(1)).save(currentUser1);
@@ -96,129 +96,83 @@ public class UserInfoControllerTests extends ControllerTestCase {
 
 
     @Test
-    @WithMockUser(roles = { "ADMIN" }) // Test with admin user
-    public void updateAliasModeration__admin_updates_successfully() throws Exception {
-        // Arrange
-        Long userId = 1L;
-        boolean newModerationStatus = true;
-
-        // Create a mock user object
-        User mockUser = User.builder()
-            .id(userId)
+    @WithMockUser(roles = { "ADMIN" }) 
+    public void admin_can_edit_moderation_value() throws Exception {
+        //arrange 
+        User userOrig = User.builder()
+            .id(7L)
             .email("user@example.org")
-            .moderation(!newModerationStatus)  // Set initial status to the opposite
+            .moderation(false) 
             .build();
 
-        // Mock the userRepository to return the mock user when findById is called
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
-        // Act: Perform the PUT request to update the moderation status
+        User userEdited = User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .moderation(true) 
+            .build();
+
+        String requestBody = mapper.writeValueAsString(userEdited);
+        when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+
+        // act
         MvcResult response = mockMvc.perform(
             put("/api/currentUser/updateAliasModeration")
-                .param("id", String.valueOf(userId))
-                .param("moderation", String.valueOf(newModerationStatus))
-                .with(csrf())  // Ensure CSRF is included
-        )
-        .andExpect(status().isOk())  // Expect HTTP 200 OK
-        .andReturn();
-
-        // Assert: Verify the userRepository's save method was called
-        verify(userRepository, times(1)).save(mockUser);
-
-        // Assert: Check the response content to ensure the user was updated correctly
-        String responseString = response.getResponse().getContentAsString();
-        assertTrue(responseString.contains("moderation"));
-        assertTrue(responseString.contains(String.valueOf(newModerationStatus)));  // Assert moderation status is updated
+                .param("id", String.valueOf(7l))
+                .param("moderation", String.valueOf(true))
+                .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+        
+        // assert
+        verify(userRepository, times(1)).findById(7L);
+                verify(userRepository, times(1)).save(userEdited); 
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(requestBody, responseString);
     }
 
     @Test
-    @WithMockUser(roles = { "USER" }) // Test with non-admin user
-    public void updateAliasModeration__non_admin_cannot_update() throws Exception {
-        // Arrange
-        Long userId = 1L;
-        boolean newModerationStatus = true;
-
-        // Act: Try to perform the PUT request with a non-admin user
-        mockMvc.perform(
-            put("/api/currentUser/updateAliasModeration")
-                .param("id", String.valueOf(userId))
-                .param("moderation", String.valueOf(newModerationStatus))
-                .with(csrf())  // Ensure CSRF is included
-        )
-        .andExpect(status().isForbidden());  // Expect HTTP 403 Forbidden
+    @WithMockUser(roles = { "USER" }) 
+    public void regular_users_cannot_update_moderation_value() throws Exception {
+        mockMvc.perform(post("/api/currentUser/updateAliasModeration"))
+                                .andExpect(status().is(403)); 
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" }) // Test with admin user
-    public void updateAliasModeration__user_not_found() throws Exception {
-        // Arrange
-        Long userId = 999L;  // A non-existing user ID
-        boolean newModerationStatus = true;
-
-        // Mock the userRepository to return an empty Optional (user not found)
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // Act: Perform the PUT request with an invalid user ID
-        mockMvc.perform(
+    @WithMockUser(roles = { "ADMIN" })
+    public void admin_cannot_update_nonexistent_id() throws Exception {
+        // arrange
+    
+        User currentUser = User.builder()
+                .id(1L)  
+                .email("user@example.org")
+                .googleSub("fake_user")
+                .pictureUrl("https://example.org/user.jpg")
+                .fullName("Fake user")
+                .givenName("Fake")
+                .familyName("user")
+                .emailVerified(true)
+                .locale("")
+                .hostedDomain("example.org")
+                .admin(false)
+                .alias("Chipotle") 
+                .moderation(false)
+                .build();
+        String requestBody = mapper.writeValueAsString(currentUser);
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    
+        // act
+        MvcResult response = mockMvc.perform(
             put("/api/currentUser/updateAliasModeration")
-                .param("id", String.valueOf(userId))
-                .param("moderation", String.valueOf(newModerationStatus))
-                .with(csrf())  // Ensure CSRF is included
-        )
-        .andExpect(status().isNotFound());  // Expect HTTP 404 Not Found
+                .param("id", String.valueOf(1L))
+                .param("moderation", String.valueOf(false)) 
+                .with(csrf()))  
+            .andExpect(status().isNotFound()).andReturn();
+    
+        // assert
+        verify(userRepository, times(1)).findById(1L);
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("User with id 1 not found", json.get("message"));
     }
+
+
 }
-
-
-
-
-// package edu.ucsb.cs156.dining.controllers;
-
-// import edu.ucsb.cs156.dining.ControllerTestCase;
-// import edu.ucsb.cs156.dining.models.CurrentUser;
-// import edu.ucsb.cs156.dining.repositories.UserRepository;
-// import edu.ucsb.cs156.dining.testconfig.TestConfig;
-
-// import org.junit.jupiter.api.Test;
-// import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-// import org.springframework.boot.test.mock.mockito.MockBean;
-// import org.springframework.context.annotation.Import;
-// import org.springframework.security.test.context.support.WithMockUser;
-// import org.springframework.test.web.servlet.MvcResult;
-
-// import static org.junit.jupiter.api.Assertions.assertEquals;
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-// @WebMvcTest(controllers = UserInfoController.class)
-// @Import(TestConfig.class)
-// public class UserInfoControllerTests extends ControllerTestCase {
-
-//   @MockBean
-//   UserRepository userRepository;
-
-//   @Test
-//   public void currentUser__logged_out() throws Exception {
-//     mockMvc.perform(get("/api/currentUser"))
-//         .andExpect(status().is(403));
-//   }
-
-//   @WithMockUser(roles = { "USER" })
-//   @Test
-//   public void currentUser__logged_in() throws Exception {
-
-//     // arrange
-
-//     CurrentUser currentUser = currentUserService.getCurrentUser();
-//     String expectedJson = mapper.writeValueAsString(currentUser);
-
-//     // act
-
-//     MvcResult response = mockMvc.perform(get("/api/currentUser"))
-//         .andExpect(status().isOk()).andReturn();
-
-//     // assert
-//     String responseString = response.getResponse().getContentAsString();
-//     assertEquals(expectedJson, responseString);
-//   }
-// }
