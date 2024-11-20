@@ -38,15 +38,11 @@ describe("ReviewsLookupPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await screen.findByText(
-      "Placeholder for Dining Commons Page for (diningCommonsCode)",
-    );
+    await screen.findByText("Placeholder for Dining Commons Page for");
 
     // assert
     expect(
-      screen.getByText(
-        "Placeholder for Dining Commons Page for (diningCommonsCode)",
-      ),
+      screen.getByText("Placeholder for Dining Commons Page for"),
     ).toBeInTheDocument();
   });
 });
