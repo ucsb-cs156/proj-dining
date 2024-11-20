@@ -1,6 +1,8 @@
 package edu.ucsb.cs156.dining.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,10 +28,7 @@ public class DiningCommonsReview {
   private long id;
   
   private Long studentUserId;
-  private String diningCommons;
-  private String meal;
-  private String menuItem;
-  private String stationName;
+  private Long itemId;
   private LocalDateTime itemServedDate;
   private String status;
   private Long moderatorUserId;
