@@ -75,11 +75,11 @@ describe("MealsTable tests", () => {
 
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-name`),
-    ).toHaveTextContent("Lunch");
+    ).toHaveTextContent("Breakfast");
 
     expect(
         screen.getByTestId(`${testId}-cell-row-1-col-name`),
-      ).toHaveTextContent("Dinner");
+      ).toHaveTextContent("Lunch");
   });
 
 });
