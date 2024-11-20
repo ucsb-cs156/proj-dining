@@ -27,14 +27,13 @@ public class DiningCommonsReview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   
-  private Long studentUserId;
-  private Long itemId;
+  private long studentUserId;
+  private long itemId;
   private LocalDateTime itemServedDate;
   private String status;
-  private Long moderatorUserId;
+  private long moderatorUserId;
   private String moderatorComments;
   private LocalDateTime createdDate;
   private LocalDateTime lastEditedDate;
-
 
 }
