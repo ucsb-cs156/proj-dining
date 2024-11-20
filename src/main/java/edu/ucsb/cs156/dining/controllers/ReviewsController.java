@@ -1,6 +1,10 @@
 package edu.ucsb.cs156.dining.controllers;
 
+import edu.ucsb.cs156.dining.entities.Restaurant;
+import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.entities.Reviews;
+import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.entities.UCSBDiningCommons;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
 
@@ -19,7 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
+
+import java.util.ArrayList;
 import jakarta.validation.Valid;
 
 /**
@@ -53,40 +61,41 @@ public class ReviewsController extends ApiController {
      * @param item_id itemID of the review
      * @param date_served date served 
      * @param status status of the review
-     * @param user_id userid of the moderator
      * @param moderator_comments comments from the moderator
      * @param created_date created date of the review
      * @param last_edited_date last edited date of the review
      * @return the save review
      */
     @Operation(summary= "Create a new review")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public Reviews postReview(
         @Parameter(name="student_id") @RequestParam int student_id,
-        @Parameter(name="item_id") @RequestParam String item_id,
+        @Parameter(name="item_id") @RequestParam int item_id,
         @Parameter(name="date_served") @RequestParam String date_served,
         @Parameter(name="status") @RequestParam(required=false) String status,
-        @Parameter(name="user_id") @RequestParam(required=false) String user_id,
         @Parameter(name="moderator_comments") @RequestParam(required=false) String moderator_comments,
         @Parameter(name="created_date") @RequestParam String created_date,
         @Parameter(name="last_edited_date") @RequestParam String last_edited_date
-        )
+        ) 
         {
 
+
         Reviews reviews = new Reviews();
+        CurrentUser user = getCurrentUser();
+        
         reviews.setStudent_id(student_id);
         reviews.setItem_id(item_id);
         reviews.setDate_served(date_served);
-        reviews.setStatus(status);
-        reviews.setUser_id(user_id);
+        reviews.setStatus(status != null ? status : "Awaiting Moderation");
+        reviews.setUser_id(user.getUser().getId());
         reviews.setModerator_comments(moderator_comments);
         reviews.setCreated_date(created_date);
         reviews.setLast_edited_date(last_edited_date);
 
         Reviews savedReviews = reviewsRepository.save(reviews);
 
-        return savedReviews;   //MIGHT NEED TO IMPLEMENT TESTS!!!!!
+        return savedReviews; 
     }
 
 }
