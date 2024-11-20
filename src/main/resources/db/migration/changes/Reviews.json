@@ -1,0 +1,102 @@
+{
+    "databaseChangeLog": [
+      {
+        "changeSet": {
+          "id": "Reviews-1",
+          "author": "JaydenJ",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "not": [
+                {
+                  "tableExists": {
+                    "tableName": "Reviews"
+                  }
+                }
+              ]
+            }
+          ],
+          "changes": [
+            {
+              "createTable": {
+                "tableName": "Reviews",
+                "columns": [
+                  {
+                    "column": {
+                      "name": "ID",
+                      "type": "BIGINT",
+                      "autoIncrement": true,
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "CONSTRAINT_9"
+                      }
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "STUDENT_ID",
+                      "type": "BIGINT",
+                      "constraints": {"nullable": false}
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "ITEM_ID",
+                      "type": "VARCHAR(255)",
+                      "constraints": {"nullable": false}
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "DATE_ITEM_SERVED",
+                      "type": "TIMESTAMP",
+                      "constraints": {"nullable": false}
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "STATUS",
+                      "type": "VARCHAR(255)",
+                      "constraints": {"nullable": false},
+                      "defaultValue": "Awaiting Moderation"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "USER_ID_MODERATOR",
+                      "type": "VARCHAR(255)",
+                      "defaultValue": null
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "MODERATOR_COMMENTS",
+                      "type": "VARCHAR(255)",
+                      "defaultValue": null
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "DATE_CREATED",
+                      "type": "TIMESTAMP",
+                      "constraints": {"nullable": false}
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "DATE_EDITED",
+                      "type": "TIMESTAMP",
+                      "constraints": {"nullable": false}
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
