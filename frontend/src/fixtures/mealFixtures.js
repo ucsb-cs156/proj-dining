@@ -1,21 +1,21 @@
 const mealFixtures = {
     oneMeal: {
-      name: "Late Night",
-      code: "late-night",
+      name: "Breakfast",
+      code: "breakfast",
     },
   
     threeMeals: [
       {
-        name: "Late Night1",
-        code: "late-night1",
+        name: "Breakfast",
+        code: "breakfast",
       },
       {
-        name: "Late Night2",
-        code: "late-night2",
+        name: "Lunch",
+        code: "lunch",
       },
       {
-        name: "Late Night3",
-        code: "late-night3",
+        name: "Dinner",
+        code: "dinner",
       },
     ],
   };
