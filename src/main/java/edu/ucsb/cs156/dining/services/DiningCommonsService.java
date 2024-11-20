@@ -86,10 +86,8 @@ public class DiningCommonsService {
     HttpEntity<String> entity = new HttpEntity<>("body", headers);
 
     // set the date in the format that the api expects
-    if (date != null) {
-      String formattedDate = date.toString();
-      log.info("formattedDate: {}", formattedDate);
-    }
+    String formattedDate = date.toString();
+    log.info("formattedDate: {}", formattedDate);
 
     // set the url for the api request (https://api.ucsb.edu/dining/menu/v1/2024-10-21T12%3A00%3A00/carrillo)
     String url = MEALS_BY_DATE_ENDPOINT + date.toString() + "/" + diningCommonsCode;

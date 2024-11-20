@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
+import java.time.LocalDateTime;
 
 @RestClientTest(DiningCommonsService.class)
 @AutoConfigureDataJpa
@@ -70,6 +71,29 @@ class DiningCommonsServiceTests {
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
     String actualResult = diningCommonsService.getDiningCommonsJSON();
+    assertEquals(expectedResult, actualResult);
+  }
+
+  @Test
+  void get_returns_all_meals_by_date() throws Exception {
+
+    LocalDateTime date = LocalDateTime.of(2021, 5, 1, 0, 0);
+    String diningCommonsCode = "ortega";
+
+
+    String expectedURL = DiningCommonsService.MEALS_BY_DATE_ENDPOINT + date.toString() + "/ortega";
+
+    String expectedResult = "t";
+
+    this.mockRestServiceServer
+        .expect(requestTo(expectedURL))
+        .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("ucsb-api-version", "1.0"))
+        .andExpect(header("ucsb-api-key", apiKey))
+        .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
+
+    String actualResult = diningCommonsService.getMealsByDateJSON(date, diningCommonsCode);
     assertEquals(expectedResult, actualResult);
   }
 }
