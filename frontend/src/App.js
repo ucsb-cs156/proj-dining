@@ -15,6 +15,8 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
+import MyReviewsIndexPage from 'main/pages/MyReviews/MyReviewsIndexPage';
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -36,6 +38,13 @@ function App() {
             <Route exact path="/ucsbdates" element={<UCSBDatesIndexPage />} />
           </>
         )}
+
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
+          </>
+        )}
+
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <>
             <Route
