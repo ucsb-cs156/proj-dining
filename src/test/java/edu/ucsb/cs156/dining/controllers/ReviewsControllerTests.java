@@ -142,7 +142,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // act
                 MvcResult response = mockMvc.perform(
                                 post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&created_date=today&last_edited_date=rn")
-                                                .with(csrf()))
+                                                .with(csrf()).with(anonymous()))
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
