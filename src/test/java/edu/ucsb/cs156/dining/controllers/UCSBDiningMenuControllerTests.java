@@ -27,8 +27,6 @@ import java.util.List;
 @AutoConfigureDataJpa
 public class UCSBDiningMenuControllerTests extends ControllerTestCase {
 
-  @MockBean UserRepository userRepository;
-
   @Autowired private MockMvc mockMvc;
 
   @MockBean private UCSBDiningMenuService ucsbDiningMenuService;

@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.dining.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +24,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class UCSBDiningMenuService {
-
-    @Autowired private ObjectMapper objectMapper;
 
     @Value("${app.ucsb.api.consumer_key}")
     private String apiKey;
