@@ -2,7 +2,7 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "MenuItems-1",
+          "id": "MenuItems-3",
           "author": "OviyaS",
           "preConditions": [
             {
@@ -47,7 +47,7 @@
                   },
                   {
                     "column": {
-                      "name": "ITEMNAME",
+                      "name": "NAME",
                       "type": "VARCHAR(255)"
                     }
                   },
