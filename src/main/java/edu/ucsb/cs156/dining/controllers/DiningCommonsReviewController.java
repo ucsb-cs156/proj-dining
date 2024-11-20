@@ -44,27 +44,35 @@ public class DiningCommonsReviewController extends ApiController {
     
     /**
      * Create a new dining commons review -> all users
-     * 
-     * @param 
-     * 
-     * @return the saved dining commons review
      */
 
     @Operation(summary= "Create a new dining commons review")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public DiningCommonsReview postDiningCommonsReview(
-           // FIX PARAMETERS 
-             @Parameter(name="quarterYYYYQ") @RequestParam String quarterYYYYQ,
-            @Parameter(name="name") @RequestParam String name,
-            @Parameter(name="localDateTime", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)") @RequestParam("localDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime)
+           
+            @Parameter(name="studentUserId") @RequestParam long studentuserId,
+            @Parameter(name="itemId") @RequestParam long itemId,
+            @Parameter(name="itemServedDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("itemServedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime itemServedDate,
+            @Parameter(name="status") @RequestParam String status,
+            @Parameter(name="moderatorUserId") @RequestParam long moderatorUserId,
+            @Parameter(name="moderatorComments") @RequestParam String moderatorComments,
+            @Parameter(name="createdDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("createdDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdDate,
+            @Parameter(name="lastEditedDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("lastEditedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastEditedDate)
+    
             throws JsonProcessingException {
 
-        log.info("localDateTime={}", localDateTime);
+        log.info("itemServedDate={}", itemServedDate);
 
         DiningCommonsReview diningCommonsReview = new DiningCommonsReview();
-        diningCommonsReview.setQuarterYYYYQ(quarterYYYYQ);
-        // FIX SETTING PARAMETERS
+        diningCommonsReview.setStudentUserId(studentuserId);
+        diningCommonsReview.setItemId(itemId);
+        diningCommonsReview.setItemServedDate(itemServedDate);
+        diningCommonsReview.setStatus(status);
+        diningCommonsReview.setModeratorUserId(moderatorUserId);
+        diningCommonsReview.setModeratorComments(moderatorComments);
+        diningCommonsReview.setCreatedDate(createdDate);
+        diningCommonsReview.setLastEditedDate(lastEditedDate);
 
         DiningCommonsReview savedDiningCommonsReview = diningCommonsReviewRepository.save(diningCommonsReview);
 
@@ -78,7 +86,7 @@ public class DiningCommonsReviewController extends ApiController {
      * @return an iterable of DiningCommonsReview
      */
     @Operation(summary= "List all dining commons reviews")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<DiningCommonsReview> allDiningCommonsReviewAdminOnly() {
         // MAKE IT SO ONLY ADMIN CAN VIEW ALL REVIEWS
