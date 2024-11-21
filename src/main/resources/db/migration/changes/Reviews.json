@@ -21,7 +21,6 @@
           "changes": [
             {
               "createTable": {
-                "tableName": "REVIEWS",
                 "columns": [
                   {
                     "column": {
@@ -91,7 +90,9 @@
                       "constraints": {"nullable": false}
                     }
                   }
-                ]
+                ],
+                "tableName": "REVIEWS"
+
               }
             }
           ]
