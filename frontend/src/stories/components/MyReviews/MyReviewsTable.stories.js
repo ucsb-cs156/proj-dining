@@ -1,7 +1,6 @@
 import React from "react";
 import MyReviewsTable from "main/components/MyReviews/MyReviewsTable";
 import { myReviewsFixtures } from "fixtures/myReviewsFixtures";
-import { currentUserFixtures } from "fixtures/currentUserFixtures";
 import { http, HttpResponse } from "msw";
 
 export default {
@@ -23,19 +22,39 @@ export const ThreeItemsOrdinaryUser = Template.bind({});
 
 ThreeItemsOrdinaryUser.args = {
   reviews: myReviewsFixtures.threeReviews,
-  currentUser: currentUserFixtures.userOnly,
 };
 
-export const ThreeItemsAdminUser = Template.bind({});
-ThreeItemsAdminUser.args = {
+export const ThreeItemsModerator = Template.bind({});
+ThreeItemsModerator.args = {
   reviews: myReviewsFixtures.threeReviews,
-  currentUser: currentUserFixtures.adminUser,
+  moderatorOptions: true,
 };
 
-ThreeItemsAdminUser.parameters = {
+export const ThreeItemsUserDelete = Template.bind({});
+ThreeItemsUserDelete.args = {
+  reviews: myReviewsFixtures.threeReviews,
+  deleteColumn: true,
+};
+
+export const ThreeItemsModeratorDelete = Template.bind({});
+ThreeItemsModeratorDelete.args = {
+  reviews: myReviewsFixtures.threeReviews,
+  deleteColumn: true,
+  moderatorOptions: true,
+};
+
+ThreeItemsModeratorDelete.parameters = {
   msw: [
     http.delete("/api/myreviews", () => {
       return HttpResponse.json({}, { status: 200 });
     }),
   ],
 };
+
+ThreeItemsUserDelete.parameters = {
+    msw: [
+      http.delete("/api/myreviews", () => {
+        return HttpResponse.json({}, { status: 200 });
+      }),
+    ],
+  };

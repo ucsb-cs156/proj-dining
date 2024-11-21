@@ -59,7 +59,7 @@ export default function MyReviewsTable({ reviews, moderatorOptions=false, delete
       accessor: "moderatorComments",
     },
   ];
-
+  
   columns.push(
     ButtonColumn("Edit", "primary", editCallback, "MyReviewsTable"),
     );
