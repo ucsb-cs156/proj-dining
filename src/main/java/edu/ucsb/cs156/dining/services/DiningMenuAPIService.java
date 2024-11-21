@@ -6,6 +6,7 @@ import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
 import edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,23 +28,23 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class DiningMenuAPIService {
-  @Value("${app.startDate:2024-01-01T00:00:00}")
-  private LocalDateTime startDate;
+  @Value("${app.startDate:2024-01-01T00:00:00-08:00}")
+  private OffsetDateTime startDate;
 
-  @Value("${app.endDate:2024-12-31T23:59:59}")
-  private LocalDateTime endDate;
+  @Value("${app.endDate:2024-12-31T23:59:59-08:00}")
+  private OffsetDateTime endDate;
 
   @Autowired private ObjectMapper objectMapper;
 
-  @Autowired edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository diningMenuApiRepository;
+  @Autowired private DiningMenuAPIRepository diningMenuApiRepository;
 
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
-  private RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate;
 
   public DiningMenuAPIService(RestTemplateBuilder restTemplateBuilder) throws Exception {
-    restTemplate = restTemplateBuilder.build();
+    this.restTemplate = restTemplateBuilder.build();
   }
 
   public static final String GET_MEALS =
@@ -55,59 +56,21 @@ public class DiningMenuAPIService {
   public static final String GET_DAYS =
       "https://api.ucsb.edu/dining/menu/v1/";
 
-  public LocalDateTime getStartDateTime() {
+  public OffsetDateTime getStartDateTime() {
     return startDate;
   }
 
-  public LocalDateTime getEndDateTime() {
+  public OffsetDateTime getEndDateTime() {
     return endDate;
   }
 
-  public void setStartDateTime(LocalDateTime startDate) {
+  public void setStartDateTime(OffsetDateTime startDate) {
     this.startDate = startDate;
   }
 
-  public void setEndDateTime(LocalDateTime endDate) {
+  public void setEndDateTime(OffsetDateTime endDate) {
     this.endDate = endDate;
   }
-
-  // public String getCurrentQuarterYYYYQ() throws Exception {
-  //   UCSBAPIQuarter quarter = getCurrentQuarter();
-  //   return quarter.getQuarter();
-  // }
-
-  // public UCSBAPIQuarter getCurrentQuarter() throws Exception {
-  //   HttpHeaders headers = new HttpHeaders();
-  //   headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-  //   headers.setContentType(MediaType.APPLICATION_JSON);
-  //   headers.set("ucsb-api-version", "1.0");
-  //   headers.set("ucsb-api-key", this.apiKey);
-
-  //   HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-  //   String url = CURRENT_QUARTER_ENDPOINT;
-
-  //   log.info("url=" + url);
-
-  //   String retVal = "";
-  //   MediaType contentType = null;
-  //   HttpStatus statusCode = null;
-
-  //   ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-  //   contentType = re.getHeaders().getContentType();
-  //   statusCode = (HttpStatus) re.getStatusCode();
-  //   retVal = re.getBody();
-
-  //   log.info(
-  //       "json: {} contentType: {} statusCode: {} entity: {}",
-  //       retVal,
-  //       contentType,
-  //       statusCode,
-  //       entity);
-  //   UCSBAPIQuarter quarter = null;
-  //   quarter = objectMapper.readValue(retVal, UCSBAPIQuarter.class);
-  //   return quarter;
-  // }
 
   public List<DiningMenuAPI> getDays() throws Exception {
     List<DiningMenuAPI> days = diningMenuApiRepository.findAll();
@@ -117,7 +80,7 @@ public class DiningMenuAPIService {
     return days;
   }
 
-  public List<DiningMenuAPI> getCommons(LocalDateTime dateTime) throws Exception {
+  public List<DiningMenuAPI> getCommons(OffsetDateTime dateTime) throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -146,7 +109,7 @@ public class DiningMenuAPIService {
     return commons;
   }
 
-  public List<DiningMenuAPI> getMeals(LocalDateTime dateTime, String diningCommonCode) throws Exception {
+  public List<DiningMenuAPI> getMeals(OffsetDateTime dateTime, String diningCommonCode) throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -211,9 +174,9 @@ public class DiningMenuAPIService {
     return day;
   }
 
-  public boolean dateInRange(LocalDateTime dateTime) {
-    boolean dateGEStart = dateTime.isAfter(startDate) || dateTime.isEqual(startDate);
-    boolean dateLEEnd = dateTime.isBefore(endDate) || dateTime.isEqual(endDate);
+  public boolean dateInRange(OffsetDateTime dateTime) {
+    boolean dateGEStart = !dateTime.isBefore(startDate);
+    boolean dateLEEnd = !dateTime.isAfter(endDate);
     return (dateGEStart && dateLEEnd);
   }
 

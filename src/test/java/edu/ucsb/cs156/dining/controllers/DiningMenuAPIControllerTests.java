@@ -16,8 +16,11 @@ import edu.ucsb.cs156.dining.config.SecurityConfig;
 import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.DiningMenuAPIService;
+import edu.ucsb.cs156.dining.testconfig.TestConfig;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -74,14 +77,14 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
   @Test
   public void test_getCommons() throws Exception {
 
-    LocalDateTime testDateTime = LocalDateTime.of(2024, 11, 19, 12, 0);
+    OffsetDateTime testDateTime = OffsetDateTime.of(2024, 11, 19, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
     DiningMenuAPI Tomorrow =
         objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_2_JSON, DiningMenuAPI.class);
 
     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
     expectedResult.add(Tomorrow);
 
-    String url = "/api/public/getCommons";
+    String url = "/api/public/getCommons?dateTime=" + testDateTime.toString();
 
     when(diningMenuAPIService.getCommons(testDateTime)).thenReturn(expectedResult);
 
@@ -103,7 +106,7 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
   @Test
   public void test_getMeals() throws Exception {
 
-    LocalDateTime testDateTime = LocalDateTime.of(2024, 11, 20, 12, 0);
+    OffsetDateTime testDateTime = OffsetDateTime.of(2024, 11, 20, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
     String testCommonsCode = "portola";
     DiningMenuAPI Wednesday =
         objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_3_JSON, DiningMenuAPI.class);
@@ -111,7 +114,8 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
     expectedResult.add(Wednesday);
 
-    String url = "/api/public/getMeals";
+   // String formattedDateTime = testDateTime.toLocalDateTime().toString();
+    String url = "/api/public/getMeals?dateTime=" + testDateTime + "&diningCommonsCode=" + testCommonsCode;
 
     when(diningMenuAPIService.getMeals(testDateTime, testCommonsCode)).thenReturn(expectedResult);
 

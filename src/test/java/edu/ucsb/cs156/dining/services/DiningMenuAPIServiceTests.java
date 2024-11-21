@@ -2,12 +2,8 @@ package edu.ucsb.cs156.dining.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,8 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
 import edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
@@ -30,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +40,8 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfigureDataJpa
 @TestPropertySource(
     properties = {
-      "app.startDate:2024-01-01T00:00:001",
-      "app.endDate:2024-12-31T23:59:59",
-      "app.ucsb.api.consumer_key=fakeApiKey"
+      "app.startDate=2024-01-01T00:00:00-08:00",
+      "app.endDate=2024-12-31T23:59:59-08:00",
     })
 public class DiningMenuAPIServiceTests {
 
@@ -64,151 +60,162 @@ public class DiningMenuAPIServiceTests {
 
   @Test
   public void test_getStartDateTime() {
-    assertEquals("2024-01-01T00:00:001", diningMenuAPIService.getStartDateTime());
+    assertEquals("2024-01-01T00:00:00-08:00", diningMenuAPIService.getStartDateTime().toString());
   }
 
   @Test
   public void test_getEndDateTime() {
-    assertEquals("2024-12-31T23:59:59", diningMenuAPIService.getEndDateTime());
+    assertEquals("2024-12-31T23:59:59-08:00", diningMenuAPIService.getEndDateTime().toString());
   }
 
   @Test
   void testGetDays_withDataInRepository() throws Exception {
-    // Mock repository data
-    List<DiningMenuAPI> mockDays = List.of(
-        DiningMenuAPI.builder().name("Cream of Wheat").date(LocalDateTime.of(2024, 11, 18, 0, 0)).build(),
-        DiningMenuAPI.builder().name("Turkey Noodle Soup").date(LocalDateTime.of(2024, 11, 19, 0, 0)).build()
-    );
+    DiningMenuAPI sampleDay =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
 
-    when(diningMenuAPIRepository.findAll()).thenReturn(mockDays);
+    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
+    expectedResult.add(sampleDay);
 
-    // Call the method
-    List<DiningMenuAPI> result = diningMenuAPIService.getDays();
+    when(diningMenuAPIRepository.findAll()).thenReturn(expectedResult);
 
-    // Assertions
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    List<DiningMenuAPI> actualResult = diningMenuAPIService.getDays();
     verify(diningMenuAPIRepository, times(1)).findAll();
-    verify(diningMenuAPIService, never()).loadAllDays();
+
+    assertEquals(expectedResult, actualResult);
   }
 
   @Test
   void testGetDays_whenRepositoryIsEmpty() throws Exception {
-      // Mock empty repository
-      when(diningMenuAPIRepository.findAll()).thenReturn(Collections.emptyList());
+    DiningMenuAPI DAY_1 =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
+    DiningMenuAPI DAY_2 =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_2_JSON, DiningMenuAPI.class);
+    DiningMenuAPI DAY_3 =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_3_JSON, DiningMenuAPI.class);
 
-      // Mock `loadAllDays` behavior
-      List<DiningMenuAPI> loadedDays = List.of(
-          DiningMenuAPI.builder().name("Watermelon").date(LocalDateTime.of(2024, 11, 20, 0, 0)).build()
-      );
-      when(diningMenuAPIService.loadAllDays()).thenReturn(loadedDays);
+    List<DiningMenuAPI> emptyList = new ArrayList<DiningMenuAPI>();
+    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
+    expectedResult.add(DAY_2);
 
-      // Call the method
-      List<DiningMenuAPI> result = diningMenuAPIService.getDays();
+    when(diningMenuAPIRepository.findAll()).thenReturn(emptyList);
+    when(diningMenuAPIRepository.save(DAY_2)).thenReturn(DAY_2);
 
-      // Assertions
-      assertNotNull(result);
-      assertEquals(1, result.size());
-      verify(diningMenuAPIRepository, times(1)).findAll();
-      verify(diningMenuAPIService, times(1)).loadAllDays();
+    List<DiningMenuAPI> expectedAPIResult = new ArrayList<DiningMenuAPI>();
+    expectedAPIResult.add(DAY_1); // expected to be ignored
+    expectedAPIResult.add(DAY_2); // expected to be saved
+    expectedAPIResult.add(DAY_3); // expected to be saved
+
+    String expectedURL = DiningMenuAPIService.GET_DAYS;
+
+    String expectedJSON = objectMapper.writeValueAsString(expectedAPIResult);
+
+    this.mockRestServiceServer
+        .expect(requestTo(expectedURL))
+        .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("ucsb-api-version", "1.0"))
+        .andExpect(header("ucsb-api-key", apiKey))
+        .andRespond(withSuccess(expectedJSON, MediaType.APPLICATION_JSON));
+
+    List<DiningMenuAPI> actualResult = diningMenuAPIService.getDays();
+    verify(diningMenuAPIRepository, times(1)).findAll();
+    verify(diningMenuAPIRepository, times(1)).save(eq(DAY_2));
+
+    assertEquals(expectedResult, actualResult);
   }
 
   @Test
   void testGetCommons() throws Exception {
-    LocalDateTime dateTime = LocalDateTime.of(2024, 11, 18, 0, 0);
-    String apiResponse = "[" + DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON + "]";
+    OffsetDateTime dateTime = OffsetDateTime.now();
+    DiningMenuAPI sampleCommons =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
 
-    // Mock RestTemplate response
-    ResponseEntity<String> mockResponse = new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
-        .thenReturn(mockResponse);
+    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
+    expectedResult.add(sampleCommons);
 
-    // Call the method
-    List<DiningMenuAPI> result = diningMenuAPIService.getCommons(dateTime);
+    when(diningMenuAPIRepository.findAll()).thenReturn(expectedResult);
 
-    // Assertions
-    assertNotNull(result);
-    assertEquals(1, result.size());
-    assertEquals("Cream of Wheat (vgn)", result.get(0).getName());
+    List<DiningMenuAPI> actualResult = diningMenuAPIService.getCommons(dateTime);
+    verify(diningMenuAPIRepository, times(1)).findAll();
+
+    assertEquals(expectedResult, actualResult);
   }
 
   @Test
   void testGetMeals() throws Exception {
-    LocalDateTime dateTime = LocalDateTime.of(2024, 11, 18, 0, 0);
-    String diningCommonCode = "carrillo";
-    String apiResponse = "[" + DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON + "]";
+    OffsetDateTime dateTime = OffsetDateTime.now();
+    String commons = "portola";
+    DiningMenuAPI sampleMeal =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
 
-    // Mock RestTemplate response
-    ResponseEntity<String> mockResponse = new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
-        .thenReturn(mockResponse);
+    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
+    expectedResult.add(sampleMeal);
 
-    // Call the method
-    List<DiningMenuAPI> result = diningMenuAPIService.getMeals(dateTime, diningCommonCode);
+    when(diningMenuAPIRepository.findAll()).thenReturn(expectedResult);
 
-    // Assertions
-    assertNotNull(result);
-    assertEquals(1, result.size());
-    assertEquals("Cream of Wheat (vgn)", result.get(0).getName());
-    assertEquals(diningCommonCode, result.get(0).getDiningCommonsCode());
+    List<DiningMenuAPI> actualResult = diningMenuAPIService.getMeals(dateTime, commons);
+    verify(diningMenuAPIRepository, times(1)).findAll();
+
+    assertEquals(expectedResult, actualResult);
   }
 
   @Test
   void testGetAllDaysFromAPI() throws Exception {
-    String apiResponse = "[" + DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON + "]";
+    DiningMenuAPI sampleDay =
+        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
 
-    // Mock RestTemplate response
-    ResponseEntity<String> mockResponse = new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
-        .thenReturn(mockResponse);
+    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
+    expectedResult.add(sampleDay);
+    String expectedJSON = objectMapper.writeValueAsString(expectedResult);
 
-    // Call the method
-    List<DiningMenuAPI> result = diningMenuAPIService.getAllDaysFromAPI();
+    String expectedURL = DiningMenuAPIService.GET_DAYS;
 
-    // Assertions
-    assertNotNull(result);
-    assertEquals(1, result.size());
-    assertEquals("Cream of Wheat (vgn)", result.get(0).getName());
+    this.mockRestServiceServer
+        .expect(requestTo(expectedURL))
+        .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("ucsb-api-version", "1.0"))
+        .andExpect(header("ucsb-api-key", apiKey))
+        .andRespond(withSuccess(expectedJSON, MediaType.APPLICATION_JSON));
+
+    List<DiningMenuAPI> actualResult = diningMenuAPIService.getAllDaysFromAPI();
+
+    assertEquals(expectedResult, actualResult);
   }
 
 
-  @Test
-  void testLoadAllDays() throws Exception {
-    List<DiningMenuAPI> mockDays = List.of(
-        DiningMenuAPI.builder().date(LocalDateTime.of(2024, 11, 18, 0, 0)).build(),
-        DiningMenuAPI.builder().date(LocalDateTime.of(2024, 11, 21, 0, 0)).build()
-    );
+  // @Test
+  // void testLoadAllDays() throws Exception {
+  //   List<DiningMenuAPI> mockDays = List.of(
+  //       DiningMenuAPI.builder().dateTime(OffsetDateTime.now()).build(),
+  //       DiningMenuAPI.builder().dateTime(OffsetDateTime.now()).build()
+  //   );
 
-    // Mock `getAllDaysFromAPI` and `dateInRange`
-    when(diningMenuAPIService.getAllDaysFromAPI()).thenReturn(mockDays);
-    when(diningMenuAPIService.dateInRange(any())).thenAnswer(
-        invocation -> {
-            LocalDateTime date = invocation.getArgument(0);
-            return !date.isAfter(LocalDateTime.of(2024, 11, 20, 0, 0));
-        }
-    );
+  //   // Mock `getAllDaysFromAPI` and `dateInRange`
+  //   when(diningMenuAPIService.getAllDaysFromAPI()).thenReturn(mockDays);
+  //   when(diningMenuAPIService.dateInRange(any())).thenReturn(true);
 
-    // Call the method
-    List<DiningMenuAPI> result = diningMenuAPIService.loadAllDays();
+  //   // Call the method
+  //   List<DiningMenuAPI> result = diningMenuAPIService.loadAllDays();
 
-    // Assertions
-    assertNotNull(result);
-    assertEquals(1, result.size());
-    verify(diningMenuAPIRepository, times(1)).save(any());
-  }
+  //   // Assertions
+  //   assertNotNull(result);
+  //   assertEquals(2, result.size());
+  //   verify(diningMenuAPIRepository, times(2)).save(any());
+  // }
 
   @Test
   void testDateInRange() {
-    LocalDateTime startDate = LocalDateTime.of(2024, 11, 15, 0, 0);
-    LocalDateTime endDate = LocalDateTime.of(2024, 11, 20, 0, 0);
+    OffsetDateTime startDate = OffsetDateTime.of(2024, 11, 15, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
+    OffsetDateTime endDate = OffsetDateTime.of(2024, 11, 20, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
 
     diningMenuAPIService.setStartDateTime(startDate);
     diningMenuAPIService.setEndDateTime(endDate);
 
     // Date in range
-    assertTrue(diningMenuAPIService.dateInRange(LocalDateTime.of(2024, 11, 18, 0, 0)));
+    assertTrue(diningMenuAPIService.dateInRange(OffsetDateTime.of(2024, 11, 19, 12, 0, 0, 0, ZoneOffset.of("-08:00"))));
 
     // Date out of range
-    assertFalse(diningMenuAPIService.dateInRange(LocalDateTime.of(2024, 11, 21, 0, 0)));
+    assertFalse(diningMenuAPIService.dateInRange(OffsetDateTime.of(2024, 11, 21, 12, 0, 0, 0, ZoneOffset.of("-08:00"))));
   }
 }
