@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
  */
 
 @Tag(name = "Review")
-@RequestMapping("/api/review")
+@RequestMapping("/api/reviews")
 @RestController
 @Slf4j
 public class ReviewController extends ApiController {
@@ -82,7 +82,7 @@ public class ReviewController extends ApiController {
         CurrentUser user = getCurrentUser();
         review.setStudentId(user.getUser().getId());
         review.setDateEdited(now);
-        log.info("review={}", review);
+        log.info("reviews={}", review);
         reviewRepository.save(review);
         return review;
     }

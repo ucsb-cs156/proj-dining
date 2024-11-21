@@ -60,27 +60,27 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         @Test
         public void logged_out_users_cannot_get_all() throws Exception {
-                mockMvc.perform(get("/api/review/all"))
+                mockMvc.perform(get("/api/reviews/all"))
                                 .andExpect(status().is(403)); // logged out users can't get all
         }
 
         @WithMockUser(roles = { "ADMIN" })
         @Test
         public void logged_in_admin_can_get_all() throws Exception {
-                mockMvc.perform(get("/api/review/all"))
+                mockMvc.perform(get("/api/reviews/all"))
                                 .andExpect(status().is(200));
         }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_user_cant_get_all() throws Exception {
-                mockMvc.perform(get("/api/review/all"))
+                mockMvc.perform(get("/api/reviews/all"))
                                 .andExpect(status().is(403));
         }
 
         @Test
         public void logged_out_users_cannot_post() throws Exception {
-                mockMvc.perform(post("/api/review/post"))
+                mockMvc.perform(post("/api/reviews/post"))
                                 .andExpect(status().is(403));
         }
 
@@ -104,7 +104,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
                 // Act
                 MvcResult response = mockMvc.perform(
-                                post("/api/review/post?itemId=Bfast1090&dateItemServed=2021-12-12T08:08:08")
+                                post("/api/reviews/post?itemId=Bfast1090&dateItemServed=2021-12-12T08:08:08")
                                 .with(csrf()))
                                 .andExpect(status().isOk())
                                 .andReturn();
@@ -159,7 +159,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
                 when(reviewRepository.findAll()).thenReturn(reviews);
                 // Act
-                MvcResult response = mockMvc.perform(get("/api/review/all"))
+                MvcResult response = mockMvc.perform(get("/api/reviews/all"))
                                 .andExpect(status().is(200)).andReturn();
 
                 // assert
