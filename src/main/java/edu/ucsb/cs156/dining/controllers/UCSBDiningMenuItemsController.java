@@ -4,7 +4,6 @@ import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import edu.ucsb.cs156.dining.models.Entree;
 
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.List;
 
 import jakarta.validation.Valid;

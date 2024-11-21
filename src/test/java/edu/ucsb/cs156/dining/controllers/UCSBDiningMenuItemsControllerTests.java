@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.config.SecurityConfig;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,7 +47,7 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
         String diningCommonCode = "ortega";
         String mealCode = "lunch";
         mockMvc.perform(get("/api/diningcommons/{dateTime}/{diningCommonsCode}/{lunch}", dateTime, diningCommonCode, mealCode))
-                        .andExpect(status().is(403)); // logged out users can't get meal times
+                        .andExpect(status().is(403)); // logged out users can't get meal items
   }
 
   @WithMockUser(roles = { "USER" })
