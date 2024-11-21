@@ -38,7 +38,9 @@ describe("HomePage tests", () => {
         </QueryClientProvider>,
       );
 
-      expect(await screen.findByTestId("DiningCommonsTable-header-group-0"));
+      expect(
+        await screen.findByTestId("DiningCommonsTable-header-group-0"),
+      ).toBeInTheDocument();
     });
 
     test("Is populated with the data provided", async () => {
@@ -54,10 +56,10 @@ describe("HomePage tests", () => {
       await screen.findByTestId("DiningCommonsTable-header-group-0");
 
       expect(
-        await screen.getByTestId("DiningCommonsTable-header-code-sort-carets"),
+        screen.getByTestId("DiningCommonsTable-header-code-sort-carets"),
       ).toBeInTheDocument();
       expect(
-        await screen.getByTestId("DiningCommonsTable-header-name-sort-carets"),
+        screen.getByTestId("DiningCommonsTable-header-name-sort-carets"),
       ).toBeInTheDocument();
 
       expect(
@@ -109,7 +111,9 @@ describe("HomePage tests", () => {
         </QueryClientProvider>,
       );
 
-      expect(await screen.findByTestId("DiningCommonsTable-header-group-0"));
+      expect(
+        await screen.findByTestId("DiningCommonsTable-header-group-0"),
+      ).toBeInTheDocument();
 
       const errorMessage = console.error.mock.calls[0][0];
       expect(errorMessage).toMatch(
