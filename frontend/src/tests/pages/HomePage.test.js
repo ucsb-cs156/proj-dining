@@ -37,39 +37,10 @@ import AxiosMockAdapter from "axios-mock-adapter";
   });
 }); */
 
+const axiosMock = new AxiosMockAdapter(axios);
+
 describe("HomePage tests", () => {
-  describe("when the backend doesn't return data", () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    beforeEach(() => {
-      axiosMock.reset();
-      axiosMock.resetHistory();
-      axiosMock
-        .onGet("/api/currentUser")
-        .reply(200, apiCurrentUserFixtures.userOnly);
-      axiosMock
-        .onGet("/api/systemInfo")
-        .reply(200, systemInfoFixtures.showingNeither);
-      axiosMock
-        .onGet("/api/diningcommons/all", {})
-        .reply(200, diningCommonsFixtures.threeDiningCommons);
-    });
-
-    const queryClient = new QueryClient();
-    test("renders without crashing", async () => {
-      render(
-        <QueryClientProvider client={queryClient}>
-          <MemoryRouter>
-            <HomePage />
-          </MemoryRouter>
-        </QueryClientProvider>,
-      );
-
-    expect(await screen.findByTestId("DiningCommonsTable-header-group-0"));
-    });
-  });
-
   describe("tests where backend is working normally", () => {
-    const axiosMock = new AxiosMockAdapter(axios);
     beforeEach(() => {
       axiosMock.reset();
       axiosMock.resetHistory();
@@ -84,8 +55,8 @@ describe("HomePage tests", () => {
         .reply(200, diningCommonsFixtures.threeDiningCommons);
     });
 
-    const queryClient = new QueryClient();
     test("renders without crashing", async () => {
+      const queryClient = new QueryClient();
       render(
         <QueryClientProvider client={queryClient}>
           <MemoryRouter>
@@ -98,6 +69,7 @@ describe("HomePage tests", () => {
     });
 
     test("Is populated with the data provided", async () => {
+      const queryClient = new QueryClient();
       render(
         <QueryClientProvider client={queryClient}>
           <MemoryRouter>
@@ -135,6 +107,42 @@ describe("HomePage tests", () => {
       expect(
         screen.getByTestId("DiningCommonsTable-cell-row-2-col-name"),
       ).toHaveTextContent("Ortega");
+    });
+  });
+
+  describe("tests where backend is NOT working normally", () => {
+    beforeEach(() => {
+      axiosMock.reset();
+      axiosMock.resetHistory();
+      axiosMock
+        .onGet("/api/currentUser")
+        .reply(200, apiCurrentUserFixtures.userOnly);
+      axiosMock
+        .onGet("/api/systemInfo")
+        .reply(200, systemInfoFixtures.showingNeither);
+      axiosMock.onGet("/api/diningcommons/all", {}).timeout();
+    });
+
+    test("renders empty table without crashing", async () => {
+      const queryClient = new QueryClient();
+
+      const restoreConsole = mockConsole();
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      expect(await screen.findByTestId("DiningCommonsTable-header-group-0"));
+
+      const errorMessage = console.error.mock.calls[0][0];
+      expect(errorMessage).toMatch(
+        "Error communicating with backend via GET on /api/diningcommons/all",
+      );
+      restoreConsole();
     });
   });
 });
