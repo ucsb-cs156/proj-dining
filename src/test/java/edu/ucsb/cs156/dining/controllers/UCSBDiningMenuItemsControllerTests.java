@@ -59,11 +59,6 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     String diningCommonCode = "ortega";
     String mealCode = "lunch";
 
-    String readat = UCSBDiningMenuItemsService.ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;
-    readat = readat.replace("{date-time}", dateTime);
-    readat = readat.replace("{dining-common-code}", diningCommonCode);
-    readat = readat.replace("{meal-code}", mealCode);
-
     String jsonResponse =
       String.format(
           """
