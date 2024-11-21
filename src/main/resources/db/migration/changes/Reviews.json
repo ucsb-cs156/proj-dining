@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "Reviews"
+                    "tableName": "REVIEWS"
                   }
                 }
               ]
@@ -21,7 +21,7 @@
           "changes": [
             {
               "createTable": {
-                "tableName": "Reviews",
+                "tableName": "REVIEWS",
                 "columns": [
                   {
                     "column": {
