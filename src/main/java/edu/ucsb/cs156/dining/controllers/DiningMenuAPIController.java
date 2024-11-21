@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "DiningMenuAPIController")
 @RestController
-@RequestMapping("/api/public")
+@RequestMapping("/api/dining")
 @Slf4j
 public class DiningMenuAPIController extends ApiController {
 
@@ -31,16 +32,13 @@ public class DiningMenuAPIController extends ApiController {
 
   @Operation(summary = "Get list of meals served in given dining commons on given date")
   @GetMapping(value = "/getMeals", produces = "application/json")
-  public List<DiningMenuAPI> getMeals (@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
-    @RequestParam String diningCommonCode
-    ) throws Exception {
-    return diningMenuAPIService.getMeals(dateTime, diningCommonCode);
+  public List<DiningMenuAPI> getMeals (@RequestParam OffsetDateTime dateTime, @RequestParam String diningCommonsCode) throws Exception {
+    return diningMenuAPIService.getMeals(dateTime, diningCommonsCode);
   }
 
   @Operation(summary = "Get list of dining commons serving meals on given date")
   @GetMapping(value = "/getCommons", produces = "application/json")
-  public List<DiningMenuAPI> getCommons( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime dateTime
-    ) throws Exception {
+  public List<DiningMenuAPI> getCommons( @RequestParam OffsetDateTime dateTime) throws Exception {
     return diningMenuAPIService.getCommons(dateTime);
   }
 
