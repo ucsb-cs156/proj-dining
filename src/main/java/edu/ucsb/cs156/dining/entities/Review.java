@@ -22,19 +22,27 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(nullable = false)
     private long studentId;
 
+    @Column(nullable = false)
     private String itemId;
 
+    @Column(nullable = false)
     private LocalDateTime dateItemServed;
 
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'Awaiting Moderation'")
     private String status = "Awaiting Moderation";
 
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String userIdModerator;
 
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String moderatorComments; 
 
+    @Column(nullable = false)
     private LocalDateTime dateCreated;
 
+    @Column(nullable = false)
     private LocalDateTime dateEdited;
 }

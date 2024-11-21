@@ -52,7 +52,9 @@ public class ReviewController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<Review> allReviews() {
+        log.info("Attempting to log all reviews");
         Iterable<Review> reviews = reviewRepository.findAll();
+        log.info("all reviews found, ", reviews);
         return reviews;
     }
 
