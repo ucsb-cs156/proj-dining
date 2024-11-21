@@ -164,6 +164,30 @@ describe("AppNavbar tests", () => {
     expect(link.getAttribute("href")).toBe("/placeholder");
   });
 
+  test("renders the moderate link correctly", async () => {
+    const currentUser = currentUserFixtures.adminUser;
+    const systemInfo = systemInfoFixtures.showingBoth;
+
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar
+            currentUser={currentUser}
+            systemInfo={systemInfo}
+            doLogin={doLogin}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Moderate");
+    const link = screen.getByText("Moderate");
+    expect(link).toBeInTheDocument();
+    expect(link.getAttribute("href")).toBe("/moderate");
+  });
+
   test("Placeholder link does NOT show when not logged in", async () => {
     const currentUser = null;
     const systemInfo = systemInfoFixtures.showingBoth;
