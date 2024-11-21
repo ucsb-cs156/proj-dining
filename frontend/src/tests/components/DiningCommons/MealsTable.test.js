@@ -21,8 +21,8 @@ describe("MealsTable tests", () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <MealsTable
-            mealsData={mealsFixtures.threeMeals} 
-            dateTime={dateTime} 
+            mealsData={mealsFixtures.threeMeals}
+            dateTime={dateTime}
             diningCommonsCode={diningCommonsCode}
           />
         </MemoryRouter>
@@ -47,18 +47,27 @@ describe("MealsTable tests", () => {
       screen.getByTestId(`${testId}-cell-row-0-col-name`),
     ).toHaveTextContent("Breakfast");
     const breakfastLink = screen.getByText("Breakfast");
-    expect(breakfastLink).toHaveAttribute("href", "/diningcommons/2021-10-01/de-la-guerra/Breakfast");
+    expect(breakfastLink).toHaveAttribute(
+      "href",
+      "/diningcommons/2021-10-01/de-la-guerra/Breakfast",
+    );
 
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-name`),
     ).toHaveTextContent("Lunch");
     const lunchLink = screen.getByText("Lunch");
-    expect(lunchLink).toHaveAttribute("href", "/diningcommons/2021-10-01/de-la-guerra/Lunch");
+    expect(lunchLink).toHaveAttribute(
+      "href",
+      "/diningcommons/2021-10-01/de-la-guerra/Lunch",
+    );
 
     expect(
       screen.getByTestId(`${testId}-cell-row-2-col-name`),
     ).toHaveTextContent("Dinner");
     const dinnerLink = screen.getByText("Dinner");
-    expect(dinnerLink).toHaveAttribute("href", "/diningcommons/2021-10-01/de-la-guerra/Dinner");
+    expect(dinnerLink).toHaveAttribute(
+      "href",
+      "/diningcommons/2021-10-01/de-la-guerra/Dinner",
+    );
   });
 });

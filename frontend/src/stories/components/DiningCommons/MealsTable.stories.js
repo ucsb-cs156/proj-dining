@@ -12,4 +12,8 @@ const Template = (args) => {
 
 export const Sample = Template.bind({});
 
-Sample.args = {mealsData: mealsFixtures.threeMeals, dateTime: "2021-10-01", diningCommonsCode: "de-la-guerra"};
+Sample.args = {
+  mealsData: mealsFixtures.threeMeals,
+  dateTime: "2021-10-01",
+  diningCommonsCode: "de-la-guerra",
+};
