@@ -7,6 +7,7 @@ import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 /*
                                 .status("working")
                                 
-                                .user_id("me")
+                                .userid(1L)
                                 .moderator_comments("test")
                                 */
                                 .created_date("today")
@@ -80,7 +81,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .item_id(1)
                                 .date_served("today")
                                 .status("working")
-                                //.user_id(1)
+                                //.userid(1L)
                                 .moderator_comments("test")
                                 .created_date("today")
                                 .last_edited_date("not rn")
@@ -128,7 +129,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .item_id(2)
                                 .date_served("today")
                                 .status("Awaiting Moderation")
-                                .user_id(1)
+                                .userId(1L)
                                 .created_date("today")
                                 .last_edited_date("rn")
                                 .build();
@@ -158,7 +159,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .item_id(2)
                                 .date_served("today")
                                 .status("working")
-                                .user_id(1)
+                                .userId(1L)
                                 .moderator_comments("test")
                                 .created_date("today")
                                 .last_edited_date("rn")
@@ -178,6 +179,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
+
 }
-        
 

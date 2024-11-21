@@ -87,7 +87,7 @@ public class ReviewsController extends ApiController {
         reviews.setItem_id(item_id);
         reviews.setDate_served(date_served);
         reviews.setStatus(status != null ? status : "Awaiting Moderation");
-        reviews.setUser_id(user.getUser().getId());
+        reviews.setUserId(user.getUser().getId());
         reviews.setModerator_comments(moderator_comments);
         reviews.setCreated_date(created_date);
         reviews.setLast_edited_date(last_edited_date);
