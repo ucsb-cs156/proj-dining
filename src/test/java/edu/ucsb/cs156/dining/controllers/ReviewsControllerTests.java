@@ -7,6 +7,7 @@ import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 /*
                                 .status("working")
                                 
-                                .user_id("me")
+                                .userid(1L)
                                 .moderator_comments("test")
                                 */
                                 .created_date("today")
@@ -80,7 +81,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .item_id(1)
                                 .date_served("today")
                                 .status("working")
-                                //.user_id(1)
+                                //.userid(1L)
                                 .moderator_comments("test")
                                 .created_date("today")
                                 .last_edited_date("not rn")
@@ -118,64 +119,151 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
 
 
-        // @WithMockUser(roles = { "ADMIN", "USER" })
-        // @Test
-        // public void an_admin_user_can_post_a_new_empty_review() throws Exception {
-        //         // arrange
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_post_a_new_empty_review() throws Exception {
+                // arrange
 
-        //         Reviews review = Reviews.builder()
-        //                         .student_id(1)
-        //                         .item_id(2)
-        //                         .date_served("today")
-        //                         .created_date("today")
-        //                         .last_edited_date("rn")
-        //                         .build();
+                Reviews review = Reviews.builder()
+                                .student_id(1)
+                                .item_id(2)
+                                .date_served("today")
+                                .status("Awaiting Moderation")
+                                .userId(1L)
+                                .created_date("today")
+                                .last_edited_date("rn")
+                                .build();
 
-        //         when(reviewsRepository.save(eq(review))).thenReturn(review);
+                when(reviewsRepository.save(eq(review))).thenReturn(review);
 
-        //         // act
-        //         MvcResult response = mockMvc.perform(
-        //                         post("/api/reviews/post?student_id=1&item_id=2&date_served=today&created_date=today&last_edited_date=rn")
-        //                                         .with(csrf()))
-        //                         .andExpect(status().isOk()).andReturn();
+                // act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?student_id=1&item_id=2&date_served=today&created_date=today&last_edited_date=rn")
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
 
-        //         // assert
-        //         verify(reviewsRepository, times(1)).save(review);
-        //         String expectedJson = mapper.writeValueAsString(review);
-        //         String responseString = response.getResponse().getContentAsString();
-        //         assertEquals(expectedJson, responseString);
-        // }
+                // assert
+                verify(reviewsRepository, times(1)).save(review);
+                String expectedJson = mapper.writeValueAsString(review);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
 
-        // @WithMockUser(roles = { "ADMIN", "USER" })
-        // @Test
-        // public void an_admin_user_can_post_a_new_nonempty_review() throws Exception {
-        //         // arrange
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_post_a_new_nonempty_review() throws Exception {
+                // arrange
 
-        //         Reviews review = Reviews.builder()
-        //                         .student_id(1)
-        //                         .item_id("pesto pasta")
-        //                         .date_served("today")
-        //                         .status("working")
-        //                         //.user_id(0)
-        //                         .moderator_comments("test")
-        //                         .created_date("today")
-        //                         .last_edited_date("rn")
-        //                         .build();
+                Reviews review = Reviews.builder()
+                                .student_id(1)
+                                .item_id(2)
+                                .date_served("today")
+                                .status("working")
+                                .userId(1L)
+                                .moderator_comments("test")
+                                .created_date("today")
+                                .last_edited_date("rn")
+                                .build();
 
-        //         when(reviewsRepository.save(eq(review))).thenReturn(review);
+                when(reviewsRepository.save(eq(review))).thenReturn(review);
 
-        //         // act
-        //         MvcResult response = mockMvc.perform(
-        //                         post("/api/reviews/post?student_id=1&item_id=pesto pasta&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
-        //                                         .with(csrf()))
-        //                         .andExpect(status().isOk()).andReturn();
+                // act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
 
-        //         // assert
-        //         verify(reviewsRepository, times(1)).save(review);
-        //         String expectedJson = mapper.writeValueAsString(review);
-        //         String responseString = response.getResponse().getContentAsString();
-        //         assertEquals(expectedJson, responseString);
-        // }
+                // assert
+                verify(reviewsRepository, times(1)).save(review);
+                String expectedJson = mapper.writeValueAsString(review);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
+        @Test
+        public void nonadmin_cant_get_reviews() throws Exception {
+                mockMvc.perform(get("/api/reviews?userId=1"))
+                                .andExpect(status().is(403)); // only admins can query
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_gets_empty_response() throws Exception {
+                mockMvc.perform(get("/api/reviews?userId=10000"))
+                                .andExpect(status().is(404));
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_gets_a_nonempty_response() throws Exception {
+        // Arrange
+        long fakeId = 1L;
+
+        // Mock repository behavior for existing records
+        Reviews review = Reviews.builder()
+                .id(1L)
+                .student_id(1)
+                .item_id(1)
+                .date_served("today")
+                .status("Awaiting Moderation")
+                .userId(fakeId)
+                .moderator_comments("none")
+                .created_date("today")
+                .last_edited_date("rn")
+                .build();
+
+        ArrayList<Reviews> reviewList = new ArrayList<>();
+        reviewList.add(review);
+
+        when(reviewsRepository.findAll()).thenReturn(reviewList);
+
+        // Expected response
+        String expectedResponseJson = "[{\"id\":1,\"student_id\":1,\"item_id\":1,\"date_served\":\"today\",\"status\":\"Awaiting Moderation\",\"userId\":1,\"moderator_comments\":\"none\",\"created_date\":\"today\",\"last_edited_date\":\"rn\"}]";
+
+        // Act
+        MvcResult response = mockMvc.perform(get("/api/reviews?userId=1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedResponseJson, responseString);
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_gets_finds_wrong_review() throws Exception {
+        // Arrange
+        long fakeId = 1L;
+
+        // Mock repository behavior for existing records
+        Reviews review = Reviews.builder()
+                .id(1L)
+                .student_id(1)
+                .item_id(1)
+                .date_served("today")
+                .status("Awaiting Moderation")
+                .userId(fakeId)
+                .moderator_comments("none")
+                .created_date("today")
+                .last_edited_date("rn")
+                .build();
+
+        ArrayList<Reviews> reviewList = new ArrayList<>();
+        reviewList.add(review);
+
+        when(reviewsRepository.findAll()).thenReturn(reviewList);
+
+        // Expected response
+        String expectedResponseJson = "[{\"id\":1,\"student_id\":1,\"item_id\":1,\"date_served\":\"today\",\"status\":\"Awaiting Moderation\",\"userId\":1,\"moderator_comments\":\"none\",\"created_date\":\"today\",\"last_edited_date\":\"rn\"}]";
+
+        // Act
+        mockMvc.perform(get("/api/reviews?userId=10000"))
+                                .andExpect(status().is(404));
+        }
+
+        //create getusertests
 }
         
 

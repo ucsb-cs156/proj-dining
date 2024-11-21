@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +31,10 @@ public class Reviews {
   private int item_id;
   private String date_served;
   private String status;
-  private long user_id;
+
+  @Column(name="userId")
+  private long userId;
+  
   private String moderator_comments;
   private String created_date;
   private String last_edited_date;
