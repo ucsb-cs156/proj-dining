@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,28 +14,23 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /** 
- * This is a JPA entity that represents a DiningCommonsReview
+ * This is a JPA entity that represents a MenuItem
  * 
- * A DiningCommonsReview is a review for a dining commons at UCSB
+ * A MenuItem is a single item as offered in a particular dining commons on a particular day.
  */
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "diningcommonsreview")
-public class DiningCommonsReview {
+@Entity(name = "menuitem")
+public class MenuItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   
-  private long studentUserId;
-  private long itemId;
-  private LocalDateTime itemServedDate;
-  private String status;
-  private long moderatorUserId;
-  private String moderatorComments;
-  private LocalDateTime createdDate;
-  private LocalDateTime lastEditedDate;
-
+  private String diningCommonsCode;
+  private String mealCode;
+  private String name;
+  private String station;
 }

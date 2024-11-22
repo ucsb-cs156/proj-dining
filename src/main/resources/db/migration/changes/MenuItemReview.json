@@ -2,7 +2,7 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "DiningCommonsReview-1",
+          "id": "MenuItemReview-1",
           "author": "RiaSinha",
           "preConditions": [
             {
@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "DININGCOMMONSREVIEW"
+                    "tableName": "MENUITEMREVIEW"
                   }
                 }
               ]
@@ -27,7 +27,7 @@
                       "autoIncrement": true,
                       "constraints": {
                         "primaryKey": true,
-                        "primaryKeyName": "PK_DININGCOMMONSREVIEW"
+                        "primaryKeyName": "PK_MENUITEMREVIEW"
                       },
                       "name": "ID",
                       "type": "BIGINT"
@@ -82,7 +82,7 @@
                     }
                   }
                 ],
-                "tableName": "DININGCOMMONSREVIEW"
+                "tableName": "MENUITEMREVIEW"
               }
             }
           ]
