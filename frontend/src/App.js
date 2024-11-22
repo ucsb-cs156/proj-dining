@@ -17,6 +17,8 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import DiningCommonsPage from "main/pages/DiningCommons/DiningCommonsPage";
 
+import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -105,6 +107,11 @@ function App() {
               path="/diningcommons/:diningCommonsCode"
               element={<DiningCommonsPage />}
             />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
           </>
         )}
       </Routes>
