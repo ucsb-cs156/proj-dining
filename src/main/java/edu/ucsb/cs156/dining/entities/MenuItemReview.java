@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "menuitemreviews")
+@Entity(name = "menuitemreview")
 public class MenuItemReview {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

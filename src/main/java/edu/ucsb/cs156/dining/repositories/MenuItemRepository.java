@@ -10,6 +10,6 @@ This is a repository file for MenuItemReview
  */
 
  @Repository
- public interface MenuIteRepository extends CrudRepository<MenuItem, Long> {
+ public interface MenuItemRepository extends CrudRepository<MenuItem, Long> {
    
  }
