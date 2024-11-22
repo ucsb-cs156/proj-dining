@@ -52,9 +52,9 @@ ThreeItemsModeratorDelete.parameters = {
 };
 
 ThreeItemsUserDelete.parameters = {
-    msw: [
-      http.delete("/api/myreviews", () => {
-        return HttpResponse.json({}, { status: 200 });
-      }),
-    ],
-  };
+  msw: [
+    http.delete("/api/myreviews", () => {
+      return HttpResponse.json({}, { status: 200 });
+    }),
+  ],
+};

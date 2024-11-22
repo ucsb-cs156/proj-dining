@@ -8,7 +8,11 @@ import {
 } from "main/utils/MyReviewsUtils";
 import { useNavigate } from "react-router-dom";
 
-export default function MyReviewsTable({ reviews, moderatorOptions=false, deleteColumn=false }) {
+export default function MyReviewsTable({
+  reviews,
+  moderatorOptions = false,
+  deleteColumn = false,
+}) {
   const navigate = useNavigate();
 
   const editCallback = (cell) => {
@@ -35,12 +39,12 @@ export default function MyReviewsTable({ reviews, moderatorOptions=false, delete
       accessor: "id", // accessor is the "key" in the data
     },
     {
-        Header: "Item",
-        accessor: "item", 
+      Header: "Item",
+      accessor: "item",
     },
     {
-        Header: "Station",
-        accessor: "station", 
+      Header: "Station",
+      accessor: "station",
     },
     {
       Header: "Stars",
@@ -59,27 +63,21 @@ export default function MyReviewsTable({ reviews, moderatorOptions=false, delete
       accessor: "moderatorComments",
     },
   ];
-  
-  columns.push(
-    ButtonColumn("Edit", "primary", editCallback, "MyReviewsTable"),
+
+  columns.push(ButtonColumn("Edit", "primary", editCallback, "MyReviewsTable"));
+  if (deleteColumn) {
+    columns.push(
+      ButtonColumn("Delete", "danger", deleteCallback, "MyReviewsTable"),
     );
-    if (deleteColumn) {
-        columns.push(
-        ButtonColumn("Delete", "danger", deleteCallback, "MyReviewsTable"),
-        );
-    }
-    if (moderatorOptions) {
-        columns.push( 
-            ButtonColumn("Approve", "success", editCallback, "MyReviewsTable"),
-            ButtonColumn("Reject", "danger", editCallback, "MyReviewsTable"),
-        )
-    }
+  }
+  if (moderatorOptions) {
+    columns.push(
+      ButtonColumn("Approve", "success", editCallback, "MyReviewsTable"),
+      ButtonColumn("Reject", "danger", editCallback, "MyReviewsTable"),
+    );
+  }
 
   return (
-    <OurTable
-      data={reviews}
-      columns={columns}
-      testid={"MyReviewsTable"}
-    />
+    <OurTable data={reviews} columns={columns} testid={"MyReviewsTable"} />
   );
 }

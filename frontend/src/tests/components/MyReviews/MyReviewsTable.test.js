@@ -20,9 +20,7 @@ describe("UserTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <MyReviewsTable
-            reviews={myReviewsFixtures.threeReviews}
-          />
+          <MyReviewsTable reviews={myReviewsFixtures.threeReviews} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -76,13 +74,13 @@ describe("UserTable tests", () => {
     expect(deleteButton).not.toBeInTheDocument();
 
     const approveButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Approve-button`,
-      );
+      `${testId}-cell-row-0-col-Approve-button`,
+    );
     expect(approveButton).not.toBeInTheDocument();
 
     const rejectButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Reject-button`,
-      );
+      `${testId}-cell-row-0-col-Reject-button`,
+    );
     expect(rejectButton).not.toBeInTheDocument();
   });
 
@@ -148,15 +146,14 @@ describe("UserTable tests", () => {
     expect(deleteButton).toHaveClass("btn-danger");
 
     const approveButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Approve-button`,
-      );
+      `${testId}-cell-row-0-col-Approve-button`,
+    );
     expect(approveButton).not.toBeInTheDocument();
 
     const rejectButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Reject-button`,
-      );
+      `${testId}-cell-row-0-col-Reject-button`,
+    );
     expect(rejectButton).not.toBeInTheDocument();
-
   });
 
   test("Has the expected column headers and content for moderator without delete", () => {
@@ -220,15 +217,14 @@ describe("UserTable tests", () => {
     expect(deleteButton).not.toBeInTheDocument();
 
     const approveButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Approve-button`,
-      );
+      `${testId}-cell-row-0-col-Approve-button`,
+    );
     expect(approveButton).toBeInTheDocument();
     expect(approveButton).toHaveClass("btn-success");
-    
 
     const rejectButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Reject-button`,
-      );
+      `${testId}-cell-row-0-col-Reject-button`,
+    );
     expect(rejectButton).toBeInTheDocument();
     expect(rejectButton).toHaveClass("btn-danger");
   });
@@ -295,14 +291,14 @@ describe("UserTable tests", () => {
     expect(deleteButton).toBeInTheDocument();
 
     const approveButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Approve-button`,
-      );
+      `${testId}-cell-row-0-col-Approve-button`,
+    );
     expect(approveButton).toBeInTheDocument();
     expect(approveButton).toHaveClass("btn-success");
 
     const rejectButton = screen.queryByTestId(
-        `${testId}-cell-row-0-col-Reject-button`,
-      );
+      `${testId}-cell-row-0-col-Reject-button`,
+    );
     expect(rejectButton).toBeInTheDocument();
     expect(rejectButton).toHaveClass("btn-danger");
   });
@@ -311,9 +307,7 @@ describe("UserTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <MyReviewsTable
-            reviews={myReviewsFixtures.threeReviews}
-          />
+          <MyReviewsTable reviews={myReviewsFixtures.threeReviews} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
