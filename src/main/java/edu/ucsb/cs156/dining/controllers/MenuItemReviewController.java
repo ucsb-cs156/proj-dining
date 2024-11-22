@@ -1,10 +1,8 @@
 package edu.ucsb.cs156.dining.controllers;
 
-import edu.ucsb.cs156.dining.entities.DiningCommonsReview;
-import edu.ucsb.cs156.dining.entities.UCSBDate;
+import edu.ucsb.cs156.dining.entities.MenuItemReview;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
-import edu.ucsb.cs156.dining.repositories.DiningCommonsReviewRepository;
-import edu.ucsb.cs156.dining.repositories.UCSBDateRepository;
+import edu.ucsb.cs156.dining.repositories.MenuItemReviewRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,27 +28,27 @@ import java.time.LocalDateTime;
 
 
 /**
- * This is a REST controller for DiningCommonsReview
+ * This is a REST controller for MenuItemReview
  */
 
-@Tag(name = "DiningCommonsReview")
-@RequestMapping("/api/diningcommonsreview")
+@Tag(name = "MenuItemReview")
+@RequestMapping("/api/menuitemreviews")
 @RestController
 @Slf4j
-public class DiningCommonsReviewController extends ApiController {
+public class MenuItemReviewController extends ApiController {
 
     @Autowired
-    DiningCommonsReviewRepository diningCommonsReviewRepository;
+    MenuItemReviewRepository menuItemReviewRepository;
     
     /**
-     * Create a new dining commons review -> all users
+     * Create a new menu item review -> all users
      */
 
-    @Operation(summary= "Create a new dining commons review")
+    @Operation(summary= "Create a new menu item review")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
-    public DiningCommonsReview postDiningCommonsReview(
-           
+    public MenuItemReview postMenuItemReview(
+           // MAKE SURE THE MENU ITEM EXISTS -> look up itemID and check status code
             @Parameter(name="studentUserId") @RequestParam long studentuserId,
             @Parameter(name="itemId") @RequestParam long itemId,
             @Parameter(name="itemServedDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("itemServedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime itemServedDate,
@@ -64,30 +62,30 @@ public class DiningCommonsReviewController extends ApiController {
 
         log.info("itemServedDate={}", itemServedDate);
 
-        DiningCommonsReview diningCommonsReview = new DiningCommonsReview();
-        diningCommonsReview.setStudentUserId(studentuserId);
-        diningCommonsReview.setItemId(itemId);
-        diningCommonsReview.setItemServedDate(itemServedDate);
-        diningCommonsReview.setStatus(status);
-        diningCommonsReview.setModeratorUserId(moderatorUserId);
-        diningCommonsReview.setModeratorComments(moderatorComments);
-        diningCommonsReview.setCreatedDate(createdDate);
-        diningCommonsReview.setLastEditedDate(lastEditedDate);
+        MenuItemReview menuItemReview = new MenuItemReview();
+        menuItemReview.setStudentUserId(studentuserId);
+        menuItemReview.setItemId(itemId);
+        menuItemReview.setItemServedDate(itemServedDate);
+        menuItemReview.setStatus(status);
+        menuItemReview.setModeratorUserId(moderatorUserId);
+        menuItemReview.setModeratorComments(moderatorComments);
+        menuItemReview.setCreatedDate(createdDate);
+        menuItemReview.setLastEditedDate(lastEditedDate);
 
-        DiningCommonsReview savedDiningCommonsReview = diningCommonsReviewRepository.save(diningCommonsReview);
+        MenuItemReview savedMenuItemReview = menuItemReviewRepository.save(menuItemReview);
 
-        return savedDiningCommonsReview;
+        return savedMenuItemReview;
     }
 
 
     /**
-     * List all dining commons reviews -> ADMIN ONLY
+     * List all menu item reviews -> ADMIN ONLY
      */
-    @Operation(summary= "List all dining commons reviews")
+    @Operation(summary= "List all menu item reviews")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
-    public Iterable<DiningCommonsReview> allDiningCommonsReviewAdminOnly() {
-        Iterable<DiningCommonsReview> reviews = diningCommonsReviewRepository.findAll();
+    public Iterable<MenuItemReview> allMenuItemReviewAdminOnly() {
+        Iterable<MenuItemReview> reviews = menuItemReviewRepository.findAll();
         return reviews;
     }
 }

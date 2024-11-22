@@ -3,8 +3,8 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.ControllerTestCase;
-import edu.ucsb.cs156.dining.entities.DiningCommonsReview;
-import edu.ucsb.cs156.dining.repositories.DiningCommonsReviewRepository;
+import edu.ucsb.cs156.dining.entities.MenuItemReview;
+import edu.ucsb.cs156.dining.repositories.MenuItemReviewRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,12 +32,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest(controllers = DiningCommonsReviewController.class)
+@WebMvcTest(controllers = MenuItemReviewController.class)
 @Import(TestConfig.class)
-public class DiningCommonsReviewControllerTests extends ControllerTestCase {
+public class MenuItemReviewControllerTests extends ControllerTestCase {
 
         @MockBean
-        DiningCommonsReviewRepository diningCommonsReviewRepository;
+        MenuItemReviewRepository menuItemReviewRepository;
 
         @MockBean
         UserRepository userRepository;
@@ -47,28 +47,28 @@ public class DiningCommonsReviewControllerTests extends ControllerTestCase {
 
         @Test
         public void logged_out_users_cannot_get_all() throws Exception {
-                mockMvc.perform(get("/api/diningcommonsreview/all"))
+                mockMvc.perform(get("/api/menuitemreviews/all"))
                                 .andExpect(status().is(403)); // logged out users can't get all
         }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_users_cannot_get_all() throws Exception {
-                mockMvc.perform(get("/api/diningcommonsreview/all"))
+                mockMvc.perform(get("/api/menuitemreviews/all"))
                                 .andExpect(status().is(200)); // logged in non admin users cannot get all
         }
 
         @WithMockUser(roles = { "ADMIN" })
         @Test
         public void logged_in_admin_can_get_all() throws Exception {
-                mockMvc.perform(get("/api/diningcommonsreview/all"))
+                mockMvc.perform(get("/api/menuitemreviews/all"))
                                 .andExpect(status().is(200)); // logged in admin users can get all
         }
 
         // POST
         @Test
         public void logged_out_users_cannot_post() throws Exception {
-                mockMvc.perform(post("/api/diningcommonsreview/post"))
+                mockMvc.perform(post("/api/menuitemreviews/post"))
                                 .andExpect(status().is(403));
         }
 
