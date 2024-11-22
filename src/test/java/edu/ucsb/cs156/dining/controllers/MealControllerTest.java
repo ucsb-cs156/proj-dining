@@ -12,6 +12,7 @@ import edu.ucsb.cs156.dining.config.SecurityConfig;
 import edu.ucsb.cs156.dining.models.Meal;
 import edu.ucsb.cs156.dining.services.MealService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class MealControllerTest extends ControllerTestCase {
 
     @Test
     public void logged_out_users_cannot_access_getMeals() throws Exception {
-        mockMvc.perform(get("/api/diningcommons/2024-11-20/de-la-guerra"))
+        mockMvc.perform(get("/api/diningcommons/2024-11-20T00:00:00/de-la-guerra"))
             .andExpect(status().is(403)); // Expect 403 Forbidden for logged-out users
     }
 
@@ -65,11 +66,13 @@ public class MealControllerTest extends ControllerTestCase {
         expectedMeals.add(lunch);
         expectedMeals.add(dinner);
 
-        when(mealService.getMeals("2024-11-20", "de-la-guerra")).thenReturn(expectedMeals);
+        // Mock the MealService behavior
+        LocalDateTime dateTime = LocalDateTime.parse("2024-11-20T00:00:00");
+        when(mealService.getMeals(dateTime, "de-la-guerra")).thenReturn(expectedMeals);
 
         // Act
         MvcResult response = mockMvc
-            .perform(get("/api/diningcommons/2024-11-20/de-la-guerra")
+            .perform(get("/api/diningcommons/2024-11-20T00:00:00/de-la-guerra")
             .contentType("application/json"))
             .andExpect(status().isOk()) // Expect HTTP 200
             .andReturn();

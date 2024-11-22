@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestClientTest(MealService.class)
@@ -42,7 +43,10 @@ public class MealServiceTest {
             ]
         """;
 
-        String expectedUrl = "https://api.ucsb.edu/dining/menu/v1/2024-11-20/de-la-guerra";
+        LocalDateTime dateTime = LocalDateTime.parse("2024-11-20T00:00:00");
+        String formattedDate = "2024-11-20";
+        String diningCommonsCode = "de-la-guerra";
+        String expectedUrl = String.format("https://api.ucsb.edu/dining/menu/v1/%s/%s", formattedDate, diningCommonsCode);
 
         mockServer.expect(requestTo(expectedUrl))
                 .andExpect(header("ucsb-api-key", apiKey))
@@ -50,7 +54,7 @@ public class MealServiceTest {
                 .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
 
         // Act
-        List<Meal> result = mealService.getMeals("2024-11-20", "de-la-guerra");
+        List<Meal> result = mealService.getMeals(dateTime, diningCommonsCode);
 
         // Assert
         assertNotNull(result);
@@ -72,7 +76,10 @@ public class MealServiceTest {
     @Test
     public void testGetMeals_NullResponse() {
         // Arrange: Mock API response with null body
-        String expectedUrl = "https://api.ucsb.edu/dining/menu/v1/2024-11-20/de-la-guerra";
+        LocalDateTime dateTime = LocalDateTime.parse("2024-11-20T00:00:00");
+        String formattedDate = "2024-11-20";
+        String diningCommonsCode = "de-la-guerra";
+        String expectedUrl = String.format("https://api.ucsb.edu/dining/menu/v1/%s/%s", formattedDate, diningCommonsCode);
 
         mockServer.expect(requestTo(expectedUrl))
                 .andExpect(header("ucsb-api-key", apiKey))
@@ -80,7 +87,7 @@ public class MealServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            mealService.getMeals("2024-11-20", "de-la-guerra");
+            mealService.getMeals(dateTime, diningCommonsCode);
         });
         assertEquals("Failed to fetch meals data from API", exception.getMessage());
     }
@@ -88,7 +95,10 @@ public class MealServiceTest {
     @Test
     public void testGetMeals_InvalidApiKey() {
         // Arrange: Mock API response with 401 Unauthorized
-        String expectedUrl = "https://api.ucsb.edu/dining/menu/v1/2024-11-20/de-la-guerra";
+        LocalDateTime dateTime = LocalDateTime.parse("2024-11-20T00:00:00");
+        String formattedDate = "2024-11-20";
+        String diningCommonsCode = "de-la-guerra";
+        String expectedUrl = String.format("https://api.ucsb.edu/dining/menu/v1/%s/%s", formattedDate, diningCommonsCode);
 
         mockServer.expect(requestTo(expectedUrl))
                 .andExpect(header("ucsb-api-key", apiKey))
@@ -96,7 +106,7 @@ public class MealServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            mealService.getMeals("2024-11-20", "de-la-guerra");
+            mealService.getMeals(dateTime, diningCommonsCode);
         });
         assertTrue(exception.getMessage().contains("401 Unauthorized"));
     }

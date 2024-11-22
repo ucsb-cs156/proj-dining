@@ -1,6 +1,8 @@
 package edu.ucsb.cs156.dining.services;
 
 import edu.ucsb.cs156.dining.models.Meal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -27,19 +29,24 @@ public class MealService {
     this.restTemplate = restTemplateBuilder.build();
   }
 
-  private static final String  MEAL_ENDPOINT =
+  private static final String MEAL_ENDPOINT =
       "https://api.ucsb.edu/dining/menu/v1/";
+
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   /**
    * Fetches all meals served in a particular dining commons on a specific date.
    *
-   * @param dateTime the date (in YYYY-MM-DD format)
+   * @param dateTime the date and time as a LocalDateTime
    * @param diningCommonsCode the dining commons code
    * @return a list of meals (e.g., breakfast, lunch, dinner)
    * @throws Exception if the API request fails
    */
-  public List<Meal> getMeals(String dateTime, String diningCommonsCode) throws Exception {
-    String url = String.format("%s%s/%s", MEAL_ENDPOINT, dateTime, diningCommonsCode);
+  public List<Meal> getMeals(LocalDateTime dateTime, String diningCommonsCode) throws Exception {
+    // Convert LocalDateTime to YYYY-MM-DD format
+    String formattedDate = dateTime.format(DATE_FORMATTER);
+
+    String url = String.format("%s%s/%s", MEAL_ENDPOINT, formattedDate, diningCommonsCode);
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("ucsb-api-key", this.apiKey);
@@ -47,7 +54,7 @@ public class MealService {
 
     HttpEntity<String> entity = new HttpEntity<>("body", headers);
 
-    log.info("Fetching meals for date: {}, dining commons: {}", dateTime, diningCommonsCode);
+    log.info("Fetching meals for date: {}, dining commons: {}", formattedDate, diningCommonsCode);
 
     // Use RestTemplate to fetch data
     ResponseEntity<Meal[]> response = restTemplate.exchange(
@@ -60,6 +67,5 @@ public class MealService {
 
     return List.of(mealsArray);
   }
-
 
 }
