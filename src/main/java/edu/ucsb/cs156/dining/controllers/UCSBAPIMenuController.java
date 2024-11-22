@@ -37,7 +37,7 @@ public class UCSBAPIMenuController {
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("/{dateTime}/{diningCommonsCode}")
   public List<Meal> getMeals(
-      @Parameter(description = "The date in YYYY-MM-DD format") 
+      @Parameter(description = " ISO date only (2005-12-06) or ISO date and time (2005-12-06T00:00:00-08:00)") 
       @PathVariable String dateTime,
       @PathVariable String diningCommonsCode) throws Exception {
     log.info("Fetching meals for date: {} and dining commons: {}", dateTime, diningCommonsCode);
