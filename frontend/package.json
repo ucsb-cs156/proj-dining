@@ -33,7 +33,8 @@
     "check-format": "prettier --check \"src/**/*.{js,jsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=chpt_e5f33bd39314919"
   },
   "browserslist": {
     "production": [
