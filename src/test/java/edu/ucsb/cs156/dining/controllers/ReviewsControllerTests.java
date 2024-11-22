@@ -65,12 +65,18 @@ public class ReviewsControllerTests extends ControllerTestCase {
         }
 
         // Authorization tests for /api/reviews/post
-        // (Perhaps should also have these for put and delete)
 
         @Test
         public void logged_out_users_cannot_post() throws Exception {
                 mockMvc.perform(post("/api/reviews/post"))
                                 .andExpect(status().is(403));
+        }
+
+        // Authorization tests for /api/reviews?userId=x
+        @Test
+        public void logged_out_users_cannot_get_reviews_by_user_id() throws Exception {
+                mockMvc.perform(get("/api/reviews?userId=1"))
+                                .andExpect(status().is(403)); 
         }
 
         // // Tests with mocks for database actions
@@ -189,6 +195,41 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // assert
                 verify(reviewsRepository, times(1)).save(reviews1);
                 String expectedJson = mapper.writeValueAsString(reviews1);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void logged_in_user_can_get_reviews_by_user_id() throws Exception {
+
+                // arrange
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                Review reviews1 = Review.builder()
+                                .reviewerId(1)
+                                .itemId(1)
+                                .dateServed(ldt1)
+                                .stars(5)
+                                .reviewText("very good")
+                                .status("Awaiting Approval")
+                                .createdDate(ldt1)
+                                .lastEditedDate(ldt1)
+                                .build();
+
+                ArrayList<Review> expectedReviews = new ArrayList<>();
+                expectedReviews.add(reviews1);
+
+                when(reviewsRepository.findAllByReviewerId(1)).thenReturn(expectedReviews);
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/reviews?userId=1"))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+
+                verify(reviewsRepository, times(1)).findAllByReviewerId(1);
+                String expectedJson = mapper.writeValueAsString(expectedReviews);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
