@@ -38,6 +38,6 @@ public class User {
 
   private String alias;
   private String status;
-  private String alias_pending;
-  private LocalDateTime date_approved;
+  private String aliasPending;
+  private LocalDateTime dateApproved;
 }
