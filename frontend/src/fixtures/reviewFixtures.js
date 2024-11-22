@@ -1,43 +1,51 @@
+
 const ReviewFixtures = {
-    oneReview: {
+  oneReview: {
+    id: 1,
+    studentId: 4921081,
+    itemId: "A02341",
+    dateItemServed: "2022-01-02T12:00:00",
+    status: "Awaiting Moderation",
+    userIdModerator: null,
+    moderatorComments: null,
+    dateCreated: "2022-01-01T12:00:00",
+    dateEdited: "2022-01-01T12:00:00",
+  },
+  threeReviews: [
+    {
       id: 1,
       studentId: 4921081,
       itemId: "A02341",
       dateItemServed: "2022-01-02T12:00:00",
-      diningCommons: "Carrillo",
-      meal: "Lunch",
-      menuItem: "Steak",
-      stationName: "Mains"
-      status: "Finished",
-      comments: "Very good",
+      status: "Approved",
+      userIdModerator: "moderator1",
+      moderatorComments: "Looks good",
+      dateCreated: "2022-01-01T12:00:00",
+      dateEdited: "2022-01-02T13:00:00",
     },
-    threeReviews: [
-      {
-        id: 1,
-        itemId: 10,
-        reviewerEmail: "rohanpreetam21@gmail.com",
-        stars: 5,
-        dateReviewed: "2022-01-02T12:00:00",
-        comments: "Very good",
-      },
-      {
-        id: 2,
-        itemId: 20,
-        reviewerEmail: "rohanpreetam@ucsb.com",
-        stars: 4,
-        dateReviewed: "2022-04-03T12:00:00",
-        comments: "Good",
-      },
-      {
-        id: 3,
-        itemId: 30,
-        reviewerEmail: "salshriaan@ucsb.com",
-        stars: 3,
-        dateReviewed: "2022-07-04T12:00:00",
-        comments: "Very average",
-      },
-    ],
-  };
-  
-  export { ReviewFixtures };
-  
+    {
+      id: 2,
+      studentId: 4921082,
+      itemId: "B01321",
+      dateItemServed: "2022-02-02T12:00:00",
+      status: "Rejected",
+      userIdModerator: "moderator1",
+      moderatorComments: "Inappropriate content",
+      dateCreated: "2022-02-01T12:00:00",
+      dateEdited: "2022-02-02T13:00:00",
+    },
+    {
+      id: 3,
+      studentId: 4921083,
+      itemId: "C23101",
+      dateItemServed: "2022-03-02T12:00:00",
+      status: "Awaiting Moderation",
+      userIdModerator: null,
+      moderatorComments: null,
+      dateCreated: "2022-03-01T12:00:00",
+      dateEdited: "2022-03-01T12:00:00",
+    },
+  ],
+};
+
+export { ReviewFixtures };
