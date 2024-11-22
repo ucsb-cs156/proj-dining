@@ -28,7 +28,7 @@ public class UCSBAPIMenuController {
    * Endpoint to fetch all meals served in a particular dining commons on a specific date.
    *
    * @param dateTime the date (in YYYY-MM-DD format)
-   * @param diningCommonsCode the dining commons code
+   * @param diningCommonsCode  the dining commons code
    * @return a list of meals
    * @throws Exception if the API request fails
    */
@@ -36,6 +36,7 @@ public class UCSBAPIMenuController {
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("/{dateTime}/{diningCommonsCode}")
   public List<Meal> getMeals(
+      @Parameter(description = "The date in YYYY-MM-DD format") 
       @PathVariable String dateTime,
       @PathVariable String diningCommonsCode) throws Exception {
     log.info("Fetching meals for date: {} and dining commons: {}", dateTime, diningCommonsCode);
