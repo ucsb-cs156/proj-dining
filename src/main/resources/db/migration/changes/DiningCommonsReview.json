@@ -1,0 +1,92 @@
+{
+    "databaseChangeLog": [
+      {
+        "changeSet": {
+          "id": "DiningCommonsReview-1",
+          "author": "RiaSinha",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "not": [
+                {
+                  "tableExists": {
+                    "tableName": "DININGCOMMONSREVIEW"
+                  }
+                }
+              ]
+            }
+          ],
+          "changes": [
+            {
+              "createTable": {
+                "columns": [
+                  {
+                    "column": {
+                      "autoIncrement": true,
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "PK_DININGCOMMONSREVIEW"
+                      },
+                      "name": "ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "STUDENT_USER_ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "ITEM_ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "ITEM_SERVED_DATE",
+                      "type": "TIMESTAMP"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "STATUS",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "MODERATOR_USER_ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "MODERATOR_COMMENTS",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "CREATED_DATE",
+                      "type": "TIMESTAMP"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "LAST_EDITED_DATE",
+                      "type": "TIMESTAMP"
+                    }
+                  }
+                ],
+                "tableName": "DININGCOMMONSREVIEW"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
