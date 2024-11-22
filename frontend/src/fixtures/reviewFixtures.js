@@ -1,4 +1,3 @@
-
 const ReviewFixtures = {
   oneReview: {
     id: 1,
@@ -29,7 +28,7 @@ const ReviewFixtures = {
       itemId: "B01321",
       dateItemServed: "2022-02-02T12:00:00",
       status: "Rejected",
-      userIdModerator: "moderator1",
+      userIdModerator: "moderator2",
       moderatorComments: "Inappropriate content",
       dateCreated: "2022-02-01T12:00:00",
       dateEdited: "2022-02-02T13:00:00",
@@ -40,8 +39,8 @@ const ReviewFixtures = {
       itemId: "C23101",
       dateItemServed: "2022-03-02T12:00:00",
       status: "Awaiting Moderation",
-      userIdModerator: null,
-      moderatorComments: null,
+      userIdModerator: "moderator3",
+      moderatorComments: "Thanks!",
       dateCreated: "2022-03-01T12:00:00",
       dateEdited: "2022-03-01T12:00:00",
     },
