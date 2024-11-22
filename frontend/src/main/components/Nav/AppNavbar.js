@@ -75,6 +75,12 @@ export default function AppNavbar({
                   >
                     Menu Items
                   </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to="/diningcommons/:diningCommonsCode"
+                  >
+                    Dining Commons
+                  </Nav.Link>
                 </>
               ) : (
                 <></>
