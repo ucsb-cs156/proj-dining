@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
@@ -36,13 +36,11 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.getByText("Moderation Page")).toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
+    expect(await screen.findByText("Moderation Page")).toBeInTheDocument();
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+      await screen.findByText(
+        "This page is accessible only to admins. (Placeholder)",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -57,11 +55,9 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
+    expect(
+      await screen.queryByText("Moderation Page"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
         "This page is accessible only to admins. (Placeholder)",
@@ -77,11 +73,9 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
+    expect(
+      await screen.queryByText("Moderation Page"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
         "This page is accessible only to admins. (Placeholder)",
@@ -99,11 +93,9 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
+    expect(
+      await screen.queryByText("Moderation Page"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
         "This page is accessible only to admins. (Placeholder)",
@@ -121,11 +113,9 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
+    expect(
+      await screen.queryByText("Moderation Page"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
         "This page is accessible only to admins. (Placeholder)",
