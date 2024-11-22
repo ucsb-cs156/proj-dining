@@ -1,4 +1,4 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
@@ -9,16 +9,14 @@ describe("ModeratePage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   const queryClient = new QueryClient();
 
-  const renderPage = async () => {
-    await act(async () => {
-      render(
-        <QueryClientProvider client={queryClient}>
-          <MemoryRouter>
-            <Moderate />
-          </MemoryRouter>
-        </QueryClientProvider>,
-      );
-    });
+  const renderPage = () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Moderate />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
   };
 
   beforeEach(() => {
@@ -36,16 +34,16 @@ describe("ModeratePage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
 
-    await renderPage();
+    renderPage();
 
-    await waitFor(() => {
-      expect(screen.getByText("Moderation Page")).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          "This page is accessible only to admins. (Placeholder)",
-        ),
-      ).toBeInTheDocument();
-    });
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.getByText("Moderation Page")).toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+    ).toBeInTheDocument();
   });
 
   test("redirects non-admin user to homepage", async () => {
@@ -57,16 +55,18 @@ describe("ModeratePage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
 
-    await renderPage();
+    renderPage();
 
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-      expect(
-        screen.queryByText(
-          "This page is accessible only to admins. (Placeholder)",
-        ),
-      ).not.toBeInTheDocument();
-    });
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
   });
 
   test("redirects to homepage if currentUser is undefined", async () => {
@@ -75,16 +75,18 @@ describe("ModeratePage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
 
-    await renderPage();
+    renderPage();
 
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-      expect(
-        screen.queryByText(
-          "This page is accessible only to admins. (Placeholder)",
-        ),
-      ).not.toBeInTheDocument();
-    });
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
   });
 
   test("redirects to homepage if currentUser.loggedIn is undefined", async () => {
@@ -95,16 +97,18 @@ describe("ModeratePage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
 
-    await renderPage();
+    renderPage();
 
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-      expect(
-        screen.queryByText(
-          "This page is accessible only to admins. (Placeholder)",
-        ),
-      ).not.toBeInTheDocument();
-    });
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
   });
 
   test("handles case where currentUser is null and skips hasRole", async () => {
@@ -115,15 +119,17 @@ describe("ModeratePage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
 
-    await renderPage();
+    renderPage();
 
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-      expect(
-        screen.queryByText(
-          "This page is accessible only to admins. (Placeholder)",
-        ),
-      ).not.toBeInTheDocument();
-    });
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
   });
 });
