@@ -79,6 +79,20 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(403)); 
         }
 
+        // Authorization tests for /api/reviews/needsmoderation
+        @Test
+        public void logged_out_users_cannot_get_reviews_needing_moderation() throws Exception {
+                mockMvc.perform(get("/api/reviews/needsmoderation"))
+                                .andExpect(status().is(403)); 
+        }
+
+        @Test
+        public void logged_in_users_cannot_get_reviews_needing_moderation() throws Exception {
+                mockMvc.perform(get("/api/reviews/needsmoderation"))
+                                .andExpect(status().is(403)); 
+        }
+
+
         // // Tests with mocks for database actions
 
         @WithMockUser(roles = { "USER", "ADMIN" })
@@ -229,6 +243,42 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // assert
 
                 verify(reviewsRepository, times(1)).findAllByReviewerId(1);
+                String expectedJson = mapper.writeValueAsString(expectedReviews);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
+        
+        @WithMockUser(roles = { "USER", "ADMIN" })
+        @Test
+        public void an_admin_user_can_get_reviews_needing_moderation() throws Exception {
+
+                // arrange
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                Review reviews1 = Review.builder()
+                                .reviewerId(1)
+                                .itemId(1)
+                                .dateServed(ldt1)
+                                .stars(5)
+                                .reviewText("very good")
+                                .status("Awaiting Approval")
+                                .createdDate(ldt1)
+                                .lastEditedDate(ldt1)
+                                .build();
+
+                ArrayList<Review> expectedReviews = new ArrayList<>();
+                expectedReviews.add(reviews1);
+
+                when(reviewsRepository.findAllByStatus("Awaiting Approval")).thenReturn(expectedReviews);
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/reviews/needsmoderation"))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+
+                verify(reviewsRepository, times(1)).findAllByStatus("Awaiting Approval");
                 String expectedJson = mapper.writeValueAsString(expectedReviews);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);

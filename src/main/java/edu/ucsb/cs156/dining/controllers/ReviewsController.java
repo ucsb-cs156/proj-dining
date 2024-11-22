@@ -70,6 +70,19 @@ public class ReviewsController extends ApiController {
     }
 
     /**
+     * List all reviews needing moderation
+     * 
+     * @return an iterable of Review
+     */
+    @Operation(summary= "List all reviews needing moderation")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/needsmoderation")
+    public Iterable<Review> getReviewsNeedingModeration() {
+        Iterable<Review> reviews = reviewsRepository.findAllByStatus("Awaiting Approval");
+        return reviews;
+    }
+
+    /**
      * Create a new review
      * 
      * @param itemId            id of item in DiningCommonsMenuItem table
