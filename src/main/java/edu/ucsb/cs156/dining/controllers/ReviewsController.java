@@ -23,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 import java.util.ArrayList;
 import jakarta.validation.Valid;
+
+
 
 /**
  * This is a REST controller for Reviews
@@ -47,7 +51,7 @@ public class ReviewsController extends ApiController {
      * @return a list of all reviews
      */
     @Operation(summary= "List all ucsb reviews of dining commons")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<Reviews> allReviews() {
         Iterable<Reviews> reviews = reviewsRepository.findAll();
@@ -96,56 +100,31 @@ public class ReviewsController extends ApiController {
 
         return savedReviews; 
     }
-
-        // /**
-        //  * This method returns all reviews from current user.
-        //  * @return all reviews from current user.
-        //  */
-        // @Operation(summary = "Get reviews from an user")
-        // @PreAuthorize("hasRole('ROLE_USER')")
-        // @GetMapping("")
-        // public Iterable<Reviews> getByCurrUserId() {
-        //     CurrentUser user = getCurrentUser();
-        //     long currUserId = user.getUser().getId();
-
-        //     Iterable<Reviews> reviews = reviewsRepository.findAll();
-        //     ArrayList<Reviews> newReviews = new ArrayList<>();
-
-        //     for(Reviews review : reviews){
-        //         if(currUserId == review.getUserId()){
-        //             newReviews.add(review);
-        //         }
-        //     }
-
-
-        //     return newReviews;
-        // }
+     
 
         /**
-         * This method returns all reviews from a user.
-         * @param userId of who to query
-         * @return all reviews from a user.
+         * This method returns all reviews from current user.
+         * @return all reviews from current user.
          */
         @Operation(summary = "Get reviews from an user")
-        @PreAuthorize("hasRole('ROLE_ADMIN')")
+        @PreAuthorize("hasRole('ROLE_USER')")
         @GetMapping("")
-        public Iterable<Reviews> getByUserId(
-            @Parameter(name="userId") @RequestParam long userId
-        ) {
+        public Iterable<Reviews> getByCurrUserId() {
+            CurrentUser user = getCurrentUser();
+            long currUserId = user.getUser().getId();
 
-            Iterable<Reviews> reviews = reviewsRepository.findAll();
-            ArrayList<Reviews> newReviews = new ArrayList<>();
+            Iterable<Reviews> reviews = reviewsRepository.findByUserId(currUserId);
+            // Iterable<Reviews> reviews = reviewsRepository.findAll();
+            // ArrayList<Reviews> newReviews = new ArrayList<>();
 
-            for(Reviews review : reviews){
-                if(userId == review.getUserId()){
-                    newReviews.add(review);
-                }
-            }
-            if(newReviews.isEmpty()){
-                throw new EntityNotFoundException(Reviews.class, userId);
-            }
+            // for(Reviews review : reviews){
+            //     if(currUserId == review.getUserId()){
+            //         newReviews.add(review);
+            //     }
+            // }
 
-            return newReviews;
+
+            return reviews;
         }
 
 }

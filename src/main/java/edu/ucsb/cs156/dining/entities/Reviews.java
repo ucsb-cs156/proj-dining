@@ -31,7 +31,7 @@ public class Reviews {
   private String date_served;
   private String status;
 
-  @Column(name="userId")
+  @Column(name="USER_ID")
   private long userId;
   
   private String moderator_comments;

@@ -1,7 +1,7 @@
 { "databaseChangeLog": [
     {
         "changeSet": {
-          "id": "Reviews-6",
+          "id": "Reviews-8",
           "author": "KEVINY",
           "preConditions": [
             {
@@ -74,7 +74,7 @@
                       "constraints":{
                         "default": null
                       },
-                      "name": "USERID",
+                      "name": "USER_ID",
                       "type": "BIGINT"
                     }
                   },
