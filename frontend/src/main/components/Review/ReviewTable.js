@@ -12,8 +12,8 @@ import { hasRole } from "main/utils/currentUser";
 export default function ReviewTable({
   reviews,
   currentUser,
-  moderatorOptions = false,
-  deleteColumn = true,
+  moderatorOptions,
+  deleteColumn,
 }) {
   const navigate = useNavigate();
 
@@ -36,13 +36,11 @@ export default function ReviewTable({
   };
 
   const approveCallback = (cell) => {
-    // Add your logic for the "Approve" action here
-    console.log("Approve clicked for", cell.row.values.id);
+    console.log(`Approved review with id: ${cell.row.values.id}`);
   };
 
   const rejectCallback = (cell) => {
-    // Add your logic for the "Reject" action here
-    console.log("Reject clicked for", cell.row.values.id);
+    console.log(`Rejected review with id: ${cell.row.values.id}`);
   };
 
   const columns = [

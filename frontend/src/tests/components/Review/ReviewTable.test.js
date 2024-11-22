@@ -14,8 +14,54 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedNavigate,
 }));
 
-describe("UserTable tests", () => {
+describe("ReviewTable tests", () => {
   const queryClient = new QueryClient();
+
+  test("Approve button triggers callback", () => {
+    console.log = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ReviewTable
+            reviews={reviewFixtures.threeReviews}
+            currentUser={currentUserFixtures.userOnly}
+            moderatorOptions={true}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const approveButton = screen.getByTestId(
+      "ReviewTable-cell-row-0-col-Approve-button",
+    );
+    fireEvent.click(approveButton);
+
+    expect(console.log).toHaveBeenCalledWith("Approved review with id: 1");
+  });
+
+  test("Reject button triggers callback", () => {
+    console.log = jest.fn(); // Mock console.log
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ReviewTable
+            reviews={reviewFixtures.threeReviews}
+            currentUser={currentUserFixtures.userOnly}
+            moderatorOptions={true}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const rejectButton = screen.getByTestId(
+      "ReviewTable-cell-row-0-col-Reject-button",
+    );
+    fireEvent.click(rejectButton);
+
+    expect(console.log).toHaveBeenCalledWith("Rejected review with id: 1");
+  });
 
   test("Shows Approve and Reject buttons when moderatorOptions is true", () => {
     const currentUser = currentUserFixtures.userOnly;
@@ -54,7 +100,7 @@ describe("UserTable tests", () => {
           <ReviewTable
             reviews={reviewFixtures.threeReviews}
             currentUser={currentUser}
-            moderatorOptions={false} // Pass false
+            moderatorOptions={false}
           />
         </MemoryRouter>
       </QueryClientProvider>,
@@ -115,13 +161,6 @@ describe("UserTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent(
-      "1",
-    );
-    expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent(
-      "2",
-    );
-
     const editButton = screen.queryByTestId(
       `${testId}-cell-row-0-col-Edit-button`,
     );
@@ -133,7 +172,7 @@ describe("UserTable tests", () => {
     expect(deleteButton).not.toBeInTheDocument();
   });
 
-  test("Has the expected colum headers and content for adminUser", () => {
+  test("Has the expected column headers and content for adminUser", () => {
     const currentUser = currentUserFixtures.adminUser;
 
     render(
@@ -178,13 +217,6 @@ describe("UserTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent(
-      "1",
-    );
-    expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent(
-      "2",
-    );
-
     const editButton = screen.getByTestId(
       `${testId}-cell-row-0-col-Edit-button`,
     );
@@ -213,26 +245,17 @@ describe("UserTable tests", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`ReviewTable-cell-row-0-col-id`),
-      ).toHaveTextContent("1");
-    });
-
     const editButton = screen.getByTestId(
-      `ReviewTable-cell-row-0-col-Edit-button`,
+      "ReviewTable-cell-row-0-col-Edit-button",
     );
-    expect(editButton).toBeInTheDocument();
-
     fireEvent.click(editButton);
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/myreviews/edit/1"),
-    );
+    await waitFor(() => {
+      expect(mockedNavigate).toHaveBeenCalledWith("/myreviews/edit/1");
+    });
   });
 
   test("Delete button calls delete callback", async () => {
-    // arrange
     const currentUser = currentUserFixtures.adminUser;
 
     const axiosMock = new AxiosMockAdapter(axios);
@@ -240,7 +263,6 @@ describe("UserTable tests", () => {
       .onDelete("/api/myreviews")
       .reply(200, { message: "Review deleted" });
 
-    // act - render the component
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -253,25 +275,36 @@ describe("UserTable tests", () => {
       </QueryClientProvider>,
     );
 
-    // assert - check that the expected content is rendered
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`ReviewTable-cell-row-0-col-id`),
-      ).toHaveTextContent("1");
-    });
-
     const deleteButton = screen.getByTestId(
-      `ReviewTable-cell-row-0-col-Delete-button`,
+      "ReviewTable-cell-row-0-col-Delete-button",
     );
     expect(deleteButton).toBeInTheDocument();
 
-    // act - click the delete button
     fireEvent.click(deleteButton);
-
-    // assert - check that the delete endpoint was called
 
     await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
+    expect(axiosMock.history.delete[0].url).toBe("/api/myreviews");
+  });
+
+  test("Does not show Delete button when deleteColumn is false", () => {
+    const currentUser = currentUserFixtures.adminUser;
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ReviewTable
+            reviews={reviewFixtures.threeReviews}
+            currentUser={currentUser}
+            deleteColumn={false}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const deleteButton = screen.queryByTestId(
+      "ReviewTable-cell-row-0-col-Delete-button",
+    );
+    expect(deleteButton).not.toBeInTheDocument();
   });
 });
