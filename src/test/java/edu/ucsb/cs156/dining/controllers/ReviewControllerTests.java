@@ -169,6 +169,66 @@ public class ReviewControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void a_logged_in_user_can_get_own_reviews_list() throws Exception {
+                // Arrange
+
+                Review review1 = Review.builder()
+                                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+                                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+                                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3 ))
+                                .studentId(1L)
+                                .status("Awaiting Moderation")
+                                .itemId("Bfast1090")
+                                .id(1L)
+                                .build();
+
+                Review review2 = Review.builder()
+                                .dateCreated(LocalDateTime.of(2024, 4, 28, 1, 47))
+                                .dateEdited(LocalDateTime.of(2024, 7, 2, 6, 47))
+                                .dateItemServed(LocalDateTime.of(2022, 2, 6, 8, 8))
+                                .studentId(2L)
+                                .status("Awaiting Moderation")
+                                .itemId("Bfast1090")
+                                .id(2L)
+                                .build();
+                
+                Review review3 = Review.builder()
+                                .dateCreated(LocalDateTime.of(2024, 2, 17, 2, 47))
+                                .dateEdited(LocalDateTime.of(2024, 12, 15, 04, 26))
+                                .dateItemServed(LocalDateTime.of(2023, 1, 7, 3, 8))
+                                .studentId(2L)
+                                .status("Awaiting Moderation")
+                                .itemId("Bfast1090")
+                                .id(3L)
+                                .build();
+
+                ArrayList<Review> reviews = new ArrayList<>();
+                ArrayList<Review> valid_reviews = new ArrayList<>();
+                valid_reviews.addAll(Arrays.asList(review1));
+                reviews.addAll(Arrays.asList(review1, review2,review3));
+                when(reviewRepository.findAllByStudentId(1)).thenReturn(valid_reviews);
+
+                // Act
+                MvcResult response = mockMvc.perform(
+                                get("/api/reviews/userReviews")
+                                .with(csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                // assert
+                verify(reviewRepository, times(1)).findAllByStudentId(1);
+                String expectedJson = mapper.writeValueAsString(valid_reviews);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+
+        }
+
+
+
+
         /**
          * checkDates function is needed for checking and asserting the time of the expected response and the instantiated review
          * Their is a few millisecond delay from the mocked request and the creation of the objects instance,
@@ -187,5 +247,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                         throw new IllegalStateException(fieldName + " should not be null");
                 }
         }
+
+
 
 }
