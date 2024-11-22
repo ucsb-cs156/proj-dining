@@ -59,7 +59,7 @@ public class UserInfoControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "ADMIN", "USER" })
     @Test
-    public void a_user_can_post_a_new_currentUser() throws Exception {
+    public void a_user_can_post_a_new_alias() throws Exception {
         // arrange
         User currentUser1 = User.builder()
             .id(1L)  
@@ -74,7 +74,7 @@ public class UserInfoControllerTests extends ControllerTestCase {
             .hostedDomain("example.org")
             .admin(false)
             .alias("Chipotle") 
-            .moderation(false)
+            .moderation(null)
             .build();
         
   
@@ -174,5 +174,6 @@ public class UserInfoControllerTests extends ControllerTestCase {
         assertEquals("User with id 1 not found", json.get("message"));
     }
 
-
 }
+
+

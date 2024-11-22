@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
  * This is a REST controller for getting information about the current user and modifying user details.
  */
@@ -48,32 +47,33 @@ public class UserInfoController extends ApiController {
     public User updateAlias(@RequestParam String alias) {
         CurrentUser currentUser = super.getCurrentUser();
         User user = currentUser.getUser();
-        
-        user.setAlias(alias);  
-        userRepository.save(user);  
-        
-        return user;
+
+        user.setAlias(alias); 
+        User savedUser = userRepository.save(user);  
+
+        return savedUser;
     }
 
     /**
-     * This method allows an admin to update the moderation status of a user.
+     * This method allows an admin to update the moderation status of a user's alias.
      * @param id the id of the user to update
-     * @param moderation the new moderation status
+     * @param moderation the new moderation status 
      * @return the updated user
      */
-    @Operation(summary = "Update moderation status of a user (admin only)")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/updateAliasModeration")
     public User updateAliasModeration(
             @RequestParam long id, 
-            @RequestParam boolean moderation) {
+            @RequestParam Boolean moderation) {
         
         User user = userRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(User.class, id));
         
+  
         user.setModeration(moderation);  
-        userRepository.save(user);  
-        
+        userRepository.save(user);
+
         return user;
     }
+
 }
