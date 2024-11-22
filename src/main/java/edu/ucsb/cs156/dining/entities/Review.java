@@ -31,7 +31,7 @@ public class Review {
   private long stars;
   private String reviewText;
   private String status;
-  private long modId;
+  private Long modId;
   private String modComments;
   private LocalDateTime createdDate;
   private LocalDateTime lastEditedDate;

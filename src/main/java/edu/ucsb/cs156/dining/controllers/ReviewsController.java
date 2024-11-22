@@ -78,8 +78,8 @@ public class ReviewsController extends ApiController {
             @Parameter(name="stars") @RequestParam long stars,
             @Parameter(name="reviewText") @RequestParam String reviewText,
             @Parameter(name="status") @RequestParam String status,
-            @Parameter(name="modId") @RequestParam long modId,
-            @Parameter(name="modComments") @RequestParam String modComments,
+            @Parameter(name="modId") @RequestParam(required=false) Long modId,
+            @Parameter(name="modComments") @RequestParam(required=false) String modComments,
             @Parameter(name="createdDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("createdDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdDate,
             @Parameter(name="lastEditedDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("lastEditedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastEditedDate)
             throws JsonProcessingException {
