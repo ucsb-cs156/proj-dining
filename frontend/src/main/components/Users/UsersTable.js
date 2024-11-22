@@ -22,24 +22,6 @@ const columns = [
     id: "admin",
     accessor: (row, _rowIndex) => String(row.admin), // hack needed for boolean values to show up
   },
-  {
-    Header: "Alias",
-    accessor: "alias",
-  },
-  {
-    Header: "Moderation Status",
-    accessor: "moderation",
-    Cell: ({ value }) => {
-      switch (value) {
-        case "Approved":
-          return "APPROVED";
-        case "Rejected":
-          return "REJECTED";
-        default:
-          return "Awaiting Moderation";
-      }
-    },
-  },
 ];
 
 export default function UsersTable({ users }) {
