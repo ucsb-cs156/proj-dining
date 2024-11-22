@@ -82,14 +82,11 @@ public class DiningCommonsReviewController extends ApiController {
 
     /**
      * List all dining commons reviews -> ADMIN ONLY
-     * 
-     * @return an iterable of DiningCommonsReview
      */
     @Operation(summary= "List all dining commons reviews")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<DiningCommonsReview> allDiningCommonsReviewAdminOnly() {
-        // MAKE IT SO ONLY ADMIN CAN VIEW ALL REVIEWS
         Iterable<DiningCommonsReview> reviews = diningCommonsReviewRepository.findAll();
         return reviews;
     }
