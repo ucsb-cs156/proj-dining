@@ -13,21 +13,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-/** Service class to interact with UCSB Dining Menu API */
+/** Service class to interact with Meal */
 @Service
 @Slf4j
-public class UCSBAPIMenuService {
+public class MealService {
 
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
   private final RestTemplate restTemplate;
 
-  public UCSBAPIMenuService(RestTemplateBuilder restTemplateBuilder) {
+  public MealService(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder.build();
   }
 
-  private static final String  MENU_ENDPOINT =
+  private static final String  MEAL_ENDPOINT =
       "https://api.ucsb.edu/dining/menu/v1/";
 
   /**
@@ -39,7 +39,7 @@ public class UCSBAPIMenuService {
    * @throws Exception if the API request fails
    */
   public List<Meal> getMeals(String dateTime, String diningCommonsCode) throws Exception {
-    String url = String.format("%s%s/%s", MENU_ENDPOINT, dateTime, diningCommonsCode);
+    String url = String.format("%s%s/%s", MEAL_ENDPOINT, dateTime, diningCommonsCode);
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("ucsb-api-key", this.apiKey);

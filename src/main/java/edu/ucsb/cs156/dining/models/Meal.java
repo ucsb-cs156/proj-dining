@@ -3,7 +3,7 @@ package edu.ucsb.cs156.dining.models;
 import lombok.Data;
 
 /**
- * Represents a Meal returned by the UCSB Dining Menu API.
+ * Represents a Meal
  */
 @Data
 public class Meal {

@@ -16,11 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
-@RestClientTest(UCSBAPIMenuService.class)
-public class UCSBAPIMenuServiceTest {
+@RestClientTest(MealService.class)
+public class MealServiceTest {
 
     @Autowired
-    private UCSBAPIMenuService menuService;
+    private MealService mealService;
 
     @Autowired
     private MockRestServiceServer mockServer;
@@ -50,7 +50,7 @@ public class UCSBAPIMenuServiceTest {
                 .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
 
         // Act
-        List<Meal> result = menuService.getMeals("2024-11-20", "de-la-guerra");
+        List<Meal> result = mealService.getMeals("2024-11-20", "de-la-guerra");
 
         // Assert
         assertNotNull(result);
@@ -80,7 +80,7 @@ public class UCSBAPIMenuServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            menuService.getMeals("2024-11-20", "de-la-guerra");
+            mealService.getMeals("2024-11-20", "de-la-guerra");
         });
         assertEquals("Failed to fetch meals data from API", exception.getMessage());
     }
@@ -96,7 +96,7 @@ public class UCSBAPIMenuServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            menuService.getMeals("2024-11-20", "de-la-guerra");
+            mealService.getMeals("2024-11-20", "de-la-guerra");
         });
         assertTrue(exception.getMessage().contains("401 Unauthorized"));
     }

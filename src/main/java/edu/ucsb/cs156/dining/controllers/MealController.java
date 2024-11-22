@@ -1,7 +1,7 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import edu.ucsb.cs156.dining.models.Meal;
-import edu.ucsb.cs156.dining.services.UCSBAPIMenuService;
+import edu.ucsb.cs156.dining.services.MealService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/** Controller for UCSB Dining Menu API */
-@Tag(name = "UCSBAPIMenuController")
+/** Controller for Meal */
+@Tag(name = "Meal")
 @RestController
 @RequestMapping("/api/diningcommons")
 @Slf4j
-public class UCSBAPIMenuController {
+public class MealController {
 
   @Autowired
-  private UCSBAPIMenuService menuService;
+  private MealService mealService;
 
   /**
    * Endpoint to fetch all meals served in a particular dining commons on a specific date.
@@ -41,7 +41,7 @@ public class UCSBAPIMenuController {
       @PathVariable String dateTime,
       @PathVariable String diningCommonsCode) throws Exception {
     log.info("Fetching meals for date: {} and dining commons: {}", dateTime, diningCommonsCode);
-    return menuService.getMeals(dateTime, diningCommonsCode);
+    return mealService.getMeals(dateTime, diningCommonsCode);
   }
 
 
