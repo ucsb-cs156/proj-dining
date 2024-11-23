@@ -55,6 +55,7 @@ public class DiningCommonsServiceTest {
         mockServer.expect(requestTo(DiningCommonsService.DINING_COMMONS_ENDPOINT))
                 .andExpect(header("ucsb-api-key", apiKey))
                 .andExpect(header("accept", "application/json"))
+                .andExpect(header("Content-Type", "application/json"))
                 .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
 
         // Act
