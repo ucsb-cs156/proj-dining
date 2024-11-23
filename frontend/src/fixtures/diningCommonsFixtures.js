@@ -1,48 +1,32 @@
 const diningCommonsFixtures = {
-  oneDate: {
-    name: "steve",
-    code: "help world",
+  oneDiningCommon: {
+    name: "Carillo",
+    code: "carillo",
     hasDiningCam: "true",
-    hasSackMeal: "true",
+    hasSackMeal: "false",
     hasTakeoutMeal: "false",
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
   },
-  threeDates: [
+  threeDiningCommons: [
     {
-      name: "mike",
-      code: "xyz",
+      name: "Portola",
+      code: "portola",
       hasDiningCam: "true",
       hasSackMeal: "true",
-      hasTakeoutMeal: "false",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      hasTakeoutMeal: "true",
     },
     {
-      name: "bob",
-      code: "team 13",
+      name: "De La Guerra",
+      code: "de-la-guerra",
       hasDiningCam: "true",
-      hasSackMeal: "true",
+      hasSackMeal: "false",
       hasTakeoutMeal: "false",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
     },
     {
-      name: "jake",
-      code: "testing",
+      name: "Ortega",
+      code: "ortega",
       hasDiningCam: "true",
       hasSackMeal: "true",
-      hasTakeoutMeal: "false",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      hasTakeoutMeal: "true",
     },
   ],
 };
