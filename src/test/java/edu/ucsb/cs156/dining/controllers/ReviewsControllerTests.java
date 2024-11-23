@@ -88,7 +88,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .dateServed(ldt1)
                                 .stars(5)
                                 .reviewText("very good")
-                                .status("Awaiting Approval")
+                                .status("Awaiting Moderation")
                                 .createdDate(ldt1)
                                 .lastEditedDate(ldt1)
                                 .build();
