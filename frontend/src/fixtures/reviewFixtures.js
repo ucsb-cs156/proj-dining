@@ -8,7 +8,7 @@ const reviewFixtures = {
     reviewText: "soggy",
     status: "Awaiting Moderation",
     modId: null,
-    modComments: "",
+    modComments: "null",
     createdDate: "2023-11-01T15:00:00",
     lastEditedDate: "2023-11-01T16:00:00",
   },
