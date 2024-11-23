@@ -49,12 +49,16 @@ export default function ReviewTable({
       accessor: "id", // accessor is the "key" in the data
     },
     {
-      Header: "Item",
-      accessor: "item",
+      Header: "Reviewer ID",
+      accessor: "reviewerId",
     },
     {
-      Header: "Station",
-      accessor: "station",
+      Header: "Item ID",
+      accessor: "itemId",
+    },
+    {
+      Header: "Date Served",
+      accessor: "dateServed",
     },
     {
       Header: "Stars",
@@ -69,8 +73,20 @@ export default function ReviewTable({
       accessor: "status",
     },
     {
+      Header: "Mod ID",
+      accessor: "modId",
+    },
+    {
       Header: "Moderator Comments",
       accessor: "modComments",
+    },
+    {
+      Header: "Created Date",
+      accessor: "createdDate",
+    },
+    {
+      Header: "Last Edited Date",
+      accessor: "lastEditedDate",
     },
   ];
 

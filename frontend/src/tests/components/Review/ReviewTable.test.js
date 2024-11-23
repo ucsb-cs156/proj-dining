@@ -133,22 +133,32 @@ describe("ReviewTable tests", () => {
 
     const expectedHeaders = [
       "id",
-      "Item",
-      "Station",
+      "Reviewer ID",
+      "Item ID",
+      "Date Served",
       "Stars",
       "Review Text",
       "Status",
+      "Mod ID",
       "Moderator Comments",
+      "Created Date",
+      "Last Edited Date",
     ];
+
     const expectedFields = [
       "id",
-      "item",
-      "station",
+      "reviewerId",
+      "itemId",
+      "dateServed",
       "stars",
       "reviewText",
       "status",
+      "modId",
       "modComments",
+      "createdDate",
+      "lastEditedDate",
     ];
+
     const testId = "ReviewTable";
 
     expectedHeaders.forEach((headerText) => {
@@ -189,22 +199,32 @@ describe("ReviewTable tests", () => {
 
     const expectedHeaders = [
       "id",
-      "Item",
-      "Station",
+      "Reviewer ID",
+      "Item ID",
+      "Date Served",
       "Stars",
       "Review Text",
       "Status",
+      "Mod ID",
       "Moderator Comments",
+      "Created Date",
+      "Last Edited Date",
     ];
+
     const expectedFields = [
       "id",
-      "item",
-      "station",
+      "reviewerId",
+      "itemId",
+      "dateServed",
       "stars",
       "reviewText",
       "status",
+      "modId",
       "modComments",
+      "createdDate",
+      "lastEditedDate",
     ];
+
     const testId = "ReviewTable";
 
     expectedHeaders.forEach((headerText) => {
