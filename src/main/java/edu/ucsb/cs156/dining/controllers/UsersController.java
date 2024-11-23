@@ -15,6 +15,12 @@ import edu.ucsb.cs156.dining.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+
+import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
+import org.springframework.web.bind.annotation.*;
+
 /**
  * This is a REST controller for getting information about the users.
  * 
@@ -22,7 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 
 @Tag(name="User information (admin only)")
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api")
 @RestController
 public class UsersController extends ApiController {
     @Autowired
@@ -38,11 +44,51 @@ public class UsersController extends ApiController {
      */
     @Operation(summary= "Get a list of all users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("")
+    @GetMapping("/admin/users")
     public ResponseEntity<String> users()
             throws JsonProcessingException {
         Iterable<User> users = userRepository.findAll();
         String body = mapper.writeValueAsString(users);
         return ResponseEntity.ok().body(body);
+    }
+
+    /**
+     * This method allows the user to update their alias.
+     * @param alias the new alias
+     * @return the updated user
+     */
+    @Operation(summary = "Update alias of the current user")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/currentUser/updateAlias")
+    public User updateAlias(@RequestParam String alias) {
+        CurrentUser currentUser = super.getCurrentUser();
+        User user = currentUser.getUser();
+
+        user.setAlias(alias); 
+        User savedUser = userRepository.save(user);  
+
+        return savedUser;
+    }
+
+    /**
+     * This method allows an admin to update the moderation status of a user's alias.
+     * @param id the id of the user to update
+     * @param moderator the new moderation status 
+     * @return the updated user
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/currentUser/updateAliasModeration")
+    public User updateAliasModeration(
+            @RequestParam long id, 
+            @RequestParam Boolean moderator) {
+        
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(User.class, id));
+        
+  
+        user.setModerator(moderator);  
+        userRepository.save(user);
+
+        return user;
     }
 }

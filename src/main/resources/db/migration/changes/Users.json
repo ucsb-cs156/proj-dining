@@ -109,7 +109,7 @@
                     "constraints": {
                       "nullable": true
                     },
-                    "name": "MODERATION",
+                    "name": "MODERATOR",
                     "type": "BOOLEAN"
                   }
                 }]

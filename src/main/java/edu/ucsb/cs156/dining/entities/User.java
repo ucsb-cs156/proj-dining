@@ -35,7 +35,7 @@ public class User {
   private boolean admin;
 
   private String alias = "Anonymous User";
-  private Boolean moderation;
+  private Boolean moderator;
 
 
 
