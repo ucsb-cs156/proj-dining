@@ -2,10 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
-
+import DiningCommonsIndexPage from "main/pages/Dining/DiningCommonsIndexPage";
 import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
+import MyReviewsPage from "main/pages/MyReviews/MyReviewsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -20,6 +21,13 @@ function App() {
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
+        <>
+          <Route
+            exact
+            path="/diningcommons/:diningCommonsCode"
+            element={<DiningCommonsIndexPage />}
+          />
+        </>
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <Route exact path="/admin/users" element={<AdminUsersPage />} />
         )}
@@ -44,6 +52,11 @@ function App() {
               path="/placeholder/create"
               element={<PlaceholderCreatePage />}
             />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsPage />} />
           </>
         )}
       </Routes>
