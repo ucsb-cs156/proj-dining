@@ -78,7 +78,7 @@ public class ReviewsController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/needsmoderation")
     public Iterable<Review> getReviewsNeedingModeration() {
-        Iterable<Review> reviews = reviewsRepository.findAllByStatus("Awaiting Approval");
+        Iterable<Review> reviews = reviewsRepository.findAllByStatus("Awaiting Moderation");
         return reviews;
     }
 

@@ -262,7 +262,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .dateServed(ldt1)
                                 .stars(5)
                                 .reviewText("very good")
-                                .status("Awaiting Approval")
+                                .status("Awaiting Moderation")
                                 .createdDate(ldt1)
                                 .lastEditedDate(ldt1)
                                 .build();
@@ -270,7 +270,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 ArrayList<Review> expectedReviews = new ArrayList<>();
                 expectedReviews.add(reviews1);
 
-                when(reviewsRepository.findAllByStatus("Awaiting Approval")).thenReturn(expectedReviews);
+                when(reviewsRepository.findAllByStatus("Awaiting Moderation")).thenReturn(expectedReviews);
 
                 // act
                 MvcResult response = mockMvc.perform(get("/api/reviews/needsmoderation"))
@@ -278,7 +278,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 // assert
 
-                verify(reviewsRepository, times(1)).findAllByStatus("Awaiting Approval");
+                verify(reviewsRepository, times(1)).findAllByStatus("Awaiting Moderation");
                 String expectedJson = mapper.writeValueAsString(expectedReviews);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
