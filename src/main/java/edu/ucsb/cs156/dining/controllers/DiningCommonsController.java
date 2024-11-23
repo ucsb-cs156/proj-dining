@@ -22,12 +22,7 @@ public class DiningCommonsController extends ApiController {
 
   @Operation(summary = "Get all dining commons")
   @GetMapping(value = "/diningcommons/all", produces = "application/json")
-  public List<DiningCommon> getAllDiningCommons() {
-    try {
+  public List<DiningCommon> getAllDiningCommons() throws Exception{
       return diningCommonsService.getAllDiningCommons();
-    } catch (Exception e) {
-      log.error("Error retrieving dining commons", e);
-      throw new RuntimeException("Unable to retrieve dining commons", e);
-    }
   }
 }

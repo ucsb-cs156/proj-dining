@@ -49,10 +49,7 @@ public class DiningCommonsService {
 
             ResponseEntity<String> response = restTemplate.exchange(DINING_COMMONS_ENDPOINT, HttpMethod.GET, entity, String.class);
 
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                log.error("Failed to fetch dining commons. Status: {}", response.getStatusCode());
-                throw new RuntimeException("Error fetching dining commons. Status: " + response.getStatusCode());
-            }
+            
 
             return objectMapper.readValue(response.getBody(), new TypeReference<List<DiningCommon>>() {});
         } catch (Exception e) {
