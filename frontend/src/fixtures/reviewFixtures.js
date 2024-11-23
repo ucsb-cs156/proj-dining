@@ -19,7 +19,7 @@ const reviewFixtures = {
       itemId: 202,
       dateServed: "2023-11-01T12:00:00",
       stars: 2,
-      reviewText: "not spicy",
+      reviewText: "not very spicy",
       status: "Approved",
       modId: 301,
       modComments: "",
