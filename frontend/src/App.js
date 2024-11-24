@@ -15,6 +15,8 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
+import DiningCommonsPage from "main/pages/DiningCommons/DiningCommonsPage";
+
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
 import ModerateIndexPage from "main/pages/Moderate/ModerateIndexPage";
@@ -99,6 +101,15 @@ function App() {
               exact
               path="/placeholder/create"
               element={<PlaceholderCreatePage />}
+            />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route
+              exact
+              path="/diningcommons/:diningCommonsCode"
+              element={<DiningCommonsPage />}
             />
           </>
         )}
