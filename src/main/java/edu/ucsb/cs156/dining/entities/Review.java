@@ -58,6 +58,7 @@ public class Review {
 
         
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime dateCreated;
 
     @LastModifiedDate
