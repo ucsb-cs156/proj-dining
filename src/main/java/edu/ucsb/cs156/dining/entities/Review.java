@@ -57,6 +57,7 @@ public class Review {
     private String moderatorComments;
     
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime dateCreated;
 
     @LastModifiedDate
