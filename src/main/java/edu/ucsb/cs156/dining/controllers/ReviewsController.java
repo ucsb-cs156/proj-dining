@@ -114,15 +114,6 @@ public class ReviewsController extends ApiController {
             long currUserId = user.getUser().getId();
 
             Iterable<Reviews> reviews = reviewsRepository.findByUserId(currUserId);
-            // Iterable<Reviews> reviews = reviewsRepository.findAll();
-            // ArrayList<Reviews> newReviews = new ArrayList<>();
-
-            // for(Reviews review : reviews){
-            //     if(currUserId == review.getUserId()){
-            //         newReviews.add(review);
-            //     }
-            // }
-
 
             return reviews;
         }

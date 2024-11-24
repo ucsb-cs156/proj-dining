@@ -13,5 +13,5 @@ import java.util.Optional;
  */
 @Repository
 public interface ReviewsRepository extends CrudRepository<Reviews, Long> {
-    Optional<Reviews> findByUserId(Long userId);
+    Iterable<Reviews> findByUserId(Long userId);
 }
