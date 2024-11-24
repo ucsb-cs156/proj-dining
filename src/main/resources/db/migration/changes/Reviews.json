@@ -104,7 +104,7 @@
                     "column": {
                       "name": "DATE_EDITED",
                       "type": "TIMESTAMP",
-                      "constraints": {"nullable": true}
+                      "constraints": {"nullable": false}
                     }
                   }
                 ],
