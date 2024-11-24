@@ -97,7 +97,7 @@
                     "column": {
                       "name": "DATE_CREATED",
                       "type": "TIMESTAMP",
-                      "constraints": {"nullable": true}
+                      "constraints": {"nullable": false}
                     }
                   },
                   {
