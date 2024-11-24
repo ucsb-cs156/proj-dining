@@ -49,6 +49,23 @@
                   },
                   {
                     "column": {
+                      "name": "REVIEWER_COMMENTS",
+                      "type": "VARCHAR(255)",
+                      "defaultValue": null
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "ITEMS_STARS",
+                      "type": "BIGINT",
+                      "defaultValue": null,
+                      "constraints": {
+                        "check": "ITEMS_STARS >= 1 AND ITEMS_STARS <= 5"
+                      }
+                    }
+                  },
+                  {
+                    "column": {
                       "name": "DATE_ITEM_SERVED",
                       "type": "TIMESTAMP",
                       "constraints": {"nullable": false}
@@ -87,7 +104,7 @@
                     "column": {
                       "name": "DATE_EDITED",
                       "type": "TIMESTAMP",
-                      "constraints": {"nullable": false}
+                      "constraints": {"nullable": true}
                     }
                   }
                 ],

@@ -10,4 +10,16 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ReviewRepository extends CrudRepository<Review, Long> {
+
+
+    /**
+     * 
+     * @param studentId
+     * @return all reviews that have come from a single reviewer, ex say this user has made a few reviews over the past year
+     * well then this method will return only the reviews that this user has sent 
+     */
+
+    Iterable<Review> findAllByStudentId(long studentId);
+ 
+
 }
