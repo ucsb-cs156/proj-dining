@@ -94,6 +94,8 @@ public class ReviewControllerTests extends ControllerTestCase {
                 Review review = Review.builder()
                                 .dateCreated(now)
                                 .dateEdited(now)
+                                .itemsStars(1l)
+                                .reviewerComments("Worst flavor ever.")
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
@@ -104,7 +106,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
                 // Act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?itemId=Bfast1090&dateItemServed=2021-12-12T08:08:08")
+                                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
                                 .with(csrf()))
                                 .andExpect(status().isOk())
                                 .andReturn();
@@ -117,8 +119,10 @@ public class ReviewControllerTests extends ControllerTestCase {
                 JsonNode expectedJson = mapper.readTree(jsonReview);
 
                 assertEquals(expectedJson.get("studentId").asInt(), responseJson.get("studentId").asInt());
+                assertEquals(expectedJson.get("itemsStars").asInt(), responseJson.get("itemsStars").asInt());
                 assertEquals(expectedJson.get("status").asText(), responseJson.get("status").asText());
                 assertEquals(expectedJson.get("itemId").asText(), responseJson.get("itemId").asText());
+                assertEquals(expectedJson.get("reviewerComments").asText(), responseJson.get("reviewerComments").asText());
 
                 // Manually compare important date fields with a threshold for acceptable
                 // variation
@@ -126,6 +130,135 @@ public class ReviewControllerTests extends ControllerTestCase {
                 checkDates(expectedJson, responseJson, "dateCreated");
                 checkDates(expectedJson, responseJson, "dateEdited");
         }
+        
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_rating_below_1_throws_exception() throws Exception {
+            mockMvc.perform(
+                    post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
+                    .with(csrf()))
+                    .andDo(print()) // This helps you see the full response for debugging
+                    .andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_rating_above_5_throws_exception() throws Exception {
+            mockMvc.perform(
+                    post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=6&dateItemServed=2021-12-12T08:08:08")
+                    .with(csrf()))
+                    .andDo(print()) // This helps you see the full response for debugging
+                    .andExpect(status().isBadRequest());
+        }
+
+            // Test valid input at boundaries
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
+        // Lower boundary test
+        mockMvc.perform(
+                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                .with(csrf()))
+            .andExpect(status().isOk());
+        // Lower boundary test
+        mockMvc.perform(
+                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
+                .with(csrf()))
+            .andExpect(status().isOk());
+    }
+
+
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_emptyString_on_creating_new_review() throws Exception {
+
+                // Arrange
+                LocalDateTime now = LocalDateTime.now();
+
+                Review review = Review.builder()
+                                .dateCreated(now)
+                                .dateEdited(now)
+                                .itemsStars(1l)
+                                .reviewerComments("   ")
+                                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                                .studentId(1L)
+                                .status("Awaiting Moderation")
+                                .itemId("Bfast1090")
+                                .id(0L)
+                                .build();
+                when(reviewRepository.save(eq(review))).thenReturn(review);
+
+                // Act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=   &itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                .with(csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                String jsonReview = mapper.writeValueAsString(review);
+
+                // Assert
+                verify(reviewRepository).save(any(Review.class));
+                JsonNode responseJson = mapper.readTree(response.getResponse().getContentAsString());
+                JsonNode expectedJson = mapper.readTree(jsonReview);
+
+                assertTrue(responseJson.get("reviewerComments").isNull());
+
+
+                //assertEquals(expectedJson.get("reviewerComments").asText(), responseJson.get("reviewerComments").asText());
+
+        }
+        // @WithMockUser(roles = { "USER" })
+        // @Test
+        // public void a_user_can_post_a_new_review_throws_itemStarts_Exception() throws Exception {
+
+        //         // Arrange
+        //         LocalDateTime now = LocalDateTime.now();
+
+        //         Review review2 = Review.builder()
+        //                         .dateCreated(now)
+        //                         .dateEdited(now)
+        //                         .itemsStars(0l)
+        //                         .reviewerComments("")
+        //                         .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+        //                         .studentId(1L)
+        //                         .status("Awaiting Moderation")
+        //                         .itemId("Bfast1090")
+        //                         .id(0L)
+        //                         .build();
+        //         when(reviewRepository.save(eq(review2))).thenReturn(review2);
+
+        //         // Act
+        //         MvcResult response2 = mockMvc.perform(
+        //                         post("/api/reviews/post?itemId=Bfast1090&reviewerComments=&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
+        //                         .with(csrf()))
+        //                         .andExpect(status().isBadRequest())
+        //                         .andReturn();
+
+        //         String jsonReview2 = mapper.writeValueAsString(review2);
+
+        //         // Assert
+        //         verify(reviewRepository).save(any(Review.class));
+        //         JsonNode responseJson2 = mapper.readTree(response2.getResponse().getContentAsString());
+        //         JsonNode expectedJson2 = mapper.readTree(jsonReview2);
+
+        //         assertEquals(expectedJson2.get("studentId").asInt(), responseJson2.get("studentId").asInt());
+        //         assertEquals(expectedJson2.get("itemsStars").asInt(), responseJson2.get("itemsStars").asInt());
+        //         assertEquals(expectedJson2.get("status").asText(), responseJson2.get("status").asText());
+        //         assertEquals(expectedJson2.get("itemId").asText(), responseJson2.get("itemId").asText());
+        //         assertEquals(expectedJson2.get("reviewerComments").asText(), responseJson2.get("reviewerComments").asText());
+
+        //         // Manually compare important date fields with a threshold for acceptable
+        //         // variation
+        //         checkDates(expectedJson2, responseJson2, "dateItemServed");
+        //         checkDates(expectedJson2, responseJson2, "dateCreated");
+        //         checkDates(expectedJson2, responseJson2, "dateEdited");
+        // }
+
+
+
+
 
         @WithMockUser(roles = { "ADMIN" })
         @Test
@@ -137,16 +270,20 @@ public class ReviewControllerTests extends ControllerTestCase {
                 Review review1 = Review.builder()
                                 .dateCreated(now)
                                 .dateEdited(now)
+                                .itemsStars(3l)
+                                .reviewerComments("Im tired of this same chicken")
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId("Dinner2313")
                                 .id(0L)
                                 .build();
 
                 Review review2 = Review.builder()
                                 .dateCreated(now.plusDays(4))
                                 .dateEdited(now.plusDays(5))
+                                .itemsStars(5l)
+                                .reviewerComments("MMMMM I LOVE CHICKEN")
                                 .dateItemServed(LocalDateTime.of(2022, 7, 1, 8, 8, 8))
                                 .studentId(2L)
                                 .status("Awaiting Moderation")
@@ -154,8 +291,20 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .id(0L)
                                 .build();
 
+                Review review3 = Review.builder()
+                                .dateCreated(now)
+                                .dateEdited(now)
+                                .itemsStars(6l)
+                                .reviewerComments("Im tired of this same chicken")
+                                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                                .studentId(1L)
+                                .status("Awaiting Moderation")
+                                .itemId("Dinner2313")
+                                .id(0L)
+                                .build();
+
                 ArrayList<Review> reviews = new ArrayList<>();
-                reviews.addAll(Arrays.asList(review1, review2));
+                reviews.addAll(Arrays.asList(review1, review2, review3));
 
                 when(reviewRepository.findAll()).thenReturn(reviews);
                 // Act
