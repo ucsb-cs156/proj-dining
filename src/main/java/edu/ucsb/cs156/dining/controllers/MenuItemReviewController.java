@@ -1,8 +1,10 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import edu.ucsb.cs156.dining.entities.MenuItemReview;
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.MenuItemReviewRepository;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,9 +23,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import jakarta.validation.Valid;
-
 import java.time.LocalDateTime;
 
 
@@ -39,6 +42,9 @@ public class MenuItemReviewController extends ApiController {
 
     @Autowired
     MenuItemReviewRepository menuItemReviewRepository;
+
+    @Autowired
+    MenuItemRepository menuItemRepository;
     
     /**
      * Create a new menu item review -> all users
@@ -48,8 +54,7 @@ public class MenuItemReviewController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public MenuItemReview postMenuItemReview(
-           // MAKE SURE THE MENU ITEM EXISTS -> look up itemID and check status code
-            @Parameter(name="studentUserId") @RequestParam long studentuserId,
+            @Parameter(name="studentUserId") @RequestParam long studentUserId,
             @Parameter(name="itemId") @RequestParam long itemId,
             @Parameter(name="itemServedDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("itemServedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime itemServedDate,
             @Parameter(name="status") @RequestParam String status,
@@ -60,11 +65,14 @@ public class MenuItemReviewController extends ApiController {
     
             throws JsonProcessingException {
 
+                MenuItem menuItem = menuItemRepository.findById(itemId).orElseThrow(() -> 
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, "MenuItem with ID " + itemId + " not found"));
+
         log.info("itemServedDate={}", itemServedDate);
 
         MenuItemReview menuItemReview = new MenuItemReview();
-        menuItemReview.setStudentUserId(studentuserId);
-        menuItemReview.setItemId(itemId);
+        menuItemReview.setStudentUserId(studentUserId);
+        menuItemReview.setMenuItem(menuItem);
         menuItemReview.setItemServedDate(itemServedDate);
         menuItemReview.setStatus(status);
         menuItemReview.setModeratorUserId(moderatorUserId);
