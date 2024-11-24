@@ -137,7 +137,7 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
     when(menuItemRepository.save(any(MenuItem.class))).thenAnswer(invocation -> {
       MenuItem menuItem = invocation.getArgument(0);
-      menuItem.setId(1L);  // Mock the ID after saving
+      menuItem.setId(1L);
       return menuItem;
     });
 
@@ -153,9 +153,6 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
   
     for(MenuItem item : menuItems){
         menuItemRepository.save(item);
-
-      // assertEquals(item.getDiningCommonsCode(), "portola");
-      // assertEquals(item.getMealCode(), "dinner");
 
       when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station))
             .thenReturn(Optional.of(new MenuItem(1L, diningCommonCode, mealCode, name, station)));
