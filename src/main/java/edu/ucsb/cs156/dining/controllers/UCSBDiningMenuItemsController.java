@@ -2,6 +2,10 @@ package edu.ucsb.cs156.dining.controllers;
 
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import java.util.Optional;
+import java.util.ArrayList;
 
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 
@@ -30,11 +34,15 @@ import jakarta.validation.Valid;
 public class UCSBDiningMenuItemsController extends ApiController {
 
   @Autowired UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
+  
+  @Autowired
+  MenuItemRepository menuItemRepository;
 
   @Operation(summary = "Get list of entrees being served at given meal, dining common, and day")
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping(value = "/{date-time}/{dining-commons-code}/{meal-code}", produces = "application/json")
-  public ResponseEntity<List<Entree>> get_menu_items(
+  // public ResponseEntity<List<Entree>> get_menu_items(
+  public ResponseEntity<List<MenuItem>> get_menu_items(
       @Parameter(description= "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)") 
       @PathVariable("date-time") String datetime,
       @PathVariable("dining-commons-code") String diningcommoncode,
@@ -44,6 +52,23 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);
 
-    return ResponseEntity.ok().body(body);
+    List<MenuItem> menuitems = new ArrayList<>();
+
+    for (Entree entree : body) {
+        Optional<MenuItem> exists = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningcommoncode, mealcode, entree.getName(), entree.getStation());
+
+        MenuItem newMenuItem = exists.orElse(new MenuItem());
+          // MenuItem newMenuItem = new MenuItem();
+          newMenuItem.setDiningCommonsCode(diningcommoncode);
+          newMenuItem.setMealCode(mealcode);
+          newMenuItem.setName(entree.getName());
+          newMenuItem.setStation(entree.getStation());
+
+          menuItemRepository.save(newMenuItem);
+          menuitems.add(newMenuItem);
+    }
+    
+    // return ResponseEntity.ok().body(body);
+    return ResponseEntity.ok().body(menuitems);
   }
 }
