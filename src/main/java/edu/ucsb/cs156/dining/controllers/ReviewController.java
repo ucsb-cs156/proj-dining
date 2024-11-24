@@ -94,7 +94,6 @@ public class ReviewController extends ApiController {
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
         review.setDateCreated(now);
-        review.setDateEdited(now);
 
         // Ensures content of truly empty and sets to null if so
         if ((reviewerComments != null && !reviewerComments.trim().isEmpty())) {
