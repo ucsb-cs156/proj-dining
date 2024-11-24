@@ -31,10 +31,11 @@ public class Reviews {
   private String date_served;
   private String status;
 
-  @Column(name="userId")
+  @Column(name="user_id")
   private long userId;
   
   private String moderator_comments;
+  private int moderator_id;
   private String created_date;
   private String last_edited_date;
 }

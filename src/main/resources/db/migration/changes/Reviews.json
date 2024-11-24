@@ -1,8 +1,8 @@
 { "databaseChangeLog": [
     {
         "changeSet": {
-          "id": "Reviews-6",
-          "author": "KEVINY",
+          "id": "Reviews-10",
+          "author": "KEV-YAN",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
@@ -76,6 +76,15 @@
                       },
                       "name": "USERID",
                       "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints":{
+                        "default": null
+                      },
+                      "name": "MODERATOR_ID",
+                      "type": "INTEGER"
                     }
                   },
                   {
