@@ -10,7 +10,9 @@ export default function MenuItemPage() {
     <BasicLayout>
       <div className="pt-2">
         <h1>Menu Item page not yet implemented for the following info</h1>
-        <>{dateTime}   /   {diningCommonsCode}   /   {meal}</>
+        <>
+          {dateTime} / {diningCommonsCode} / {meal}
+        </>
       </div>
     </BasicLayout>
   );

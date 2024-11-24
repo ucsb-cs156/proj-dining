@@ -38,11 +38,15 @@ describe("MenuItemPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await screen.findByText("Menu Item page not yet implemented for the following info");
+    await screen.findByText(
+      "Menu Item page not yet implemented for the following info",
+    );
 
     // assert
     expect(
-      screen.getByText("Menu Item page not yet implemented for the following info"),
+      screen.getByText(
+        "Menu Item page not yet implemented for the following info",
+      ),
     ).toBeInTheDocument();
   });
 });
