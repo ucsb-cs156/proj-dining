@@ -33,7 +33,7 @@ public class User {
  private String locale;
  private String hostedDomain;
  private boolean admin;
- private String alias = "Anonymous User";
+ private String alias;
  private String proposedAlias;
 
 }

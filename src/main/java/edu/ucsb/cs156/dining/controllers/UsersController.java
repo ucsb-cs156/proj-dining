@@ -22,7 +22,7 @@ import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-
+import java.util.List;
 
 /**
  * This is a REST controller for getting information about the users.
@@ -51,6 +51,21 @@ public class UsersController extends ApiController {
     public ResponseEntity<String> users()
             throws JsonProcessingException {
         Iterable<User> users = userRepository.findAll();
+        String body = mapper.writeValueAsString(users);
+        return ResponseEntity.ok().body(body);
+    }
+
+    /**
+     * This method returns list of all users with a proposed alias.
+     * @return a list of users with a proposed alias
+     * @throws JsonProcessingException if there is an error processing the JSON
+     */
+    @Operation(summary = "Get a list of all users with a proposed alias")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/usersWithProposedAlias")
+    public ResponseEntity<String> getUsersWithProposedAlias()
+            throws JsonProcessingException {
+        Iterable<User> users = userRepository.findByProposedAliasNotNull();
         String body = mapper.writeValueAsString(users);
         return ResponseEntity.ok().body(body);
     }

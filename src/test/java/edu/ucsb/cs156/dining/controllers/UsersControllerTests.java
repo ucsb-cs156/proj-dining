@@ -21,11 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import java.util.Optional;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -194,75 +196,105 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-@WithMockUser(roles = { "ADMIN" })
-public void admin_approves_alias() throws Exception {
-    // arrange
-    User userOrig = User.builder()
-        .id(7L)
-        .email("user@example.org")
-        .alias("Chip")
-        .proposedAlias("Chop") 
+  @WithMockUser(roles = { "ADMIN" })
+  public void admin_approves_alias() throws Exception {
+      // arrange
+      User userOrig = User.builder()
+          .id(7L)
+          .email("user@example.org")
+          .alias("Chip")
+          .proposedAlias("Chop") 
+          .build();
+
+      User userUpdated = User.builder()
+          .id(7L)
+          .email("user@example.org")
+          .alias("Chop")  // Alias should be updated
+          .proposedAlias(null)
+          .build();
+
+      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+
+      // act
+      MvcResult response = mockMvc.perform(
+          put("/api/currentUser/updateAliasModeration")
+              .param("id", String.valueOf(7L))
+              .param("approved", "true") // Boolean value passed as string
+              .with(csrf()))
+          .andExpect(status().isOk()).andReturn();
+
+      // assert
+      verify(userRepository, times(1)).findById(7L);
+      verify(userRepository, times(1)).save(userUpdated);  // Verify the user has been saved with the new alias
+      String responseString = response.getResponse().getContentAsString();
+      String expectedJson = mapper.writeValueAsString(userUpdated);
+      assertEquals(expectedJson, responseString);
+  }
+
+  @Test
+  @WithMockUser(roles = { "ADMIN" })
+  public void admin_does_not_approve_alias() throws Exception {
+      // arrange
+      User userOrig = User.builder()
+          .id(7L)
+          .email("user@example.org")
+          .alias("Chipotle")
+          .proposedAlias("Taco Bell")
+          .build();
+
+      User userUnchanged = User.builder()
+          .id(7L)
+          .email("user@example.org")
+          .alias("Chipotle") 
+          .proposedAlias("Taco Bell")
+          .build();
+
+      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+
+      // act
+      MvcResult response = mockMvc.perform(
+          put("/api/currentUser/updateAliasModeration")
+              .param("id", String.valueOf(7L))
+              .param("approved", "false")  // Setting approved as false
+              .with(csrf()))
+          .andExpect(status().isOk()).andReturn();
+
+      // assert
+      verify(userRepository, times(1)).findById(7L);
+      verify(userRepository, times(1)).save(userUnchanged);  // User should remain unchanged
+      String responseString = response.getResponse().getContentAsString();
+      String expectedJson = mapper.writeValueAsString(userUnchanged);
+      assertEquals(expectedJson, responseString);
+  }
+
+  @Test
+  @WithMockUser(roles = { "ADMIN" })
+  public void admin_can_get_all_users_with_proposed_alias() throws Exception {
+      // arrange
+      User user1 = User.builder()
+        .id(1L)
+        .proposedAlias("Chipo")
+        .build();
+      User user2 = User.builder()
+        .id(2L)
+        .proposedAlias("Taco")
         .build();
 
-    User userUpdated = User.builder()
-        .id(7L)
-        .email("user@example.org")
-        .alias("Chop")  // Alias should be updated
-        .proposedAlias(null)
-        .build();
+      List<User> users = Arrays.asList(user1, user2);
 
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+      when(userRepository.findByProposedAliasNotNull()).thenReturn(users);
+      String expectedJson = mapper.writeValueAsString(users);
 
-    // act
-    MvcResult response = mockMvc.perform(
-        put("/api/currentUser/updateAliasModeration")
-            .param("id", String.valueOf(7L))
-            .param("approved", "true") // Boolean value passed as string
-            .with(csrf()))
-        .andExpect(status().isOk()).andReturn();
+      // act
+      MvcResult response = mockMvc.perform(get("/api/admin/usersWithProposedAlias")
+              .with(csrf()))
+              .andExpect(status().isOk())
+              .andReturn();
 
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUpdated);  // Verify the user has been saved with the new alias
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUpdated);
-    assertEquals(expectedJson, responseString);
-}
-
-@Test
-@WithMockUser(roles = { "ADMIN" })
-public void admin_does_not_approve_alias() throws Exception {
-    // arrange
-    User userOrig = User.builder()
-        .id(7L)
-        .email("user@example.org")
-        .alias("Chipotle")
-        .proposedAlias("Taco Bell")
-        .build();
-
-    User userUnchanged = User.builder()
-        .id(7L)
-        .email("user@example.org")
-        .alias("Chipotle") 
-        .proposedAlias("Taco Bell")
-        .build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
-
-    // act
-    MvcResult response = mockMvc.perform(
-        put("/api/currentUser/updateAliasModeration")
-            .param("id", String.valueOf(7L))
-            .param("approved", "false")  // Setting approved as false
-            .with(csrf()))
-        .andExpect(status().isOk()).andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUnchanged);  // User should remain unchanged
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUnchanged);
-    assertEquals(expectedJson, responseString);
-}
+      // assert
+      String responseString = response.getResponse().getContentAsString();
+      assertEquals(expectedJson, responseString);
+      verify(userRepository, times(1)).findByProposedAliasNotNull();
+  }
 
 }
