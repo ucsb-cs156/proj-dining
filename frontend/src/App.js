@@ -17,6 +17,8 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
+import Moderate from "main/pages/Moderate";
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -43,6 +45,10 @@ function App() {
           <>
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
           </>
+        )}
+
+        {hasRole(currentUser, "ROLE_ADMIN") && (
+          <Route exact path="/moderate" element={<Moderate />} />
         )}
 
         {hasRole(currentUser, "ROLE_ADMIN") && (
