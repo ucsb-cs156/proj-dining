@@ -181,6 +181,11 @@ public class DiningMenuAPIService {
   }
 
   public boolean dateInRange(OffsetDateTime dateTime, OffsetDateTime startDateTest, OffsetDateTime endDateTest) {
+    if (dateTime == null) 
+    {
+      dateTime = OffsetDateTime.now();
+    }
+
     boolean dateGEStart = !dateTime.isBefore(startDateTest);
     boolean dateLEEnd = !dateTime.isAfter(endDateTest);
     return (dateGEStart && dateLEEnd);
