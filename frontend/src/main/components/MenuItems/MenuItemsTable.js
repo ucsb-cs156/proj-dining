@@ -11,12 +11,6 @@ export default function MenuItemsTable({ menuItems }) {
     window.alert("Feature coming soon!");
   };
 
-  // Stryker disable all : hard to test for query caching
-
-  // Stryker restore all
-
-  // Stryker disable next-line all : TODO try to make a good test for this
-  //make a test for stryker window alert
   const columns = [
     {
       Header: "id",
