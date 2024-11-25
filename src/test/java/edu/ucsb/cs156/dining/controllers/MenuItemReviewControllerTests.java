@@ -58,53 +58,6 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
         @MockBean
         CurrentUserService currentUserService;
 
-       
-        // GET
-
-        @Test
-        public void logged_out_users_cannot_get_all() throws Exception {
-                mockMvc.perform(get("/api/menuitemreviews/all"))
-                                .andExpect(status().is(403)); // logged out users can't get all
-        }
-
-        @WithMockUser(roles = { "USER" })
-        @Test
-        public void logged_in_users_cannot_get_all() throws Exception {
-                mockMvc.perform(get("/api/menuitemreviews/all"))
-                                .andExpect(status().is(403)); // logged in non admin users cannot get all
-        }
-
-        @WithMockUser(roles = { "ADMIN" })
-        @Test
-        public void admin_can_get_all_awaiting_moderation_reviews() throws Exception {
-                MenuItemReview review1 = MenuItemReview.builder()
-                        .id(1L)
-                        .studentUserId(100L)
-                        .status("Awaiting Moderation")
-                        .build();
-
-                MenuItemReview review2 = MenuItemReview.builder()
-                        .id(2L)
-                        .studentUserId(101L)
-                        .status("Awaiting Moderation")
-                        .build();
-
-                when(menuItemReviewRepository.findByStatus("Awaiting Moderation"))
-                        .thenReturn(Arrays.asList(review1, review2));
-
-                MvcResult result = mockMvc.perform(get("/api/menuitemreviews/all"))
-                        .andExpect(status().isOk())
-                        .andReturn();
-
-                String responseContent = result.getResponse().getContentAsString();
-                assertTrue(responseContent.contains("\"id\":1"));
-                assertTrue(responseContent.contains("\"id\":2"));
-                assertTrue(responseContent.contains("\"status\":\"Awaiting Moderation\""));
-
-                verify(menuItemReviewRepository, times(1)).findByStatus("Awaiting Moderation");
-        }
-
-
         // POST
         @Test
         public void logged_out_users_cannot_post() throws Exception {

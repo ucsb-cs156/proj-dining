@@ -27,9 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
-import jakarta.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.stream.StreamSupport;
+
 
 
 /**
@@ -90,22 +89,4 @@ public class MenuItemReviewController extends ApiController {
         return savedMenuItemReview;
     }
 
-
-    /**
-     * List all menu item reviews with status "Awaiting Moderation" -> ADMIN ONLY
-     */
-    @Operation(summary= "List all menu item reviews")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/all")
-    public Iterable<MenuItemReview> allAwawitingModerationMenuItemReviewAdminOnly() {
-        try {
-            Iterable<MenuItemReview> reviews = menuItemReviewRepository.findByStatus("Awaiting Moderation");
-            long size = StreamSupport.stream(reviews.spliterator(), false).count();
-            log.info("Fetched {} reviews", size);
-            return reviews;
-        } catch (Exception e) {
-            log.error("Error fetching reviews", e);
-            throw e; 
-        }
-    }
 }
