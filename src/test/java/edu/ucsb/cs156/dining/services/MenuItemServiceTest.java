@@ -9,6 +9,7 @@ import edu.ucsb.cs156.dining.dto.MenuItemDTO;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @RestClientTest(MenuItemService.class)
@@ -89,6 +91,8 @@ public class MenuItemServiceTest {
         MenuItemDTO item2 = result.get(1);
         assertEquals("Pancakes", item2.getName());
         assertEquals("Breakfast Station", item2.getStation());
+    
+        
     }
 
     @Test
@@ -132,4 +136,96 @@ public class MenuItemServiceTest {
         assertEquals(500, exception.getStatusCode().value());
         assertTrue(exception.getReason().contains("Error fetching menu items from the API"));
     }
+
+    @Test
+    public void testSaveOrUpdateMenuItem_NewItem() {
+        // Arrange
+        MenuItem menuItem = new MenuItem(0L, null, null, "Scrambled Eggs", "Breakfast Station");
+        String diningCommonsCode = "de-la-guerra";
+        String mealCode = "breakfast";
+
+        MenuItem savedMenuItem = new MenuItem(1L, "de-la-guerra", "breakfast", "Scrambled Eggs", "Breakfast Station");
+
+        when(menuItemRepository.findByUniqueFields(diningCommonsCode, mealCode, menuItem.getName(), menuItem.getStation()))
+            .thenReturn(Optional.empty());
+        when(menuItemRepository.save(menuItem)).thenReturn(savedMenuItem);
+
+        // Act
+        MenuItem result = menuItemService.saveOrUpdateMenuItem(menuItem, diningCommonsCode, mealCode);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(savedMenuItem.getId(), result.getId());
+        assertEquals(savedMenuItem.getDiningCommonsCode(), result.getDiningCommonsCode());
+        assertEquals(savedMenuItem.getMealCode(), result.getMealCode());
+        assertEquals(savedMenuItem.getName(), result.getName());
+        assertEquals(savedMenuItem.getStation(), result.getStation());
+
+        verify(menuItemRepository, times(1)).findByUniqueFields(diningCommonsCode, mealCode, menuItem.getName(), menuItem.getStation());
+        verify(menuItemRepository, times(1)).save(menuItem);
+    }
+
+    @Test
+    public void testSaveOrUpdateMenuItem_ExistingItem() {
+        // Arrange
+        MenuItem menuItem = new MenuItem(0L, null, null, "Scrambled Eggs", "Breakfast Station");
+        String diningCommonsCode = "de-la-guerra";
+        String mealCode = "breakfast";
+
+        MenuItem existingMenuItem = new MenuItem(1L, "de-la-guerra", "breakfast", "Scrambled Eggs", "Breakfast Station");
+
+        when(menuItemRepository.findByUniqueFields(diningCommonsCode, mealCode, menuItem.getName(), menuItem.getStation()))
+            .thenReturn(Optional.of(existingMenuItem));
+
+        // Act
+        MenuItem result = menuItemService.saveOrUpdateMenuItem(menuItem, diningCommonsCode, mealCode);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(existingMenuItem.getId(), result.getId());
+        assertEquals(existingMenuItem.getDiningCommonsCode(), result.getDiningCommonsCode());
+        assertEquals(existingMenuItem.getMealCode(), result.getMealCode());
+        assertEquals(existingMenuItem.getName(), result.getName());
+        assertEquals(existingMenuItem.getStation(), result.getStation());
+
+        verify(menuItemRepository, times(1)).findByUniqueFields(diningCommonsCode, mealCode, menuItem.getName(), menuItem.getStation());
+        verify(menuItemRepository, times(0)).save(any(MenuItem.class));
+    }
+
+    @Test
+public void testSaveOrUpdateMenuItem_NewItem_FieldSetting() {
+    // Arrange
+    String diningCommonsCode = "de-la-guerra";
+    String mealCode = "breakfast";
+    String itemName = "Scrambled Eggs";
+    String station = "Breakfast Station";
+
+    // 给 id 设置初始值
+    MenuItem menuItem = new MenuItem(0L, null, null, itemName, station); 
+    MenuItem savedMenuItem = new MenuItem(1L, diningCommonsCode, mealCode, itemName, station);
+
+    // 模拟存储行为：第一次 findByUniqueFields 返回空，save 方法返回新保存的对象
+    when(menuItemRepository.findByUniqueFields(diningCommonsCode, mealCode, itemName, station))
+        .thenReturn(Optional.empty());
+    when(menuItemRepository.save(any(MenuItem.class))).thenReturn(savedMenuItem);
+
+    // 捕获被传递给 save 的 MenuItem
+    ArgumentCaptor<MenuItem> menuItemCaptor = ArgumentCaptor.forClass(MenuItem.class);
+
+    // Act
+    menuItemService.saveOrUpdateMenuItem(menuItem, diningCommonsCode, mealCode);
+
+    // Assert
+    verify(menuItemRepository, times(1)).save(menuItemCaptor.capture());
+    MenuItem capturedMenuItem = menuItemCaptor.getValue();
+
+    // 验证字段是否被正确设置
+    assertEquals(diningCommonsCode, capturedMenuItem.getDiningCommonsCode());
+    assertEquals(mealCode, capturedMenuItem.getMealCode());
+    assertEquals(itemName, capturedMenuItem.getName());
+    assertEquals(station, capturedMenuItem.getStation());
+    assertNotNull(capturedMenuItem.getId()); // 检查 ID 不为 null
+}
+
+
 }

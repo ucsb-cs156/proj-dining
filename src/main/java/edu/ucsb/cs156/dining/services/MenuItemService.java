@@ -64,16 +64,12 @@ public class MenuItemService {
           url, HttpMethod.GET, entity, MenuItem[].class);
 
       MenuItem[] menuItemsArray = response.getBody();
-      System.out.println("API Response - Menu Items Array: " + Arrays.toString(menuItemsArray));
 
       // Save unique menu items to the database and return DTOs
       List<MenuItemDTO> result = Arrays.stream(menuItemsArray)
             .map(menuItem -> saveOrUpdateMenuItem(menuItem, diningCommonsCode, mealCode))
             .map(menuItem -> new MenuItemDTO(menuItem.getId(), menuItem.getName(), menuItem.getStation()))
             .collect(Collectors.toList());
-
-        // Log DTOs to be returned
-      System.out.println("MenuItemDTOs to be returned: " + result);
       return result;
     } catch (HttpClientErrorException.NotFound e) {
         // Handle 404 error from external API
@@ -96,16 +92,14 @@ public class MenuItemService {
    * @param mealCode          the meal code
    * @return the saved or existing MenuItem
    */
-  private MenuItem saveOrUpdateMenuItem(MenuItem menuItem, String diningCommonsCode, String mealCode) {
+  public MenuItem saveOrUpdateMenuItem(MenuItem menuItem, String diningCommonsCode, String mealCode) {
     // Check if the menu item already exists
     return menuItemRepository.findByUniqueFields(diningCommonsCode, mealCode, menuItem.getName(), menuItem.getStation())
         .orElseGet(() -> {
           // Log the new menu item to be saved
-            System.out.println("Saving new MenuItem: " + menuItem);
             menuItem.setDiningCommonsCode(diningCommonsCode);
             menuItem.setMealCode(mealCode);
             MenuItem savedItem = menuItemRepository.save(menuItem);
-            System.out.println("Saved MenuItem: " + savedItem);
             return savedItem;
         });
   }

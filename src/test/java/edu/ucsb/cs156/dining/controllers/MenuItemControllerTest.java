@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
 @Import(SecurityConfig.class)
@@ -62,10 +63,16 @@ public class MenuItemControllerTest {
         when(menuItemService.getMenuItems(dateTime, diningCommonsCode, mealCode))
                 .thenReturn(mockResponse);
 
+        // Convert mockResponse to JSON string for comparison
+        ObjectMapper objectMapper = new ObjectMapper();
+        String expectedResponse = objectMapper.writeValueAsString(mockResponse);
+
         // Act & Assert
         mockMvc.perform(get(String.format("/api/diningcommons/%s/%s/%s", dateTime, diningCommonsCode, mealCode)))
-                .andExpect(status().isOk());
-    }
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedResponse)); // Assert response body matches mockResponse
+        }
+    
 
     @WithMockUser(roles = { "USER" })
     @Test
