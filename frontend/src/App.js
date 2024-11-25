@@ -16,6 +16,8 @@ import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage"
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import DiningCommonsPlaceholderPage from "main/pages/UCSBAPIDiningCommons/UCSBAPIDiningCommonsPlaceholderPage"; // Import the new component
+import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
+import DiningCommonsPage from "main/pages/DiningCommons/DiningCommonsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -103,6 +105,24 @@ function App() {
           path="/diningcommons/:diningCommonsCode"
           element={<DiningCommonsPlaceholderPage />}
         />
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route
+              exact
+              path="/diningcommons/:date-time/:dining-commons-code/:meal"
+              element={<MenuItemPage />}
+            />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route
+              exact
+              path="/diningcommons/:diningCommonsCode"
+              element={<DiningCommonsPage />}
+            />
+          </>
+        )}
       </Routes>
     </BrowserRouter>
   );
