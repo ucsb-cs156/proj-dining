@@ -97,7 +97,13 @@ public class MenuItemReviewController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<MenuItemReview> allAwawitingModerationMenuItemReviewAdminOnly() {
+        log.info("Fetching all reviews with status 'Awaiting Moderation'");
         Iterable<MenuItemReview> reviews = menuItemReviewRepository.findByStatus("Awaiting Moderation");
+        if (reviews == null) {
+            log.error("Repository returned null instead of an empty list!");
+        } else if (!reviews.iterator().hasNext()) {
+            log.info("No reviews found in the database.");
+        }
         return reviews;
     }
 }
