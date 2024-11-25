@@ -7,9 +7,12 @@ import edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /** Service object that wraps the UCSB Academic Curriculum API */
 @Service
@@ -87,7 +91,8 @@ public class DiningMenuAPIService {
     headers.set("ucsb-api-version", "1.0");
     headers.set("ucsb-api-key", this.apiKey);
 
-    String formattedDateTime = dateTime.toString(); // ISO format
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    String formattedDateTime = dateTime.format(formatter);
 
     String url = GET_COMMONS.replace("{date-time}", formattedDateTime);
 
