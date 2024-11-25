@@ -5,7 +5,7 @@ import { useBackend } from "main/utils/useBackend";
 
 export default function HomePage() {
   // Fetch dining commons data from the backend
-  const { data: diningCommons, error } = useBackend(
+  const { data: diningCommons } = useBackend(
     ["/api/diningcommons/all"],
     { method: "GET", url: "/api/diningcommons/all" },
     [],
