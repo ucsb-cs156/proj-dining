@@ -3,9 +3,9 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.models.CurrentUser;
-import edu.ucsb.cs156.dining.entities.UCSBDiningCommons;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 import java.util.ArrayList;
 import jakarta.validation.Valid;
+
+
 
 /**
  * This is a REST controller for Reviews
@@ -42,6 +46,9 @@ public class ReviewsController extends ApiController {
     @Autowired
     ReviewsRepository reviewsRepository;
 
+    @Autowired
+    MenuItemRepository menuItemRepository;
+
     /**
      * THis method returns a list of all reviews.
      * @return a list of all reviews
@@ -54,11 +61,10 @@ public class ReviewsController extends ApiController {
         return reviews;
     }
 
-    /**
+   /**
      * This method creates a new review. Accessible only to users with the role "ROLE_ADMIN".
      * @param item_id itemID of the review
      * @param date_served date served 
-     * @param status status of the review
      * @return the save review
      */
     @Operation(summary= "Create a new review")
@@ -67,10 +73,12 @@ public class ReviewsController extends ApiController {
     public Reviews postReview(
         @Parameter(name="item_id") @RequestParam int item_id,
         @Parameter(name="date_served") @RequestParam String date_served,
-        @Parameter(name="status") @RequestParam(required=false) String status
         ) 
         {
 
+        MenuItem menuItem = menuItemRepository.findById((long)item_id)
+        .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "No MenuItem with itemId: " + item_id + " found"));
 
         Reviews reviews = new Reviews();
         CurrentUser user = getCurrentUser();
