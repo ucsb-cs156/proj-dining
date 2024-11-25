@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -90,6 +92,26 @@ public class MealServiceTest {
             mealService.getMeals(dateTime, diningCommonsCode);
         });
         assertEquals("Failed to fetch meals data from API", exception.getMessage());
+    }
+
+    @Test
+    public void testGetMeals_404NotFound() {
+        // Arrange: Mock API response with 404 Not Found
+        LocalDateTime dateTime = LocalDateTime.parse("2024-11-20T00:00:00");
+        String formattedDate = "2024-11-20";
+        String diningCommonsCode = "invalid-commons";
+        String expectedUrl = String.format("https://api.ucsb.edu/dining/menu/v1/%s/%s", formattedDate, diningCommonsCode);
+
+        mockServer.expect(requestTo(expectedUrl))
+                .andExpect(header("ucsb-api-key", apiKey))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        // Act & Assert
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            mealService.getMeals(dateTime, diningCommonsCode);
+        });
+        assertEquals(404, exception.getStatusCode().value());
+        assertTrue(exception.getReason().contains("Meals not found for given date and dining commons"));
     }
 
     @Test
