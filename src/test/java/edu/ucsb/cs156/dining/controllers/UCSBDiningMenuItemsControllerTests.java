@@ -4,7 +4,6 @@ import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.controllers.UCSBDiningMenuItemsController;
-// import edu.ucsb.cs156.dining.dto.MenuItemDTO;
 
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,62 +62,9 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
                         .andExpect(status().is(403)); // logged out users can't get meal items
   }
 
-  // @WithMockUser(roles = { "USER" })
-  // @Test
-  // public void logged_in_users_can_get_meal_items() throws Exception {
-
-  //   String dateTime = "2023-10-10";
-  //   String diningCommonCode = "ortega";
-  //   String mealCode = "lunch";
-
-  //   String jsonResponse =
-  //     String.format(
-  //         """
-  //             [
-  //               {
-  //                 \"name\": \"%s\",
-  //                 \"station\":\"%s\"
-  //               }
-  //             ]
-  //         """,
-  //         NAME,
-  //         STATION);
-    
-  //   List<Entree> expectedResult = new ArrayList<Entree>();
-
-  //   JsonNode rootNode = objectMapper.readTree(jsonResponse);
-  //   Iterator<JsonNode> elements = rootNode.elements();
-
-  //   while (elements.hasNext()) {
-  //       JsonNode element = elements.next();
-  
-  //       Entree meal = Entree.builder()
-  //           .name(element.get("name").asText())
-  //           .station(element.get("station").asText())
-  //           .build();
-  //       expectedResult.add(meal);
-  //   }
-
-  //   String url = "/api/diningcommons/2023-10-10/ortega/lunch";
-
-  //   when(ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode)).thenReturn(expectedResult);
-
-  //   MvcResult response =
-  //       mockMvc
-  //           .perform(get(url).contentType("application/json"))
-  //           .andExpect(status().isOk())
-  //           .andReturn();
-
-  //   assertEquals(
-  //       expectedResult,
-  //       objectMapper.readValue(
-  //           response.getResponse().getContentAsString(),
-  //           new TypeReference<List<Entree>>() {}));
-  // }
-
   @WithMockUser(roles = { "USER" })
   @Test
-  public void meal_item_exists() throws Exception {
+  public void meal_item_created_and_found() throws Exception {
     String dateTime = "2023-10-11";
     String diningCommonCode = "portola";
     String mealCode = "dinner";

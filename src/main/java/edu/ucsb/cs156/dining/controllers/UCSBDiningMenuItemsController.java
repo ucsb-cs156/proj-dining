@@ -41,7 +41,6 @@ public class UCSBDiningMenuItemsController extends ApiController {
   @Operation(summary = "Get list of entrees being served at given meal, dining common, and day")
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping(value = "/{date-time}/{dining-commons-code}/{meal-code}", produces = "application/json")
-  // public ResponseEntity<List<Entree>> get_menu_items(
   public ResponseEntity<List<MenuItem>> get_menu_items(
       @Parameter(description= "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)") 
       @PathVariable("date-time") String datetime,
@@ -67,8 +66,7 @@ public class UCSBDiningMenuItemsController extends ApiController {
           menuItemRepository.save(newMenuItem);
           menuitems.add(newMenuItem);
     }
-    
-    // return ResponseEntity.ok().body(body);
+
     return ResponseEntity.ok().body(menuitems);
   }
 }
