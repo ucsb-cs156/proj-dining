@@ -124,8 +124,8 @@ describe("DiningCommonsTable tests", () => {
     );
 
     // Adjust to look for names present in the fixtures
-    const link = screen.getByText("ortega");
+    const link = screen.getByRole("link", { name: "ortega" });
     expect(link).toBeInTheDocument();
-    expect(link.closest("a")).toHaveAttribute("href", "/diningcommons/ortega");
+    expect(link).toHaveAttribute("href", "/diningcommons/ortega");
   });
 });

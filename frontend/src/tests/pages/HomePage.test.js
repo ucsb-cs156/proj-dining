@@ -1,15 +1,14 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import HomePage from "main/pages/HomePage";
+import { useBackend } from "main/utils/useBackend";
 
 // Mock the `useBackend` hook
 jest.mock("main/utils/useBackend", () => ({
   useBackend: jest.fn(),
 }));
-
-import { useBackend } from "main/utils/useBackend";
 
 describe("HomePage tests", () => {
   const queryClient = new QueryClient();
@@ -55,10 +54,8 @@ describe("HomePage tests", () => {
     );
 
     // Wait for the table to render and verify its content
-    await waitFor(() => {
-      expect(screen.getByText("Dining Commons")).toBeInTheDocument();
-      expect(screen.getByText("Carrillo")).toBeInTheDocument();
-      expect(screen.getByText("De La Guerra")).toBeInTheDocument();
-    });
+    screen.getByText("Dining Commons");
+    screen.getByText("Carrillo");
+    screen.getByText("De La Guerra");
   });
 });
