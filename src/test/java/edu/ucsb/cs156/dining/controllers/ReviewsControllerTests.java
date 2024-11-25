@@ -315,7 +315,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // arrange
 
                 LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
 
                 Review reviewOrig = Review.builder()
                                 .reviewerId(1)
@@ -323,7 +322,9 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .dateServed(ldt1)
                                 .stars(5)
                                 .reviewText("very good")
-                                .status("Awaiting Moderation")
+                                .status("Approved")
+                                .modId(3L)
+                                .modComments("good review")
                                 .createdDate(ldt1)
                                 .lastEditedDate(ldt1)
                                 .build();
@@ -405,7 +406,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // arrange
 
                 LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
 
                 Review reviewOrig = Review.builder()
                                 .reviewerId(1)
