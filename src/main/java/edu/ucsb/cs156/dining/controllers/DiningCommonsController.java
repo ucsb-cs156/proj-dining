@@ -87,7 +87,7 @@ public class DiningCommonsController {
         String station = retrievedMenuItem.getString("station");
 
         // Check if record already exists
-        existingMenuItem = menuItemRepository.findByDiningCommonsCodeAndMealAndNameAndStation(
+        existingMenuItem = menuItemRepository.findFirstByDiningCommonsCodeAndMealAndNameAndStation(
             diningCommonsCode, meal, name, station);
 
         
@@ -97,7 +97,9 @@ public class DiningCommonsController {
         newMenuItem.setName(name);
         newMenuItem.setStation(station);
 
-        returnedMenuItem = existingMenuItem.orElse(menuItemRepository.save(newMenuItem));
+        returnedMenuItem = existingMenuItem.orElseGet(() -> menuItemRepository.save(newMenuItem));
+        // We must use orElseGet (and not orElse) to ensure lazy evaluation of the Optional<MenuItem>, that is,
+        // we only want to save a new MenuItem if NO existing menu item is returned.
 
         // Add to DTO list
         menuItemDTOs.add(new MenuItemDTO(returnedMenuItem.getId(), returnedMenuItem));

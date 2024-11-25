@@ -22,6 +22,6 @@ public interface MenuItemRepository extends CrudRepository<MenuItem, Long> {
      * 
      * @return Optional of MenuItem
      */
-    Optional<MenuItem> findByDiningCommonsCodeAndMealAndNameAndStation(String diningCommonsCode, String meal, String name, String station);
+    Optional<MenuItem> findFirstByDiningCommonsCodeAndMealAndNameAndStation(String diningCommonsCode, String meal, String name, String station);
  
 }

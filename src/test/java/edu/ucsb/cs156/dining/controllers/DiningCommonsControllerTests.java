@@ -83,7 +83,7 @@ public class DiningCommonsControllerTests extends ControllerTestCase {
         .thenReturn(serviceResponseJson);
 
     // Mock repository behavior for existing records
-    when(menuItemRepository.findByDiningCommonsCodeAndMealAndNameAndStation("DLG", "lunch", "Pizza", "Main Line"))
+    when(menuItemRepository.findFirstByDiningCommonsCodeAndMealAndNameAndStation("DLG", "lunch", "Pizza", "Main Line"))
         .thenReturn(Optional.empty());
 
     // Mock repository save
