@@ -56,13 +56,9 @@ public class ReviewsController extends ApiController {
 
     /**
      * This method creates a new review. Accessible only to users with the role "ROLE_ADMIN".
-     * @param student_id studentID of the reviewer
      * @param item_id itemID of the review
      * @param date_served date served 
      * @param status status of the review
-     * @param moderator_comments comments from the moderator
-     * @param created_date created date of the review
-     * @param last_edited_date last edited date of the review
      * @return the save review
      */
     @Operation(summary= "Create a new review")
