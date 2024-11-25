@@ -35,7 +35,6 @@ public class DiningCommonsControllerTests extends ControllerTestCase {
 
 
     String expectedJson = "{expectedResult}";
-
     when(diningCommonsService.getDiningCommonsJSON())
         .thenReturn(expectedJson);
 
