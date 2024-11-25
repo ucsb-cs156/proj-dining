@@ -17,4 +17,17 @@ public class DiningCommons {
   private Boolean hasTakeOutMeal;
   private Double latitude;
   private Double longitude;
+
+  public static final String SAMPLE_CARRILLO =
+      """
+          {
+              "name": "Carrillo",
+              "code": "M24",
+              "hasDiningCam": true,
+              "hasSackMeal": false,
+              "hasTakeOutMeal" : false,
+              "latitude" : null,
+              "longitude" : null
+          }
+      """;
 }

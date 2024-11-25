@@ -30,7 +30,7 @@ public class DiningCommonsController extends ApiController /* implements Applica
   @Autowired DiningCommonsService diningCommonsService;
 
   @Operation(summary = "Get all Dining Commons")
-  @GetMapping("/all")
+  @GetMapping(value = "/all", produces = "application/json")
   public Iterable<DiningCommons> allDiningCommons() throws Exception {
     Iterable<DiningCommons> diningCommons = diningCommonsService.get();
     

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,6 +42,8 @@ public class DiningCommonsControllerTests extends ControllerTestCase {
 
   @MockBean DiningCommonsService diningCommonsService;
 
+  @Autowired private ObjectMapper objectMapper;
+
   @Test
   public void api_DiningCommons_all__logged_out__returns_200() throws Exception {
     mockMvc.perform(get("/api/dining/all")).andExpect(status().isOk());
@@ -55,6 +59,32 @@ public class DiningCommonsControllerTests extends ControllerTestCase {
   @Test
   public void api_DiningCommons_all__admin_logged_in__returns_200() throws Exception {
     mockMvc.perform(get("/api/dining/all")).andExpect(status().isOk());
+  }
+
+  @Test
+  public void api_DiningCommons_test_get() throws Exception {
+
+    DiningCommons carrillo =
+        objectMapper.readValue(DiningCommons.SAMPLE_CARRILLO, DiningCommons.class);
+
+    List<DiningCommons> expectedResult = new ArrayList<DiningCommons>();
+    expectedResult.add(carrillo);
+
+    String url = "/api/dining/all";
+
+    when(diningCommonsService.get()).thenReturn(expectedResult);
+
+    MvcResult response =
+        mockMvc
+            .perform(get(url).contentType("application/json"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    assertEquals(
+        expectedResult,
+        objectMapper.readValue(
+            response.getResponse().getContentAsString(),
+            new TypeReference<List<DiningCommons>>() {}));
   }
   
 }
