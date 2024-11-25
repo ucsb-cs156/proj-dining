@@ -69,7 +69,6 @@ public class ReviewsController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public Review postReview(
-            @Parameter(name="reviewerId") @RequestParam long reviewerId,
             @Parameter(name="itemId") @RequestParam long itemId,
             @Parameter(name="dateServed", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("dateServed") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateServed,
             @Parameter(name="stars") @RequestParam long stars,
@@ -84,7 +83,7 @@ public class ReviewsController extends ApiController {
         log.info("createdDate={}", createdDate.format(DateTimeFormatter.ISO_DATE_TIME));
 
         Review reviews = new Review();
-        reviews.setReviewerId(reviewerId);
+        reviews.setReviewerId(getCurrentUser().getUser().getId());
         reviews.setItemId(itemId);
         reviews.setDateServed(dateServed);
         reviews.setStars(stars);
