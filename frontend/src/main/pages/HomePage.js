@@ -16,8 +16,7 @@ export default function HomePage() {
       <div className="pt-2">
         <h1>Dining Commons</h1>
         <p>Here is the list of all UCSB Dining Commons:</p>
-        (
-        <DiningCommonsTable diningCommons={diningCommons} />)
+        <DiningCommonsTable diningCommons={diningCommons} />
       </div>
     </BasicLayout>
   );
