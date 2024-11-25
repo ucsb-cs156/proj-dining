@@ -5,7 +5,6 @@ export default function MealsTable({ meals }) {
   // Stryker disable all : hard to test for query caching
 
 
-  // Stryker disable next-line all : TODO try to make a good test for this
 
   const columns = [
     {
