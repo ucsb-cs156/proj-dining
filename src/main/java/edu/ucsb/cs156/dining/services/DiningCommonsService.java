@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.dining.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,7 +39,6 @@ public class DiningCommonsService {
       "https://api.ucsb.edu/dining/commons/v1/names";
 
   public static final String MEALS_BY_DATE_ENDPOINT = "https://api.ucsb.edu/dining/menu/v1/";
-
 
   public String getDiningCommonsJSON() throws Exception {
 

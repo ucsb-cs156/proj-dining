@@ -19,6 +19,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping("/api/diningcommons")
 public class DiningCommonsController {
