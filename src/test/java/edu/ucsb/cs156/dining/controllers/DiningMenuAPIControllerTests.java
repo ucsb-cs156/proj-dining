@@ -55,7 +55,7 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
     expectedResult.add(Today);
 
-    String url = "/api/public/getDays";
+    String url = "/api/dining/getDays";
 
     when(diningMenuAPIService.getDays()).thenReturn(expectedResult);
 
@@ -84,7 +84,7 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
     expectedResult.add(Tomorrow);
 
-    String url = "/api/public/getCommons?dateTime=" + testDateTime.toString();
+    String url = "/api/dining/getCommons?dateTime=" + testDateTime.toString();
 
     when(diningMenuAPIService.getCommons(testDateTime)).thenReturn(expectedResult);
 
@@ -115,7 +115,7 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
     expectedResult.add(Wednesday);
 
    // String formattedDateTime = testDateTime.toLocalDateTime().toString();
-    String url = "/api/public/getMeals?dateTime=" + testDateTime + "&diningCommonsCode=" + testCommonsCode;
+    String url = "/api/dining/getMeals?dateTime=" + testDateTime + "&diningCommonsCode=" + testCommonsCode;
 
     when(diningMenuAPIService.getMeals(testDateTime, testCommonsCode)).thenReturn(expectedResult);
 
@@ -144,7 +144,7 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
     expectedResult.add(Today);
 
-    String url = "/api/public/loadDays";
+    String url = "/api/dining/loadDays";
 
     when(diningMenuAPIService.loadAllDays()).thenReturn(expectedResult);
 
