@@ -15,7 +15,6 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
-import DiningCommonsPlaceholderPage from "main/pages/UCSBAPIDiningCommons/UCSBAPIDiningCommonsPlaceholderPage"; // Import the new component
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import DiningCommonsPage from "main/pages/DiningCommons/DiningCommonsPage";
 
@@ -100,11 +99,6 @@ function App() {
             />
           </>
         )}
-        <Route
-          exact
-          path="/diningcommons/:diningCommonsCode"
-          element={<DiningCommonsPlaceholderPage />}
-        />
         {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route
@@ -114,15 +108,13 @@ function App() {
             />
           </>
         )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/diningcommons/:diningCommonsCode"
-              element={<DiningCommonsPage />}
-            />
-          </>
-        )}
+        <>
+          <Route
+            exact
+            path="/diningcommons/:diningCommonsCode"
+            element={<DiningCommonsPage />}
+          />
+        </>
       </Routes>
     </BrowserRouter>
   );
