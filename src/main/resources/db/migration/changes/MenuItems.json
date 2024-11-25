@@ -2,7 +2,7 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "MenuItems-3",
+          "id": "MenuItems-5",
           "author": "OviyaS",
           "preConditions": [
             {
@@ -35,7 +35,7 @@
                   },
                   {
                     "column": {
-                      "name": "DININGCOMMONSCODE",
+                      "name": "DINING_COMMONS_CODE",
                       "type": "VARCHAR(255)"
                     }
                   },
