@@ -121,7 +121,8 @@ public class DiningMenuAPIService {
     headers.set("ucsb-api-version", "1.0");
     headers.set("ucsb-api-key", this.apiKey);
 
-    String formattedDateTime = dateTime.toString(); // ISO format
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    String formattedDateTime = dateTime.format(formatter);
 
     String url = GET_MEALS
             .replace("{date-time}", formattedDateTime)
@@ -179,9 +180,9 @@ public class DiningMenuAPIService {
     return day;
   }
 
-  public boolean dateInRange(OffsetDateTime dateTime) {
-    boolean dateGEStart = !dateTime.isBefore(startDate);
-    boolean dateLEEnd = !dateTime.isAfter(endDate);
+  public boolean dateInRange(OffsetDateTime dateTime, OffsetDateTime startDateTest, OffsetDateTime endDateTest) {
+    boolean dateGEStart = !dateTime.isBefore(startDateTest);
+    boolean dateLEEnd = !dateTime.isAfter(endDateTest);
     return (dateGEStart && dateLEEnd);
   }
 
@@ -190,7 +191,7 @@ public class DiningMenuAPIService {
     List<DiningMenuAPI> savedDays = new ArrayList<DiningMenuAPI>();
     days.forEach(
         (day) -> {
-          if (dateInRange(day.getDate())) {
+          if (dateInRange(day.getDate(), startDate, endDate)) {
             diningMenuApiRepository.save(day);
             savedDays.add(day);
           }
