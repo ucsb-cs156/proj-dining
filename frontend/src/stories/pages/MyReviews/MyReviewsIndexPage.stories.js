@@ -7,7 +7,7 @@ import { http, HttpResponse } from "msw";
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
 export default {
-  title: "pages/MyRevies/MyReviewsIndexPage",
+  title: "pages/MyReviews/MyReviewsIndexPage",
   component: MyReviewsIndexPage,
 };
 
