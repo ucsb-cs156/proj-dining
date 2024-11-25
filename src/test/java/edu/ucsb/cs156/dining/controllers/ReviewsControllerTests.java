@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDateTime;
-
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,6 +131,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // arrange
 
                 LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                LocalDateTime cdt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
                 Review reviews1 = Review.builder()
                                 .reviewerId(1)
@@ -138,18 +139,16 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .dateServed(ldt1)
                                 .stars(5)
                                 .reviewText("very good")
-                                .status("Approved")
-                                .modId(2L)
-                                .modComments("good review")
-                                .createdDate(ldt1)
-                                .lastEditedDate(ldt1)
+                                .status("Awaiting Moderation")
+                                .createdDate(cdt)
+                                .lastEditedDate(cdt)
                                 .build();
 
                 when(reviewsRepository.save(eq(reviews1))).thenReturn(reviews1);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?reviewerId=1&itemId=1&dateServed=2022-01-03T00:00:00&stars=5&reviewText=very good&status=Approved&modId=2&modComments=good review&createdDate=2022-01-03T00:00:00&lastEditedDate=2022-01-03T00:00:00")
+                                post("/api/reviews/post?reviewerId=1&itemId=1&dateServed=2022-01-03T00:00:00&stars=5&reviewText=very good")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
@@ -166,6 +165,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 // arrange
 
                 LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                LocalDateTime cdt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
                 Review reviews1 = Review.builder()
                                 .reviewerId(1)
@@ -173,18 +173,16 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .dateServed(ldt1)
                                 .stars(5)
                                 .reviewText("very good")
-                                .status("Approved")
-                                .modId(2L)
-                                .modComments("good review")
-                                .createdDate(ldt1)
-                                .lastEditedDate(ldt1)
+                                .status("Awaiting Moderation")
+                                .createdDate(cdt)
+                                .lastEditedDate(cdt)
                                 .build();
 
                 when(reviewsRepository.save(eq(reviews1))).thenReturn(reviews1);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?reviewerId=1&itemId=1&dateServed=2022-01-03T00:00:00&stars=5&reviewText=very good&status=Approved&modId=2&modComments=good review&createdDate=2022-01-03T00:00:00&lastEditedDate=2022-01-03T00:00:00")
+                                post("/api/reviews/post?reviewerId=1&itemId=1&dateServed=2022-01-03T00:00:00&stars=5&reviewText=very good")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 

@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is a REST controller for Reviews
@@ -61,11 +63,6 @@ public class ReviewsController extends ApiController {
      * @param dateServed        date item was served
      * @param stars             rating from 0-5 inclusive
      * @param reviewText        reviewer comments
-     * @param status            awaiting approval, approved, or rejected
-     * @param modId             user id of the moderator
-     * @param modComments       moderator comments about review
-     * @param createdDate       the date review was created
-     * @param lastEditedDate    the date review was last edited
      * @return the saved review
      */
     @Operation(summary= "Create a new review")
@@ -76,18 +73,15 @@ public class ReviewsController extends ApiController {
             @Parameter(name="itemId") @RequestParam long itemId,
             @Parameter(name="dateServed", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("dateServed") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateServed,
             @Parameter(name="stars") @RequestParam long stars,
-            @Parameter(name="reviewText") @RequestParam String reviewText,
-            @Parameter(name="status") @RequestParam String status,
-            @Parameter(name="modId") @RequestParam(required=false) Long modId,
-            @Parameter(name="modComments") @RequestParam(required=false) String modComments,
-            @Parameter(name="createdDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("createdDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdDate,
-            @Parameter(name="lastEditedDate", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS") @RequestParam("lastEditedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastEditedDate)
+            @Parameter(name="reviewText") @RequestParam String reviewText)
             throws JsonProcessingException {
 
         // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         // See: https://www.baeldung.com/spring-date-parameters
 
-        log.info("createdDate={}", createdDate);
+        LocalDateTime createdDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+        log.info("createdDate={}", createdDate.format(DateTimeFormatter.ISO_DATE_TIME));
 
         Review reviews = new Review();
         reviews.setReviewerId(reviewerId);
@@ -95,11 +89,9 @@ public class ReviewsController extends ApiController {
         reviews.setDateServed(dateServed);
         reviews.setStars(stars);
         reviews.setReviewText(reviewText);
-        reviews.setStatus(status);
-        reviews.setModId(modId);
-        reviews.setModComments(modComments);
+        reviews.setStatus("Awaiting Moderation");
         reviews.setCreatedDate(createdDate);
-        reviews.setLastEditedDate(lastEditedDate);
+        reviews.setLastEditedDate(createdDate);
 
         Review savedReview = reviewsRepository.save(reviews);
 
