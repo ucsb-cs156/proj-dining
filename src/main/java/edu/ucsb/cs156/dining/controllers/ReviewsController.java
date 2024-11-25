@@ -5,6 +5,7 @@ import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,6 +46,9 @@ public class ReviewsController extends ApiController {
     @Autowired
     ReviewsRepository reviewsRepository;
 
+    @Autowired
+    MenuItemRepository menuItemRepository;
+
     /**
      * THis method returns a list of all reviews.
      * @return a list of all reviews
@@ -70,9 +74,13 @@ public class ReviewsController extends ApiController {
     public Reviews postReview(
         @Parameter(name="item_id") @RequestParam int item_id,
         @Parameter(name="date_served") @RequestParam String date_served,
-        @Parameter(name="status") @RequestParam(required=false) String status
+        //@Parameter(name="status") @RequestParam(required=false) String status
         ) 
         {
+
+        MenuItem menuItem = menuItemRepository.findById((long)item_id)
+        .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "No MenuItem with itemId: " + item_id + " found"));
 
         Reviews reviews = new Reviews();
         CurrentUser user = getCurrentUser();
