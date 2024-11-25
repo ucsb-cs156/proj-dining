@@ -280,7 +280,7 @@ describe("ReviewTable tests", () => {
 
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
-      .onDelete("/api/myreviews")
+      .onDelete("/api/reviews")
       .reply(200, { message: "Review deleted" });
 
     render(
@@ -304,7 +304,7 @@ describe("ReviewTable tests", () => {
 
     await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
-    expect(axiosMock.history.delete[0].url).toBe("/api/myreviews");
+    expect(axiosMock.history.delete[0].url).toBe("/api/reviews");
   });
 
   test("Does not show Delete button when deleteColumn is false", () => {
