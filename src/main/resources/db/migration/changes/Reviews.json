@@ -1,7 +1,7 @@
 { "databaseChangeLog": [
     {
         "changeSet": {
-          "id": "Reviews-11",
+          "id": "Reviews-12",
           "author": "KEV-YAN",
           "preConditions": [
             {
@@ -99,13 +99,13 @@
                   {
                     "column": {
                       "name": "CREATED_DATE",
-                      "type": "VARCHAR(255)"
+                      "type": "TIMESTAMP"
                     }
                   },
                   {
                     "column": {
                       "name": "LAST_EDITED_DATE",
-                      "type": "VARCHAR(255)"
+                      "type": "TIMESTAMP"
                     }
                   }]
                 ,

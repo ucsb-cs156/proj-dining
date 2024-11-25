@@ -51,19 +51,19 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "USER" })
         @Test
-        public void logged_in_users_can_get_all() throws Exception {
+        public void logged_in_users_cannot_get_all() throws Exception {
                 mockMvc.perform(get("/api/reviews/all"))
-                                .andExpect(status().is(200)); // logged
+                                .andExpect(status().is(403)); // logged
         }
 
-        @WithMockUser(roles = { "USER" })
+        @WithMockUser(roles = { "ADMIN" })
         @Test
-        public void logged_in_user_can_get_all_reviews() throws Exception {
+        public void logged_in_admin_can_get_all_reviews() throws Exception {
 
                 // arrange
 
                 Reviews review1 = Reviews.builder()
-                                .student_id(1)
+                                //.student_id(1)
                                 .item_id(2)
                                 .date_served("today")
                                 /*
@@ -71,20 +71,21 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 
                                 .userid(1L)
                                 .moderator_comments("test")
-                                */
+                                
                                 .created_date("today")
                                 .last_edited_date("rn")
+                                */
                                 .build();
 
                 Reviews review2 = Reviews.builder()
-                                .student_id(3)
+                                //.student_id(3)
                                 .item_id(1)
                                 .date_served("today")
                                 .status("working")
                                 //.userid(1L)
-                                .moderator_comments("test")
-                                .created_date("today")
-                                .last_edited_date("not rn")
+                                // .moderator_comments("test")
+                                // .created_date("today")
+                                // .last_edited_date("not rn")
                                 .build();
 
                 ArrayList<Reviews> expectedReviews = new ArrayList<>();
@@ -130,15 +131,15 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .date_served("today")
                                 .status("Awaiting Moderation")
                                 .userId(1L)
-                                .created_date("today")
-                                .last_edited_date("rn")
+                                // .created_date("today")
+                                // .last_edited_date("rn")
                                 .build();
 
                 when(reviewsRepository.save(eq(review))).thenReturn(review);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?student_id=1&item_id=2&date_served=today&created_date=today&last_edited_date=rn")
+                                post("/api/reviews/post?item_id=2&date_served=today")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
@@ -160,16 +161,17 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .date_served("today")
                                 .status("working")
                                 .userId(1L)
-                                .moderator_comments("test")
-                                .created_date("today")
-                                .last_edited_date("rn")
+                                //.moderator_comments("test")
+                                //.created_date("today")
+                                //.last_edited_date("rn")
                                 .build();
 
                 when(reviewsRepository.save(eq(review))).thenReturn(review);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
+                        post("/api/reviews/post?item_id=2&date_served=today&status=working")                
+                //post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 

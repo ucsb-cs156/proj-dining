@@ -69,13 +69,9 @@ public class ReviewsController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public Reviews postReview(
-        //@Parameter(name="student_id") @RequestParam int student_id,
         @Parameter(name="item_id") @RequestParam int item_id,
         @Parameter(name="date_served") @RequestParam String date_served,
-        @Parameter(name="status") @RequestParam(required=false) String status,
-        //@Parameter(name="moderator_comments") @RequestParam(required=false) String moderator_comments,
-        @Parameter(name="created_date") @RequestParam String created_date,
-        @Parameter(name="last_edited_date") @RequestParam String last_edited_date
+        @Parameter(name="status") @RequestParam(required=false) String status
         ) 
         {
 
@@ -83,16 +79,11 @@ public class ReviewsController extends ApiController {
         Reviews reviews = new Reviews();
         CurrentUser user = getCurrentUser();
         
-        //reviews.setStudent_id(student_id);
         reviews.setStudent_id((int)user.getUser().getId());
         reviews.setItem_id(item_id);
         reviews.setDate_served(date_served);
         reviews.setStatus(status != null ? status : "Awaiting Moderation");
         reviews.setUserId(user.getUser().getId());
-        //reviews.setModerator_id(null);
-        //reviews.setModerator_comments(moderator_comments);
-        reviews.setCreated_date(created_date);
-        reviews.setLast_edited_date(last_edited_date);
 
         Reviews savedReviews = reviewsRepository.save(reviews);
 
