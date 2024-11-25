@@ -92,7 +92,7 @@ public class UsersControllerTests extends ControllerTestCase {
             .locale("")
             .hostedDomain("example.org")
             .admin(false)
-            .alias(null) 
+            .alias("Anonymous User") 
             .proposedAlias("Chipotle")
             .build();
         
@@ -297,4 +297,16 @@ public class UsersControllerTests extends ControllerTestCase {
       verify(userRepository, times(1)).findByProposedAliasNotNull();
   }
 
+  @Test
+  @WithMockUser(roles = { "USER" })
+  public void testGetAliasWhenSet() throws Exception {
+    // arrange
+      User user = User.builder()
+          .id(1L)
+          .alias("Chipo")
+          .build();
+
+      // assert
+      assertEquals("Chipo", user.getAlias());
+  }
 }

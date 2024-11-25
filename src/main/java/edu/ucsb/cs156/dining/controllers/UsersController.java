@@ -50,6 +50,8 @@ public class UsersController extends ApiController {
     @GetMapping("/admin/users")
     public ResponseEntity<String> users()
             throws JsonProcessingException {
+
+
         Iterable<User> users = userRepository.findAll();
         String body = mapper.writeValueAsString(users);
         return ResponseEntity.ok().body(body);
@@ -81,7 +83,10 @@ public class UsersController extends ApiController {
     public ResponseEntity<User> updateProposedAlias(@RequestParam String proposedAlias) {
         CurrentUser currentUser = super.getCurrentUser();
         User user = currentUser.getUser();
-    
+
+        // if (user.getAlias() == null) {
+        //     user.setAlias("Anonymous User");
+        // }   
         if (userRepository.findByAlias(proposedAlias).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Alias already in use.");
         }

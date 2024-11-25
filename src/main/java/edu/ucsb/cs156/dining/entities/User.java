@@ -35,5 +35,12 @@ public class User {
  private boolean admin;
  private String alias;
  private String proposedAlias;
+ 
+ public String getAlias() {
+        if (this.alias == null) {
+            this.alias = "Anonymous User"; 
+        }
+        return this.alias;
+    }
 
 }
