@@ -58,7 +58,6 @@ public class ReviewsController extends ApiController {
     /**
      * Create a new review
      * 
-     * @param reviewerId        user id of the reviewer
      * @param itemId            id of item in DiningCommonsMenuItem table
      * @param dateServed        date item was served
      * @param stars             rating from 0-5 inclusive
