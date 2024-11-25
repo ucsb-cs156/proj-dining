@@ -14,6 +14,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 /** Service class to interact with Meal */
 @Service
@@ -56,16 +59,19 @@ public class MealService {
 
     log.info("Fetching meals for date: {}, dining commons: {}", formattedDate, diningCommonsCode);
 
-    // Use RestTemplate to fetch data
-    ResponseEntity<Meal[]> response = restTemplate.exchange(
-        url, HttpMethod.GET, entity, Meal[].class);
+    try {
+        ResponseEntity<Meal[]> response = restTemplate.exchange(
+            url, HttpMethod.GET, entity, Meal[].class);
 
-    Meal[] mealsArray = response.getBody();
-    if (mealsArray == null) {
-      throw new Exception("Failed to fetch meals data from API");
+        Meal[] mealsArray = response.getBody();
+        if (mealsArray == null) {
+            throw new Exception("Failed to fetch meals data from API");
+        }
+
+        return List.of(mealsArray);
+    } catch (HttpClientErrorException.NotFound e) {
+        log.error("API returned 404 for date: {} and dining commons: {}", formattedDate, diningCommonsCode);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Meals not found for given date and dining commons");
     }
-
-    return List.of(mealsArray);
   }
-
 }
