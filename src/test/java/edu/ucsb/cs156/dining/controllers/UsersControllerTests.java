@@ -246,7 +246,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .id(7L)
           .email("user@example.org")
           .alias("Chipotle") 
-          .proposedAlias("Taco Bell")
+          .proposedAlias(null)
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));

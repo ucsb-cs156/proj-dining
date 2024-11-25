@@ -111,6 +111,8 @@ public class UsersController extends ApiController {
         if (approved) {
             user.setAlias(user.getProposedAlias());  
             user.setProposedAlias(null);
+        } else {
+            user.setProposedAlias(null);
         }
         
         userRepository.save(user);
