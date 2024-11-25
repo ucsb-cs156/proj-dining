@@ -21,21 +21,6 @@ const columns = [
     Header: "Admin",
     id: "admin",
     accessor: (row, _rowIndex) => String(row.admin), // hack needed for boolean values to show up
-  },{
-    Header: "Alias",
-    accessor: "alias",
-  },
-  {
-    Header: "Status",
-    accessor: (row) => {
-      if (row.moderator === null) {
-        return "Awaiting Moderation";
-      } else if (row.moderator === true) {
-        return "Approved";
-      } else if (row.moderator === false) {
-        return "Rejected";
-      }
-    },
   },
 ];
 
