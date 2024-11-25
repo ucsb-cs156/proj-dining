@@ -20,6 +20,9 @@ import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 
 /**
  * This is a REST controller for getting information about the users.
@@ -54,39 +57,47 @@ public class UsersController extends ApiController {
 
     /**
      * This method allows the user to update their alias.
-     * @param alias the new alias
+     * @param proposedAlias the new alias
      * @return the updated user
      */
     @Operation(summary = "Update alias of the current user")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/currentUser/updateAlias")
-    public User updateAlias(@RequestParam String alias) {
+    public ResponseEntity<User> updateProposedAlias(@RequestParam String proposedAlias) {
         CurrentUser currentUser = super.getCurrentUser();
         User user = currentUser.getUser();
-
-        user.setAlias(alias); 
-        User savedUser = userRepository.save(user);  
-
-        return savedUser;
+    
+        if (userRepository.findByAlias(proposedAlias).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Alias already in use.");
+        }
+    
+        user.setProposedAlias(proposedAlias);
+        User savedUser = userRepository.save(user);
+    
+        return ResponseEntity.ok(savedUser);
     }
-
+    
     /**
      * This method allows an admin to update the moderation status of a user's alias.
      * @param id the id of the user to update
-     * @param moderator the new moderation status 
+     * @param approved the new moderation status 
      * @return the updated user
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/currentUser/updateAliasModeration")
     public User updateAliasModeration(
             @RequestParam long id, 
-            @RequestParam Boolean moderator) {
+            @RequestParam Boolean approved) {
         
         User user = userRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(User.class, id));
         
-  
-        user.setModerator(moderator);  
+
+        if (approved) {
+            user.setAlias(user.getProposedAlias());  
+            user.setProposedAlias(null);
+        }
+        
         userRepository.save(user);
 
         return user;
