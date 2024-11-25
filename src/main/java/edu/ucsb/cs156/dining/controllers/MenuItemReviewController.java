@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.stream.StreamSupport;
 
 
 /**
@@ -97,7 +98,14 @@ public class MenuItemReviewController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<MenuItemReview> allAwawitingModerationMenuItemReviewAdminOnly() {
-        Iterable<MenuItemReview> reviews = menuItemReviewRepository.findAll();
-        return reviews;
+        try {
+            Iterable<MenuItemReview> reviews = menuItemReviewRepository.findByStatus("Awaiting Moderation");
+            long size = StreamSupport.stream(reviews.spliterator(), false).count();
+            log.info("Fetched {} reviews", size);
+            return reviews;
+        } catch (Exception e) {
+            log.error("Error fetching reviews", e);
+            throw e; 
+        }
     }
 }
