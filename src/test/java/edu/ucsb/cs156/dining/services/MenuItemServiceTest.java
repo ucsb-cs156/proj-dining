@@ -200,16 +200,13 @@ public void testSaveOrUpdateMenuItem_NewItem_FieldSetting() {
     String itemName = "Scrambled Eggs";
     String station = "Breakfast Station";
 
-    // 给 id 设置初始值
     MenuItem menuItem = new MenuItem(0L, null, null, itemName, station); 
     MenuItem savedMenuItem = new MenuItem(1L, diningCommonsCode, mealCode, itemName, station);
 
-    // 模拟存储行为：第一次 findByUniqueFields 返回空，save 方法返回新保存的对象
     when(menuItemRepository.findByUniqueFields(diningCommonsCode, mealCode, itemName, station))
         .thenReturn(Optional.empty());
     when(menuItemRepository.save(any(MenuItem.class))).thenReturn(savedMenuItem);
 
-    // 捕获被传递给 save 的 MenuItem
     ArgumentCaptor<MenuItem> menuItemCaptor = ArgumentCaptor.forClass(MenuItem.class);
 
     // Act
@@ -218,13 +215,12 @@ public void testSaveOrUpdateMenuItem_NewItem_FieldSetting() {
     // Assert
     verify(menuItemRepository, times(1)).save(menuItemCaptor.capture());
     MenuItem capturedMenuItem = menuItemCaptor.getValue();
-
-    // 验证字段是否被正确设置
+    
     assertEquals(diningCommonsCode, capturedMenuItem.getDiningCommonsCode());
     assertEquals(mealCode, capturedMenuItem.getMealCode());
     assertEquals(itemName, capturedMenuItem.getName());
     assertEquals(station, capturedMenuItem.getStation());
-    assertNotNull(capturedMenuItem.getId()); // 检查 ID 不为 null
+    assertNotNull(capturedMenuItem.getId());
 }
 
 
