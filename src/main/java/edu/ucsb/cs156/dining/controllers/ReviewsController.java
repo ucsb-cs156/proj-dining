@@ -56,6 +56,20 @@ public class ReviewsController extends ApiController {
     }
 
     /**
+     * List all reviews created by a specific user
+     * 
+     * @return an iterable of Review
+     */
+    @Operation(summary= "List all reviews created by a specific user")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public Iterable<Review> getReviewsByUser(
+        @Parameter(name="userId") @RequestParam long userId) {
+        Iterable<Review> reviews = reviewsRepository.findAllByReviewerId(userId);
+        return reviews;
+    }
+
+    /**
      * Create a new review
      * 
      * @param itemId            id of item in DiningCommonsMenuItem table
