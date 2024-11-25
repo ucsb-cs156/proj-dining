@@ -77,16 +77,13 @@ public class UsersController extends ApiController {
      * @param proposedAlias the new alias
      * @return the updated user
      */
-    @Operation(summary = "Update alias of the current user")
+    @Operation(summary = "Update proposed alias of the current user")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/currentUser/updateAlias")
     public ResponseEntity<User> updateProposedAlias(@RequestParam String proposedAlias) {
         CurrentUser currentUser = super.getCurrentUser();
         User user = currentUser.getUser();
 
-        // if (user.getAlias() == null) {
-        //     user.setAlias("Anonymous User");
-        // }   
         if (userRepository.findByAlias(proposedAlias).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Alias already in use.");
         }
