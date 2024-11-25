@@ -1,72 +1,50 @@
 import React from "react";
-import OurTable, { ButtonColumn } from "main/components/OurTable";
+import OurTable from "main/components/OurTable";
+import { Link } from "react-router-dom";
 
-import { useBackendMutation } from "main/utils/useBackend";
-import {
-  cellToAxiosParamsDelete,
-  onDeleteSuccess,
-} from "main/utils/DiningCommonsUtils";
-import { useNavigate } from "react-router-dom";
-import { hasRole } from "main/utils/currentUser";
-
-export default function DiningCommonsTable({ diningcommons, currentUser }) {
-  const navigate = useNavigate();
-
-  const editCallback = (cell) => {
-    navigate(`/diningcommons/edit/${cell.row.values.id}`);
-  };
-
-  // Stryker disable all : hard to test for query caching
-
-  const deleteMutation = useBackendMutation(
-    cellToAxiosParamsDelete,
-    { onSuccess: onDeleteSuccess },
-    ["/api/diningcommons/all"],
-  );
-  // Stryker restore all
-
-  // Stryker disable next-line all : TODO try to make a good test for this
-  const deleteCallback = async (cell) => {
-    deleteMutation.mutate(cell);
-  };
-
+export default function DiningCommonsTable({ diningcommons }) {
   const columns = [
     {
       Header: "Name",
-      accessor: "name", // accessor is the "key" in the data
+      accessor: "name",
+      Cell: ({ value, row }) => (
+        <Link to={`/diningcommons/${row.original.code}`}>{value}</Link>
+      ),
     },
     {
       Header: "Code",
       accessor: "code",
     },
     {
-      Header: "HasDiningCam",
+      Header: "Has DiningCam",
       accessor: "hasDiningCam",
+      Cell: ({ value }) => (value ? "Yes" : "No"),
     },
     {
-      Header: "HasSackMeal",
+      Header: "Has Sack Meal",
       accessor: "hasSackMeal",
+      Cell: ({ value }) => (value ? "Yes" : "No"),
     },
     {
-      Header: "HasTakeoutMeal",
+      Header: "Has Takeout Meal",
       accessor: "hasTakeoutMeal",
+      Cell: ({ value }) => (value ? "Yes" : "No"),
     },
   ];
 
-  if (hasRole(currentUser, "ROLE_ADMIN")) {
-    columns.push(
-      ButtonColumn("Edit", "primary", editCallback, "DiningCommonsTable"),
-    );
-    columns.push(
-      ButtonColumn("Delete", "danger", deleteCallback, "DiningCommonsTable"),
-    );
-  }
-
   return (
-    <OurTable
-      data={diningcommons}
-      columns={columns}
-      testid={"DiningCommonsTable"}
-    />
+    <div>
+      {diningcommons.length === 0 ? (
+        <div data-testid="DiningCommonsTable-empty-message">
+          No data available
+        </div>
+      ) : (
+        <OurTable
+          data={diningcommons}
+          columns={columns}
+          testid={"DiningCommonsTable"}
+        />
+      )}
+    </div>
   );
 }
