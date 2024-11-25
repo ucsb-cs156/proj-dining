@@ -3,7 +3,6 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.models.CurrentUser;
-import edu.ucsb.cs156.dining.entities.UCSBDiningCommons;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
 

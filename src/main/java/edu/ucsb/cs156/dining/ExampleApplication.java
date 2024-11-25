@@ -1,11 +1,20 @@
 package edu.ucsb.cs156.dining;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,5 +60,13 @@ public class ExampleApplication {
    */
   public static void main(String[] args) {
     SpringApplication.run(ExampleApplication.class, args);
+  }
+
+  @Bean
+  public DateTimeProvider utcDateTimeProvider() {
+      return () -> {
+        ZonedDateTime now = ZonedDateTime.now();
+        return Optional.of(now);
+      };
   }
 }
