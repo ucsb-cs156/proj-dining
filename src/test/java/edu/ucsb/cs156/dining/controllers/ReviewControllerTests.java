@@ -205,6 +205,44 @@ public class ReviewControllerTests extends ControllerTestCase {
 
                 assertTrue(responseJson.get("reviewerComments").isNull());
         }
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_no_string_on_creating_new_review() throws Exception {
+
+                // Arrange
+                LocalDateTime now = LocalDateTime.now();
+
+                Review review = Review.builder()
+                                .dateCreated(now)
+                                .dateEdited(now)
+                                .itemsStars(1l)
+                                .reviewerComments(null)
+                                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                                .studentId(1L)
+                                .status("Awaiting Moderation")
+                                .itemId("Bfast1090")
+                                .id(0L)
+                                .build();
+                when(reviewRepository.save(eq(review))).thenReturn(review);
+
+                // Act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                .with(csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+
+                // Assert
+                verify(reviewRepository).save(any(Review.class));
+                JsonNode responseJson = mapper.readTree(response.getResponse().getContentAsString());
+                assertTrue(responseJson.get("reviewerComments").isNull());
+
+                
+        }
+
+
        
         @WithMockUser(roles = { "ADMIN" })
         @Test
