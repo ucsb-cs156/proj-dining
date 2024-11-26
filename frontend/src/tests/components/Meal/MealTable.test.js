@@ -73,7 +73,7 @@ describe("MealTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-name`),
     ).toHaveTextContent("Breakfast");
-    const bLink = screen.getByText("Breakfast"); 
+    const bLink = screen.getByText("Breakfast");
     expect(bLink).toHaveAttribute(
       "href",
       "/api/diningcommons/2024-11-25/portola/breakfast",
@@ -82,7 +82,7 @@ describe("MealTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-name`),
     ).toHaveTextContent("Lunch");
-    const lLink = screen.getByText("Lunch"); 
+    const lLink = screen.getByText("Lunch");
     expect(lLink).toHaveAttribute(
       "href",
       "/api/diningcommons/2024-11-25/portola/lunch",
