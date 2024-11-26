@@ -5,6 +5,7 @@ import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
@@ -54,6 +57,8 @@ public class ReviewController extends ApiController {
     @Autowired
     ReviewRepository reviewRepository;
 
+    @Autowired
+    MenuItemRepository menuItemRepository;
 
     /**
      * This method returns a list of all Reviews.
@@ -84,12 +89,11 @@ public class ReviewController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public Review postReview(
-        @Parameter(name = "itemId") @RequestParam String itemId,
-        @Parameter(description = "Comments by the reviewer, can be blank") @RequestParam(required = false) String reviewerComments,
-        @Parameter(name = "itemsStars") @RequestParam Long itemsStars,
-        @Parameter(name = "dateItemServed", description = "date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)") @RequestParam("dateItemServed") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateItemServed) // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) See: https://www.baeldung.com/spring-date-parameters
-
-        throws JsonProcessingException {
+            @Parameter(name = "itemId") @RequestParam long itemId,
+            @Parameter(description = "Comments by the reviewer, can be blank") @RequestParam(required = false) String reviewerComments,
+            @Parameter(name = "itemsStars") @RequestParam Long itemsStars,
+            @Parameter(name = "dateItemServed", description = "date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)") @RequestParam("dateItemServed") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateItemServed) // For
+            throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
@@ -99,13 +103,18 @@ public class ReviewController extends ApiController {
         if ((!reviewerComments.trim().isEmpty())) {
             review.setReviewerComments(reviewerComments);
         }
-        
+
         // Ensure user inputs rating 1-5
         if (itemsStars < 1 || itemsStars > 5) {
             throw new IllegalArgumentException("Items stars must be between 1 and 5.");
         }
 
         review.setItemsStars(itemsStars);
+
+        // Check if the menu item exists
+        if (!menuItemRepository.existsById(itemId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "MenuItem with id " + itemId + " not found");
+        }
 
         review.setItemId(itemId);
         CurrentUser user = getCurrentUser();

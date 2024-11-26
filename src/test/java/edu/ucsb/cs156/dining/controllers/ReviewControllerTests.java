@@ -3,9 +3,11 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.ControllerTestCase;
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 
 import java.time.Duration;
@@ -13,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -55,6 +60,20 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         @MockBean
         UserRepository userRepository;
+
+        @MockBean
+        private MenuItemRepository menuItemRepository;
+
+        @BeforeEach
+        void setup() {
+        // Assume an item exists with ID 1
+        when(menuItemRepository.existsById(1L)).thenReturn(true);
+        when(menuItemRepository.existsById(5L)).thenReturn(false);
+        when(menuItemRepository.existsById(313L)).thenReturn(true);
+
+        // Assume no item exists with ID 999
+        when(menuItemRepository.existsById(999L)).thenReturn(false);
+        }
 
         // Authorization tests for /api/request
 
@@ -99,15 +118,15 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId(1L)
                                 .id(0L)
                                 .build();
                 when(reviewRepository.save(eq(review))).thenReturn(review);
 
                 // Act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
-                                .with(csrf()))
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
                                 .andExpect(status().isOk())
                                 .andReturn();
 
@@ -121,8 +140,9 @@ public class ReviewControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson.get("studentId").asInt(), responseJson.get("studentId").asInt());
                 assertEquals(expectedJson.get("itemsStars").asInt(), responseJson.get("itemsStars").asInt());
                 assertEquals(expectedJson.get("status").asText(), responseJson.get("status").asText());
-                assertEquals(expectedJson.get("itemId").asText(), responseJson.get("itemId").asText());
-                assertEquals(expectedJson.get("reviewerComments").asText(), responseJson.get("reviewerComments").asText());
+                assertEquals(expectedJson.get("itemId").asInt(), responseJson.get("itemId").asInt());
+                assertEquals(expectedJson.get("reviewerComments").asText(),
+                                responseJson.get("reviewerComments").asText());
 
                 // Manually compare important date fields with a threshold for acceptable
                 // variation
@@ -130,44 +150,42 @@ public class ReviewControllerTests extends ControllerTestCase {
                 checkDates(expectedJson, responseJson, "dateCreated");
                 checkDates(expectedJson, responseJson, "dateEdited");
         }
-        
+
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_rating_below_1_throws_exception() throws Exception {
-            mockMvc.perform(
-                    post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
-                    .with(csrf()))
-                    .andDo(print()) // This helps you see the full response for debugging
-                    .andExpect(status().isBadRequest());
+                mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andDo(print()) // This helps you see the full response for debugging
+                                .andExpect(status().isBadRequest());
         }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_rating_above_5_throws_exception() throws Exception {
-            mockMvc.perform(
-                    post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=6&dateItemServed=2021-12-12T08:08:08")
-                    .with(csrf()))
-                    .andDo(print()) // This helps you see the full response for debugging
-                    .andExpect(status().isBadRequest());
+                mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=6&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andDo(print()) // This helps you see the full response for debugging
+                                .andExpect(status().isBadRequest());
         }
 
-            // Test valid input at boundaries
-    @WithMockUser(roles = { "USER" })
-    @Test
-    public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
-        // Lower boundary test
-        mockMvc.perform(
-                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
-                .with(csrf()))
-            .andExpect(status().isOk());
-        // Lower boundary test
-        mockMvc.perform(
-                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
-                .with(csrf()))
-            .andExpect(status().isOk());
-    }
-
-
+        // Test valid input at boundaries
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
+                // Lower boundary test
+                mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andExpect(status().isOk());
+                // Lower boundary test
+                mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andExpect(status().isOk());
+        }
 
         @WithMockUser(roles = { "USER" })
         @Test
@@ -184,15 +202,15 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId(1L)
                                 .id(0L)
                                 .build();
                 when(reviewRepository.save(eq(review))).thenReturn(review);
 
                 // Act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?itemId=Bfast1090&reviewerComments=   &itemsStars=1&dateItemServed=2021-12-12T08:08:08")
-                                .with(csrf()))
+                                post("/api/reviews/post?itemId=1&reviewerComments=   &itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
                                 .andExpect(status().isOk())
                                 .andReturn();
 
@@ -204,12 +222,41 @@ public class ReviewControllerTests extends ControllerTestCase {
                 JsonNode expectedJson = mapper.readTree(jsonReview);
 
                 assertTrue(responseJson.get("reviewerComments").isNull());
-
         }
 
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_no_string_on_creating_new_review() throws Exception {
 
+                // Arrange
+                LocalDateTime now = LocalDateTime.now();
 
+                Review review = Review.builder()
+                                .dateCreated(now)
+                                .dateEdited(now)
+                                .itemsStars(1l)
+                                .reviewerComments(null)
+                                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                                .studentId(1L)
+                                .status("Awaiting Moderation")
+                                .itemId(1L)
+                                .id(0L)
+                                .build();
+                when(reviewRepository.save(eq(review))).thenReturn(review);
 
+                // Act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                // Assert
+                verify(reviewRepository).save(any(Review.class));
+                JsonNode responseJson = mapper.readTree(response.getResponse().getContentAsString());
+                assertTrue(responseJson.get("reviewerComments").isNull());
+
+        }
 
         @WithMockUser(roles = { "ADMIN" })
         @Test
@@ -226,7 +273,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
-                                .itemId("Dinner2313")
+                                .itemId(313L)
                                 .id(0L)
                                 .build();
 
@@ -238,7 +285,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2022, 7, 1, 8, 8, 8))
                                 .studentId(2L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId(1L)
                                 .id(0L)
                                 .build();
 
@@ -250,7 +297,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
-                                .itemId("Dinner2313")
+                                .itemId(313L)
                                 .id(0L)
                                 .build();
 
@@ -329,10 +376,33 @@ public class ReviewControllerTests extends ControllerTestCase {
 
 
 
+        @WithMockUser(roles = {"USER"})
+        @Test
+        public void testItemIdIsInvalid_NotFound() throws Exception {
+
+            // Act: Perform the request and expect the review creation to fail due to non-existing itemId
+            mockMvc.perform(post("/api/reviews/post")
+                    .param("itemId", "5")  // This itemId does not exist
+                    .param("reviewerComments", "")
+                    .param("itemsStars", "1")
+                    .param("dateItemServed", "2021-12-12T08:08:08")
+                    .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals("404 NOT_FOUND \"MenuItem with id 5 not found\"", result.getResolvedException().getMessage()));
+        
+            // Assert: Ensure no reviews are saved due to invalid itemId
+            verify(reviewRepository, times(0)).save(any(Review.class));
+        }
+
         /**
-         * checkDates function is needed for checking and asserting the time of the expected response and the instantiated review
-         * Their is a few millisecond delay from the mocked request and the creation of the objects instance,
-         * therefore, the time is off. Thus when checking against one another, we allow some tolerance.
+         * checkDates function is needed for checking and asserting the time of the
+         * expected response and the instantiated review
+         * Their is a few millisecond delay from the mocked request and the creation of
+         * the objects instance,
+         * therefore, the time is off. Thus when checking against one another, we allow
+         * some tolerance.
+         * 
          * @param expectedJson
          * @param responseJson
          * @param fieldName

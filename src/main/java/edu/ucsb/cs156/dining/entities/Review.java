@@ -32,7 +32,7 @@ public class Review {
     private long studentId;
 
     @Column(nullable = false)
-    private String itemId;
+    private Long itemId;
 
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
