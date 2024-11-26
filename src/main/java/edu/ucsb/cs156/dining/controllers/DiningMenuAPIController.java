@@ -48,11 +48,11 @@ public class DiningMenuAPIController extends ApiController {
     return diningMenuAPIService.getDays();
   }
 
-  @Operation(summary = "Load days with meal service into database from API")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @PostMapping("/loadDays")
-  public List<DiningMenuAPI> loadDays() throws Exception {
-    List<DiningMenuAPI> savedDays = diningMenuAPIService.loadAllDays();
-    return savedDays;
-  }
+  // @Operation(summary = "Load days with meal service into database from API")
+  // @PreAuthorize("hasRole('ROLE_ADMIN')")
+  // @PostMapping("/loadDays")
+  // public List<DiningMenuAPI> loadDays() throws Exception {
+  //   List<DiningMenuAPI> savedDays = diningMenuAPIService.loadAllDays();
+  //   return savedDays;
+  // }
 }

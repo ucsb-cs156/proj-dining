@@ -134,32 +134,32 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
     verify(diningMenuAPIService, times(1)).getMeals(testDateTime, testCommonsCode);
   }
 
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void test_loadDays() throws Exception {
+//   @Test
+//   @WithMockUser(roles = {"ADMIN"})
+//   public void test_loadDays() throws Exception {
 
-    DiningMenuAPI Today =
-        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
+//     DiningMenuAPI Today =
+//         objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
 
-    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
-    expectedResult.add(Today);
+//     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
+//     expectedResult.add(Today);
 
-    String url = "/api/dining/loadDays";
+//     String url = "/api/dining/loadDays";
 
-    when(diningMenuAPIService.loadAllDays()).thenReturn(expectedResult);
+//     when(diningMenuAPIService.loadAllDays()).thenReturn(expectedResult);
 
-    MvcResult response =
-        mockMvc
-            .perform(post(url).contentType("application/json").with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
+//     MvcResult response =
+//         mockMvc
+//             .perform(post(url).contentType("application/json").with(csrf()))
+//             .andExpect(status().isOk())
+//             .andReturn();
 
-    assertEquals(
-        expectedResult,
-        objectMapper.readValue(
-            response.getResponse().getContentAsString(),
-            new TypeReference<List<DiningMenuAPI>>() {}));
+//     assertEquals(
+//         expectedResult,
+//         objectMapper.readValue(
+//             response.getResponse().getContentAsString(),
+//             new TypeReference<List<DiningMenuAPI>>() {}));
 
-    verify(diningMenuAPIService, times(1)).loadAllDays();
-  }
+//     verify(diningMenuAPIService, times(1)).loadAllDays();
+//   }
 }

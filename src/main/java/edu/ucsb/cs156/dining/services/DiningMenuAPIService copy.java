@@ -10,7 +10,6 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -77,7 +76,78 @@ public class DiningMenuAPIService {
     this.endDate = endDate;
   }
 
-  public String getDays() throws Exception {
+  public List<DiningMenuAPI> getDays() throws Exception {
+    List<DiningMenuAPI> days = diningMenuApiRepository.findAll();
+    if (days.isEmpty()) {
+      days = this.loadAllDays();
+    }
+    return days;
+  }
+
+  public List<DiningMenuAPI> getCommons(OffsetDateTime dateTime) throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    String formattedDateTime = dateTime.format(formatter);
+
+    String url = GET_COMMONS.replace("{date-time}", formattedDateTime);
+
+    log.info("Fetching commons data from URL: {}", url);
+
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+    if (responseEntity.getStatusCode() != HttpStatus.OK) {
+        log.error("Error fetching commons data: Status = {}", responseEntity.getStatusCode());
+        throw new Exception("Failed to fetch dining commons data");
+    }
+
+    String responseBody = responseEntity.getBody();
+    List<DiningMenuAPI> commons = objectMapper.readValue(responseBody, new TypeReference<List<DiningMenuAPI>>() {});
+
+    log.info("Fetched {} commons from the API", commons.size());
+    return commons;
+  }
+
+  public List<DiningMenuAPI> getMeals(OffsetDateTime dateTime, String diningCommonCode) throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    String formattedDateTime = dateTime.format(formatter);
+
+    String url = GET_MEALS
+            .replace("{date-time}", formattedDateTime)
+            .replace("{dining-common-code}", diningCommonCode);
+
+    log.info("Fetching meals data from URL: {}", url);
+
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+    if (responseEntity.getStatusCode() != HttpStatus.OK) {
+        log.error("Error fetching meals data: Status = {}", responseEntity.getStatusCode());
+        throw new Exception("Failed to fetch meals data for dining common: " + diningCommonCode);
+    }
+
+    String responseBody = responseEntity.getBody();
+    List<DiningMenuAPI> meals = objectMapper.readValue(responseBody, new TypeReference<List<DiningMenuAPI>>() {});
+
+    log.info("Fetched {} meals for dining common {} on {}", meals.size(), diningCommonCode, formattedDateTime);
+    return meals;
+}
+
+
+  public List<DiningMenuAPI> getAllDaysFromAPI() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -87,6 +157,7 @@ public class DiningMenuAPIService {
     HttpEntity<String> entity = new HttpEntity<>("body", headers);
 
     String url = GET_DAYS;
+
     log.info("url=" + url);
 
     String retVal = "";
@@ -98,113 +169,16 @@ public class DiningMenuAPIService {
     statusCode = (HttpStatus) re.getStatusCode();
     retVal = re.getBody();
 
-    log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
-    return retVal;
+    log.info(
+        "json: {} contentType: {} statusCode: {} entity: {}",
+        retVal,
+        contentType,
+        statusCode,
+        entity);
+    List<DiningMenuAPI> day = null;
+    day = objectMapper.readValue(retVal, new TypeReference<List<DiningMenuAPI>>() {});
+    return day;
   }
-
-  public String getCommons(OffsetDateTime dateTime) throws Exception {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.set("ucsb-api-version", "1.0");
-    headers.set("ucsb-api-key", this.apiKey);
-
-    HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-    String formattedDateTime = dateTime.format(formatter);
-
-    String url = GET_COMMONS
-                .replace("{date-time}", formattedDateTime);
-
-    log.info("url=" + url);
-
-    String retVal = "";
-    MediaType contentType = null;
-    HttpStatus statusCode = null;
-
-    ResponseEntity<String> re =
-        restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-    contentType = re.getHeaders().getContentType();
-    statusCode = (HttpStatus) re.getStatusCode();
-    retVal = re.getBody();
-
-    if (retVal.equals("null")) {
-      retVal = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
-    }
-
-    log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
-    return retVal;
-  }
-
-  public String getMeals(OffsetDateTime dateTime, String diningCommonCode) throws Exception {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.set("ucsb-api-version", "1.0");
-    headers.set("ucsb-api-key", this.apiKey);
-
-    HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-    String formattedDateTime = dateTime.format(formatter);
-
-    String url = GET_MEALS
-                .replace("{date-time}", formattedDateTime)
-                .replace("{dining-common-code}", diningCommonCode);
-
-    log.info("url=" + url);
-
-    String retVal = "";
-    MediaType contentType = null;
-    HttpStatus statusCode = null;
-
-    ResponseEntity<String> re =
-        restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-    contentType = re.getHeaders().getContentType();
-    statusCode = (HttpStatus) re.getStatusCode();
-    retVal = re.getBody();
-
-    if (retVal.equals("null")) {
-      retVal = "{\"error\": \"Meals are not served at given commons on given day.\"}";
-    }
-
-    log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
-    return retVal;
-}
-
-  // public List<DiningMenuAPI> getAllDaysFromAPI() throws Exception {
-  //   HttpHeaders headers = new HttpHeaders();
-  //   headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-  //   headers.setContentType(MediaType.APPLICATION_JSON);
-  //   headers.set("ucsb-api-version", "1.0");
-  //   headers.set("ucsb-api-key", this.apiKey);
-
-  //   HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-  //   String url = GET_DAYS;
-
-  //   log.info("url=" + url);
-
-  //   String retVal = "";
-  //   MediaType contentType = null;
-  //   HttpStatus statusCode = null;
-
-  //   ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-  //   contentType = re.getHeaders().getContentType();
-  //   statusCode = (HttpStatus) re.getStatusCode();
-  //   retVal = re.getBody();
-
-  //   log.info(
-  //       "json: {} contentType: {} statusCode: {} entity: {}",
-  //       retVal,
-  //       contentType,
-  //       statusCode,
-  //       entity);
-  //   List<DiningMenuAPI> day = null;
-  //   day = objectMapper.readValue(retVal, new TypeReference<List<DiningMenuAPI>>() {});
-  //   return day;
-  // }
 
   public boolean dateInRange(OffsetDateTime dateTime, OffsetDateTime startDateTest, OffsetDateTime endDateTest) {
     if (dateTime == null) 
@@ -217,17 +191,17 @@ public class DiningMenuAPIService {
     return (dateGEStart && dateLEEnd);
   }
 
-  // public List<DiningMenuAPI> loadAllDays() throws Exception {
-  //   List<DiningMenuAPI> days = this.getAllDaysFromAPI();
-  //   List<DiningMenuAPI> savedDays = new ArrayList<DiningMenuAPI>();
-  //   days.forEach(
-  //       (day) -> {
-  //         if (dateInRange(day.getDate(), startDate, endDate)) {
-  //           diningMenuApiRepository.save(day);
-  //           savedDays.add(day);
-  //         }
-  //       });
-  //   log.info("savedDays.size={}", savedDays.size());
-  //   return savedDays;
-  // }
+  public List<DiningMenuAPI> loadAllDays() throws Exception {
+    List<DiningMenuAPI> days = this.getAllDaysFromAPI();
+    List<DiningMenuAPI> savedDays = new ArrayList<DiningMenuAPI>();
+    days.forEach(
+        (day) -> {
+          if (dateInRange(day.getDate(), startDate, endDate)) {
+            diningMenuApiRepository.save(day);
+            savedDays.add(day);
+          }
+        });
+    log.info("savedDays.size={}", savedDays.size());
+    return savedDays;
+  }
 }
