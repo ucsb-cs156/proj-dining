@@ -111,3 +111,4 @@ function App() {
 }
 
 export default App;
+/api/currentUser/updateAlias

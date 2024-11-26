@@ -1,17 +1,42 @@
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 import RoleBadge from "main/components/Profile/RoleBadge";
 import { useCurrentUser } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-
-import { Inspector } from "react-inspector";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { useBackendMutation } from "main/utils/useBackend";
 const ProfilePage = () => {
   const { data: currentUser } = useCurrentUser();
+  const { root } = currentUser || {};
+  const { user } = root || {};
+  const { email, pictureUrl, fullName, alias: initialAlias } = user || {};
 
-  if (!currentUser.loggedIn) {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+
+  const objectToAxiosParams = (user) => ({
+    url: "/api/currentUser/updateAlias",
+    method: "POST",
+    params: {
+      proposedAlias: user.proposedAlias,
+    },
+  });
+  const onSuccess = (user) => {
+    toast(`Alias Awaiting Moderation: ${user.proposedAlias}`);
+  };
+
+  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess });
+  if (!currentUser?.loggedIn) {
     return <p>Not logged in.</p>;
   }
+  const onSubmit = async (data) => {
+    mutation.mutate({ proposedAlias: data.alias });
+  };
 
-  const { email, pictureUrl, fullName } = currentUser.root.user;
+  const displayedAlias = initialAlias || "Anonymous User";
   return (
     <BasicLayout>
       <Row className="align-items-center profile-header mb-5 text-center text-md-left">
@@ -24,6 +49,7 @@ const ProfilePage = () => {
         </Col>
         <Col md>
           <h2>{fullName}</h2>
+          <h3>{displayedAlias}</h3>
           <p className="lead text-muted">{email}</p>
           <RoleBadge role={"ROLE_USER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_MEMBER"} currentUser={currentUser} />
@@ -31,10 +57,33 @@ const ProfilePage = () => {
         </Col>
       </Row>
       <Row className="text-left">
-        <Inspector data={currentUser.root} />
+        <Col md={12}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form.Group controlId="formAlias">
+              <Form.Label>Alias</Form.Label>
+              <Form.Control
+                type="text"
+                {...register("alias", {
+                  required: "Alias is required.",
+                })}
+                isInvalid={Boolean(errors.alias)}
+                placeholder="Enter your new alias"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.alias?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={mutation.isLoading}
+            >
+              {"Update Alias"}
+            </Button>
+          </Form>
+        </Col>
       </Row>
     </BasicLayout>
   );
 };
-
 export default ProfilePage;

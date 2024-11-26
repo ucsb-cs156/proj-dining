@@ -14,8 +14,22 @@ describe("UserTable tests", () => {
   test("Has the expected colum headers and content", () => {
     render(<UsersTable users={usersFixtures.threeUsers} />);
 
-    const expectedHeaders = ["id", "First Name", "Last Name", "Email", "Admin"];
-    const expectedFields = ["id", "givenName", "familyName", "email", "admin"];
+    const expectedHeaders = [
+      "id",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Admin",
+      "Alias",
+    ];
+    const expectedFields = [
+      "id",
+      "givenName",
+      "familyName",
+      "email",
+      "admin",
+      "alias",
+    ];
     const testId = "UsersTable";
 
     expectedHeaders.forEach((headerText) => {
@@ -40,5 +54,23 @@ describe("UserTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-admin`),
     ).toHaveTextContent("false");
+  });
+
+  test("Status column appends approval date only for approved users with a valid date", () => {
+    render(
+      <UsersTable
+        users={[
+          { id: 1, status: "Approved", dateApproved: "2024-11-01" },
+          { id: 2, status: "Approved", dateApproved: null },
+          { id: 3, status: "Rejected", dateApproved: "2024-11-01" },
+          { id: 4, status: "Awaiting Moderation", dateApproved: null },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Approved on 10/31/2024")).toBeInTheDocument();
+    expect(screen.getByText("Approved")).toBeInTheDocument();
+    expect(screen.getByText("Rejected")).toBeInTheDocument();
+    expect(screen.getByText("Awaiting Moderation")).toBeInTheDocument();
   });
 });
