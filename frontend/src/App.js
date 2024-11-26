@@ -17,6 +17,8 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
+import MealTimesPage from "main/pages/Meal/MealTimesPage";
+
 import Moderate from "main/pages/Moderate";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
@@ -108,6 +110,15 @@ function App() {
               exact
               path="/placeholder/create"
               element={<PlaceholderCreatePage />}
+            />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route
+              exact
+              path="/diningcommons/:date-time/:dining-commons-code"
+              element={<MealTimesPage />}
             />
           </>
         )}
