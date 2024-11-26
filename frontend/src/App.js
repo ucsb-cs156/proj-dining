@@ -124,7 +124,6 @@ function App() {
             element={<DiningCommonsPage />}
           />
         </>
-
       </Routes>
     </BrowserRouter>
   );
