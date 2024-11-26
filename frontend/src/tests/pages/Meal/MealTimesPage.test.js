@@ -34,7 +34,7 @@ describe("MealTimesPage tests", () => {
   beforeEach(() => {
     axiosMock.reset();
     axiosMock
-      .onGet(`/api/diningcommons/2024-11-25/portola`)
+      .onGet("/api/diningcommons/2024-11-25/portola")
       .reply(200, mealFixtures.threeMeals);
   });
 
@@ -58,11 +58,11 @@ describe("MealTimesPage tests", () => {
     );
 
     // Wait for the meal information to be loaded
-    await screen.findByText(`Meals at portola for 2024-11-25`);
+    await screen.findByText("Meals at portola for 2024-11-25");
 
     // Ensure that the header is correct
     expect(
-      screen.getByText(`Meals at portola for 2024-11-25`),
+      screen.getByText("Meals at portola for 2024-11-25"),
     ).toBeInTheDocument();
 
     // Check that each meal time is displayed correctly
