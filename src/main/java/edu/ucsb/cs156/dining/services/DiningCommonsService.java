@@ -105,4 +105,45 @@ public class DiningCommonsService {
     log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
     return retVal;
   }
+
+
+  /**
+   * Get the meals for a specific dining commons by date
+   * @param meal
+   * @param date
+   * @param diningCommonsCode
+   * @return meals by date by dining common
+   * @throws Exception
+   */
+  public String getMenuItemsByMealAndDate(LocalDateTime date, String diningCommonsCode, String meal) throws Exception {
+
+    // set headers for api requests
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    // set the date in the format that the api expects
+    String formattedDate = date.toString();
+    log.info("formattedDate: {}", formattedDate);
+
+    // set the url for the api request e.g. (https://api.ucsb.edu/dining/menu/v1/2021-02-10/ortega/lunch)
+    String url = MEALS_BY_DATE_ENDPOINT + date.toString() + "/" + diningCommonsCode + "/" + meal;
+
+
+    // get the information from request
+    String retVal = "";
+    MediaType contentType = null;
+    HttpStatus statusCode = null;
+
+    ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+    contentType = re.getHeaders().getContentType();
+    statusCode = (HttpStatus) re.getStatusCode();
+    retVal = re.getBody();
+
+    log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
+    return retVal;
+  }
 }
