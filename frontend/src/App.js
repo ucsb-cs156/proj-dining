@@ -18,6 +18,8 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import DiningCommonsPage from "main/pages/DiningCommons/DiningCommonsPage";
 
+import MyReviewsPage from "main/pages/MyReviews/MyReviewsPage";
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -115,6 +117,11 @@ function App() {
               path="/diningcommons/:diningCommonsCode"
               element={<DiningCommonsPage />}
             />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsPage />} />
           </>
         )}
       </Routes>
