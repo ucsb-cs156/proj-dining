@@ -7,6 +7,7 @@ import DiningCommonsIndexPage from "main/pages/Dining/DiningCommonsIndexPage";
 import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
+import MenuItemPage from "main/pages/MenuItemPage";
 import MyReviewsPage from "main/pages/MyReviews/MyReviewsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
@@ -22,6 +23,11 @@ function App() {
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
+        <Route
+          exact
+          path="/diningcommons/:dateTime/:diningCommonsCode/:meal"
+          element={<MenuItemPage />}
+        />
         <>
           <Route
             exact
