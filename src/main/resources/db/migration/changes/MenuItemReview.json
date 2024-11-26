@@ -71,6 +71,18 @@
                   },
                   {
                     "column": {
+                      "name": "RATING",
+                      "type": "INT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "REVIEW_TEXT",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
                       "name": "CREATED_DATE",
                       "type": "TIMESTAMP"
                     }
