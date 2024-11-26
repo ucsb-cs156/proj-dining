@@ -205,56 +205,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
                 assertTrue(responseJson.get("reviewerComments").isNull());
 
-
-                //assertEquals(expectedJson.get("reviewerComments").asText(), responseJson.get("reviewerComments").asText());
-
         }
-        // @WithMockUser(roles = { "USER" })
-        // @Test
-        // public void a_user_can_post_a_new_review_throws_itemStarts_Exception() throws Exception {
-
-        //         // Arrange
-        //         LocalDateTime now = LocalDateTime.now();
-
-        //         Review review2 = Review.builder()
-        //                         .dateCreated(now)
-        //                         .dateEdited(now)
-        //                         .itemsStars(0l)
-        //                         .reviewerComments("")
-        //                         .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
-        //                         .studentId(1L)
-        //                         .status("Awaiting Moderation")
-        //                         .itemId("Bfast1090")
-        //                         .id(0L)
-        //                         .build();
-        //         when(reviewRepository.save(eq(review2))).thenReturn(review2);
-
-        //         // Act
-        //         MvcResult response2 = mockMvc.perform(
-        //                         post("/api/reviews/post?itemId=Bfast1090&reviewerComments=&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
-        //                         .with(csrf()))
-        //                         .andExpect(status().isBadRequest())
-        //                         .andReturn();
-
-        //         String jsonReview2 = mapper.writeValueAsString(review2);
-
-        //         // Assert
-        //         verify(reviewRepository).save(any(Review.class));
-        //         JsonNode responseJson2 = mapper.readTree(response2.getResponse().getContentAsString());
-        //         JsonNode expectedJson2 = mapper.readTree(jsonReview2);
-
-        //         assertEquals(expectedJson2.get("studentId").asInt(), responseJson2.get("studentId").asInt());
-        //         assertEquals(expectedJson2.get("itemsStars").asInt(), responseJson2.get("itemsStars").asInt());
-        //         assertEquals(expectedJson2.get("status").asText(), responseJson2.get("status").asText());
-        //         assertEquals(expectedJson2.get("itemId").asText(), responseJson2.get("itemId").asText());
-        //         assertEquals(expectedJson2.get("reviewerComments").asText(), responseJson2.get("reviewerComments").asText());
-
-        //         // Manually compare important date fields with a threshold for acceptable
-        //         // variation
-        //         checkDates(expectedJson2, responseJson2, "dateItemServed");
-        //         checkDates(expectedJson2, responseJson2, "dateCreated");
-        //         checkDates(expectedJson2, responseJson2, "dateEdited");
-        // }
 
 
 
