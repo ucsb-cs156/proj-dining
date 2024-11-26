@@ -73,7 +73,7 @@ public class ReviewsController extends ApiController {
     @PostMapping("/post")
     public Reviews postReview(
         @Parameter(name="item_id") @RequestParam int item_id,
-        @Parameter(name="date_served") @RequestParam String date_served,
+        @Parameter(name="date_served") @RequestParam String date_served
         //@Parameter(name="status") @RequestParam(required=false) String status
         ) 
         {
