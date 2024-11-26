@@ -29,11 +29,11 @@ export default {
   },
 };
 
-  const Template = (args) => {
-    return <MealTimesPage {...args} />;
-  };
-  
-  export const Default = Template.bind({});
-  Default.args = {
-    suppressMemoryRouter: true,
-  };
+const Template = (args) => {
+  return <MealTimesPage {...args} />;
+};
+
+export const Default = Template.bind({});
+Default.args = {
+  suppressMemoryRouter: true,
+};

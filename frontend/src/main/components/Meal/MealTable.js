@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function MealTable({
   meals,
-  dateTime, 
+  dateTime,
   diningCommonsCode,
   testIdPrefix = "MealTable",
 }) {
@@ -22,7 +22,5 @@ export default function MealTable({
     },
   ];
 
-  return (
-    <OurTable data={meals} columns={columns} testid={testIdPrefix} />
-  );
+  return <OurTable data={meals} columns={columns} testid={testIdPrefix} />;
 }

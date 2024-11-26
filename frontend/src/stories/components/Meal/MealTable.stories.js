@@ -19,7 +19,7 @@ Empty.args = {
 
 export const ExampleMeals = Template.bind({});
 ExampleMeals.args = {
-    dateTime: "2024-11-25",
-    diningCommonsCode: "portola",
-    meals: mealFixtures.threeMeals,
+  dateTime: "2024-11-25",
+  diningCommonsCode: "portola",
+  meals: mealFixtures.threeMeals,
 };

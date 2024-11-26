@@ -26,7 +26,7 @@ jest.mock("react-router-dom", () => {
 const queryClient = new QueryClient();
 
 describe("MealTimesPage tests", () => {
- const axiosMock = new AxiosMockAdapter(axios);
+  const axiosMock = new AxiosMockAdapter(axios);
   beforeEach(() => {
     jest.spyOn(console, "error");
     console.error.mockImplementation(() => null);
@@ -44,7 +44,7 @@ describe("MealTimesPage tests", () => {
         <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
           <MealTimesPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   });
 
@@ -54,19 +54,20 @@ describe("MealTimesPage tests", () => {
         <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
           <MealTimesPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     // Wait for the meal information to be loaded
     await waitFor(() => screen.getByText(`Meals at portola for 2024-11-25`));
 
     // Ensure that the header is correct
-    expect(screen.getByText(`Meals at portola for 2024-11-25`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Meals at portola for 2024-11-25`),
+    ).toBeInTheDocument();
 
     // Check that each meal time is displayed correctly
     expect(screen.getByText("Breakfast")).toBeInTheDocument();
     expect(screen.getByText("Lunch")).toBeInTheDocument();
     expect(screen.getByText("Dinner")).toBeInTheDocument();
   });
-
 });
