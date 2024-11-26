@@ -1,50 +1,32 @@
-const diningCommonsFixtures = {
-  oneDate: {
-    name: "steve",
-    code: "help world",
-    hasDiningCam: "true",
-    hasSackMeal: "true",
-    hasTakeoutMeal: "false",
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
+export const diningCommonsFixtures = {
+  oneDiningCommon: {
+    name: "Carillo",
+    code: "carillo",
+    hasDiningCam: true,
+    hasSackMeal: false,
+    hasTakeoutMeal: false,
   },
-  threeDates: [
+  threeDiningCommons: [
     {
-      name: "mike",
-      code: "xyz",
-      hasDiningCam: "true",
-      hasSackMeal: "true",
-      hasTakeoutMeal: "false",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      name: "Portola",
+      code: "portola",
+      hasDiningCam: true,
+      hasSackMeal: true,
+      hasTakeoutMeal: true,
     },
     {
-      name: "bob",
-      code: "team 13",
-      hasDiningCam: "true",
-      hasSackMeal: "true",
-      hasTakeoutMeal: "false",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      name: "De La Guerra",
+      code: "de-la-guerra",
+      hasDiningCam: true,
+      hasSackMeal: false,
+      hasTakeoutMeal: false,
     },
     {
-      name: "jake",
-      code: "testing",
-      hasDiningCam: "true",
-      hasSackMeal: "true",
-      hasTakeoutMeal: "false",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      name: "Ortega",
+      code: "ortega",
+      hasDiningCam: true,
+      hasSackMeal: true,
+      hasTakeoutMeal: true,
     },
   ],
 };
-
-export { diningCommonsFixtures };
