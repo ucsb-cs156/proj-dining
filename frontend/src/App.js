@@ -108,15 +108,13 @@ function App() {
             />
           </>
         )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/diningcommons/:diningCommonsCode"
-              element={<DiningCommonsPage />}
-            />
-          </>
-        )}
+        <>
+          <Route
+            exact
+            path="/diningcommons/:diningCommonsCode"
+            element={<DiningCommonsPage />}
+          />
+        </>
       </Routes>
     </BrowserRouter>
   );

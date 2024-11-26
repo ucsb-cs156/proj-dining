@@ -23,7 +23,6 @@ public class UCSBAPIDiningCommonsController {
   private UCSBAPIDiningCommonsService diningCommonsService;
 
   @Operation(summary = "Get all dining commons from UCSB API")
-  @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("/all")
   public List<UCSBAPIDiningCommons> getAllDiningCommons() throws Exception {
     return diningCommonsService.getAllDiningCommons();
