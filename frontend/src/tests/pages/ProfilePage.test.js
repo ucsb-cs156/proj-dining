@@ -13,16 +13,6 @@ jest.mock("react-toastify", () => ({
   toast: jest.fn(),
 }));
 
-const currentUserMock = {
-  loggedIn: true,
-  user: {
-    email: "phtcon@ucsb.edu",
-    fullName: "Phillip Conrad",
-    alias: "Anonymous User",
-    pictureUrl: "profile.jpg",
-  },
-};
-
 describe("ProfilePage tests", () => {
   const queryClient = new QueryClient();
 
