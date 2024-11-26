@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -58,7 +58,7 @@ describe("MealTimesPage tests", () => {
     );
 
     // Wait for the meal information to be loaded
-    await waitFor(() => screen.getByText(`Meals at portola for 2024-11-25`));
+    await screen.findByText(`Meals at portola for 2024-11-25`);
 
     // Ensure that the header is correct
     expect(
