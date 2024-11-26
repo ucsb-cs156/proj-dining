@@ -28,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -488,6 +489,58 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 verify(reviewsRepository, times(1)).findById(67L);
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("Review with id 67 not found", json.get("message"));
+
+        }
+
+        @WithMockUser(roles = { "USER", "ADMIN" })
+        @Test
+        public void admin_user_inputs_valid_moderation_status() throws Exception {
+                // arrange
+
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                Review reviewOrig = Review.builder()
+                                .reviewerId(1)
+                                .itemId(1)
+                                .dateServed(ldt1)
+                                .stars(5)
+                                .reviewText("very good")
+                                .status("Awaiting Moderation")
+                                .createdDate(ldt1)
+                                .lastEditedDate(ldt1)
+                                .build();
+
+                Review reviewEdited = Review.builder()
+                                .reviewerId(1)
+                                .itemId(1)
+                                .dateServed(ldt1)
+                                .stars(5)
+                                .reviewText("very good")
+                                .status("Horrible Review")
+                                .modId(1L)
+                                .modComments("brilliant review")
+                                .createdDate(ldt1)
+                                .lastEditedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                                .build();
+
+                String requestBody = mapper.writeValueAsString(reviewEdited);
+
+                when(reviewsRepository.findById(eq(67L))).thenReturn(Optional.of(reviewOrig));
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/reviews/moderator?id=67")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isBadRequest()).andReturn();
+
+                // assert
+                verify(reviewsRepository, times(1)).findById(67L);
+                Optional<IllegalArgumentException> except = Optional.ofNullable((IllegalArgumentException) response.getResolvedException());
+                assertTrue(except.isPresent());
+                except.ifPresent( (e) -> assertEquals(e.getMessage(), "Status must be 'Awaiting Moderation', 'Approved', or 'Rejected'"));
 
         }
 

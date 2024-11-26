@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import org.springframework.http.HttpStatus;
 
 import jakarta.validation.Valid;
 
@@ -41,6 +45,13 @@ public class ReviewsController extends ApiController {
 
     @Autowired
     ReviewRepository reviewsRepository;
+
+    
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleIllegalArgumentException() {
+
+    }
 
     /**
      * List all reviews
@@ -169,6 +180,10 @@ public class ReviewsController extends ApiController {
 
         Review review = reviewsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+        
+        if( !(incoming.getStatus().equals("Awaiting Moderation") || incoming.getStatus().equals("Approved") || incoming.getStatus().equals("Rejected")) ) {
+            throw new IllegalArgumentException("Status must be 'Awaiting Moderation', 'Approved', or 'Rejected'");
+        } 
 
         review.setStatus(incoming.getStatus());
         review.setModComments(incoming.getModComments());
