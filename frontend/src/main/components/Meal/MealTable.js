@@ -14,7 +14,7 @@ export default function MealTable({
       accessor: "name", // accessor is the "key" in the data
       Cell: ({ row }) => (
         <Link
-          to={`/api/diningcommons/${dateTime}/${diningCommonsCode}/${row.original.code}`}
+          to={`/diningcommons/${dateTime}/${diningCommonsCode}/${row.original.code}`}
         >
           {row.original.name}
         </Link>

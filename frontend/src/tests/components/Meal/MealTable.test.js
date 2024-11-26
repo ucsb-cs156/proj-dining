@@ -76,7 +76,7 @@ describe("MealTable tests", () => {
     const bLink = screen.getByText("Breakfast");
     expect(bLink).toHaveAttribute(
       "href",
-      "/api/diningcommons/2024-11-25/portola/breakfast",
+      "/diningcommons/2024-11-25/portola/breakfast",
     );
 
     expect(
@@ -85,7 +85,7 @@ describe("MealTable tests", () => {
     const lLink = screen.getByText("Lunch");
     expect(lLink).toHaveAttribute(
       "href",
-      "/api/diningcommons/2024-11-25/portola/lunch",
+      "/diningcommons/2024-11-25/portola/lunch",
     );
 
     expect(
@@ -94,7 +94,7 @@ describe("MealTable tests", () => {
     const dLink = screen.getByText("Dinner");
     expect(dLink).toHaveAttribute(
       "href",
-      "/api/diningcommons/2024-11-25/portola/dinner",
+      "/diningcommons/2024-11-25/portola/dinner",
     );
   });
 });
