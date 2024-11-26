@@ -154,38 +154,40 @@ public class ReviewControllerTests extends ControllerTestCase {
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_rating_below_1_throws_exception() throws Exception {
-                mockMvc.perform(
-                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
-                                                .with(csrf()))
-                                .andDo(print()) // This helps you see the full response for debugging
-                                .andExpect(status().isBadRequest());
+            mockMvc.perform(
+                    post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=0&dateItemServed=2021-12-12T08:08:08")
+                    .with(csrf()))
+                    .andDo(print()) // This helps you see the full response for debugging
+                    .andExpect(status().isBadRequest());
         }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_rating_above_5_throws_exception() throws Exception {
-                mockMvc.perform(
-                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=6&dateItemServed=2021-12-12T08:08:08")
-                                                .with(csrf()))
-                                .andDo(print()) // This helps you see the full response for debugging
-                                .andExpect(status().isBadRequest());
+            mockMvc.perform(
+                    post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=6&dateItemServed=2021-12-12T08:08:08")
+                    .with(csrf()))
+                    .andDo(print()) // This helps you see the full response for debugging
+                    .andExpect(status().isBadRequest());
         }
 
-        // Test valid input at boundaries
-        @WithMockUser(roles = { "USER" })
-        @Test
-        public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
-                // Lower boundary test
-                mockMvc.perform(
-                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
-                                                .with(csrf()))
-                                .andExpect(status().isOk());
-                // Lower boundary test
-                mockMvc.perform(
-                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
-                                                .with(csrf()))
-                                .andExpect(status().isOk());
-        }
+            // Test valid input at boundaries
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
+        // Lower boundary test
+        mockMvc.perform(
+                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                .with(csrf()))
+            .andExpect(status().isOk());
+        // Lower boundary test
+        mockMvc.perform(
+                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
+                .with(csrf()))
+            .andExpect(status().isOk());
+    }
+
+
 
         @WithMockUser(roles = { "USER" })
         @Test
@@ -210,7 +212,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 // Act
                 MvcResult response = mockMvc.perform(
                                 post("/api/reviews/post?itemId=1&reviewerComments=   &itemsStars=1&dateItemServed=2021-12-12T08:08:08")
-                                                .with(csrf()))
+                                .with(csrf()))
                                 .andExpect(status().isOk())
                                 .andReturn();
 
@@ -328,7 +330,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3 ))
                                 .studentId(1L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId(1L)
                                 .id(1L)
                                 .build();
 
@@ -338,7 +340,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2022, 2, 6, 8, 8))
                                 .studentId(2L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId(1L)
                                 .id(2L)
                                 .build();
                 
@@ -348,7 +350,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                                 .dateItemServed(LocalDateTime.of(2023, 1, 7, 3, 8))
                                 .studentId(2L)
                                 .status("Awaiting Moderation")
-                                .itemId("Bfast1090")
+                                .itemId(1L)
                                 .id(3L)
                                 .build();
 
