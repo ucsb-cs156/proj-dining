@@ -184,8 +184,10 @@ public class ReviewsController extends ApiController {
         Review review = reviewsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
         
-        if( !incoming.getStatus().matches("Approved|Awaiting Approval|Rejected") ) {
-            throw new IllegalArgumentException("Status must be 'Awaiting Moderation', 'Approved', or 'Rejected'");
+        ArrayList<String> validStatus = new ArrayList<>(Arrays.asList("Approved", "Awaiting Moderation", "Rejected"));
+
+        if( !validStatus.contains(incoming.getStatus()) ) {
+            throw new IllegalArgumentException("Status must be one of: " + validStatus);
         } 
 
         review.setStatus(incoming.getStatus());

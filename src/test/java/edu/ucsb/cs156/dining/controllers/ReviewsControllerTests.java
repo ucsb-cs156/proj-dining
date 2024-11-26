@@ -540,7 +540,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 verify(reviewsRepository, times(1)).findById(67L);
                 Optional<IllegalArgumentException> except = Optional.ofNullable((IllegalArgumentException) response.getResolvedException());
                 assertTrue(except.isPresent());
-                except.ifPresent( (e) -> assertEquals(e.getMessage(), "Status must be 'Awaiting Moderation', 'Approved', or 'Rejected'"));
+                except.ifPresent( (e) -> assertEquals(e.getMessage(), "Status must be one of: [Approved, Awaiting Moderation, Rejected]"));
 
         }
 
