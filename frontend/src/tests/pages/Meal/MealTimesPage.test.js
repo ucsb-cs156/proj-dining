@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
-import { mealFixtures } from "fixtures/mealFixtures"; // Mock fixture data
+import { mealFixtures } from "fixtures/mealFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
@@ -35,7 +35,7 @@ describe("MealTimesPage tests", () => {
     axiosMock.reset();
     axiosMock
       .onGet(`/api/diningcommons/2024-11-25/portola`)
-      .reply(200, mealFixtures.threeMeals); // Return mock data for the test
+      .reply(200, mealFixtures.threeMeals);
   });
 
   test("renders without crashing", () => {

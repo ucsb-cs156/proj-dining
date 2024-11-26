@@ -45,7 +45,7 @@ describe("MealTable tests", () => {
     });
   });
 
-  test("Has the expected column headers, content and buttons for admin user", () => {
+  test("Has the expected column headers and content", () => {
     // act
     render(
       <QueryClientProvider client={queryClient}>
@@ -73,7 +73,7 @@ describe("MealTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-name`),
     ).toHaveTextContent("Breakfast");
-    const bLink = screen.getByText("Breakfast"); // The link text
+    const bLink = screen.getByText("Breakfast"); 
     expect(bLink).toHaveAttribute(
       "href",
       "/api/diningcommons/2024-11-25/portola/breakfast",
@@ -82,7 +82,7 @@ describe("MealTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-name`),
     ).toHaveTextContent("Lunch");
-    const lLink = screen.getByText("Lunch"); // The link text
+    const lLink = screen.getByText("Lunch"); 
     expect(lLink).toHaveAttribute(
       "href",
       "/api/diningcommons/2024-11-25/portola/lunch",
@@ -91,7 +91,7 @@ describe("MealTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-2-col-name`),
     ).toHaveTextContent("Dinner");
-    const dLink = screen.getByText("Dinner"); // The link text
+    const dLink = screen.getByText("Dinner");
     expect(dLink).toHaveAttribute(
       "href",
       "/api/diningcommons/2024-11-25/portola/dinner",
