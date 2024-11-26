@@ -6,7 +6,7 @@ import MealTable from "main/components/Meal/MealTable";
 
 export default function MealTimesPage() {
   // Stryker disable next-line all : Can't test state because hook is internal
-  let { dateTime, diningCommonsCode } = useParams();
+  let { "date-time": dateTime, "dining-commons-code": diningCommonsCode } = useParams();
 
   const {
     data: meals,
@@ -16,10 +16,6 @@ export default function MealTimesPage() {
         // Stryker disable next-line all : don't test internal caching of React Query
         [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
         {url: `/api/diningcommons/${dateTime}/${diningCommonsCode}`,  
-        params: {
-            dateTime,
-            diningCommonsCode,
-          },
         },
         // Stryker disable next-line all : don't test default value of empty list
         [],
@@ -29,12 +25,9 @@ export default function MealTimesPage() {
     <BasicLayout>
       <div className="pt-2">
         {/* You can display all meal times of the dining common on a certain date */}
-        <h5>Meals at {diningCommonsCode} for {dateTime}</h5>
-
-        {/* Render the MealTable and pass the meals data */}
+        <h1>Meals at {diningCommonsCode} for {dateTime}</h1>
         {meals && <MealTable meals={meals} dateTime={dateTime} diningCommonsCode={diningCommonsCode} />}
       </div>
     </BasicLayout>
   );
-
 }
