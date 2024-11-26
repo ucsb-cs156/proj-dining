@@ -65,7 +65,6 @@ public class ReviewsController extends ApiController {
      * This method creates a new review. Accessible only to users with the role "ROLE_ADMIN".
      * @param item_id itemID of the review
      * @param date_served date served 
-     * @param status status of the review
      * @return the save review
      */
     @Operation(summary= "Create a new review")
@@ -74,7 +73,6 @@ public class ReviewsController extends ApiController {
     public Reviews postReview(
         @Parameter(name="item_id") @RequestParam int item_id,
         @Parameter(name="date_served") @RequestParam String date_served
-        //@Parameter(name="status") @RequestParam(required=false) String status
         ) 
         {
 
@@ -95,22 +93,5 @@ public class ReviewsController extends ApiController {
 
         return savedReviews; 
     }
-     
-
-        /**
-         * This method returns all reviews from current user.
-         * @return all reviews from current user.
-         */
-        @Operation(summary = "Get reviews from an user")
-        @PreAuthorize("hasRole('ROLE_USER')")
-        @GetMapping("")
-        public Iterable<Reviews> getByCurrUserId() {
-            CurrentUser user = getCurrentUser();
-            long currUserId = user.getUser().getId();
-
-            Iterable<Reviews> reviews = reviewsRepository.findByUserId(currUserId);
-
-            return reviews;
-        }
 
 }
