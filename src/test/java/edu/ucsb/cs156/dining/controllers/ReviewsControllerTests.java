@@ -465,9 +465,9 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .dateServed(ldt1)
                                 .stars(1)
                                 .reviewText("very bad")
-                                .status("Approved")
+                                .status("Rejected")
                                 .modId(1L)
-                                .modComments("good good")
+                                .modComments("not good")
                                 .createdDate(ldt1)
                                 .lastEditedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                                 .build();

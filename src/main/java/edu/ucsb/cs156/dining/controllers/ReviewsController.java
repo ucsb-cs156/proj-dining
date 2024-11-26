@@ -33,6 +33,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+import java.util.Arrays;
+import java.util.ArrayList;
+
 /**
  * This is a REST controller for Reviews
  */
@@ -181,7 +184,7 @@ public class ReviewsController extends ApiController {
         Review review = reviewsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
         
-        if( !(incoming.getStatus().equals("Awaiting Moderation") || incoming.getStatus().equals("Approved") || incoming.getStatus().equals("Rejected")) ) {
+        if( !incoming.getStatus().matches("Approved|Awaiting Approval|Rejected") ) {
             throw new IllegalArgumentException("Status must be 'Awaiting Moderation', 'Approved', or 'Rejected'");
         } 
 
