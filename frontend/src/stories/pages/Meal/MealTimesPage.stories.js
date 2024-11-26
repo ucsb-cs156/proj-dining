@@ -13,9 +13,7 @@ export default {
         return HttpResponse.json(mealFixtures.threeMeals, { status: 200 });
       }),
     ],
-    // Simulating route parameters for `dateTime` and `diningCommonsCode`
     reactRouter: {
-      // We are mocking the params here, so `useParams` will be able to use these values.
       location: {
         path: "/diningcommons/2024-11-25/portola",
         pathname: "/diningcommons/2024-11-25/portola",
@@ -23,7 +21,6 @@ export default {
         hash: "",
         state: null,
       },
-      // Matching the route for `dateTime` and `diningCommonsCode`
       routeParams: {
         dateTime: "2024-11-25",
         diningCommonsCode: "portola",
