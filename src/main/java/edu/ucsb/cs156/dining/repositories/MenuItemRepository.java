@@ -18,4 +18,5 @@ public interface MenuItemRepository extends CrudRepository<MenuItem, Long> {
    * @return Optional of Menu item based on the parameters (empty if not found)
    */
   Optional<MenuItem> findByDiningCommonsCodeAndMealCodeAndNameAndStation(String diningCommonsCode, String mealCode, String name, String station);
+  boolean existsById(Long id);
 }
