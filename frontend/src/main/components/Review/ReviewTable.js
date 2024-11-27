@@ -14,7 +14,6 @@ export default function ReviewTable({
   moderatorOptions,
   deleteColumn,
 }) {
-
   // Stryker disable all : hard to test for query caching
 
   const deleteMutation = useBackendMutation(
@@ -90,7 +89,7 @@ export default function ReviewTable({
       ButtonColumn("Reject", "danger", rejectCallback, "ReviewTable"),
     );
   }
- 
+
   if (deleteColumn && hasRole(currentUser, "ROLE_ADMIN")) {
     columns.push(
       ButtonColumn("Delete", "danger", deleteCallback, "ReviewTable"),
