@@ -82,7 +82,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 //.student_id(3)
                                 .item_id(1)
                                 .date_served("today")
-                                .status("working")
+                                //.status("working")
                                 //.userid(1L)
                                 // .moderator_comments("test")
                                 // .created_date("today")
@@ -160,7 +160,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .student_id(1)
                                 .item_id(2)
                                 .date_served("today")
-                                .status("working")
+                                .status("Awaiting Moderation")
                                 .userId(1L)
                                 //.moderator_comments("test")
                                 //.created_date("today")
@@ -171,7 +171,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc.perform(
-                        post("/api/reviews/post?item_id=2&date_served=today&status=working")                
+                        post("/api/reviews/post?item_id=2&date_served=today")                
                 //post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
@@ -200,7 +200,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                         .student_id(1)
                         .item_id(2)
                         .date_served("today")
-                        .status("working")
+                        .status("Awaiting Moderation")
                         .userId(1L)
                         .build();
 
@@ -208,7 +208,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                         .student_id(3)
                         .item_id(1)
                         .date_served("today")
-                        .status("working")
+                        .status("Awaiting Moderation")
                         .userId(1L)
                         .build();
 

@@ -5,7 +5,7 @@ import edu.ucsb.cs156.dining.entities.Reviews;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
-import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+//import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -46,8 +46,8 @@ public class ReviewsController extends ApiController {
     @Autowired
     ReviewsRepository reviewsRepository;
 
-    @Autowired
-    MenuItemRepository menuItemRepository;
+    // @Autowired
+    // MenuItemRepository menuItemRepository;
 
     /**
      * THis method returns a list of all reviews.
@@ -76,9 +76,9 @@ public class ReviewsController extends ApiController {
         ) 
         {
 
-        MenuItem menuItem = menuItemRepository.findById((long)item_id)
-        .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "No MenuItem with itemId: " + item_id + " found"));
+        // MenuItem menuItem = menuItemRepository.findById((long)item_id)
+        // .orElseThrow(() -> new ResponseStatusException(
+        //         HttpStatus.NOT_FOUND, "No MenuItem with itemId: " + item_id + " found"));
 
         Reviews reviews = new Reviews();
         CurrentUser user = getCurrentUser();
@@ -86,12 +86,26 @@ public class ReviewsController extends ApiController {
         reviews.setStudent_id((int)user.getUser().getId());
         reviews.setItem_id(item_id);
         reviews.setDate_served(date_served);
-        reviews.setStatus(status != null ? status : "Awaiting Moderation");
+        //reviews.setStatus(status != null ? status : "Awaiting Moderation");
+        reviews.setStatus("Awaiting Moderation");
         reviews.setUserId(user.getUser().getId());
 
         Reviews savedReviews = reviewsRepository.save(reviews);
 
         return savedReviews; 
     }
+    /**
+         * This method returns all reviews from current user.
+         * @return all reviews from current user.
+         */
+        @Operation(summary = "Get reviews from an user")
+        @PreAuthorize("hasRole('ROLE_USER')")
+        @GetMapping("")
+        public Iterable<Reviews> getByCurrUserId() {
+            CurrentUser user = getCurrentUser();
+            long currUserId = user.getUser().getId();
+            Iterable<Reviews> reviews = reviewsRepository.findByUserId(currUserId);
+            return reviews;
+        }
 
 }
