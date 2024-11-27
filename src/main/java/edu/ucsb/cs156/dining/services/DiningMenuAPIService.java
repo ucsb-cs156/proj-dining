@@ -2,8 +2,6 @@ package edu.ucsb.cs156.dining.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
-import edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -41,7 +39,7 @@ public class DiningMenuAPIService {
 
   @Autowired private ObjectMapper objectMapper;
 
-  @Autowired private DiningMenuAPIRepository diningMenuApiRepository;
+  //@Autowired private DiningMenuAPIRepository diningMenuApiRepository;
 
   @Value("${app.ucsb.api.key}")
   private String apiKey;

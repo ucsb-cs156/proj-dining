@@ -12,8 +12,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
-import edu.ucsb.cs156.dining.repositories.DiningMenuAPIRepository;
 import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
 
 import java.time.OffsetDateTime;
@@ -54,8 +52,6 @@ public class DiningMenuAPIServiceTests {
 
   @Mock private RestTemplate restTemplate;
 
-  @MockBean private DiningMenuAPIRepository diningMenuAPIRepository;
-
   @MockBean WiremockService wiremockService;
 
   @Autowired private DiningMenuAPIService diningMenuAPIService;
@@ -79,7 +75,7 @@ public class DiningMenuAPIServiceTests {
 
     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
     expectedResult.add(sampleDay);
-
+ 
     when(diningMenuAPIRepository.findAll()).thenReturn(expectedResult);
 
     List<DiningMenuAPI> actualResult = diningMenuAPIService.getDays();
