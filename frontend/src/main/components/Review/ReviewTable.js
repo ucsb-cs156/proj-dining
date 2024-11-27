@@ -4,7 +4,6 @@ import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useBackendMutation } from "main/utils/useBackend";
 import {
   cellToAxiosParamsDelete,
-  onDeleteSuccess,
 } from "main/utils/ReviewUtils";
 import { hasRole } from "main/utils/currentUser";
 
@@ -18,7 +17,7 @@ export default function ReviewTable({
 
   const deleteMutation = useBackendMutation(
     cellToAxiosParamsDelete,
-    { onSuccess: onDeleteSuccess },
+    {},
     ["/api/reviews/all"],
   );
   // Stryker restore all
