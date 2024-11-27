@@ -106,7 +106,7 @@ public class DiningMenuAPIServiceTests {
 
     @Test
     public void testGetCommons_failure() throws Exception {
-      OffsetDateTime dateTime = OffsetDateTime.of(2024, 12, 10, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
+      OffsetDateTime dateTime = OffsetDateTime.of(2025, 01, 01, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
       DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
       String formattedDateTime = dateTime.format(formatter);
 
@@ -132,7 +132,7 @@ public class DiningMenuAPIServiceTests {
       OffsetDateTime dateTime = OffsetDateTime.of(2024, 12, 01, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
       DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
       String formattedDateTime = dateTime.format(formatter);
-      String commons = "portola";
+      String commons = "del-playa";
 
       String expectedResult = "{expectedResult}";
       String expectedURL = DiningMenuAPIService.GET_MEALS
