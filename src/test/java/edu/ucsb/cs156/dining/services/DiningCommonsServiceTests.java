@@ -96,4 +96,28 @@ class DiningCommonsServiceTests {
     String actualResult = diningCommonsService.getMealsByDateJSON(date, diningCommonsCode);
     assertEquals(expectedResult, actualResult);
   }
+
+  @Test
+  void get_returns_all_menuitems_by_meal_date_diningcommons() throws Exception {
+
+    LocalDateTime date = LocalDateTime.of(2021, 5, 1, 0, 0);
+    String diningCommonsCode = "ortega";
+    String meal = "lunch";
+
+
+    String expectedURL = DiningCommonsService.MEALS_BY_DATE_ENDPOINT + date.toString() + "/" + diningCommonsCode + "/" + meal;
+
+    String expectedResult = "test2";
+
+    this.mockRestServiceServer
+        .expect(requestTo(expectedURL))
+        .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
+        .andExpect(header("ucsb-api-version", "1.0"))
+        .andExpect(header("ucsb-api-key", apiKey))
+        .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
+
+    String actualResult = diningCommonsService.getMenuItemsByMealAndDate(date, diningCommonsCode, meal);
+    assertEquals(expectedResult, actualResult);
+  }
 }

@@ -62,4 +62,20 @@ public class DiningCommonsControllerTests extends ControllerTestCase {
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
+
+  @Test
+  public void getMenuItemsByMealDateTimeAndDiningCommonsCode() throws Exception
+  {
+    String expectedJson = "{expectedResult}";
+    LocalDateTime dateTime = LocalDateTime.now();
+
+    when(diningCommonsService.getMenuItemsByMealAndDate(dateTime, "DLG", "lunch"))
+        .thenReturn(expectedJson);
+
+    MvcResult response = mockMvc.perform(get("/api/diningcommons/" + dateTime + "/DLG" + "/lunch"))
+        .andExpect(status().isOk()).andReturn();
+
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
 }
