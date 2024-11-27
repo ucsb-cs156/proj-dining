@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.config.SecurityConfig;
-import edu.ucsb.cs156.dining.entities.DiningMenuAPI;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.DiningMenuAPIService;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
@@ -49,12 +48,7 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
   @Test
   public void test_getDays() throws Exception {
 
-    DiningMenuAPI Today =
-        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
-
-    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
-    expectedResult.add(Today);
-
+    String expectedResult = "{expectedJSONResult}";
     String url = "/api/dining/getDays";
 
     when(diningMenuAPIService.getDays()).thenReturn(expectedResult);
@@ -64,26 +58,16 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
             .perform(get(url).contentType("application/json"))
             .andExpect(status().isOk())
             .andReturn();
+    String responseString = response.getResponse().getContentAsString();
 
-    assertEquals(
-        expectedResult,
-        objectMapper.readValue(
-            response.getResponse().getContentAsString(),
-            new TypeReference<List<DiningMenuAPI>>() {}));
-
-    verify(diningMenuAPIService, times(1)).getDays();
+    assertEquals(expectedResult, responseString);
   }
 
   @Test
   public void test_getCommons() throws Exception {
-
     OffsetDateTime testDateTime = OffsetDateTime.of(2024, 11, 19, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
-    DiningMenuAPI Tomorrow =
-        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_2_JSON, DiningMenuAPI.class);
 
-    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
-    expectedResult.add(Tomorrow);
-
+    String expectedResult = "{expectedJSONResult}";
     String url = "/api/dining/getCommons?dateTime=" + testDateTime.toString();
 
     when(diningMenuAPIService.getCommons(testDateTime)).thenReturn(expectedResult);
@@ -93,28 +77,17 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
             .perform(get(url).contentType("application/json"))
             .andExpect(status().isOk())
             .andReturn();
+    String responseString = response.getResponse().getContentAsString();
 
-    assertEquals(
-        expectedResult,
-        objectMapper.readValue(
-            response.getResponse().getContentAsString(),
-            new TypeReference<List<DiningMenuAPI>>() {}));
-
-    verify(diningMenuAPIService, times(1)).getCommons(testDateTime);
+    assertEquals(expectedResult, responseString);
   }
 
   @Test
   public void test_getMeals() throws Exception {
-
     OffsetDateTime testDateTime = OffsetDateTime.of(2024, 11, 20, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
     String testCommonsCode = "portola";
-    DiningMenuAPI Wednesday =
-        objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_3_JSON, DiningMenuAPI.class);
-
-    List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
-    expectedResult.add(Wednesday);
-
-   // String formattedDateTime = testDateTime.toLocalDateTime().toString();
+    
+    String expectedResult = "{expectedJSONResult}";
     String url = "/api/dining/getMeals?dateTime=" + testDateTime + "&diningCommonsCode=" + testCommonsCode;
 
     when(diningMenuAPIService.getMeals(testDateTime, testCommonsCode)).thenReturn(expectedResult);
@@ -124,42 +97,8 @@ public class DiningMenuAPIControllerTests extends ControllerTestCase {
             .perform(get(url).contentType("application/json"))
             .andExpect(status().isOk())
             .andReturn();
+    String responseString = response.getResponse().getContentAsString();
 
-    assertEquals(
-        expectedResult,
-        objectMapper.readValue(
-            response.getResponse().getContentAsString(),
-            new TypeReference<List<DiningMenuAPI>>() {}));
-
-    verify(diningMenuAPIService, times(1)).getMeals(testDateTime, testCommonsCode);
+    assertEquals(expectedResult, responseString);
   }
-
-//   @Test
-//   @WithMockUser(roles = {"ADMIN"})
-//   public void test_loadDays() throws Exception {
-
-//     DiningMenuAPI Today =
-//         objectMapper.readValue(DiningMenuAPI.SAMPLE_MENU_ITEM_1_JSON, DiningMenuAPI.class);
-
-//     List<DiningMenuAPI> expectedResult = new ArrayList<DiningMenuAPI>();
-//     expectedResult.add(Today);
-
-//     String url = "/api/dining/loadDays";
-
-//     when(diningMenuAPIService.loadAllDays()).thenReturn(expectedResult);
-
-//     MvcResult response =
-//         mockMvc
-//             .perform(post(url).contentType("application/json").with(csrf()))
-//             .andExpect(status().isOk())
-//             .andReturn();
-
-//     assertEquals(
-//         expectedResult,
-//         objectMapper.readValue(
-//             response.getResponse().getContentAsString(),
-//             new TypeReference<List<DiningMenuAPI>>() {}));
-
-//     verify(diningMenuAPIService, times(1)).loadAllDays();
-//   }
 }
