@@ -1,9 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { waitFor, render, screen } from "@testing-library/react";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
-import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 
 const mockedNavigate = jest.fn();
 

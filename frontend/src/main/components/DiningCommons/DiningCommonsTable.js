@@ -15,31 +15,27 @@ export default function DiningCommonsTable({ commons }) {
       Header: "Has Dining Cam",
       accessor: "hasDiningCam",
       // Credits to Jayden for the code here!
-      // Renders a checkmark box for whether or not the help request has been solved.
+      // Renders a checkmark box.
       Cell: ({ value }) => (value ? "✅" : "❌"),
     },
     {
       Header: "Has Sack Meal",
       accessor: "hasSackMeal",
-      // Credits to Jayden for the code here!
-      // Renders a checkmark box for whether or not the help request has been solved.
       Cell: ({ value }) => (value ? "✅" : "❌"),
     },
-    { 
+    {
       Header: "Has Takeout Meal",
-      accessor: "hasTakeOutMeal",
-      // Credits to Jayden for the code here!
-      // Renders a checkmark box for whether or not the help request has been solved.
+      accessor: "hasTakeoutMeal",
       Cell: ({ value }) => (value ? "✅" : "❌"),
     },
-    { 
-    Header: "Latitude",
-    accessor: "latitude",
+    {
+      Header: "Latitude",
+      accessor: "latitude",
     },
-    { 
-    Header: "Longitude",
-    accessor: "longitude",
-    }
+    {
+      Header: "Longitude",
+      accessor: "longitude",
+    },
   ];
 
   const testid = "DiningCommonsTable";
