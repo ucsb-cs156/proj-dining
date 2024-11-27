@@ -2,9 +2,7 @@ import React from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 
 import { useBackendMutation } from "main/utils/useBackend";
-import {
-  cellToAxiosParamsDelete,
-} from "main/utils/ReviewUtils";
+import { cellToAxiosParamsDelete } from "main/utils/ReviewUtils";
 import { hasRole } from "main/utils/currentUser";
 
 export default function ReviewTable({
@@ -15,11 +13,9 @@ export default function ReviewTable({
 }) {
   // Stryker disable all : hard to test for query caching
 
-  const deleteMutation = useBackendMutation(
-    cellToAxiosParamsDelete,
-    {},
-    ["/api/reviews/all"],
-  );
+  const deleteMutation = useBackendMutation(cellToAxiosParamsDelete, {}, [
+    "/api/reviews/all",
+  ]);
   // Stryker restore all
 
   // Stryker disable next-line all : TODO try to make a good test for this
