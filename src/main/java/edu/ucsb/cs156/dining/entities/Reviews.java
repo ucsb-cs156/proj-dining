@@ -32,7 +32,6 @@ public class Reviews {
   private long id;
   private int student_id;
   private int item_id;
-  private int item_id;
   private String date_served;
   private String status;
 

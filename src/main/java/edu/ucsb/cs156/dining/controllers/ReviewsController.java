@@ -72,7 +72,7 @@ public class ReviewsController extends ApiController {
     @PostMapping("/post")
     public Reviews postReview(
         @Parameter(name="item_id") @RequestParam int item_id,
-        @Parameter(name="date_served") @RequestParam String date_served,
+        @Parameter(name="date_served") @RequestParam String date_served
         ) 
         {
 
@@ -86,7 +86,7 @@ public class ReviewsController extends ApiController {
         reviews.setStudent_id((int)user.getUser().getId());
         reviews.setItem_id(item_id);
         reviews.setDate_served(date_served);
-        reviews.setStatus(status != null ? status : "Awaiting Moderation");
+        //reviews.setStatus(status != null ? status : "Awaiting Moderation");
         reviews.setUserId(user.getUser().getId());
 
         Reviews savedReviews = reviewsRepository.save(reviews);
