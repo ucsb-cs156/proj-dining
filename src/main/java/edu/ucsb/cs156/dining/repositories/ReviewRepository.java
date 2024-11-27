@@ -2,6 +2,7 @@ package edu.ucsb.cs156.dining.repositories;
 
 import edu.ucsb.cs156.dining.entities.Review;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,6 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
      * well then this method will return only the reviews that this user has sent 
      */
 
-    Iterable<Review> findAllByStudentId(long studentId);
- 
+    Iterable<Review> findAllByStudentId(long studentId); 
 
 }

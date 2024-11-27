@@ -5,6 +5,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -30,7 +32,8 @@ public class Review {
     private long studentId;
 
     @Column(nullable = false)
-    private String itemId;
+    private Long itemId;
+
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String reviewerComments;
@@ -44,14 +47,13 @@ public class Review {
     private LocalDateTime dateItemServed;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'Awaiting Moderation'")
-    private String status;
+    private String status = "Awaiting Moderation";
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String userIdModerator;
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String moderatorComments;
-
         
     @Column(nullable = false)
     private LocalDateTime dateCreated;
