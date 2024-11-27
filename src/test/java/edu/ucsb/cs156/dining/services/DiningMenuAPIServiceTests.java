@@ -105,29 +105,6 @@ public class DiningMenuAPIServiceTests {
     }
 
     @Test
-    public void testGetCommons_failure() throws Exception {
-      OffsetDateTime dateTime = OffsetDateTime.of(2025, 01, 01, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
-      DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-      String formattedDateTime = dateTime.format(formatter);
-
-      String expectedResult = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
-      String expectedURL = DiningMenuAPIService.GET_COMMONS
-                          .replace("{date-time}", formattedDateTime);
-
-      this.mockRestServiceServer
-          .expect(requestTo(expectedURL))
-          .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
-          .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
-          .andExpect(header("ucsb-api-version", "1.0"))
-          .andExpect(header("ucsb-api-key", apiKey))
-          .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
-  
-      String actualResult = diningMenuAPIService.getCommons(dateTime);
-  
-      assertEquals(expectedResult, actualResult);
-    }
-
-    @Test
     public void testGetMeals_success() throws Exception {
       OffsetDateTime dateTime = OffsetDateTime.of(2024, 12, 01, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
       DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -135,31 +112,6 @@ public class DiningMenuAPIServiceTests {
       String commons = "del-playa";
 
       String expectedResult = "{expectedResult}";
-      String expectedURL = DiningMenuAPIService.GET_MEALS
-                          .replace("{date-time}", formattedDateTime)
-                          .replace("{dining-common-code}", commons);
-
-      this.mockRestServiceServer
-          .expect(requestTo(expectedURL))
-          .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
-          .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
-          .andExpect(header("ucsb-api-version", "1.0"))
-          .andExpect(header("ucsb-api-key", apiKey))
-          .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
-  
-      String actualResult = diningMenuAPIService.getMeals(dateTime, commons);
-  
-      assertEquals(expectedResult, actualResult);
-    }
-
-    @Test
-    public void testGetMeals_failure() throws Exception {
-      OffsetDateTime dateTime = OffsetDateTime.of(2024, 12, 01, 12, 0, 0, 0, ZoneOffset.of("-08:00"));
-      DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-      String formattedDateTime = dateTime.format(formatter);
-      String commons = "ortega";
-
-      String expectedResult = "{\"error\": \"Meals are not served at given commons on given day.\"}";
       String expectedURL = DiningMenuAPIService.GET_MEALS
                           .replace("{date-time}", formattedDateTime)
                           .replace("{dining-common-code}", commons);

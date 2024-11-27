@@ -111,10 +111,6 @@ public class DiningMenuAPIService {
     statusCode = (HttpStatus) re.getStatusCode();
     retVal = re.getBody();
 
-    if (retVal.equals(null)) {
-      retVal = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
-    }
-
     log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
     return retVal;
   }
@@ -146,10 +142,6 @@ public class DiningMenuAPIService {
     contentType = re.getHeaders().getContentType();
     statusCode = (HttpStatus) re.getStatusCode();
     retVal = re.getBody();
-
-    if ("null".equals(retVal)) {
-      retVal = "{\"error\": \"Meals are not served at given commons on given day.\"}";
-    }
 
     log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
     return retVal;
