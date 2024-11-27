@@ -67,13 +67,13 @@ public class DiningMenuAPIService {
     return endDate;
   }
 
-  public void setStartDateTime(OffsetDateTime startDate) {
-    this.startDate = startDate;
-  }
+  // public void setStartDateTime(OffsetDateTime startDate) {
+  //   this.startDate = startDate;
+  // }
 
-  public void setEndDateTime(OffsetDateTime endDate) {
-    this.endDate = endDate;
-  }
+  // public void setEndDateTime(OffsetDateTime endDate) {
+  //   this.endDate = endDate;
+  // }
 
   public String getDays() throws Exception {
     HttpHeaders headers = new HttpHeaders();
@@ -127,7 +127,7 @@ public class DiningMenuAPIService {
     statusCode = (HttpStatus) re.getStatusCode();
     retVal = re.getBody();
 
-    if (retVal.equals("null")) {
+    if ("null".equals(retVal)) {
       retVal = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
     }
 
@@ -163,69 +163,11 @@ public class DiningMenuAPIService {
     statusCode = (HttpStatus) re.getStatusCode();
     retVal = re.getBody();
 
-    if (retVal.equals("null")) {
+    if ("null".equals(retVal)) {
       retVal = "{\"error\": \"Meals are not served at given commons on given day.\"}";
     }
 
     log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
     return retVal;
-}
-
-  // public List<DiningMenuAPI> getAllDaysFromAPI() throws Exception {
-  //   HttpHeaders headers = new HttpHeaders();
-  //   headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-  //   headers.setContentType(MediaType.APPLICATION_JSON);
-  //   headers.set("ucsb-api-version", "1.0");
-  //   headers.set("ucsb-api-key", this.apiKey);
-
-  //   HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-  //   String url = GET_DAYS;
-
-  //   log.info("url=" + url);
-
-  //   String retVal = "";
-  //   MediaType contentType = null;
-  //   HttpStatus statusCode = null;
-
-  //   ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-  //   contentType = re.getHeaders().getContentType();
-  //   statusCode = (HttpStatus) re.getStatusCode();
-  //   retVal = re.getBody();
-
-  //   log.info(
-  //       "json: {} contentType: {} statusCode: {} entity: {}",
-  //       retVal,
-  //       contentType,
-  //       statusCode,
-  //       entity);
-  //   List<DiningMenuAPI> day = null;
-  //   day = objectMapper.readValue(retVal, new TypeReference<List<DiningMenuAPI>>() {});
-  //   return day;
-  // }
-
-  public boolean dateInRange(OffsetDateTime dateTime, OffsetDateTime startDateTest, OffsetDateTime endDateTest) {
-    if (dateTime == null) 
-    {
-      dateTime = OffsetDateTime.now();
-    }
-
-    boolean dateGEStart = !dateTime.isBefore(startDateTest);
-    boolean dateLEEnd = !dateTime.isAfter(endDateTest);
-    return (dateGEStart && dateLEEnd);
   }
-
-  // public List<DiningMenuAPI> loadAllDays() throws Exception {
-  //   List<DiningMenuAPI> days = this.getAllDaysFromAPI();
-  //   List<DiningMenuAPI> savedDays = new ArrayList<DiningMenuAPI>();
-  //   days.forEach(
-  //       (day) -> {
-  //         if (dateInRange(day.getDate(), startDate, endDate)) {
-  //           diningMenuApiRepository.save(day);
-  //           savedDays.add(day);
-  //         }
-  //       });
-  //   log.info("savedDays.size={}", savedDays.size());
-  //   return savedDays;
-  // }
 }
