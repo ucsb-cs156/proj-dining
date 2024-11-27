@@ -94,6 +94,7 @@ public class ReviewsController extends ApiController {
 
         return savedReviews; 
     }
+    
     /**
          * This method returns all reviews from current user.
          * @return all reviews from current user.
