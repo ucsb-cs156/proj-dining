@@ -49,6 +49,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(403)); // logged out users can't get all
         }
 
+
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_users_cannot_get_all() throws Exception {
@@ -81,7 +82,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 //.student_id(3)
                                 .item_id(1)
                                 .date_served("today")
-                                .status("Awaiting Moderation")
+                                //.status("working")
                                 //.userid(1L)
                                 // .moderator_comments("test")
                                 // .created_date("today")
@@ -183,4 +184,5 @@ public class ReviewsControllerTests extends ControllerTestCase {
         }
 
 }
+        
 
