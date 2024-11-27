@@ -71,7 +71,7 @@ describe("MyReviewsIndexPage tests", () => {
     expect(button).toHaveAttribute("style", "float: right;");
   });
 
-  test("renders three dates correctly for regular user", async () => {
+  test("renders three reviews correctly for regular user", async () => {
     // arrange
     setupUserOnly();
     const queryClient = new QueryClient();
@@ -133,48 +133,5 @@ describe("MyReviewsIndexPage tests", () => {
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-id`),
     ).not.toBeInTheDocument();
-  });
-
-  test("what happens when you click delete, admin", async () => {
-    // arrange
-    setupAdminUser();
-    const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, reviewFixtures.threeReviews);
-    axiosMock
-      .onDelete("/api/reviews")
-      .reply(200, "Review with id 1 was deleted");
-
-    // act
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <MyReviewsIndexPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    // assert
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-id`),
-      ).toBeInTheDocument();
-    });
-
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent(
-      "1",
-    );
-
-    const deleteButton = screen.getByTestId(
-      `${testId}-cell-row-0-col-Delete-button`,
-    );
-    expect(deleteButton).toBeInTheDocument();
-
-    // act
-    fireEvent.click(deleteButton);
-
-    // assert
-    await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith("Review with id 1 was deleted");
-    });
   });
 });

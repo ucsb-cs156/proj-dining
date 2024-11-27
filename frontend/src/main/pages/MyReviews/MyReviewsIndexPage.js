@@ -39,11 +39,7 @@ export default function MyReviewsIndexPage() {
       <div className="pt-2">
         {createButton()}
         <h1>Reviews</h1>
-        <ReviewTable
-          reviews={reviews}
-          currentUser={currentUser}
-          deleteColumn={true}
-        />
+        <ReviewTable reviews={reviews} currentUser={currentUser} />
       </div>
     </BasicLayout>
   );

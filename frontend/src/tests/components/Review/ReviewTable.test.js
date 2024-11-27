@@ -237,42 +237,11 @@ describe("ReviewTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
-    const editButton = screen.getByTestId(
-      `${testId}-cell-row-0-col-Edit-button`,
-    );
-    expect(editButton).toBeInTheDocument();
-    expect(editButton).toHaveClass("btn-primary");
-
     const deleteButton = screen.getByTestId(
       `${testId}-cell-row-0-col-Delete-button`,
     );
     expect(deleteButton).toBeInTheDocument();
     expect(deleteButton).toHaveClass("btn-danger");
-  });
-
-  test("Edit button navigates to the edit page for admin user", async () => {
-    const currentUser = currentUserFixtures.adminUser;
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <ReviewTable
-            reviews={reviewFixtures.threeReviews}
-            currentUser={currentUser}
-            deleteColumn={true}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const editButton = screen.getByTestId(
-      "ReviewTable-cell-row-0-col-Edit-button",
-    );
-    fireEvent.click(editButton);
-
-    await waitFor(() => {
-      expect(mockedNavigate).toHaveBeenCalledWith("/myreviews/edit/1");
-    });
   });
 
   test("Delete button calls delete callback", async () => {

@@ -6,7 +6,6 @@ import {
   cellToAxiosParamsDelete,
   onDeleteSuccess,
 } from "main/utils/ReviewUtils";
-import { useNavigate } from "react-router-dom";
 import { hasRole } from "main/utils/currentUser";
 
 export default function ReviewTable({
@@ -15,11 +14,6 @@ export default function ReviewTable({
   moderatorOptions,
   deleteColumn,
 }) {
-  const navigate = useNavigate();
-
-  const editCallback = (cell) => {
-    navigate(`/myreviews/edit/${cell.row.values.id}`);
-  };
 
   // Stryker disable all : hard to test for query caching
 
@@ -96,9 +90,7 @@ export default function ReviewTable({
       ButtonColumn("Reject", "danger", rejectCallback, "ReviewTable"),
     );
   }
-  if (hasRole(currentUser, "ROLE_ADMIN")) {
-    columns.push(ButtonColumn("Edit", "primary", editCallback, "ReviewTable"));
-  }
+ 
   if (deleteColumn && hasRole(currentUser, "ROLE_ADMIN")) {
     columns.push(
       ButtonColumn("Delete", "danger", deleteCallback, "ReviewTable"),
