@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Column;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +31,7 @@ public class Reviews {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   private int student_id;
+  private int item_id;
   private int item_id;
   private String date_served;
   private String status;

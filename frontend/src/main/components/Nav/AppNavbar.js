@@ -41,6 +41,11 @@ export default function AppNavbar({
                 <Nav.Link href="/swagger-ui/index.html">Swagger</Nav.Link>
               </>
             )}
+            {hasRole(currentUser, "ROLE_ADMIN") && (
+              <Nav.Link as={Link} to="/moderate">
+                Moderate
+              </Nav.Link>
+            )}
           </Nav>
 
           <>
@@ -62,6 +67,9 @@ export default function AppNavbar({
                 <>
                   <Nav.Link as={Link} to="/placeholder">
                     Placeholder
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/myreviews">
+                    MyReviews
                   </Nav.Link>
                 </>
               ) : (
