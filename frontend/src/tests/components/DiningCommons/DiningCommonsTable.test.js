@@ -14,8 +14,24 @@ jest.mock("react-router-dom", () => ({
 describe("DiningCommonsTable tests", () => {
   const queryClient = new QueryClient();
 
-  const expectedHeaders = ["Code", "Name", "Has Dining Cam", "Has Sack Meal", "Has Takeout Meal", "Latitude", "Longitude"];
-  const expectedFields = ["code", "name", "hasDiningCam", "hasSackMeal", "hasTakeoutMeal", "latitude", "longitude"];
+  const expectedHeaders = [
+    "Code",
+    "Name",
+    "Has Dining Cam",
+    "Has Sack Meal",
+    "Has Takeout Meal",
+    "Latitude",
+    "Longitude",
+  ];
+  const expectedFields = [
+    "code",
+    "name",
+    "hasDiningCam",
+    "hasSackMeal",
+    "hasTakeoutMeal",
+    "latitude",
+    "longitude",
+  ];
   const testId = "DiningCommonsTable";
 
   test("Checkmark / X for Boolean columns shows up as expected", async () => {
@@ -24,9 +40,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable
-            commons={diningCommonsFixtures.fourCommons}
-          />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -40,26 +54,26 @@ describe("DiningCommonsTable tests", () => {
     });
 
     await waitFor(() => {
-        expect(
-          screen.getByTestId(`DiningCommonsTable-cell-row-1-col-code`),
-        ).toHaveTextContent("de-la-guerra");
-      });
-
-    await waitFor(() => {
-        expect(
-            screen.getByTestId(`DiningCommonsTable-cell-row-2-col-code`),
-        ).toHaveTextContent("ortega");
+      expect(
+        screen.getByTestId(`DiningCommonsTable-cell-row-1-col-code`),
+      ).toHaveTextContent("de-la-guerra");
     });
 
     await waitFor(() => {
-        expect(
-            screen.getByTestId(`DiningCommonsTable-cell-row-3-col-code`),
-        ).toHaveTextContent("portola");
+      expect(
+        screen.getByTestId(`DiningCommonsTable-cell-row-2-col-code`),
+      ).toHaveTextContent("ortega");
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`DiningCommonsTable-cell-row-3-col-code`),
+      ).toHaveTextContent("portola");
     });
 
     // assert - check that the checkmarks and X's are available
 
-    // carrillo 
+    // carrillo
     await waitFor(() => {
       expect(
         screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasSackMeal"),
@@ -96,7 +110,7 @@ describe("DiningCommonsTable tests", () => {
         screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasDiningCam"),
       ).toHaveTextContent("✅");
     });
-    
+
     // ortega
     await waitFor(() => {
       expect(
@@ -105,35 +119,35 @@ describe("DiningCommonsTable tests", () => {
     });
 
     await waitFor(() => {
-        expect(
-          screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasTakeoutMeal"),
-        ).toHaveTextContent("✅");
-      });
-  
-      await waitFor(() => {
-        expect(
-          screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasDiningCam"),
-        ).toHaveTextContent("✅");
-      });
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasTakeoutMeal"),
+      ).toHaveTextContent("✅");
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasDiningCam"),
+      ).toHaveTextContent("✅");
+    });
 
     // portola
     await waitFor(() => {
-        expect(
-          screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasSackMeal"),
-        ).toHaveTextContent("✅");
-      });
-  
-      await waitFor(() => {
-          expect(
-            screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasTakeoutMeal"),
-          ).toHaveTextContent("✅");
-        });
-    
-        await waitFor(() => {
-          expect(
-            screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasDiningCam"),
-          ).toHaveTextContent("✅");
-        });
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasSackMeal"),
+      ).toHaveTextContent("✅");
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasTakeoutMeal"),
+      ).toHaveTextContent("✅");
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasDiningCam"),
+      ).toHaveTextContent("✅");
+    });
   });
 
   test("renders empty table correctly", () => {
@@ -161,14 +175,11 @@ describe("DiningCommonsTable tests", () => {
   });
 
   test("Has the expected column headers, content and buttons for admin user", () => {
-
     // act
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable
-            commons={diningCommonsFixtures.fourCommons}
-          />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -184,16 +195,16 @@ describe("DiningCommonsTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-code`)).toHaveTextContent(
-      "carrillo",
-    );
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-code`),
+    ).toHaveTextContent("carrillo");
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-name`),
     ).toHaveTextContent("Carrillo");
 
-    expect(screen.getByTestId(`${testId}-cell-row-1-col-code`)).toHaveTextContent(
-      "de-la-guerra",
-    );
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-code`),
+    ).toHaveTextContent("de-la-guerra");
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-name`),
     ).toHaveTextContent("De La Guerra");
@@ -204,9 +215,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable
-            commons={diningCommonsFixtures.fourCommons}
-          />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -222,18 +231,112 @@ describe("DiningCommonsTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-code`)).toHaveTextContent(
-      "carrillo",
-    );
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-code`),
+    ).toHaveTextContent("carrillo");
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-name`),
     ).toHaveTextContent("Carrillo");
 
-    expect(screen.getByTestId(`${testId}-cell-row-1-col-code`)).toHaveTextContent(
-      "de-la-guerra",
-    );
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-code`),
+    ).toHaveTextContent("de-la-guerra");
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-name`),
     ).toHaveTextContent("De La Guerra");
+  });
+
+  test("Has the expected column headers and content for ordinary user", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const expectedHeaders = [
+      "Code",
+      "Name",
+      "Has Dining Cam",
+      "Has Sack Meal",
+      "Has Takeout Meal",
+      "Latitude",
+      "Longitude",
+    ];
+    const expectedFields = [
+      "code",
+      "name",
+      "hasDiningCam",
+      "hasSackMeal",
+      "hasTakeoutMeal",
+      "latitude",
+      "longitude",
+    ];
+    const testId = "DiningCommonsTable";
+
+    expectedHeaders.forEach((headerText) => {
+      const header = screen.getByText(headerText);
+      expect(header).toBeInTheDocument();
+    });
+
+    expectedFields.forEach((field) => {
+      const header = screen.getByTestId(`${testId}-cell-row-0-col-${field}`);
+      expect(header).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-code`),
+    ).toHaveTextContent("carrillo");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-code`),
+    ).toHaveTextContent("de-la-guerra");
+  });
+
+  test("Has the expected column headers and content for adminUser", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const expectedHeaders = [
+      "Code",
+      "Name",
+      "Has Dining Cam",
+      "Has Sack Meal",
+      "Has Takeout Meal",
+      "Latitude",
+      "Longitude",
+    ];
+    const expectedFields = [
+      "code",
+      "name",
+      "hasDiningCam",
+      "hasSackMeal",
+      "hasTakeoutMeal",
+      "latitude",
+      "longitude",
+    ];
+    const testId = "DiningCommonsTable";
+
+    expectedHeaders.forEach((headerText) => {
+      const header = screen.getByText(headerText);
+      expect(header).toBeInTheDocument();
+    });
+
+    expectedFields.forEach((field) => {
+      const header = screen.getByTestId(`${testId}-cell-row-0-col-${field}`);
+      expect(header).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-code`),
+    ).toHaveTextContent("carrillo");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-code`),
+    ).toHaveTextContent("de-la-guerra");
   });
 });
