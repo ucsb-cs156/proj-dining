@@ -124,4 +124,19 @@ public class ReviewController extends ApiController {
         reviewRepository.save(review);
         return review;
     }
+
+    /**
+     * This method allows a user to get a list of reviews that they have previously made.
+     * Only user can only get a list of their own reviews, and you cant request another persons reviews
+     * @return a list of reviews sent by a given user
+     */
+    @Operation(summary = "Get all reviews a user has sent: only callable by the user")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/userReviews")
+    public Iterable<Review> get_all_review_by_user_id(){
+        CurrentUser user = getCurrentUser();
+        long userId = user.getUser().getId();
+        Iterable<Review> reviews = reviewRepository.findAllByStudentId(userId);
+        return reviews;
+    }
 }
