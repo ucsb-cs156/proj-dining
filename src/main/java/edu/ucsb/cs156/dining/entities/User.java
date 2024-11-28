@@ -11,8 +11,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * This is a JPA entity that represents a user.
- */
+* This is a JPA entity that represents a user.
+*/
 
 @Data
 @AllArgsConstructor
@@ -20,17 +20,27 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity(name = "users")
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
-  private String email;
-  private String googleSub;
-  private String pictureUrl;
-  private String fullName;
-  private String givenName;
-  private String familyName;
-  private boolean emailVerified;
-  private String locale;
-  private String hostedDomain;
-  private boolean admin;
+ @Id
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ private long id;
+ private String email;
+ private String googleSub;
+ private String pictureUrl;
+ private String fullName;
+ private String givenName;
+ private String familyName;
+ private boolean emailVerified;
+ private String locale;
+ private String hostedDomain;
+ private boolean admin;
+ private String alias;
+ private String proposedAlias;
+ 
+ public String getAlias() {
+        if (this.alias == null) {
+            this.alias = "Anonymous User"; 
+        }
+        return this.alias;
+    }
+
 }
