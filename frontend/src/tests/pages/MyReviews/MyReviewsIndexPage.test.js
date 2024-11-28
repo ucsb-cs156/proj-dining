@@ -51,7 +51,7 @@ describe("MyReviewsIndexPage tests", () => {
     // arrange
     setupAdminUser();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, []);
+    axiosMock.onGet("/api/reviews").reply(200, []);
 
     // act
     render(
@@ -75,7 +75,7 @@ describe("MyReviewsIndexPage tests", () => {
     // arrange
     setupUserOnly();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, reviewFixtures.threeReviews);
+    axiosMock.onGet("/api/reviews").reply(200, reviewFixtures.threeReviews);
 
     // act
     render(
@@ -107,7 +107,7 @@ describe("MyReviewsIndexPage tests", () => {
     // arrange
     setupUserOnly();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").timeout();
+    axiosMock.onGet("/api/reviews").timeout();
     const restoreConsole = mockConsole();
 
     // act
@@ -126,7 +126,7 @@ describe("MyReviewsIndexPage tests", () => {
 
     const errorMessage = console.error.mock.calls[0][0];
     expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/reviews/all",
+      "Error communicating with backend via GET on /api/reviews",
     );
     restoreConsole();
 
