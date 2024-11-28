@@ -6,15 +6,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,12 +43,4 @@ public class DiningMenuAPIController extends ApiController {
     String body = diningMenuAPIService.getDays();
     return ResponseEntity.ok().body(body);
   }
-
-  // @Operation(summary = "Load days with meal service into database from API")
-  // @PreAuthorize("hasRole('ROLE_ADMIN')")
-  // @PostMapping("/loadDays")
-  // public List<DiningMenuAPI> loadDays() throws Exception {
-  //   List<DiningMenuAPI> savedDays = diningMenuAPIService.loadAllDays();
-  //   return savedDays;
-  // }
 }
