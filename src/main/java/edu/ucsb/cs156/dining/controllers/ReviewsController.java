@@ -22,12 +22,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import org.springframework.http.HttpStatus;
 
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+
+import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  * This is a REST controller for Reviews
@@ -41,6 +48,13 @@ public class ReviewsController extends ApiController {
 
     @Autowired
     ReviewRepository reviewsRepository;
+
+    
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleIllegalArgumentException() {
+
+    }
 
     /**
      * List all reviews
@@ -66,6 +80,19 @@ public class ReviewsController extends ApiController {
     public Iterable<Review> getReviewsByUser(
         @Parameter(name="userId") @RequestParam long userId) {
         Iterable<Review> reviews = reviewsRepository.findAllByReviewerId(userId);
+        return reviews;
+    }
+
+    /**
+     * List all reviews needing moderation
+     * 
+     * @return an iterable of Review
+     */
+    @Operation(summary= "List all reviews needing moderation")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/needsmoderation")
+    public Iterable<Review> getReviewsNeedingModeration() {
+        Iterable<Review> reviews = reviewsRepository.findAllByStatus("Awaiting Moderation");
         return reviews;
     }
 
@@ -108,6 +135,69 @@ public class ReviewsController extends ApiController {
         Review savedReview = reviewsRepository.save(reviews);
 
         return savedReview;
+    }
+    
+    /**
+     * Update a single review
+     * 
+     * @param id        id of the review to update
+     * @param incoming  the new review
+     * @return the updated review object
+     */
+    @Operation(summary= "Update a single review")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/reviewer")
+    public Review updateReview(
+            @Parameter(name="id") @RequestParam Long id,
+            @RequestBody @Valid Review incoming) {
+            
+        Review review = reviewsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+
+        review.setStars(incoming.getStars());
+        review.setReviewText(incoming.getReviewText());
+        review.setStatus("Awaiting Moderation");
+        review.setModId(null);
+        review.setModComments(null);
+        review.setLastEditedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+        reviewsRepository.save(review);
+
+        return review;
+    }
+
+    /**
+     * Moderate a single review
+     * 
+     * @param id        id of the review to moderate
+     * @param incoming  the new review
+     * @return the updated review object
+     */
+    @Operation(summary= "Moderate a single review")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/moderator")
+    public Review moderateReview(
+            @Parameter(name="id") @RequestParam Long id,
+            @RequestBody @Valid Review incoming) {
+
+
+        Review review = reviewsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+        
+        ArrayList<String> validStatus = new ArrayList<>(Arrays.asList("Approved", "Awaiting Moderation", "Rejected"));
+
+        if( !validStatus.contains(incoming.getStatus()) ) {
+            throw new IllegalArgumentException("Status must be one of: " + validStatus);
+        } 
+
+        review.setStatus(incoming.getStatus());
+        review.setModComments(incoming.getModComments());
+        review.setModId(getCurrentUser().getUser().getId());
+        review.setLastEditedDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+        reviewsRepository.save(review);
+
+        return review;
     }
 
 }
