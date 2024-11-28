@@ -29,8 +29,8 @@ export default function MyReviewsIndexPage() {
     status: _status,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/reviews/all"],
-    { method: "GET", url: "/api/reviews/all" },
+    ["/api/reviews"],
+    { method: "GET", url: "/api/reviews" },
     [],
   );
 
@@ -38,7 +38,7 @@ export default function MyReviewsIndexPage() {
     <BasicLayout>
       <div className="pt-2">
         {createButton()}
-        <h1>Reviews</h1>
+        <h1>My Reviews</h1>
         <ReviewTable reviews={reviews} currentUser={currentUser} />
       </div>
     </BasicLayout>
