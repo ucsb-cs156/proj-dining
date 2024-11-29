@@ -76,109 +76,75 @@ public class DiningMenuAPIService {
   }
 
   public String getCommons(OffsetDateTime dateTime) {
-    try {
-      HttpHeaders headers = new HttpHeaders();
-      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-      headers.setContentType(MediaType.APPLICATION_JSON);
-      headers.set("ucsb-api-version", "1.0");
-      headers.set("ucsb-api-key", this.apiKey);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
 
-      HttpEntity<String> entity = new HttpEntity<>("body", headers);
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
 
-      DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-      String formattedDateTime = dateTime.format(formatter);
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    String formattedDateTime = dateTime.format(formatter);
 
-      String url = GET_COMMONS
-                  .replace("{date-time}", formattedDateTime);
+    String url = GET_COMMONS
+                .replace("{date-time}", formattedDateTime);
 
-      log.info("url=" + url);
+    log.info("url=" + url);
 
-      String retVal = "";
-      MediaType contentType = null;
-      HttpStatus statusCode = null;
+    String retVal = "";
+    MediaType contentType = null;
+    HttpStatus statusCode = null;
 
-      ResponseEntity<String> re =
-          restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-      contentType = re.getHeaders().getContentType();
-      statusCode = (HttpStatus) re.getStatusCode();
-      retVal = re.getBody();
+    ResponseEntity<String> re =
+        restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+    contentType = re.getHeaders().getContentType();
+    statusCode = (HttpStatus) re.getStatusCode();
+    retVal = re.getBody();
 
-      if (retVal == null || retVal.equals("null"))
-      {
-        retVal = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
-      }
+    if (retVal.equals("null"))
+    {
+      retVal = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
+    }
+
+    log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
+    return retVal;
+  } 
+
+  public String getMeals(OffsetDateTime dateTime, String diningCommonCode) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("ucsb-api-version", "1.0");
+    headers.set("ucsb-api-key", this.apiKey);
+
+    HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    String formattedDateTime = dateTime.format(formatter);
+
+    String url = GET_MEALS
+                .replace("{date-time}", formattedDateTime)
+                .replace("{dining-common-code}", diningCommonCode);
+
+    log.info("url=" + url);
+
+    String retVal = "";
+    MediaType contentType = null;
+    HttpStatus statusCode = null;
+
+    ResponseEntity<String> re =
+        restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+    contentType = re.getHeaders().getContentType();
+    statusCode = (HttpStatus) re.getStatusCode();
+    retVal = re.getBody();
+
+    if (retVal.equals("null"))
+    {
+      retVal = "{\"error\": \"Meals are not served at given commons on given day.\"}";
+    }
 
       log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
       return retVal;
-    } catch (IllegalArgumentException ex) {
-        log.error("Validation Error: {}", ex.getMessage());
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid date-time format");
-    } catch (HttpClientErrorException ex) {
-        log.error("API Client Error: {}", ex.getMessage());
-        if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Commons data not found");
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request to Commons API");
-    } catch (HttpServerErrorException ex) {
-        log.error("API Server Error: {}", ex.getMessage());
-        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Commons API is currently unavailable");
-    } catch (Exception ex) {
-        log.error("Unexpected Error: {}", ex.getMessage(), ex);
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
-    }
-  }
-
-  public String getMeals(OffsetDateTime dateTime, String diningCommonCode) {
-    try {
-      HttpHeaders headers = new HttpHeaders();
-      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-      headers.setContentType(MediaType.APPLICATION_JSON);
-      headers.set("ucsb-api-version", "1.0");
-      headers.set("ucsb-api-key", this.apiKey);
-
-      HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-      DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-      String formattedDateTime = dateTime.format(formatter);
-
-      String url = GET_MEALS
-                  .replace("{date-time}", formattedDateTime)
-                  .replace("{dining-common-code}", diningCommonCode);
-
-      log.info("url=" + url);
-
-      String retVal = "";
-      MediaType contentType = null;
-      HttpStatus statusCode = null;
-
-      ResponseEntity<String> re =
-          restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-      contentType = re.getHeaders().getContentType();
-      statusCode = (HttpStatus) re.getStatusCode();
-      retVal = re.getBody();
-
-      if (retVal == null || retVal.equals("null"))
-        {
-          retVal = "{\"error\": \"Commons doesn't serve meals on given day.\"}";
-        }
-
-        log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
-        return retVal;
-    } catch (IllegalArgumentException ex) {
-        log.error("Validation Error: {}", ex.getMessage());
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid date-time format");
-    } catch (HttpClientErrorException ex) {
-        log.error("API Client Error: {}", ex.getMessage());
-        if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Commons data not found");
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request to Commons API");
-    } catch (HttpServerErrorException ex) {
-        log.error("API Server Error: {}", ex.getMessage());
-        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Commons API is currently unavailable");
-    } catch (Exception ex) {
-        log.error("Unexpected Error: {}", ex.getMessage(), ex);
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
-    }
-  }
+  } 
 }
