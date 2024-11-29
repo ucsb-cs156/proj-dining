@@ -23,10 +23,10 @@ public class DiningMenuAPIController extends ApiController {
   @Autowired UserRepository userRepository;
   @Autowired DiningMenuAPIService diningMenuAPIService;
 
-  @Operation(summary = "Get list of meals served in given dining commons on given date")
-  @GetMapping(value = "/getMeals", produces = "application/json")
-  public ResponseEntity<String> getMeals (@RequestParam OffsetDateTime dateTime, @RequestParam String diningCommonsCode) throws Exception {
-    String body = diningMenuAPIService.getMeals(dateTime, diningCommonsCode);
+  @Operation(summary = "Get list of days with meal service")
+  @GetMapping(value = "/getDays", produces = "application/json")
+  public ResponseEntity<String> getDays() throws Exception {
+    String body = diningMenuAPIService.getDays();
     return ResponseEntity.ok().body(body);
   }
 
@@ -37,10 +37,10 @@ public class DiningMenuAPIController extends ApiController {
     return ResponseEntity.ok().body(body);
   }
 
-  @Operation(summary = "Get list of days with meal service")
-  @GetMapping(value = "/getDays", produces = "application/json")
-  public ResponseEntity<String> getDays() throws Exception {
-    String body = diningMenuAPIService.getDays();
+  @Operation(summary = "Get list of meals served in given dining commons on given date")
+  @GetMapping(value = "/getMeals", produces = "application/json")
+  public ResponseEntity<String> getMeals (@RequestParam OffsetDateTime dateTime, @RequestParam String diningCommonsCode) throws Exception {
+    String body = diningMenuAPIService.getMeals(dateTime, diningCommonsCode);
     return ResponseEntity.ok().body(body);
   }
 }
