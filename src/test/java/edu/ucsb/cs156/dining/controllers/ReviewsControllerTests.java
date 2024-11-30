@@ -5,7 +5,9 @@ import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.controllers.ReviewsController;
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Reviews;
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.ReviewsRepository;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +42,9 @@ public class ReviewsControllerTests extends ControllerTestCase {
         ReviewsRepository reviewsRepository;
 
         @MockBean
+        MenuItemRepository menuItemRepository;
+
+        @MockBean
         UserRepository userRepository;
 
         // Authorization tests for /api/reviews/admin/all
@@ -61,32 +66,28 @@ public class ReviewsControllerTests extends ControllerTestCase {
         @Test
         public void logged_in_admin_can_get_all_reviews() throws Exception {
 
-                // arrange
+                //arrange
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
 
+                when(menuItemRepository.save(eq(item))).thenReturn(item);
                 Reviews review1 = Reviews.builder()
-                                //.student_id(1)
-                                .item_id(2)
-                                .date_served("today")
-                                /*
-                                .status("working")
-                                
-                                .userid(1L)
-                                .moderator_comments("test")
-                                
-                                .created_date("today")
-                                .last_edited_date("rn")
-                                */
+                                .item_id(1)
+                                .rating(1)
+                                .comments("none")
+                                .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
                                 .build();
 
                 Reviews review2 = Reviews.builder()
-                                //.student_id(3)
                                 .item_id(1)
-                                .date_served("today")
-                                //.status("working")
-                                //.userid(1L)
-                                // .moderator_comments("test")
-                                // .created_date("today")
-                                // .last_edited_date("not rn")
+                                .rating(1)
+                                .comments("not good")
+                                .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
                                 .build();
 
                 ArrayList<Reviews> expectedReviews = new ArrayList<>();
@@ -123,24 +124,31 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void an_admin_user_can_post_a_new_empty_review() throws Exception {
+        public void an_admin_user_can_post_a_new_nonempty_review() throws Exception {
                 // arrange
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
 
                 Reviews review = Reviews.builder()
-                                .student_id(1)
-                                .item_id(2)
-                                .date_served("today")
-                                .status("Awaiting Moderation")
-                                .userId(1L)
-                                // .created_date("today")
-                                // .last_edited_date("rn")
-                                .build();
+                        .item_id(1)
+                        .rating(5)
+                        .comments("test")
+                        .status("Awaiting Moderation")
+                        .userId(1)
+                        .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
+                        .build();
 
                 when(reviewsRepository.save(eq(review))).thenReturn(review);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/reviews/post?item_id=2&date_served=today")
+                                post("/api/reviews/post?item_id=1&rating=5&comments=test&date_served=2024-08-24T11:11:11")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
@@ -153,26 +161,31 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void an_admin_user_can_post_a_new_nonempty_review() throws Exception {
+        public void an_admin_user_can_post_a_new_nonempty_review_with_rating_1() throws Exception {
                 // arrange
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
 
                 Reviews review = Reviews.builder()
-                                .student_id(1)
-                                .item_id(2)
-                                .date_served("today")
-                                .status("Awaiting Moderation")
-                                .userId(1L)
-                                //.moderator_comments("test")
-                                //.created_date("today")
-                                //.last_edited_date("rn")
-                                .build();
+                        .item_id(1)
+                        .rating(1)
+                        .comments("test")
+                        .status("Awaiting Moderation")
+                        .userId(1)
+                        .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
+                        .build();
 
                 when(reviewsRepository.save(eq(review))).thenReturn(review);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                        post("/api/reviews/post?item_id=2&date_served=today")                
-                //post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
+                                post("/api/reviews/post?item_id=1&rating=1&comments=test&date_served=2024-08-24T11:11:11")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
@@ -183,6 +196,58 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_invalid_menuItemId() throws Exception {
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=5&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(404)); 
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_too_high_rating() throws Exception {
+                //when(menuItemRepository.save(eq(item))).thenReturn(item);
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=6&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(400)); 
+        }
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_too_low_rating() throws Exception {
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=0&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(400));
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_just_right_low() throws Exception {
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=1&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(200)); 
+        }
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_just_right_high() throws Exception {
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=5&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(200)); 
+        }
+
+
+  
 }
         
 
