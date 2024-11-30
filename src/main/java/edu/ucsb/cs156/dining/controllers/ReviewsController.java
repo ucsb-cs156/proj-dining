@@ -86,14 +86,13 @@ public class ReviewsController extends ApiController {
         @Parameter(name="comments") @RequestParam String comments,
         @Parameter(name="date_served", description="date (in iso format, e.g. 2024-08-24T11:11:11; see https://en.wikipedia.org/wiki/ISO_8601)") @RequestParam("date_served") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date_served)
             throws JsonProcessingException
-        //@Parameter(name= "date_served") @RequestParam String date_served
 
         {
 
         if (rating < 0 || rating > 5) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating must be between 0 and 5");
         }
-        
+
         MenuItem menuItem = menuItemRepository.findById((long)item_id)
         .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "No MenuItem with itemId: " + item_id + " found"));
@@ -101,12 +100,10 @@ public class ReviewsController extends ApiController {
         Reviews reviews = new Reviews();
         CurrentUser user = getCurrentUser();
         
-        //reviews.setStudent_id((int)user.getUser().getId());
         reviews.setItem_id(item_id);
         reviews.setRating(rating);
         reviews.setComments(comments);
         reviews.setDate_served(date_served);
-        //reviews.setStatus(status != null ? status : "Awaiting Moderation");
         reviews.setStatus("Awaiting Moderation");
         reviews.setUserId(user.getUser().getId());
 

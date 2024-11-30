@@ -88,7 +88,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .rating(1)
                                 .comments("not good")
                                 .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
-                                //.date_served("2024-08-24T11:11:11")
                                 .build();
 
                 ArrayList<Reviews> expectedReviews = new ArrayList<>();
@@ -134,7 +133,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .name("name")
                                 .station("station")
                                 .build();
-                //when(menuItemRepository.save(eq(item))).thenReturn(item);
                 when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
 
                 Reviews review = Reviews.builder()
@@ -165,7 +163,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
         @Test
         public void an_admin_user_can_not_post_with_invalid_menuItemId() throws Exception {
                 mockMvc.perform(post("/api/reviews/post?item_id=1&rating=5&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
-                                .andExpect(status().is(404)); // only admins can post
+                                .andExpect(status().is(404)); 
         }
 
         @WithMockUser(roles = { "ADMIN", "USER" })
@@ -173,45 +171,14 @@ public class ReviewsControllerTests extends ControllerTestCase {
         public void an_admin_user_can_not_post_with_too_high_rating() throws Exception {
                 //when(menuItemRepository.save(eq(item))).thenReturn(item);
                 mockMvc.perform(post("/api/reviews/post?item_id=1&rating=10&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
-                                .andExpect(status().is(400)); // only admins can post
+                                .andExpect(status().is(400)); 
         }
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
         public void an_admin_user_can_not_post_with_too_low_rating() throws Exception {
-                //when(menuItemRepository.save(eq(item))).thenReturn(item);
                 mockMvc.perform(post("/api/reviews/post?item_id=1&rating=10&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
-                                .andExpect(status().is(400)); // only admins can post
+                                .andExpect(status().is(400));
         }
-//         @WithMockUser(roles = { "ADMIN", "USER" })
-//         @Test
-//         public void an_admin_user_can_post_a_new_nonempty_review() throws Exception {
-//                 // arrange
-
-//                 Reviews review = Reviews.builder()
-//                                 .item_id(2)
-//                                 .date_served("today")
-//                                 .status("Awaiting Moderation")
-//                                 .userId(1L)
-//                                 //.moderator_comments("test")
-//                                 //.created_date("today")
-//                                 //.last_edited_date("rn")
-//                                 .build();
-
-//                 when(reviewsRepository.save(eq(review))).thenReturn(review);
-
-//                 // act
-//                 MvcResult response = mockMvc.perform(
-//                         post("/api/reviews/post?item_id=2&date_served=today")                
-//                 //post("/api/reviews/post?student_id=1&item_id=2&date_served=today&status=working&moderator_comments=test&created_date=today&last_edited_date=rn")
-//                                                 .with(csrf()))
-//                                 .andExpect(status().isOk()).andReturn();
-
-//                 // assert
-//                 verify(reviewsRepository, times(1)).save(review);
-//                 String expectedJson = mapper.writeValueAsString(review);
-//                 String responseString = response.getResponse().getContentAsString();
-//                 assertEquals(expectedJson, responseString);
-//         }
 
 
         @WithMockUser(roles = { "ADMIN", "USER" })
