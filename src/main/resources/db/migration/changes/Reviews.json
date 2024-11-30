@@ -1,7 +1,7 @@
 { "databaseChangeLog": [
   {
       "changeSet": {
-        "id": "Reviews-12",
+        "id": "Reviews-16",
         "author": "KEV-YAN",
         "preConditions": [
           {
@@ -37,7 +37,17 @@
                     "constraints": {
                       "nullable": false
                     },
-                    "name": "STUDENT_ID",
+                    "name": "ITEM_ID",
+                    "type": "INTEGER"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints": {
+                      "nullable": false,
+                      "checkConstraint": "RATING >= 0 AND RATING <= 5"
+                    },
+                    "name": "RATING",
                     "type": "INTEGER"
                   }
                 },
@@ -46,8 +56,8 @@
                     "constraints": {
                       "nullable": false
                     },
-                    "name": "ITEM_ID",
-                    "type": "INTEGER"
+                    "name": "COMMENTS",
+                    "type": "VARCHAR(255)"
                   }
                 },
                 {
@@ -56,7 +66,7 @@
                       "nullable": false
                     },
                     "name": "DATE_SERVED",
-                    "type": "VARCHAR(255)"
+                    "type": "TIMESTAMP"
                   }
                 },
                 {

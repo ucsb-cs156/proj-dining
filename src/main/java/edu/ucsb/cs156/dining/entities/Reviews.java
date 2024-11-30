@@ -1,10 +1,5 @@
 package edu.ucsb.cs156.dining.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /** 
@@ -31,10 +27,14 @@ public class Reviews {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
-  private int student_id;
   private int item_id;
-  private String date_served;
+
+  private LocalDateTime date_served;
+
   private String status;
+  @Column(name = "COMMENTS")
+  private String comments;
+  private int rating;
 
   @Column(name="USER_ID")
   private long userId;
