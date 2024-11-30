@@ -5,11 +5,12 @@ import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useBackendMutation } from "main/utils/useBackend";
+
 const ProfilePage = () => {
   const { data: currentUser } = useCurrentUser();
   const { root } = currentUser || {};
   const { user } = root || {};
-  const { email, pictureUrl, fullName, alias: initialAlias } = user || {};
+  const { email, pictureUrl, fullName, alias: initialAlias, proposedAlias, status } = user || {};
 
   const {
     register,
@@ -36,8 +37,23 @@ const ProfilePage = () => {
     mutation.mutate({ proposedAlias: data.alias });
   };
 
+  const { isSuccess } = mutation;
+  if (isSuccess) {
+    window.location.reload();
+  }
+
   const displayedAlias = initialAlias || "Anonymous User";
-  return (
+  const displayedProposedAlias = proposedAlias || "---";
+  const aliasTag =
+    status === "Approved"
+      ? " New alias now displayed."
+      : status === "Rejected"
+      ? " Please try a different alias."
+      : ""; 
+  const displayedStatus = status ? ("(Proposed Alias " + status + "." +aliasTag + ")") : "";
+
+
+  return ( 
     <BasicLayout>
       <Row className="align-items-center profile-header mb-5 text-center text-md-left">
         <Col md={2}>
@@ -49,7 +65,8 @@ const ProfilePage = () => {
         </Col>
         <Col md>
           <h2>{fullName}</h2>
-          <h3>{displayedAlias}</h3>
+          <h3>Alias: {displayedAlias}</h3>
+          <h7>Proposed Alias: {displayedProposedAlias} {displayedStatus}</h7>
           <p className="lead text-muted">{email}</p>
           <RoleBadge role={"ROLE_USER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_MEMBER"} currentUser={currentUser} />

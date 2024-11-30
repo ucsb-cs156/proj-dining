@@ -27,6 +27,10 @@ const columns = [
     accessor: "alias",
   },
   {
+    Header: "Proposed Alias",
+    accessor: "proposedAlias",
+  },
+  {
     Header: "Status",
     accessor: (row) => {
       if (row.status === "Approved" && row.dateApproved) {
