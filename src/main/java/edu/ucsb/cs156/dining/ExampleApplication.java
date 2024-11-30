@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * The ExampleApplication class is the main entry point for the application.
  */
 @SpringBootApplication
-//@EnableJpaAuditing(dateTimeProviderRef = "utcDateTimeProvider")
+@EnableJpaAuditing(dateTimeProviderRef = "utcDateTimeProvider")
 @EnableAsync
 @EnableScheduling
 @Slf4j
@@ -72,4 +72,22 @@ public class ExampleApplication {
         return Optional.of(now);
       };
   }
+
+   // See: https://www.baeldung.com/spring-security-async-principal-propagation
+   @Bean
+   public DelegatingSecurityContextAsyncTaskExecutor taskExecutor(ThreadPoolTaskExecutor delegate) {
+     return new DelegatingSecurityContextAsyncTaskExecutor(delegate);
+   }
+ 
+   // See: https://www.baeldung.com/spring-security-async-principal-propagation
+   @Bean
+   public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+     executor.setCorePoolSize(2);
+     executor.setMaxPoolSize(2);
+     executor.setQueueCapacity(500);
+     executor.setThreadNamePrefix("Reviews-");
+     executor.initialize();
+     return executor;
+   }
 }
