@@ -115,7 +115,7 @@ public class DiningCommonsService {
    * @return meals by date by dining common
    * @throws Exception
    */
-  public String getMenuItemsByMealAndDate(LocalDateTime date, String diningCommonsCode, String meal) throws Exception {
+  public String getMenuItemsByMealAndDateJSON(LocalDateTime date, String diningCommonsCode, String meal) throws Exception {
 
     // set headers for api requests
     HttpHeaders headers = new HttpHeaders();

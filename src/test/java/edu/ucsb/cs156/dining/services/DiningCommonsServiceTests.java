@@ -80,7 +80,6 @@ class DiningCommonsServiceTests {
     LocalDateTime date = LocalDateTime.of(2021, 5, 1, 0, 0);
     String diningCommonsCode = "ortega";
 
-
     String expectedURL = DiningCommonsService.MEALS_BY_DATE_ENDPOINT + date.toString() + "/ortega";
 
     String expectedResult = "t";
@@ -117,7 +116,7 @@ class DiningCommonsServiceTests {
         .andExpect(header("ucsb-api-key", apiKey))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
-    String actualResult = diningCommonsService.getMenuItemsByMealAndDate(date, diningCommonsCode, meal);
+    String actualResult = diningCommonsService.getMenuItemsByMealAndDateJSON(date, diningCommonsCode, meal);
     assertEquals(expectedResult, actualResult);
   }
 }
