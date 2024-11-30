@@ -32,16 +32,7 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
   @MockBean private UCSBDiningMenuService ucsbDiningMenuService;
 
   @Test
-  public void logged_out_users_cannot_get_meal_times() throws Exception {
-        String dateTime = "2023-10-10";
-        String diningCommonCode = "ortega";
-        mockMvc.perform(get("/api/diningcommons/{dateTime}/{diningCommonsCode}", dateTime, diningCommonCode))
-                        .andExpect(status().is(403)); // logged out users can't get meal times
-  }
-
-  @WithMockUser(roles = { "USER" })
-  @Test
-  public void logged_in_users_can_meal_times() throws Exception {
+  public void users_can_see_meal_times() throws Exception {
 
     String expectedResult = "{expectedJSONResult}";
     String url = "/api/diningcommons/2023-10-10/ortega";

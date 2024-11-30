@@ -36,7 +36,6 @@ public class UCSBDiningMenuController extends ApiController {
   @Autowired UCSBDiningMenuService ucsbDiningMenuService;
 
   @Operation(summary = "Get list of meals serving in given dining common on given date")
-  @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping(value = "/{date-time}/{dining-commons-code}", produces = "application/json")
   public ResponseEntity<String> menutimes(
       @Parameter(description= "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)") 
