@@ -5,7 +5,6 @@ import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.Review;
-import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 
 import java.util.ArrayList;
@@ -241,7 +240,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "USER" })
         @Test
-        public void logged_in_user_can_get_reviews_by_user_id() throws Exception {
+        public void logged_in_user_can_get_their_reviews() throws Exception {
 
                 // arrange
                 LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
@@ -263,7 +262,7 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 when(reviewsRepository.findAllByReviewerId(1)).thenReturn(expectedReviews);
 
                 // act
-                MvcResult response = mockMvc.perform(get("/api/reviews?userId=1"))
+                MvcResult response = mockMvc.perform(get("/api/reviews"))
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert

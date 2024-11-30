@@ -14,7 +14,7 @@ export default function ReviewTable({
   // Stryker disable all : hard to test for query caching
 
   const deleteMutation = useBackendMutation(cellToAxiosParamsDelete, {}, [
-    "/api/reviews/all",
+    "/api/reviews",
   ]);
   // Stryker restore all
 
