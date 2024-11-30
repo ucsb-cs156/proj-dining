@@ -237,12 +237,6 @@ describe("ReviewTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
-    const editButton = screen.getByTestId(
-      `${testId}-cell-row-0-col-Edit-button`,
-    );
-    expect(editButton).toBeInTheDocument();
-    expect(editButton).toHaveClass("btn-primary");
-
     const deleteButton = screen.getByTestId(
       `${testId}-cell-row-0-col-Delete-button`,
     );
@@ -250,37 +244,12 @@ describe("ReviewTable tests", () => {
     expect(deleteButton).toHaveClass("btn-danger");
   });
 
-  test("Edit button navigates to the edit page for admin user", async () => {
-    const currentUser = currentUserFixtures.adminUser;
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <ReviewTable
-            reviews={reviewFixtures.threeReviews}
-            currentUser={currentUser}
-            deleteColumn={true}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const editButton = screen.getByTestId(
-      "ReviewTable-cell-row-0-col-Edit-button",
-    );
-    fireEvent.click(editButton);
-
-    await waitFor(() => {
-      expect(mockedNavigate).toHaveBeenCalledWith("/myreviews/edit/1");
-    });
-  });
-
   test("Delete button calls delete callback", async () => {
     const currentUser = currentUserFixtures.adminUser;
 
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
-      .onDelete("/api/myreviews")
+      .onDelete("/api/reviews")
       .reply(200, { message: "Review deleted" });
 
     render(
@@ -304,7 +273,7 @@ describe("ReviewTable tests", () => {
 
     await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
-    expect(axiosMock.history.delete[0].url).toBe("/api/myreviews");
+    expect(axiosMock.history.delete[0].url).toBe("/api/reviews");
   });
 
   test("Does not show Delete button when deleteColumn is false", () => {

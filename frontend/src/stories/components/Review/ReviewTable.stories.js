@@ -34,7 +34,7 @@ ThreeItemsAdminUser.args = {
 
 ThreeItemsAdminUser.parameters = {
   msw: [
-    http.delete("/api/myreviews", () => {
+    http.delete("/api/reviews", () => {
       return HttpResponse.json({}, { status: 200 });
     }),
   ],
@@ -51,7 +51,7 @@ ThreeItemsAdminWithModeratorOptions.args = {
 
 ThreeItemsAdminWithModeratorOptions.parameters = {
   msw: [
-    http.delete("/api/myreviews", () => {
+    http.delete("/api/reviews", () => {
       return HttpResponse.json({}, { status: 200 });
     }),
   ],

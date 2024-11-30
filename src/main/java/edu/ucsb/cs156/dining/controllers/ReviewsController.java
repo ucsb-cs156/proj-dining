@@ -77,9 +77,8 @@ public class ReviewsController extends ApiController {
     @Operation(summary= "List all reviews created by a specific user")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
-    public Iterable<Review> getReviewsByUser(
-        @Parameter(name="userId") @RequestParam long userId) {
-        Iterable<Review> reviews = reviewsRepository.findAllByReviewerId(userId);
+    public Iterable<Review> getReviewsByUser() {
+        Iterable<Review> reviews = reviewsRepository.findAllByReviewerId(getCurrentUser().getUser().getId());
         return reviews;
     }
 

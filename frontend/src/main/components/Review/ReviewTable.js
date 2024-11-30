@@ -2,11 +2,7 @@ import React from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 
 import { useBackendMutation } from "main/utils/useBackend";
-import {
-  cellToAxiosParamsDelete,
-  onDeleteSuccess,
-} from "main/utils/ReviewUtils";
-import { useNavigate } from "react-router-dom";
+import { cellToAxiosParamsDelete } from "main/utils/ReviewUtils";
 import { hasRole } from "main/utils/currentUser";
 
 export default function ReviewTable({
@@ -15,19 +11,11 @@ export default function ReviewTable({
   moderatorOptions,
   deleteColumn,
 }) {
-  const navigate = useNavigate();
-
-  const editCallback = (cell) => {
-    navigate(`/myreviews/edit/${cell.row.values.id}`);
-  };
-
   // Stryker disable all : hard to test for query caching
 
-  const deleteMutation = useBackendMutation(
-    cellToAxiosParamsDelete,
-    { onSuccess: onDeleteSuccess },
-    ["/api/myreviews/all"],
-  );
+  const deleteMutation = useBackendMutation(cellToAxiosParamsDelete, {}, [
+    "/api/reviews",
+  ]);
   // Stryker restore all
 
   // Stryker disable next-line all : TODO try to make a good test for this
@@ -96,9 +84,7 @@ export default function ReviewTable({
       ButtonColumn("Reject", "danger", rejectCallback, "ReviewTable"),
     );
   }
-  if (hasRole(currentUser, "ROLE_ADMIN")) {
-    columns.push(ButtonColumn("Edit", "primary", editCallback, "ReviewTable"));
-  }
+
   if (deleteColumn && hasRole(currentUser, "ROLE_ADMIN")) {
     columns.push(
       ButtonColumn("Delete", "danger", deleteCallback, "ReviewTable"),
