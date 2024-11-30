@@ -161,6 +161,43 @@ public class ReviewsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
+        public void an_admin_user_can_post_a_new_nonempty_review_with_rating_1() throws Exception {
+                // arrange
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+                Reviews review = Reviews.builder()
+                        .item_id(1)
+                        .rating(1)
+                        .comments("test")
+                        .status("Awaiting Moderation")
+                        .userId(1)
+                        .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
+                        .build();
+
+                when(reviewsRepository.save(eq(review))).thenReturn(review);
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                post("/api/reviews/post?item_id=1&rating=1&comments=test&date_served=2024-08-24T11:11:11")
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(reviewsRepository, times(1)).save(review);
+                String expectedJson = mapper.writeValueAsString(review);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
         public void an_admin_user_can_not_post_with_invalid_menuItemId() throws Exception {
                 mockMvc.perform(post("/api/reviews/post?item_id=1&rating=5&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
                                 .andExpect(status().is(404)); 
@@ -170,14 +207,43 @@ public class ReviewsControllerTests extends ControllerTestCase {
         @Test
         public void an_admin_user_can_not_post_with_too_high_rating() throws Exception {
                 //when(menuItemRepository.save(eq(item))).thenReturn(item);
-                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=10&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=6&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
                                 .andExpect(status().is(400)); 
         }
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
         public void an_admin_user_can_not_post_with_too_low_rating() throws Exception {
-                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=10&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=0&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
                                 .andExpect(status().is(400));
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_just_right_low() throws Exception {
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=1&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(200)); 
+        }
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void an_admin_user_can_not_post_with_just_right_high() throws Exception {
+                MenuItem item = MenuItem.builder()
+                                .id(1L)
+                                .diningCommonsCode("idk")
+                                .meal("meal")
+                                .name("name")
+                                .station("station")
+                                .build();
+                when(menuItemRepository.findById(1L)).thenReturn(Optional.of(item));
+                mockMvc.perform(post("/api/reviews/post?item_id=1&rating=5&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
+                                .andExpect(status().is(200)); 
         }
 
 

@@ -89,7 +89,7 @@ public class ReviewsController extends ApiController {
 
         {
 
-        if (rating < 0 || rating > 5) {
+        if (rating <= 0 || rating >= 6) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating must be between 0 and 5");
         }
 
