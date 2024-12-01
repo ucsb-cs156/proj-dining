@@ -5,12 +5,13 @@ import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useBackendMutation } from "main/utils/useBackend";
+import UsersTable from "main/components/Users/UsersTable";
 
 const ProfilePage = () => {
   const { data: currentUser } = useCurrentUser();
   const { root } = currentUser || {};
   const { user } = root || {};
-  const { email, pictureUrl, fullName, alias: initialAlias, proposedAlias, status } = user || {};
+  const { email, pictureUrl, fullName} = user || {};
 
   const {
     register,
@@ -29,7 +30,8 @@ const ProfilePage = () => {
     toast(`Alias Awaiting Moderation: ${user.proposedAlias}`);
   };
 
-  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess });
+  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess }, ["current user"]);
+  
   if (!currentUser?.loggedIn) {
     return <p>Not logged in.</p>;
   }
@@ -37,20 +39,6 @@ const ProfilePage = () => {
     mutation.mutate({ proposedAlias: data.alias });
   };
 
-  const { isSuccess } = mutation;
-  if (isSuccess) {
-    window.location.reload();
-  }
-
-  const displayedAlias = initialAlias || "Anonymous User";
-  const displayedProposedAlias = proposedAlias || "---";
-  const aliasTag =
-    status === "Approved"
-      ? " New alias now displayed."
-      : status === "Rejected"
-      ? " Please try a different alias."
-      : ""; 
-  const displayedStatus = status ? ("(Alias " + status + "." +aliasTag + ")") : "";
 
 
   return ( 
@@ -65,8 +53,6 @@ const ProfilePage = () => {
         </Col>
         <Col md>
           <h2>{fullName}</h2>
-          <h3>{displayedAlias}</h3>
-          <h7>Proposed Alias: {displayedProposedAlias} {displayedStatus}</h7>
           <p className="lead text-muted">{email}</p>
           <RoleBadge role={"ROLE_USER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_MEMBER"} currentUser={currentUser} />
@@ -97,6 +83,12 @@ const ProfilePage = () => {
             >
               {"Update Alias"}
             </Button>
+              <Row className="mt-5">
+                <Col md={12}>
+                  <h4>Your Current User Information</h4>
+                  <UsersTable users={[currentUser.root.user]} />
+                </Col>
+              </Row>
           </Form>
         </Col>
       </Row>
