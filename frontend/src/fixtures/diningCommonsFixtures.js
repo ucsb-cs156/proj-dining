@@ -8,6 +8,15 @@ const diningCommonsFixtures = {
     latitude: 34.409953,
     longitude: -119.85277,
   },
+  oneCommonsDiningCamFalse: {
+    name: "Carrillo",
+    code: "carrillo",
+    hasSackMeal: false,
+    hasTakeoutMeal: false,
+    hasDiningCam: false,
+    latitude: 34.409953,
+    longitude: -119.85277,
+  },
   fourCommons: [
     {
       name: "Carrillo",
