@@ -156,7 +156,9 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={[diningCommonsFixtures.oneCommonsDiningCamFalse]} />
+          <DiningCommonsTable
+            commons={[diningCommonsFixtures.oneCommonsDiningCamFalse]}
+          />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -168,7 +170,6 @@ describe("DiningCommonsTable tests", () => {
         screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasDiningCam"),
       ).toHaveTextContent("❌");
     });
-
   });
 
   test("renders empty table correctly", () => {
