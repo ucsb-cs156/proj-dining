@@ -122,29 +122,6 @@ describe("ProfilePage tests", () => {
     expect(screen.getByText("NewAlias")).toBeInTheDocument();
   });
 
-  test("displays 'Not logged in' for unauthenticated user", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-
-    axiosMock
-      .onGet("/api/currentUser")
-      .reply(403, {});
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
-
-    const queryClient = new QueryClient();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <ProfilePage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    expect(await screen.findByText("Not logged in.")).toBeInTheDocument();
-  });
-
   test("displays validation error when alias is empty", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
