@@ -150,6 +150,27 @@ describe("DiningCommonsTable tests", () => {
     });
   });
 
+  test("Checkmark / X for Boolean columns shows up as expected when hasDiningCam is false", async () => {
+    // act - render the component
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={[diningCommonsFixtures.oneCommonsDiningCamFalse]} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // assert - check that the expected content is rendered
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasDiningCam"),
+      ).toHaveTextContent("❌");
+    });
+
+  });
+
   test("renders empty table correctly", () => {
     // act
     render(
