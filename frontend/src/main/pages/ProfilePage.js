@@ -9,10 +9,6 @@ import UsersTable from "main/components/Users/UsersTable";
 
 const ProfilePage = () => {
   const { data: currentUser } = useCurrentUser();
-  const { root } = currentUser || {};
-  const { user } = root || {};
-  const { email, pictureUrl, fullName } = user || {};
-
   const {
     register,
     formState: { errors },
@@ -38,6 +34,10 @@ const ProfilePage = () => {
   if (!currentUser.loggedIn) {
     return <p>Not logged in.</p>;
   }
+  const { root } = currentUser || {};
+  const { user } = root || {};
+  const { email, pictureUrl, fullName } = user || {};
+
   const onSubmit = async (data) => {
     mutation.mutate({ proposedAlias: data.alias });
   };

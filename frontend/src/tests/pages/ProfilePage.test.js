@@ -126,8 +126,11 @@ describe("ProfilePage tests", () => {
     const axiosMock = new AxiosMockAdapter(axios);
 
     axiosMock
-      .onGet("/api/currentUser/profile")
-      .reply(200, { loggedIn: false, root: null });
+      .onGet("/api/currentUser")
+      .reply(403, {});
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
 
     const queryClient = new QueryClient();
 
