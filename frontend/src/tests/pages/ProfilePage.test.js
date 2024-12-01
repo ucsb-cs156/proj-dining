@@ -166,4 +166,37 @@ describe("ProfilePage tests", () => {
     const errorMessage = await screen.findByText("Alias is required.");
     expect(errorMessage).toBeInTheDocument();
   });
+
+
+  test("displays alias when approved", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      root: {
+        user: {
+          email: "phtcon@ucsb.edu",
+          fullName: "Phillip Conrad",
+          alias: "NewAlias",
+          proposedAlias: "PropAlias",
+          status: "Approved",
+          pictureUrl: "profile.jpg",
+        },
+      },
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ProfilePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Phillip Conrad");
+    expect(screen.getByText("NewAlias")).toBeInTheDocument();
+
+    expect(
+      screen.getByText("Proposed Alias: NewAlias (Alias Approved. New alias now displayed.)"),
+    ).toBeInTheDocument();
+  });
 });

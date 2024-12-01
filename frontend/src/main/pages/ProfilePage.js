@@ -50,7 +50,7 @@ const ProfilePage = () => {
       : status === "Rejected"
       ? " Please try a different alias."
       : ""; 
-  const displayedStatus = status ? ("(Proposed Alias " + status + "." +aliasTag + ")") : "";
+  const displayedStatus = status ? ("(Alias " + status + "." +aliasTag + ")") : "";
 
 
   return ( 
@@ -65,7 +65,7 @@ const ProfilePage = () => {
         </Col>
         <Col md>
           <h2>{fullName}</h2>
-          <h3>Alias: {displayedAlias}</h3>
+          <h3>{displayedAlias}</h3>
           <h7>Proposed Alias: {displayedProposedAlias} {displayedStatus}</h7>
           <p className="lead text-muted">{email}</p>
           <RoleBadge role={"ROLE_USER"} currentUser={currentUser} />
