@@ -11,7 +11,7 @@ const ProfilePage = () => {
   const { data: currentUser } = useCurrentUser();
   const { root } = currentUser || {};
   const { user } = root || {};
-  const { email, pictureUrl, fullName} = user || {};
+  const { email, pictureUrl, fullName } = user || {};
 
   const {
     register,
@@ -30,18 +30,19 @@ const ProfilePage = () => {
     toast(`Alias Awaiting Moderation: ${user.proposedAlias}`);
   };
 
-  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess }, ["current user"]);
-  
-  if (!currentUser?.loggedIn) {
+  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess }, [
+    // Stryker disable next-line all : don't test for React Query caching
+    "current user",
+  ]);
+
+  if (!currentUser.loggedIn) {
     return <p>Not logged in.</p>;
   }
   const onSubmit = async (data) => {
     mutation.mutate({ proposedAlias: data.alias });
   };
 
-
-
-  return ( 
+  return (
     <BasicLayout>
       <Row className="align-items-center profile-header mb-5 text-center text-md-left">
         <Col md={2}>
@@ -83,12 +84,12 @@ const ProfilePage = () => {
             >
               {"Update Alias"}
             </Button>
-              <Row className="mt-5">
-                <Col md={12}>
-                  <h4>Your Current User Information</h4>
-                  <UsersTable users={[currentUser.root.user]} />
-                </Col>
-              </Row>
+            <Row className="mt-5">
+              <Col md={12}>
+                <h4>Your Current User Information</h4>
+                <UsersTable users={[currentUser.root.user]} />
+              </Col>
+            </Row>
           </Form>
         </Col>
       </Row>
