@@ -24,6 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
+import java.time.LocalDate;
+
 /**
  * This is a REST controller for getting information about the users.
  * 
@@ -89,6 +91,7 @@ public class UsersController extends ApiController {
         }
     
         user.setProposedAlias(proposedAlias);
+        user.setStatus("Awaiting Moderation");
         User savedUser = userRepository.save(user);
     
         return ResponseEntity.ok(savedUser);
@@ -112,8 +115,11 @@ public class UsersController extends ApiController {
 
         if (approved) {
             user.setAlias(user.getProposedAlias());  
+            user.setStatus("Approved");
+            user.setDateApproved(LocalDate.now());
             user.setProposedAlias(null);
         } else {
+            user.setStatus("Rejected");
             user.setProposedAlias(null);
         }
         

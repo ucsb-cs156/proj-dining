@@ -13,6 +13,10 @@ const usersFixtures = {
       locale: "en",
       hostedDomain: "ucsb.edu",
       admin: true,
+      alias: "Alias1",
+      proposedAlias: "Ali1",
+      status: "Awaiting Moderation",
+      dateApproved: null,
     },
     {
       id: 2,
@@ -27,6 +31,10 @@ const usersFixtures = {
       locale: "en",
       hostedDomain: null,
       admin: false,
+      alias: "Alias2",
+      proposedAlias: null,
+      status: "Approved",
+      dateApproved: "2024-11-01T10:30:00",
     },
     {
       id: 3,
@@ -41,6 +49,10 @@ const usersFixtures = {
       locale: "en",
       hostedDomain: null,
       admin: false,
+      alias: "Alias3",
+      proposedAlias: null,
+      status: "Rejected",
+      dateApproved: null,
     },
   ],
 };

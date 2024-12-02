@@ -109,7 +109,20 @@
                   "name": "PROPOSED_ALIAS",
                   "type": "VARCHAR(255)"
                 }
-              }]
+              },
+              {
+                "column": {
+                  "name": "STATUS",
+                  "type": "VARCHAR(255)"
+                }
+              },
+              {
+                "column": {
+                  "name": "DATE_APPROVED",
+                  "type": "TIMESTAMP"
+                }
+              }
+            ]
             ,
             "tableName": "USERS"
           }

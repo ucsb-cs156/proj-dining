@@ -29,7 +29,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.springframework.web.server.ResponseStatusException;
-
+import java.time.LocalDate;
 
 
 @WebMvcTest(controllers = UsersController.class)
@@ -94,6 +94,7 @@ public class UsersControllerTests extends ControllerTestCase {
             .admin(false)
             .alias("Anonymous User") 
             .proposedAlias("Chipotle")
+            .status("Awaiting Moderation")
             .build();
         
   
@@ -122,6 +123,7 @@ public class UsersControllerTests extends ControllerTestCase {
         .email("user@example.org")
         .alias("Anonymous User")
         .proposedAlias("Chipotle")
+        .status("Awaiting Moderation")
         .build();
 
     User userEdited = User.builder()
@@ -129,6 +131,8 @@ public class UsersControllerTests extends ControllerTestCase {
         .email("user@example.org")
         .alias("Chipotle")  
         .proposedAlias(null) 
+        .status("Approved")
+        .dateApproved(LocalDate.now())
         .build();
 
     String requestBody = mapper.writeValueAsString(userEdited);
@@ -204,13 +208,16 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chip")
           .proposedAlias("Chop") 
+          .status("Awaiting Moderation")
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
           .email("user@example.org")
-          .alias("Chop")  // Alias should be updated
+          .alias("Chop") 
           .proposedAlias(null)
+          .status("Approved")
+          .dateApproved(LocalDate.now())
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
@@ -219,13 +226,13 @@ public class UsersControllerTests extends ControllerTestCase {
       MvcResult response = mockMvc.perform(
           put("/api/currentUser/updateAliasModeration")
               .param("id", String.valueOf(7L))
-              .param("approved", "true") // Boolean value passed as string
+              .param("approved", "true")
               .with(csrf()))
           .andExpect(status().isOk()).andReturn();
 
       // assert
       verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated);  // Verify the user has been saved with the new alias
+      verify(userRepository, times(1)).save(userUpdated); 
       String responseString = response.getResponse().getContentAsString();
       String expectedJson = mapper.writeValueAsString(userUpdated);
       assertEquals(expectedJson, responseString);
@@ -240,6 +247,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chipotle")
           .proposedAlias("Taco Bell")
+          .status("Awaiting Moderation")
           .build();
 
       User userUnchanged = User.builder()
@@ -247,6 +255,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chipotle") 
           .proposedAlias(null)
+          .status("Rejected")
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
@@ -255,13 +264,13 @@ public class UsersControllerTests extends ControllerTestCase {
       MvcResult response = mockMvc.perform(
           put("/api/currentUser/updateAliasModeration")
               .param("id", String.valueOf(7L))
-              .param("approved", "false")  // Setting approved as false
+              .param("approved", "false") 
               .with(csrf()))
           .andExpect(status().isOk()).andReturn();
 
       // assert
       verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUnchanged);  // User should remain unchanged
+      verify(userRepository, times(1)).save(userUnchanged);
       String responseString = response.getResponse().getContentAsString();
       String expectedJson = mapper.writeValueAsString(userUnchanged);
       assertEquals(expectedJson, responseString);
@@ -299,7 +308,7 @@ public class UsersControllerTests extends ControllerTestCase {
 
   @Test
   @WithMockUser(roles = { "USER" })
-  public void testGetAliasWhenSet() throws Exception {
+  public void can_get_alias() throws Exception {
     // arrange
       User user = User.builder()
           .id(1L)

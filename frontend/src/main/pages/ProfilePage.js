@@ -1,17 +1,49 @@
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 import RoleBadge from "main/components/Profile/RoleBadge";
 import { useCurrentUser } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { useBackendMutation } from "main/utils/useBackend";
+import UsersTable from "main/components/Users/UsersTable";
 
-import { Inspector } from "react-inspector";
 const ProfilePage = () => {
   const { data: currentUser } = useCurrentUser();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+
+  const objectToAxiosParams = (user) => ({
+    url: "/api/currentUser/updateAlias",
+    method: "POST",
+    params: {
+      proposedAlias: user.proposedAlias,
+    },
+  });
+  const onSuccess = (user) => {
+    toast(`Alias Awaiting Moderation: ${user.proposedAlias}`);
+  };
+
+  const mutation = useBackendMutation(
+    objectToAxiosParams,
+    { onSuccess },
+    // Stryker disable next-line all : don't test for React Query caching
+    ["current user"],
+  );
 
   if (!currentUser.loggedIn) {
     return <p>Not logged in.</p>;
   }
+  const { root } = currentUser;
+  const { user } = root;
+  const { email, pictureUrl, fullName } = user;
 
-  const { email, pictureUrl, fullName } = currentUser.root.user;
+  const onSubmit = async (data) => {
+    mutation.mutate({ proposedAlias: data.alias });
+  };
+
   return (
     <BasicLayout>
       <Row className="align-items-center profile-header mb-5 text-center text-md-left">
@@ -31,10 +63,39 @@ const ProfilePage = () => {
         </Col>
       </Row>
       <Row className="text-left">
-        <Inspector data={currentUser.root} />
+        <Col md={12}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form.Group controlId="formAlias">
+              <Form.Label>Alias</Form.Label>
+              <Form.Control
+                type="text"
+                {...register("alias", {
+                  required: "Alias is required.",
+                })}
+                isInvalid={Boolean(errors.alias)}
+                placeholder="Enter your new alias"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.alias?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={mutation.isLoading}
+            >
+              {"Update Alias"}
+            </Button>
+            <Row className="mt-5">
+              <Col md={12}>
+                <h4>Your Current User Information</h4>
+                <UsersTable users={[currentUser.root.user]} />
+              </Col>
+            </Row>
+          </Form>
+        </Col>
       </Row>
     </BasicLayout>
   );
 };
-
 export default ProfilePage;
