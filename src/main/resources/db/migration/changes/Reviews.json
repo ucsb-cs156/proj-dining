@@ -1,109 +1,128 @@
 { "databaseChangeLog": [
-    {
-        "changeSet": {
-          "id": "Reviews-6",
-          "author": "KEVINY",
-          "preConditions": [
-            {
-              "onFail": "MARK_RAN"
-            },
-            {
-              "not": [
-                {
-                  "tableExists": {
-                    "tableName": "REVIEWS"
-                  }
+  {
+      "changeSet": {
+        "id": "Reviews-16",
+        "author": "KEV-YAN",
+        "preConditions": [
+          {
+            "onFail": "MARK_RAN"
+          },
+          {
+            "not": [
+              {
+                "tableExists": {
+                  "tableName": "REVIEWS"
                 }
-              ]
-            }
-          ],
-          "changes": [
-            {
-              "createTable": {
-                "columns": [
-                  {
-                    "column": {
-                        "autoIncrement": true,
-                        "constraints": {
-                            "primaryKey": true,
-                            "primaryKeyName": "REVIEWS_PK"
-                        },
-                          "name": "ID",
-                          "type": "BIGINT"
-                        }
-                  },
-                  {
-                    "column": {
-                      "constraints": {
-                        "nullable": false
-                      },
-                      "name": "STUDENT_ID",
-                      "type": "INTEGER"
-                    }
-                  },
-                  {
-                    "column": {
-                      "constraints": {
-                        "nullable": false
-                      },
-                      "name": "ITEM_ID",
-                      "type": "INTEGER"
-                    }
-                  },
-                  {
-                    "column": {
-                      "constraints": {
-                        "nullable": false
-                      },
-                      "name": "DATE_SERVED",
-                      "type": "VARCHAR(255)"
-                    }
-                  },
-                  {
-                    "column": {
-                      "constraints":{
-                        "nullable": false,
-                        "default": "Awaiting Moderation"
-                      },
-                      "name": "STATUS",
-                      "type": "VARCHAR(255)"
-                    }
-                  },
-                  {
-                    "column": {
-                      "constraints":{
-                        "default": null
-                      },
-                      "name": "USERID",
-                      "type": "BIGINT"
-                    }
-                  },
-                  {
-                    "column": {
-                      "constraints":{
-                        "default": null
-                      },
-                      "name": "MODERATOR_COMMENTS",
-                      "type": "VARCHAR(255)"
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "CREATED_DATE",
-                      "type": "VARCHAR(255)"
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "LAST_EDITED_DATE",
-                      "type": "VARCHAR(255)"
-                    }
-                  }]
-                ,
-                "tableName": "REVIEWS"
               }
-            }]
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "createTable": {
+              "columns": [
+                {
+                  "column": {
+                      "autoIncrement": true,
+                      "constraints": {
+                          "primaryKey": true,
+                          "primaryKeyName": "REVIEWS_PK"
+                      },
+                        "name": "ID",
+                        "type": "BIGINT"
+                      }
+                },
+                {
+                  "column": {
+                    "constraints": {
+                      "nullable": false
+                    },
+                    "name": "ITEM_ID",
+                    "type": "INTEGER"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints": {
+                      "nullable": false,
+                      "checkConstraint": "RATING >= 0 AND RATING <= 5"
+                    },
+                    "name": "RATING",
+                    "type": "INTEGER"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints": {
+                      "nullable": false
+                    },
+                    "name": "COMMENTS",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints": {
+                      "nullable": false
+                    },
+                    "name": "DATE_SERVED",
+                    "type": "TIMESTAMP"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints":{
+                      "nullable": false,
+                      "default": "Awaiting Moderation"
+                    },
+                    "name": "STATUS",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints":{
+                      "default": null
+                    },
+                    "name": "USER_ID",
+                    "type": "BIGINT"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints":{
+                      "default": null
+                    },
+                    "name": "MODERATOR_ID",
+                    "type": "INTEGER"
+                  }
+                },
+                {
+                  "column": {
+                    "constraints":{
+                      "default": null
+                    },
+                    "name": "MODERATOR_COMMENTS",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "CREATED_DATE",
+                    "type": "TIMESTAMP"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "LAST_EDITED_DATE",
+                    "type": "TIMESTAMP"
+                  }
+                }]
+              ,
+              "tableName": "REVIEWS"
+            }
+          }]
 
-        }
-    }
+      }
+  }
 ]}

@@ -1,14 +1,15 @@
 package edu.ucsb.cs156.dining.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /** 
  * This is a JPA entity that represents a Review
@@ -26,15 +27,26 @@ public class Reviews {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
-  private int student_id;
   private int item_id;
-  private String date_served;
-  private String status;
 
-  @Column(name="userId")
+  private LocalDateTime date_served;
+
+  private String status;
+  @Column(name = "COMMENTS")
+  private String comments;
+  private int rating;
+
+  @Column(name="USER_ID")
   private long userId;
   
   private String moderator_comments;
-  private String created_date;
-  private String last_edited_date;
+  private int moderator_id;
+
+  @CreationTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created_date; // FIX THESE AND THEN FIX TESTS
+
+  @UpdateTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date last_edited_date;
 }
