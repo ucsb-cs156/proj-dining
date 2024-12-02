@@ -206,7 +206,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
         public void an_admin_user_can_not_post_with_too_high_rating() throws Exception {
-                //when(menuItemRepository.save(eq(item))).thenReturn(item);
                 mockMvc.perform(post("/api/reviews/post?item_id=1&rating=6&comments=test&date_served=2024-08-24T11:11:11").with(csrf()))
                                 .andExpect(status().is(400)); 
         }
@@ -272,7 +271,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .rating(1)
                                 .comments("not good")
                                 .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
-                                //.date_served("2024-08-24T11:11:11")
                                 .build();
 
                 ArrayList<Reviews> expectedReviews = new ArrayList<>();
