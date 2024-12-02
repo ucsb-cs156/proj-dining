@@ -44,7 +44,7 @@ public class Reviews {
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
-  private Date created_date; // FIX THESE AND THEN FIX TESTS
+  private Date created_date;
 
   @UpdateTimestamp
   @Temporal(TemporalType.TIMESTAMP)
