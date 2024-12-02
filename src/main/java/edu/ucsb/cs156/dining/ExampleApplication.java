@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
  * The ExampleApplication class is the main entry point for the application.
  */
 @SpringBootApplication
+@EnableAsync 
+@EnableScheduling
 @Slf4j
 public class ExampleApplication {
 

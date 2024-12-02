@@ -32,7 +32,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -112,5 +111,18 @@ public class ReviewsController extends ApiController {
         return savedReviews; 
     }
     
+    /**
+         * This method returns all reviews from current user.
+         * @return all reviews from current user.
+         */
+        @Operation(summary = "Get reviews from an user")
+        @PreAuthorize("hasRole('ROLE_USER')")
+        @GetMapping("")
+        public Iterable<Reviews> getByCurrUserId() {
+            CurrentUser user = getCurrentUser();
+            long currUserId = user.getUser().getId();
+            Iterable<Reviews> reviews = reviewsRepository.findByUserId(currUserId);
+            return reviews;
+        }
 
 }
