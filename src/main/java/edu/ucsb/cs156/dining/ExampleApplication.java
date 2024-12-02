@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * The ExampleApplication class is the main entry point for the application.
  */
 @SpringBootApplication
-@Slf4j  //@EnableJpaAuditing(dateTimeProviderRef = "utcDateTimeProvider") doesn't work with mvn tests but works with backend
+@Slf4j
 public class ExampleApplication {
 
   @Autowired
