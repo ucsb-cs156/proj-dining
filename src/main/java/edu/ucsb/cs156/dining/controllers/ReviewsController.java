@@ -32,7 +32,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
