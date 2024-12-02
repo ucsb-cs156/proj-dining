@@ -80,14 +80,14 @@ public class ReviewsControllerTests extends ControllerTestCase {
                                 .item_id(1)
                                 .rating(1)
                                 .comments("none")
-                                .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
+                                .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) 
                                 .build();
 
                 Reviews review2 = Reviews.builder()
                                 .item_id(1)
                                 .rating(1)
                                 .comments("not good")
-                                .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) // Use LocalDateTime
+                                .date_served(LocalDateTime.of(2024, 8, 24, 11, 11, 11)) 
                                 .build();
 
                 ArrayList<Reviews> expectedReviews = new ArrayList<>();
@@ -290,7 +290,6 @@ public class ReviewsControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
 
         }
-
 }
         
 
