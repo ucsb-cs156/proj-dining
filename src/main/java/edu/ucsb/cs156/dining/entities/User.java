@@ -1,5 +1,7 @@
 package edu.ucsb.cs156.dining.entities;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,4 +35,9 @@ public class User {
   private String locale;
   private String hostedDomain;
   private boolean admin;
+
+  private String alias;
+  private String status;
+  private String aliasPending;
+  private LocalDateTime dateApproved;
 }

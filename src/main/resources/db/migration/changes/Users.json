@@ -97,6 +97,30 @@
                     "name": "PICTURE_URL",
                     "type": "VARCHAR(255)"
                   }
+                },
+                {
+                  "column": {
+                    "name": "ALIAS",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "STATUS",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "ALIAS_PENDING",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "DATE_APPROVED",
+                    "type": "TIMESTAMP"
+                  }
                 }]
               ,
               "tableName": "USERS"
