@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DiningCommonsService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.services</a> &gt; <span class="el_source">DiningCommonsService.java</span></div><h1>DiningCommonsService.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.services;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+/** Service object that wraps the UCSB Dining Commons API */
+@Service
+<span class="fc" id="L24">@Slf4j</span>
+public class DiningCommonsService {
+
+  @Autowired private ObjectMapper objectMapper;
+
+  @Value(&quot;${app.ucsb.api.consumer_key}&quot;)
+  private String apiKey;
+
+<span class="fc" id="L32">  private RestTemplate restTemplate = new RestTemplate();</span>
+
+<span class="fc" id="L34">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) throws Exception {</span>
+<span class="fc" id="L35">    restTemplate = restTemplateBuilder.build();</span>
+<span class="fc" id="L36">  }</span>
+
+  public static final String NAMES_ENDPOINT =
+      &quot;https://api.ucsb.edu/dining/commons/v1/names&quot;;
+
+  public static final String MEALS_BY_DATE_ENDPOINT = &quot;https://api.ucsb.edu/dining/menu/v1/&quot;;
+
+  public String getDiningCommonsJSON() throws Exception {
+
+<span class="fc" id="L45">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L46">    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L47">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L48">    headers.set(&quot;ucsb-api-version&quot;, &quot;1.0&quot;);</span>
+<span class="fc" id="L49">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+
+<span class="fc" id="L51">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(&quot;body&quot;, headers);</span>
+
+<span class="fc" id="L53">    String url = NAMES_ENDPOINT;</span>
+
+<span class="fc" id="L55">    log.info(&quot;url=&quot; + url);</span>
+
+<span class="fc" id="L57">    String retVal = &quot;&quot;;</span>
+<span class="fc" id="L58">    MediaType contentType = null;</span>
+<span class="fc" id="L59">    HttpStatus statusCode = null;</span>
+
+<span class="fc" id="L61">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L62">    contentType = re.getHeaders().getContentType();</span>
+<span class="fc" id="L63">    statusCode = (HttpStatus) re.getStatusCode();</span>
+<span class="fc" id="L64">    retVal = re.getBody();</span>
+
+<span class="fc" id="L66">    log.info(&quot;json: {} contentType: {} statusCode: {}&quot;, retVal, contentType, statusCode);</span>
+<span class="fc" id="L67">    return retVal;</span>
+  }
+
+  /**
+   * Get the meals for a specific dining commons by date
+   * @param date
+   * @param diningCommonsCode
+   * @return meals by date by dining common
+   * @throws Exception
+   */
+  public String getMealsByDateJSON(LocalDateTime date, String diningCommonsCode) throws Exception {
+
+    // set headers for api requests
+<span class="fc" id="L80">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L81">    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L82">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L83">    headers.set(&quot;ucsb-api-version&quot;, &quot;1.0&quot;);</span>
+<span class="fc" id="L84">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L85">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(&quot;body&quot;, headers);</span>
+
+    // set the date in the format that the api expects
+<span class="fc" id="L88">    String formattedDate = date.toString();</span>
+<span class="fc" id="L89">    log.info(&quot;formattedDate: {}&quot;, formattedDate);</span>
+
+    // set the url for the api request (https://api.ucsb.edu/dining/menu/v1/2024-10-21T12%3A00%3A00/carrillo)
+<span class="fc" id="L92">    String url = MEALS_BY_DATE_ENDPOINT + date.toString() + &quot;/&quot; + diningCommonsCode;</span>
+
+
+    // get the information from request
+<span class="fc" id="L96">    String retVal = &quot;&quot;;</span>
+<span class="fc" id="L97">    MediaType contentType = null;</span>
+<span class="fc" id="L98">    HttpStatus statusCode = null;</span>
+
+<span class="fc" id="L100">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L101">    contentType = re.getHeaders().getContentType();</span>
+<span class="fc" id="L102">    statusCode = (HttpStatus) re.getStatusCode();</span>
+<span class="fc" id="L103">    retVal = re.getBody();</span>
+
+<span class="fc" id="L105">    log.info(&quot;json: {} contentType: {} statusCode: {}&quot;, retVal, contentType, statusCode);</span>
+<span class="fc" id="L106">    return retVal;</span>
+  }
+
+
+  /**
+   * Get the meals for a specific dining commons by date
+   * @param meal
+   * @param date
+   * @param diningCommonsCode
+   * @return meals by date by dining common
+   * @throws Exception
+   */
+  public String getMenuItemsByMealAndDateJSON(LocalDateTime date, String diningCommonsCode, String meal) throws Exception {
+
+    // set headers for api requests
+<span class="fc" id="L121">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L122">    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L123">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L124">    headers.set(&quot;ucsb-api-version&quot;, &quot;1.0&quot;);</span>
+<span class="fc" id="L125">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L126">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(&quot;body&quot;, headers);</span>
+
+    // set the date in the format that the api expects
+<span class="fc" id="L129">    String formattedDate = date.toString();</span>
+<span class="fc" id="L130">    log.info(&quot;formattedDate: {}&quot;, formattedDate);</span>
+
+    // set the url for the api request e.g. (https://api.ucsb.edu/dining/menu/v1/2021-02-10/ortega/lunch)
+<span class="fc" id="L133">    String url = MEALS_BY_DATE_ENDPOINT + date.toString() + &quot;/&quot; + diningCommonsCode + &quot;/&quot; + meal;</span>
+
+
+    // get the information from request
+<span class="fc" id="L137">    String retVal = &quot;&quot;;</span>
+<span class="fc" id="L138">    MediaType contentType = null;</span>
+<span class="fc" id="L139">    HttpStatus statusCode = null;</span>
+
+<span class="fc" id="L141">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L142">    contentType = re.getHeaders().getContentType();</span>
+<span class="fc" id="L143">    statusCode = (HttpStatus) re.getStatusCode();</span>
+<span class="fc" id="L144">    retVal = re.getBody();</span>
+
+<span class="fc" id="L146">    log.info(&quot;json: {} contentType: {} statusCode: {}&quot;, retVal, contentType, statusCode);</span>
+<span class="fc" id="L147">    return retVal;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
