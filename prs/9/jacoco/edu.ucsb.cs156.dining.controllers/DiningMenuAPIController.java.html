@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DiningMenuAPIController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">DiningMenuAPIController.java</span></div><h1>DiningMenuAPIController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import edu.ucsb.cs156.dining.repositories.UserRepository;
+import edu.ucsb.cs156.dining.services.DiningMenuAPIService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.time.OffsetDateTime;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = &quot;DiningMenuAPIController&quot;)
+@RestController
+@RequestMapping(&quot;/api/dining&quot;)
+<span class="fc" id="L20">@Slf4j</span>
+<span class="fc" id="L21">public class DiningMenuAPIController extends ApiController {</span>
+
+  @Autowired UserRepository userRepository;
+  @Autowired DiningMenuAPIService diningMenuAPIService;
+
+  @Operation(summary = &quot;Get list of days with meal service&quot;)
+  @GetMapping(value = &quot;/getDays&quot;, produces = &quot;application/json&quot;)
+  public ResponseEntity&lt;String&gt; getDays() throws Exception {
+<span class="fc" id="L29">    String body = diningMenuAPIService.getDays();</span>
+<span class="fc" id="L30">    return ResponseEntity.ok().body(body);</span>
+  }
+
+  @Operation(summary = &quot;Get list of dining commons serving meals on given date&quot;)
+  @GetMapping(value = &quot;/getCommons&quot;, produces = &quot;application/json&quot;)
+  public ResponseEntity&lt;String&gt; getCommons( @RequestParam OffsetDateTime dateTime) throws Exception { 
+<span class="fc" id="L36">    String body = diningMenuAPIService.getCommons(dateTime);</span>
+<span class="fc" id="L37">    return ResponseEntity.ok().body(body);</span>
+  }
+
+  @Operation(summary = &quot;Get list of meals served in given dining commons on given date&quot;)
+  @GetMapping(value = &quot;/getMeals&quot;, produces = &quot;application/json&quot;)
+  public ResponseEntity&lt;String&gt; getMeals (@RequestParam OffsetDateTime dateTime, @RequestParam String diningCommonsCode) throws Exception {
+<span class="fc" id="L43">    String body = diningMenuAPIService.getMeals(dateTime, diningCommonsCode);</span>
+<span class="fc" id="L44">    return ResponseEntity.ok().body(body);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
