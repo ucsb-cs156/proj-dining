@@ -1,24 +1,43 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
-import HomePage from "main/pages/HomePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
+import HomePage from "main/pages/HomePage";
+import { useBackend } from "main/utils/useBackend";
 
-import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
-import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import axios from "axios";
-import AxiosMockAdapter from "axios-mock-adapter";
+// Mock the `useBackend` hook
+jest.mock("main/utils/useBackend", () => ({
+  useBackend: jest.fn(),
+}));
 
 describe("HomePage tests", () => {
-  const axiosMock = new AxiosMockAdapter(axios);
-  axiosMock
-    .onGet("/api/currentUser")
-    .reply(200, apiCurrentUserFixtures.userOnly);
-  axiosMock
-    .onGet("/api/systemInfo")
-    .reply(200, systemInfoFixtures.showingNeither);
-
   const queryClient = new QueryClient();
-  test("renders without crashing", async () => {
+
+  test("calls useBackend with correct arguments and renders dining commons", async () => {
+    // Arrange: Mock `useBackend` return value
+    useBackend.mockReturnValue({
+      data: [
+        {
+          name: "Carrillo",
+          code: "carrillo",
+          location: { latitude: 34.409953, longitude: -119.85277 },
+          hasSackMeal: false,
+          hasTakeOutMeal: false,
+          hasDiningCam: true,
+        },
+        {
+          name: "De La Guerra",
+          code: "de-la-guerra",
+          location: { latitude: 34.409811, longitude: -119.845026 },
+          hasSackMeal: false,
+          hasTakeOutMeal: false,
+          hasDiningCam: true,
+        },
+      ],
+      error: null,
+    });
+
+    // Act: Render the HomePage component
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -26,6 +45,17 @@ describe("HomePage tests", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    await screen.findByText(/Hello, world!/);
+
+    // Assert: Verify that `useBackend` was called with the correct arguments
+    expect(useBackend).toHaveBeenCalledWith(
+      ["/api/diningcommons/all"],
+      { method: "GET", url: "/api/diningcommons/all" },
+      [],
+    );
+
+    // Wait for the table to render and verify its content
+    screen.getByText("Dining Commons");
+    screen.getByText("Carrillo");
+    screen.getByText("De La Guerra");
   });
 });

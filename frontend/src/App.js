@@ -15,6 +15,11 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
+import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
+import DiningCommonsPage from "main/pages/DiningCommons/DiningCommonsPage";
+
+import MyReviewsPage from "main/pages/MyReviews/MyReviewsPage";
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -96,6 +101,29 @@ function App() {
             />
           </>
         )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route
+              exact
+              path="/diningcommons/:date-time/:dining-commons-code/:meal"
+              element={<MenuItemPage />}
+            />
+          </>
+        )}
+
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsPage />} />
+          </>
+        )}
+
+        <>
+          <Route
+            exact
+            path="/diningcommons/:diningCommonsCode"
+            element={<DiningCommonsPage />}
+          />
+        </>
       </Routes>
     </BrowserRouter>
   );

@@ -69,6 +69,18 @@ export default function AppNavbar({
                   <Nav.Link as={Link} to="/placeholder">
                     Placeholder
                   </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to="/diningcommons/:date-time/:dining-commons-code/:meal"
+                  >
+                    Menu Items
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/diningcommons/:diningCommonsCode">
+                    Dining Commons
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/myreviews">
+                    My Reviews
+                  </Nav.Link>
                 </>
               ) : (
                 <></>

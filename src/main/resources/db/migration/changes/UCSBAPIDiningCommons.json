@@ -1,0 +1,80 @@
+{
+    "databaseChangeLog": [
+      {
+        "changeSet": {
+          "id": "UCSBAPIDiningCommons-1",
+          "author": "phtcon",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "not": [
+                {
+                  "tableExists": {
+                    "tableName": "UCSBAPIDININGCOMMONS"
+                  }
+                }
+              ]
+            }
+          ],
+          "changes": [
+            {
+              "createTable": {
+                "columns": [
+                  {
+                    "column": {
+                      "name": "NAME",
+                      "type": "VARCHAR(255)",
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "UCSBAPIDININGCOMMONS_PK"
+                      }
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "CODE",
+                      "type": "VARCHAR(50)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "HASSACKMEAL",
+                      "type": "BOOLEAN"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "HASTAKEOUTMEAL",
+                      "type": "BOOLEAN"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "HASDININGCAM",
+                      "type": "BOOLEAN"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "LATITUDE",
+                      "type": "DOUBLE"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "LONGITUDE",
+                      "type": "DOUBLE"
+                    }
+                  }
+                ],
+                "tableName": "UCSBAPIDININGCOMMONS"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
