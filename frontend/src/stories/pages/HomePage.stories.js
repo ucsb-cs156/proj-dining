@@ -1,5 +1,6 @@
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import { http, HttpResponse } from "msw";
 
 import HomePage from "main/pages/HomePage";
@@ -10,6 +11,26 @@ export default {
 };
 
 const Template = () => <HomePage />;
+
+export const OneDiningCommons = Template.bind({});
+
+OneDiningCommons.parameters = {
+  msw: [
+    http.get("/api/diningcommons/all", () => {
+      return HttpResponse.json(diningCommonsFixtures.oneDiningCommons);
+    }),
+  ],
+};
+
+export const ThreeDiningCommons = Template.bind({});
+
+ThreeDiningCommons.parameters = {
+  msw: [
+    http.get("/api/diningcommons/all", () => {
+      return HttpResponse.json(diningCommonsFixtures.threeDiningCommons);
+    }),
+  ],
+};
 
 export const LoggedOut = Template.bind({});
 LoggedOut.parameters = {

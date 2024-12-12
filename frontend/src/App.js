@@ -2,18 +2,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
-
-import UCSBDatesIndexPage from "main/pages/UCSBDates/UCSBDatesIndexPage";
-import UCSBDatesCreatePage from "main/pages/UCSBDates/UCSBDatesCreatePage";
-import UCSBDatesEditPage from "main/pages/UCSBDates/UCSBDatesEditPage";
-
-import RestaurantIndexPage from "main/pages/Restaurants/RestaurantIndexPage";
-import RestaurantCreatePage from "main/pages/Restaurants/RestaurantCreatePage";
-import RestaurantEditPage from "main/pages/Restaurants/RestaurantEditPage";
-
+import ModeratePage from "main/pages/ModeratePage";
+import DiningCommonsIndexPage from "main/pages/Dining/DiningCommonsIndexPage";
 import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
+import MenuItemPage from "main/pages/MenuItemPage";
+import MyReviewsPage from "main/pages/MyReviews/MyReviewsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -28,49 +23,22 @@ function App() {
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
-        {hasRole(currentUser, "ROLE_ADMIN") && (
-          <Route exact path="/admin/users" element={<AdminUsersPage />} />
-        )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route exact path="/ucsbdates" element={<UCSBDatesIndexPage />} />
-          </>
-        )}
-        {hasRole(currentUser, "ROLE_ADMIN") && (
-          <>
-            <Route
-              exact
-              path="/ucsbdates/edit/:id"
-              element={<UCSBDatesEditPage />}
-            />
-            <Route
-              exact
-              path="/ucsbdates/create"
-              element={<UCSBDatesCreatePage />}
-            />
-          </>
-        )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/restaurants"
-              element={<RestaurantIndexPage />}
-            />
-          </>
-        )}
+        <Route
+          exact
+          path="/diningcommons/:dateTime/:diningCommonsCode/:meal"
+          element={<MenuItemPage />}
+        />
+        <>
+          <Route
+            exact
+            path="/diningcommons/:diningCommonsCode"
+            element={<DiningCommonsIndexPage />}
+          />
+        </>
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <>
-            <Route
-              exact
-              path="/restaurants/edit/:id"
-              element={<RestaurantEditPage />}
-            />
-            <Route
-              exact
-              path="/restaurants/create"
-              element={<RestaurantCreatePage />}
-            />
+            <Route exact path="/admin/users" element={<AdminUsersPage />} />
+            <Route exact path="/moderate" element={<ModeratePage />} />
           </>
         )}
         {hasRole(currentUser, "ROLE_USER") && (
@@ -94,6 +62,11 @@ function App() {
               path="/placeholder/create"
               element={<PlaceholderCreatePage />}
             />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsPage />} />
           </>
         )}
       </Routes>
