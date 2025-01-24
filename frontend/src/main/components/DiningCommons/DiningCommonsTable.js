@@ -3,8 +3,6 @@ import OurTable from "main/components/OurTable";
 
 export default function DiningCommonsTable({ commons }) {
   const columns = [
-    // Stryker disable all : hard to test for query caching
-
     {
       Header: "Code",
       accessor: "code", // accessor is the "key" in the data

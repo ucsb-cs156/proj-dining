@@ -33,6 +33,7 @@ public class RestaurantsController extends ApiController {
     @Autowired
     RestaurantRepository restaurantRepository;
 
+
     /**
      * This method returns a list of all restaurants.
      * @return a list of all restaurants
