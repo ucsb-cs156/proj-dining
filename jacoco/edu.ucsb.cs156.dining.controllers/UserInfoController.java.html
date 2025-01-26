@@ -7,8 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * This is a REST controller for getting information about the current user.
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name=&quot;Current User Information&quot;)
 @RequestMapping(&quot;/api/currentUser&quot;)
 @RestController
-<span class="fc" id="L20">public class UserInfoController extends ApiController {</span>
+<span class="fc" id="L23">public class UserInfoController extends ApiController {</span>
  
   /**
    * This method returns the current user.
@@ -28,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;&quot;)
   public CurrentUser getCurrentUser() {
-<span class="fc" id="L31">    return super.getCurrentUser();</span>
+<span class="fc" id="L34">    return super.getCurrentUser();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
