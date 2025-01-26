@@ -22,6 +22,24 @@ const columns = [
     id: "admin",
     accessor: (row, _rowIndex) => String(row.admin), // hack needed for boolean values to show up
   },
+  {
+    Header: "Alias",
+    accessor: "alias",
+  },
+  {
+    Header: "Proposed Alias",
+    accessor: "proposedAlias",
+  },
+  {
+    Header: "Status",
+    accessor: (row) => {
+      if (row.status === "Approved" && row.dateApproved) {
+        const formattedDate = new Date(row.dateApproved).toLocaleDateString();
+        return `Approved on ${formattedDate}`;
+      }
+      return row.status;
+    },
+  },
 ];
 
 export default function UsersTable({ users }) {

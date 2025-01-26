@@ -50,24 +50,28 @@ export default function AppNavbar({
           <Navbar.Collapse className="justify-content-between">
             <Nav className="mr-auto">
               {hasRole(currentUser, "ROLE_ADMIN") && (
-                <NavDropdown
-                  title="Admin"
-                  id="appnavbar-admin-dropdown"
-                  data-testid="appnavbar-admin-dropdown"
-                >
-                  <NavDropdown.Item href="/admin/users">Users</NavDropdown.Item>
-                </NavDropdown>
+                <>
+                  <NavDropdown
+                    title="Admin"
+                    id="appnavbar-admin-dropdown"
+                    data-testid="appnavbar-admin-dropdown"
+                  >
+                    <NavDropdown.Item href="/admin/users">
+                      Users
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                  <Nav.Link as={Link} to="/moderate">
+                    Moderate
+                  </Nav.Link>
+                </>
               )}
               {currentUser && currentUser.loggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/restaurants">
-                    Restaurants
-                  </Nav.Link>
-                  <Nav.Link as={Link} to="/ucsbdates">
-                    UCSB Dates
-                  </Nav.Link>
                   <Nav.Link as={Link} to="/placeholder">
                     Placeholder
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/myreviews">
+                    My Reviews
                   </Nav.Link>
                 </>
               ) : (

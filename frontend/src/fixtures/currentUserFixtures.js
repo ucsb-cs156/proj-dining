@@ -61,6 +61,9 @@ const apiCurrentUserFixtures = {
       locale: "en",
       hostedDomain: null,
       admin: false,
+      alias: "NewAlias",
+      proposedAlias: "PropAlias",
+      status: "Awaiting Moderation",
     },
     roles: [
       {
