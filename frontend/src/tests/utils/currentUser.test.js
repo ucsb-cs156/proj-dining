@@ -243,5 +243,8 @@ describe("utils/currentUser tests", () => {
         ),
       ).toBeFalsy();
     });
+      expect(
+          hasRole({root: {rolesList: null}})
+      ).toBeFalsy();
   });
 });
