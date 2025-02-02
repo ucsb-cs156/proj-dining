@@ -58,8 +58,10 @@ class DiningCommonsServiceTests {
               \"hasDiningCam\": \"%s\",
               \"hasSackMeal\": \"%s\",
               \"hasTakeOutMeal\": \"%s\",
-              \"longitude\": \"%s\",
-              \"latitude\": \"%s\"
+              \"location\":{
+                \"longitude\": %s,
+                \"latitude\": %s
+              }
             }
             ]
             """,
@@ -69,7 +71,7 @@ class DiningCommonsServiceTests {
             HASSACKMEAL,
             HASTAKEOUTMEAL,
             LONGITUDE,
-            LATITUDE.toString());
+            LATITUDE);
 
     DiningCommons expectedCommons =
         DiningCommons.builder()
