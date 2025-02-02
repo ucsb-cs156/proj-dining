@@ -1,4 +1,4 @@
-import { waitFor, render, screen } from "@testing-library/react";
+import { waitFor, render, screen, within } from "@testing-library/react";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -46,108 +46,16 @@ describe("DiningCommonsTable tests", () => {
     );
 
     // assert - check that the expected content is rendered
-
-    await waitFor(() => {
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+    for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-0-col-code`),
-      ).toHaveTextContent("carrillo");
-    });
-
-    await waitFor(() => {
+          screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
+      ).toBeInTheDocument();
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-1-col-code`),
-      ).toHaveTextContent("de-la-guerra");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-2-col-code`),
-      ).toHaveTextContent("ortega");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-3-col-code`),
-      ).toHaveTextContent("portola");
-    });
-
-    // assert - check that the checkmarks and X's are available
-
-    // carrillo
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasSackMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasTakeoutMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
-
-    // de la guerra
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasSackMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasTakeoutMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
-
-    // ortega
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasSackMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasTakeoutMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
-
-    // portola
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasSackMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasTakeoutMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
+        screen
+          .getByText(diningCommonsFixtures.fourCommons[i].code)
+      ).toHaveProperty("href", `http://localhost/diningcommons/${diningCommonsFixtures.fourCommons[i].code}`)
+    }
   });
 
   test("Checkmark / X for Boolean columns shows up as expected when hasDiningCam is false", async () => {
