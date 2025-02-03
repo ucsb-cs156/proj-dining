@@ -13,7 +13,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("DiningCommonsTable tests", () => {
   const queryClient = new QueryClient();
-
+  const fourCommons = diningCommonsFixtures.fourCommons;
   const expectedHeaders = [
     "Code",
     "Name",
@@ -47,14 +47,17 @@ describe("DiningCommonsTable tests", () => {
 
     // assert - check that the expected content is rendered
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
-    for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
+    for (let i = 0; i < fourCommons.length; i++) {
       expect(
           screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
       ).toBeInTheDocument();
       expect(
         screen
-          .getByText(diningCommonsFixtures.fourCommons[i].code)
-      ).toHaveProperty("href", `http://localhost/diningcommons/${diningCommonsFixtures.fourCommons[i].code}`)
+          .getByText(fourCommons[i].code)
+      ).toHaveAttribute("href", `/diningcommons/${fourCommons[i].code}`)
+      expect(screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasSackMeal`)).toHaveTextContent(fourCommons[i].hasSackMeal ? "✅" : "❌");
+      expect(screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasTakeoutMeal`)).toHaveTextContent(fourCommons[i].hasTakeoutMeal ? "✅" : "❌");
+      expect(screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasDiningCam`)).toHaveTextContent(fourCommons[i].hasDiningCam ? "✅" : "❌");
     }
   });
 
