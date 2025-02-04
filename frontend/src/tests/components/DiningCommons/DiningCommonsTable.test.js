@@ -33,14 +33,15 @@ describe("DiningCommonsTable tests", () => {
     "longitude",
   ];
   const testId = "DiningCommonsTable";
+  const date = new Date("2025-03-11").toISOString().split("T")[0];
 
-  test("Checkmark / X for Boolean columns shows up as expected", async () => {
+  test("Checkmark / X for Boolean columns shows up as expected, url shows up correctly", async () => {
     // act - render the component
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} date={date}/>
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -53,7 +54,7 @@ describe("DiningCommonsTable tests", () => {
       ).toBeInTheDocument();
       expect(screen.getByText(fourCommons[i].code)).toHaveAttribute(
         "href",
-        `/diningcommons/${fourCommons[i].code}`,
+        `/diningcommons/2025-03-11/${fourCommons[i].code}`,
       );
       expect(
         screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasSackMeal`),
@@ -77,6 +78,7 @@ describe("DiningCommonsTable tests", () => {
         <MemoryRouter>
           <DiningCommonsTable
             commons={[diningCommonsFixtures.oneCommonsDiningCamFalse]}
+            date={date}
           />
         </MemoryRouter>
       </QueryClientProvider>,
@@ -96,7 +98,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={[]} />
+          <DiningCommonsTable commons={[]} date={date}/>
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -120,7 +122,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} date={date}/>
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -156,7 +158,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} date={date}/>
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -191,7 +193,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} date={date}/>
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -238,7 +240,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} date={date}/>
         </MemoryRouter>
       </QueryClientProvider>,
     );
