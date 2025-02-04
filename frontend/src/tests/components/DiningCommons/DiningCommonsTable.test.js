@@ -49,15 +49,23 @@ describe("DiningCommonsTable tests", () => {
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
     for (let i = 0; i < fourCommons.length; i++) {
       expect(
-          screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
       ).toBeInTheDocument();
+      expect(screen.getByText(fourCommons[i].code)).toHaveAttribute(
+        "href",
+        `/diningcommons/${fourCommons[i].code}`,
+      );
       expect(
-        screen
-          .getByText(fourCommons[i].code)
-      ).toHaveAttribute("href", `/diningcommons/${fourCommons[i].code}`)
-      expect(screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasSackMeal`)).toHaveTextContent(fourCommons[i].hasSackMeal ? "✅" : "❌");
-      expect(screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasTakeoutMeal`)).toHaveTextContent(fourCommons[i].hasTakeoutMeal ? "✅" : "❌");
-      expect(screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasDiningCam`)).toHaveTextContent(fourCommons[i].hasDiningCam ? "✅" : "❌");
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasSackMeal`),
+      ).toHaveTextContent(fourCommons[i].hasSackMeal ? "✅" : "❌");
+      expect(
+        screen.getByTestId(
+          `DiningCommonsTable-cell-row-${i}-col-hasTakeoutMeal`,
+        ),
+      ).toHaveTextContent(fourCommons[i].hasTakeoutMeal ? "✅" : "❌");
+      expect(
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasDiningCam`),
+      ).toHaveTextContent(fourCommons[i].hasDiningCam ? "✅" : "❌");
     }
   });
 
