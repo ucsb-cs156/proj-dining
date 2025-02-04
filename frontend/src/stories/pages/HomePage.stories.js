@@ -3,6 +3,7 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { http, HttpResponse } from "msw";
 
 import HomePage from "main/pages/HomePage";
+import { diningCommonsFixtures } from "../../fixtures/diningCommonsFixtures";
 
 export default {
   title: "pages/HomePage",
@@ -21,6 +22,9 @@ LoggedOut.parameters = {
       http.get("/api/systemInfo", () => {
         return HttpResponse.json(systemInfoFixtures.showingNeither);
       }),
+      http.get("/api/dining/all", () => {
+        return HttpResponse.json(diningCommonsFixtures.fourCommons);
+      }),
     ],
   },
 };
@@ -34,6 +38,9 @@ LoggedInRegularUser.parameters = {
       }),
       http.get("/api/systemInfo", () => {
         return HttpResponse.json(systemInfoFixtures.showingNeither);
+      }),
+      http.get("/api/dining/all", () => {
+        return HttpResponse.json(diningCommonsFixtures.fourCommons);
       }),
     ],
   },

@@ -4,6 +4,7 @@ import DiningCommonsTable from "../components/DiningCommons/DiningCommonsTable";
 
 export default function HomePage() {
   const { data } = useBackend(
+    // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/dining/all`],
     { method: "GET", url: "/api/dining/all" },
     [],
