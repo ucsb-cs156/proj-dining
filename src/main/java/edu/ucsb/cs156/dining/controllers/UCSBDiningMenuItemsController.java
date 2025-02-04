@@ -39,7 +39,6 @@ public class UCSBDiningMenuItemsController extends ApiController {
   MenuItemRepository menuItemRepository;
 
   @Operation(summary = "Get list of entrees being served at given meal, dining common, and day")
-  @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping(value = "/{date-time}/{dining-commons-code}/{meal-code}", produces = "application/json")
   public ResponseEntity<List<MenuItem>> get_menu_items(
       @Parameter(description= "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)") 
