@@ -9,10 +9,13 @@ export default function HomePage() {
     { method: "GET", url: "/api/dining/all" },
     [],
   );
+
+  const date = new Date().toISOString().split("T")[0];
+
   return (
     <BasicLayout>
       <h1>Dining Commons</h1>
-      <DiningCommonsTable commons={data} />
+      <DiningCommonsTable commons={data} date={date} />
     </BasicLayout>
   );
 }
