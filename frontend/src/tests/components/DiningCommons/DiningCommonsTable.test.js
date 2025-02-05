@@ -13,7 +13,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("DiningCommonsTable tests", () => {
   const queryClient = new QueryClient();
-
+  const fourCommons = diningCommonsFixtures.fourCommons;
   const expectedHeaders = [
     "Code",
     "Name",
@@ -33,121 +33,44 @@ describe("DiningCommonsTable tests", () => {
     "longitude",
   ];
   const testId = "DiningCommonsTable";
+  const date = new Date("2025-03-11").toISOString().split("T")[0];
 
-  test("Checkmark / X for Boolean columns shows up as expected", async () => {
+  test("Checkmark / X for Boolean columns shows up as expected, url shows up correctly", async () => {
     // act - render the component
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
         </MemoryRouter>
       </QueryClientProvider>,
     );
 
     // assert - check that the expected content is rendered
-
-    await waitFor(() => {
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+    for (let i = 0; i < fourCommons.length; i++) {
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-0-col-code`),
-      ).toHaveTextContent("carrillo");
-    });
-
-    await waitFor(() => {
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
+      ).toBeInTheDocument();
+      expect(screen.getByText(fourCommons[i].code)).toHaveAttribute(
+        "href",
+        `/diningcommons/2025-03-11/${fourCommons[i].code}`,
+      );
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-1-col-code`),
-      ).toHaveTextContent("de-la-guerra");
-    });
-
-    await waitFor(() => {
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasSackMeal`),
+      ).toHaveTextContent(fourCommons[i].hasSackMeal ? "✅" : "❌");
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-2-col-code`),
-      ).toHaveTextContent("ortega");
-    });
-
-    await waitFor(() => {
+        screen.getByTestId(
+          `DiningCommonsTable-cell-row-${i}-col-hasTakeoutMeal`,
+        ),
+      ).toHaveTextContent(fourCommons[i].hasTakeoutMeal ? "✅" : "❌");
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-3-col-code`),
-      ).toHaveTextContent("portola");
-    });
-
-    // assert - check that the checkmarks and X's are available
-
-    // carrillo
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasSackMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasTakeoutMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-0-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
-
-    // de la guerra
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasSackMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasTakeoutMeal"),
-      ).toHaveTextContent("❌");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-1-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
-
-    // ortega
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasSackMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasTakeoutMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-2-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
-
-    // portola
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasSackMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasTakeoutMeal"),
-      ).toHaveTextContent("✅");
-    });
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("DiningCommonsTable-cell-row-3-col-hasDiningCam"),
-      ).toHaveTextContent("✅");
-    });
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasDiningCam`),
+      ).toHaveTextContent(fourCommons[i].hasDiningCam ? "✅" : "❌");
+    }
   });
 
   test("Checkmark / X for Boolean columns shows up as expected when hasDiningCam is false", async () => {
@@ -158,6 +81,7 @@ describe("DiningCommonsTable tests", () => {
         <MemoryRouter>
           <DiningCommonsTable
             commons={[diningCommonsFixtures.oneCommonsDiningCamFalse]}
+            date={date}
           />
         </MemoryRouter>
       </QueryClientProvider>,
@@ -177,7 +101,7 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={[]} />
+          <DiningCommonsTable commons={[]} date={date} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -201,7 +125,10 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -237,7 +164,10 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -272,7 +202,10 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -319,7 +252,10 @@ describe("DiningCommonsTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <DiningCommonsTable commons={diningCommonsFixtures.fourCommons} />
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
         </MemoryRouter>
       </QueryClientProvider>,
     );

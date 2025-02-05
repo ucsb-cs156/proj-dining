@@ -1,9 +1,13 @@
 package edu.ucsb.cs156.dining.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Map;
+
+import static java.lang.Double.parseDouble;
 
 @Builder
 @Data
@@ -17,6 +21,14 @@ public class DiningCommons {
   private Boolean hasTakeOutMeal;
   private Double latitude;
   private Double longitude;
+
+
+  //Found this on Baeldung for unpacking nested json properties: https://www.baeldung.com/jackson-nested-values
+  @JsonProperty("location")
+  private void unpackedNested(Map<String,Object> location){
+    this.latitude = (Double) location.get("latitude");
+    this.longitude = (Double) location.get("longitude");
+  }
 
   public static final String SAMPLE_CARRILLO =
       """

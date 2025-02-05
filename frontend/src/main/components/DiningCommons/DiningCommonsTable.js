@@ -1,11 +1,16 @@
 import React from "react";
 import OurTable from "main/components/OurTable";
+import { Link } from "react-router-dom";
 
-export default function DiningCommonsTable({ commons }) {
+export default function DiningCommonsTable({ commons, date }) {
+  const testid = "DiningCommonsTable";
   const columns = [
     {
       Header: "Code",
       accessor: "code", // accessor is the "key" in the data
+      Cell: ({ value }) => (
+        <Link to={`/diningcommons/${date}/${value}`}>{value}</Link>
+      ),
     },
     {
       Header: "Name",
@@ -37,8 +42,6 @@ export default function DiningCommonsTable({ commons }) {
       accessor: "longitude",
     },
   ];
-
-  const testid = "DiningCommonsTable";
 
   const displayedColumns = columns;
 
