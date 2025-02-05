@@ -39,7 +39,6 @@ import jakarta.validation.Valid;
   MenuItemRepository menuItemRepository;
 
   @Operation(summary = &quot;Get list of entrees being served at given meal, dining common, and day&quot;)
-  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(value = &quot;/{date-time}/{dining-commons-code}/{meal-code}&quot;, produces = &quot;application/json&quot;)
   public ResponseEntity&lt;List&lt;MenuItem&gt;&gt; get_menu_items(
       @Parameter(description= &quot;date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)&quot;) 
@@ -49,25 +48,25 @@ import jakarta.validation.Valid;
   )
     throws Exception {
 
-<span class="fc" id="L52">    List&lt;Entree&gt; body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);</span>
+<span class="fc" id="L51">    List&lt;Entree&gt; body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);</span>
 
-<span class="fc" id="L54">    List&lt;MenuItem&gt; menuitems = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L53">    List&lt;MenuItem&gt; menuitems = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L56" title="All 2 branches covered.">    for (Entree entree : body) {</span>
-<span class="fc" id="L57">        Optional&lt;MenuItem&gt; exists = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningcommoncode, mealcode, entree.getName(), entree.getStation());</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">    for (Entree entree : body) {</span>
+<span class="fc" id="L56">        Optional&lt;MenuItem&gt; exists = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningcommoncode, mealcode, entree.getName(), entree.getStation());</span>
 
-<span class="fc" id="L59">        MenuItem newMenuItem = exists.orElse(new MenuItem());</span>
+<span class="fc" id="L58">        MenuItem newMenuItem = exists.orElse(new MenuItem());</span>
           // MenuItem newMenuItem = new MenuItem();
-<span class="fc" id="L61">          newMenuItem.setDiningCommonsCode(diningcommoncode);</span>
-<span class="fc" id="L62">          newMenuItem.setMealCode(mealcode);</span>
-<span class="fc" id="L63">          newMenuItem.setName(entree.getName());</span>
-<span class="fc" id="L64">          newMenuItem.setStation(entree.getStation());</span>
+<span class="fc" id="L60">          newMenuItem.setDiningCommonsCode(diningcommoncode);</span>
+<span class="fc" id="L61">          newMenuItem.setMealCode(mealcode);</span>
+<span class="fc" id="L62">          newMenuItem.setName(entree.getName());</span>
+<span class="fc" id="L63">          newMenuItem.setStation(entree.getStation());</span>
 
-<span class="fc" id="L66">          menuItemRepository.save(newMenuItem);</span>
-<span class="fc" id="L67">          menuitems.add(newMenuItem);</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L65">          menuItemRepository.save(newMenuItem);</span>
+<span class="fc" id="L66">          menuitems.add(newMenuItem);</span>
+<span class="fc" id="L67">    }</span>
 
-<span class="fc" id="L70">    return ResponseEntity.ok().body(menuitems);</span>
+<span class="fc" id="L69">    return ResponseEntity.ok().body(menuitems);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
