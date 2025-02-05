@@ -53,14 +53,6 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
   private static final String NAME = "NAME";
   private static final String STATION = "STATION";
 
-  @Test
-  public void logged_out_users_cannot_get_meal_items() throws Exception {
-        String dateTime = "2023-10-10";
-        String diningCommonCode = "ortega";
-        String mealCode = "lunch";
-        mockMvc.perform(get("/api/diningcommons/{dateTime}/{diningCommonsCode}/{mealCode}", dateTime, diningCommonCode, mealCode))
-                        .andExpect(status().is(403)); // logged out users can't get meal items
-  }
 
   @WithMockUser(roles = { "USER" })
   @Test

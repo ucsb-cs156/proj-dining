@@ -88,7 +88,7 @@ describe("MenuItemTable Tests", () => {
 
     await waitFor(() => {
       expect(mockAlert).toBeCalledTimes(1);
-      expect(mockAlert).toBeCalledWith("Reviews coming soon!");
     });
+    expect(mockAlert).toBeCalledWith("Reviews coming soon!");
   });
 });
