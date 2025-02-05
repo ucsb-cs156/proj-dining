@@ -27,10 +27,9 @@ describe("HomePage tests", () => {
     axiosMock
       .onGet("/api/dining/all")
       .reply(200, diningCommonsFixtures.fourCommons);
-    let date = new Date("2025-03-11")
-    jest.useFakeTimers({advanceTimers: true});
+    let date = new Date("2025-03-11");
+    jest.useFakeTimers({ advanceTimers: true });
     jest.setSystemTime(date);
-
   });
   afterEach(() => {
     axiosMock.reset();
@@ -52,8 +51,11 @@ describe("HomePage tests", () => {
         screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
       ).toHaveTextContent(diningCommonsFixtures.fourCommons[i].code);
       expect(
-          screen.getByText(diningCommonsFixtures.fourCommons[i].code)
-      ).toHaveAttribute("href", `/diningcommons/2025-03-11/${diningCommonsFixtures.fourCommons[i].code}`);
+        screen.getByText(diningCommonsFixtures.fourCommons[i].code),
+      ).toHaveAttribute(
+        "href",
+        `/diningcommons/2025-03-11/${diningCommonsFixtures.fourCommons[i].code}`,
+      );
     }
   });
 });

@@ -12,22 +12,22 @@ const Template = (args) => {
 };
 
 export const Empty = Template.bind({});
-const date = new Date('2025-03-11').toISOString().split('T')[0];
+const date = new Date("2025-03-11").toISOString().split("T")[0];
 
 Empty.args = {
   commons: [],
-  date: date
+  date: date,
 };
 
 export const ThreeItemsOrdinaryUser = Template.bind({});
 
 ThreeItemsOrdinaryUser.args = {
   commons: diningCommonsFixtures.fourCommons,
-  date: date
+  date: date,
 };
 
 export const ThreeItemsAdminUser = Template.bind({});
 ThreeItemsAdminUser.args = {
   commons: diningCommonsFixtures.fourCommons,
-  date: date
+  date: date,
 };

@@ -8,7 +8,9 @@ export default function DiningCommonsTable({ commons, date }) {
     {
       Header: "Code",
       accessor: "code", // accessor is the "key" in the data
-      Cell: ({ value }) => <Link to={`/diningcommons/${date}/${value}`}>{value}</Link>,
+      Cell: ({ value }) => (
+        <Link to={`/diningcommons/${date}/${value}`}>{value}</Link>
+      ),
     },
     {
       Header: "Name",
