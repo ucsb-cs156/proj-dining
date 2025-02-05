@@ -3,7 +3,7 @@ import { hasRole } from "../../utils/currentUser";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
-  const reviewCallback = async (cell) => {
+  const reviewCallback = async (_cell) => {
     alert("Reviews coming soon!");
   };
   const columns = [
