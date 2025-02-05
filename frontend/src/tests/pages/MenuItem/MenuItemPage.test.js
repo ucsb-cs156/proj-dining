@@ -2,12 +2,8 @@ import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import mockConsole from "jest-mock-console";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import {
-  apiCurrentUserFixtures,
-  currentUserFixtures,
-} from "fixtures/currentUserFixtures";
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
