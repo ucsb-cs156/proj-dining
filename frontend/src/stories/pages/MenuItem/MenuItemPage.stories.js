@@ -2,6 +2,7 @@ import React from "react";
 import { http, HttpResponse } from "msw";
 import { menuItemFixtures } from "fixtures/menuItemFixtures";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
+import { reactRouterParameters } from "storybook-addon-remix-react-router";
 
 export default {
   title: "pages/MenuItem/MenuItemPage",
@@ -15,20 +16,18 @@ export default {
         });
       }),
     ],
-    reactRouter: {
+    reactRouter: reactRouterParameters({
       location: {
-        path: "/diningcommons/2024-11-25/portola/breakfast",
-        pathname: "/diningcommons/2024-11-25/portola/breakfast",
-        search: "",
-        hash: "",
-        state: null,
+        pathParams: {
+          meal: "breakfast",
+          "dining-commons-code": "portola",
+          "date-time": "2024-11-25",
+        },
       },
-      routeParams: {
-        dateTime: "2024-11-25",
-        diningCommonsCode: "portola",
-        meal: "breakfast",
+      routing: {
+        path: "/diningcommons/:date-time/:dining-commons-code/:meal",
       },
-    },
+    }),
   },
 };
 

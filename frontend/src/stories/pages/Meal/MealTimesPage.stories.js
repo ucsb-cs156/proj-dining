@@ -2,6 +2,7 @@ import React from "react";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import { mealFixtures } from "fixtures/mealFixtures";
 import { http, HttpResponse } from "msw";
+import { reactRouterParameters } from "storybook-addon-remix-react-router";
 
 export default {
   title: "pages/Meal/MealTimesPage",
@@ -13,19 +14,17 @@ export default {
         return HttpResponse.json(mealFixtures.threeMeals, { status: 200 });
       }),
     ],
-    reactRouter: {
+    reactRouter: reactRouterParameters({
       location: {
-        path: "/diningcommons/2024-11-25/portola",
-        pathname: "/diningcommons/2024-11-25/portola",
-        search: "",
-        hash: "",
-        state: null,
+        pathParams: {
+          "dining-commons-code": "portola",
+          "date-time": "2024-11-25",
+        },
       },
-      routeParams: {
-        dateTime: "2024-11-25",
-        diningCommonsCode: "portola",
+      routing: {
+        path: "/diningcommons/:date-time/:dining-commons-code",
       },
-    },
+    }),
   },
 };
 
