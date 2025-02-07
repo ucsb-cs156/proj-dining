@@ -5,8 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { initialize, mswLoader } from 'msw-storybook-addon'
 
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import {withRouter} from "storybook-addon-remix-react-router";
 
 const queryClient = new QueryClient();
 
@@ -32,12 +32,10 @@ initialize(
 export const decorators = [
   (Story) => (
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
         <ToastContainer />
         <Story />
-      </MemoryRouter>
     </QueryClientProvider>
-  )
+  ), withRouter
 ];
 
 /** @type { import('@storybook/react').Preview } */

@@ -17,6 +17,7 @@ import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";
+import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 
 function App() {
   const { data: currentUser } = useCurrentUser();
@@ -60,15 +61,20 @@ function App() {
             />
           </>
         )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/diningcommons/:date-time/:dining-commons-code"
-              element={<MealTimesPage />}
-            />
-          </>
-        )}
+        <>
+          <Route
+            exact
+            path="/diningcommons/:date-time/:dining-commons-code"
+            element={<MealTimesPage />}
+          />
+        </>
+        <>
+          <Route
+            exact
+            path="/diningcommons/:date-time/:dining-commons-code/:meal"
+            element={<MenuItemPage />}
+          />
+        </>
       </Routes>
     </BrowserRouter>
   );
