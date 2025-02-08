@@ -3,12 +3,9 @@ package edu.ucsb.cs156.dining.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -43,12 +40,12 @@ public class User {
  private boolean admin;
  private String alias;
  private String proposedAlias;
- private String status;
+ private ModerationStatus status;
  private LocalDate dateApproved;
 
+ @ToString.Exclude
  @OneToMany(mappedBy="reviewer")
  @Fetch(FetchMode.JOIN)
- @JsonIgnore
  private List<Review> reviews;
  
  public String getAlias() {

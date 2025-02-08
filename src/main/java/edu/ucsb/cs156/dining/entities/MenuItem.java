@@ -3,10 +3,7 @@ package edu.ucsb.cs156.dining.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -37,6 +34,7 @@ public class MenuItem {
   private String name;
   private String station;
 
+  @ToString.Exclude
   @OneToMany(mappedBy = "item")
   @Fetch(FetchMode.JOIN)
   private List<Review> reviews;

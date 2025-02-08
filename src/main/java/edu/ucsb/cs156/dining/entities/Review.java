@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -48,7 +49,7 @@ public class Review {
     private LocalDateTime dateItemServed;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'Awaiting Moderation'")
-    private String status = "Awaiting Moderation";
+    private ModerationStatus status = ModerationStatus.AWAITING_REVIEW;
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String userIdModerator;
