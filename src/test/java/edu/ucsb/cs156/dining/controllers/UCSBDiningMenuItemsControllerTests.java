@@ -93,7 +93,7 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
         menuItemRepository.save(item);
 
       when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station))
-            .thenReturn(Optional.of(new MenuItem(1L, diningCommonCode, mealCode, name, station)));
+            .thenReturn(Optional.of(new MenuItem(1L, diningCommonCode, mealCode, name, station, null)));
 
       assertEquals(item.getDiningCommonsCode(), "portola");
       assertEquals(item.getMealCode(), "dinner");

@@ -1,5 +1,8 @@
 package edu.ucsb.cs156.dining.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -23,17 +28,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity(name = "reviews")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(nullable = false)
-    private long studentId;
-
-    @Column(nullable = false)
-    private Long itemId;
-
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String reviewerComments;
@@ -54,10 +55,18 @@ public class Review {
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL")
     private String moderatorComments;
-        
+
     @Column(nullable = false)
     private LocalDateTime dateCreated;
 
     @Column(nullable = false)
     private LocalDateTime dateEdited;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id", nullable = false)
+    private MenuItem item;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User reviewer;
 }

@@ -1,5 +1,6 @@
 package edu.ucsb.cs156.dining.controllers;
 
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
@@ -111,14 +112,12 @@ public class ReviewController extends ApiController {
 
         review.setItemsStars(itemsStars);
 
-        // Check if the menu item exists
-        if (!menuItemRepository.existsById(itemId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "MenuItem with id " + itemId + " not found");
-        }
-
-        review.setItemId(itemId);
+        MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(
+                () -> new EntityNotFoundException(MenuItem.class, itemId)
+        );
+        review.setItem(reviewedItem);
         CurrentUser user = getCurrentUser();
-        review.setStudentId(user.getUser().getId());
+        review.setReviewer(user.getUser());
         review.setDateEdited(now);
         log.info("reviews={}", review);
         reviewRepository.save(review);
@@ -135,8 +134,7 @@ public class ReviewController extends ApiController {
     @GetMapping("/userReviews")
     public Iterable<Review> get_all_review_by_user_id(){
         CurrentUser user = getCurrentUser();
-        long userId = user.getUser().getId();
-        Iterable<Review> reviews = reviewRepository.findAllByStudentId(userId);
+        Iterable<Review> reviews = reviewRepository.findByReviewer(user.getUser());
         return reviews;
     }
 }

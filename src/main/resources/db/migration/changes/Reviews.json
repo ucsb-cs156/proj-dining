@@ -29,22 +29,32 @@
                       "autoIncrement": true,
                       "constraints": {
                         "primaryKey": true,
-                        "primaryKeyName": "CONSTRAINT_9"
+                        "primaryKeyName": "REVIEWS_PK"
                       }
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "STUDENT_ID",
-                      "type": "BIGINT",
-                      "constraints": {"nullable": false}
                     }
                   },
                   {
                     "column": {
                       "name": "ITEM_ID",
                       "type": "BIGINT",
-                      "constraints": {"nullable": false}
+                      "constraints": {
+                        "foreignKeyName": "FK_ITEM_ID",
+                        "referencedTableName": "REVIEWS",
+                        "referencedColumnName": "ID",
+                        "nullable": false
+                      }
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "USER_ID",
+                      "type": "BIGINT",
+                      "constraints": {
+                        "foreignKeyName": "FK_USER_ID",
+                        "referencedTableName": "USERS",
+                        "referencedColumnName": "ID",
+                        "nullable": false
+                      }
                     }
                   },
                   {
