@@ -4,11 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -46,16 +42,16 @@ public class User {
  private String status;
  private LocalDate dateApproved;
 
+ @ToString.Exclude
  @OneToMany(mappedBy=&quot;reviewer&quot;)
  @Fetch(FetchMode.JOIN)
- @JsonIgnore
  private List&lt;Review&gt; reviews;
  
  public String getAlias() {
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (this.alias == null) {</span>
-<span class="fc" id="L56">            this.alias = &quot;Anonymous User&quot;; </span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (this.alias == null) {</span>
+<span class="fc" id="L52">            this.alias = &quot;Anonymous User&quot;; </span>
         }
-<span class="fc" id="L58">        return this.alias;</span>
+<span class="fc" id="L54">        return this.alias;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
