@@ -22,5 +22,4 @@ public class TestConfig {
     public GrantedAuthoritiesService grantedAuthoritiesService() {
         return new GrantedAuthoritiesService();
     }
-
 }
