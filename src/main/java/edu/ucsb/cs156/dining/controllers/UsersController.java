@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -91,7 +92,7 @@ public class UsersController extends ApiController {
         }
     
         user.setProposedAlias(proposedAlias);
-        user.setStatus("Awaiting Moderation");
+        user.setStatus(ModerationStatus.AWAITING_REVIEW);
         User savedUser = userRepository.save(user);
     
         return ResponseEntity.ok(savedUser);
@@ -115,11 +116,11 @@ public class UsersController extends ApiController {
 
         if (approved) {
             user.setAlias(user.getProposedAlias());  
-            user.setStatus("Approved");
+            user.setStatus(ModerationStatus.APPROVED);
             user.setDateApproved(LocalDate.now());
             user.setProposedAlias(null);
         } else {
-            user.setStatus("Rejected");
+            user.setStatus(ModerationStatus.REJECTED);
             user.setProposedAlias(null);
         }
         
