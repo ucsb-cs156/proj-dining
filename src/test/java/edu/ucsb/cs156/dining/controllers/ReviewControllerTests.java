@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.CurrentUserService;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import edu.ucsb.cs156.dining.testconfig.MockCurrentUserServiceImpl;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.ControllerTestCase;
@@ -128,7 +129,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments("Worst flavor ever.")
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem)
                 .build();
 
@@ -139,7 +140,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments("Worst flavor ever.")
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -213,7 +214,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem)
                 .build();
 
@@ -224,7 +225,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -260,7 +261,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .itemsStars(1l)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem)
                 .build();
 
@@ -270,7 +271,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .itemsStars(1l)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -310,7 +311,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments("Im tired of this same chicken")
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user1)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem1)
                 .id(0L)
                 .build();
@@ -322,7 +323,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments("MMMMM I LOVE CHICKEN")
                 .dateItemServed(LocalDateTime.of(2022, 7, 1, 8, 8, 8))
                 .reviewer(user2)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem2)
                 .id(0L)
                 .build();
@@ -334,7 +335,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments("Im tired of this same chicken")
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user1)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem2)
                 .id(0L)
                 .build();
@@ -371,7 +372,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
                 .reviewer(user1)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem1)
                 .id(1L)
                 .build();
@@ -381,7 +382,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .dateEdited(LocalDateTime.of(2024, 7, 2, 6, 47))
                 .dateItemServed(LocalDateTime.of(2022, 2, 6, 8, 8))
                 .reviewer(user2)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem1)
                 .id(2L)
                 .build();
@@ -391,7 +392,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .dateEdited(LocalDateTime.of(2024, 12, 15, 04, 26))
                 .dateItemServed(LocalDateTime.of(2023, 1, 7, 3, 8))
                 .reviewer(user2)
-                .status("Awaiting Moderation")
+                .status(ModerationStatus.AWAITING_REVIEW)
                 .item(menuItem2)
                 .id(3L)
                 .build();
