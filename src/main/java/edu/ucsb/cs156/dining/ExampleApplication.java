@@ -9,12 +9,18 @@ import org.springframework.context.annotation.Profile;
 
 import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * The ExampleApplication class is the main entry point for the application.
  */
 @SpringBootApplication
 @Slf4j
+@EnableJpaAuditing(dateTimeProviderRef = "utcDateTimeProvider")
 public class ExampleApplication {
 
   @Autowired
@@ -44,6 +50,15 @@ public class ExampleApplication {
       log.info("developmentApplicationRunner completed");
     };
   }
+
+  @Bean
+  public DateTimeProvider utcDateTimeProvider() {
+    return () -> {
+      ZonedDateTime now = ZonedDateTime.now();
+      return Optional.of(now);
+    };
+  }
+
 
    /**
    * The main method is the entry point for the application.

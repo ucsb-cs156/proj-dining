@@ -98,7 +98,6 @@ public class ReviewController extends ApiController {
         LocalDateTime now = LocalDateTime.now();
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
-        review.setDateCreated(now);
 
         // Ensures content of truly empty and sets to null if so
         if ((!reviewerComments.trim().isEmpty())) {
@@ -118,9 +117,8 @@ public class ReviewController extends ApiController {
         review.setItem(reviewedItem);
         CurrentUser user = getCurrentUser();
         review.setReviewer(user.getUser());
-        review.setDateEdited(now);
         log.info("reviews={}", review);
-        reviewRepository.save(review);
+        review = reviewRepository.save(review);
         return review;
     }
 
