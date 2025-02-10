@@ -190,4 +190,27 @@ public class ReviewController extends ApiController {
         reviewRepository.delete(review);
         return genericMessage("Review with id %s deleted".formatted(id));
     }
+
+    @Operation(summary = "Moderate a review")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/moderate")
+    public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
+        Review review = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+
+        review.setModeratorComments(moderatorComments);
+        review.setStatus(status);
+
+        review = reviewRepository.save(review);
+        return review;
+    }
+
+    @Operation(summary = "See reviews that need moderation")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/needsmoderation")
+    public Iterable<Review> needsmoderation() {
+        Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
+        return reviewsList;
+    }
 }
