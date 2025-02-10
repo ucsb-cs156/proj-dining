@@ -92,7 +92,7 @@ public class UsersControllerTests extends ControllerTestCase {
             .emailVerified(true)
             .locale("")
             .hostedDomain("example.org")
-            .admin(false)
+            .admin(true)
             .alias("Anonymous User") 
             .proposedAlias("Chipotle")
             .status(ModerationStatus.AWAITING_REVIEW)

@@ -5,9 +5,11 @@ import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.models.EditedReview;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -134,5 +137,57 @@ public class ReviewController extends ApiController {
         CurrentUser user = getCurrentUser();
         Iterable<Review> reviews = reviewRepository.findByReviewer(user.getUser());
         return reviews;
+    }
+
+    @Operation(summary = "Edit a review")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping
+    public Review editReview(@Parameter Long id, @RequestBody @Valid EditedReview incoming) {
+
+        Review oldReview = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+        User current = getCurrentUser().getUser();
+        if(current.getId() != oldReview.getReviewer().getId()) {
+            throw new AccessDeniedException("No permission to edit review");
+        }
+
+        if(incoming.getItemStars() < 1 || incoming.getItemStars() > 5) {
+            throw new IllegalArgumentException("Items stars must be between 1 and 5.");
+        }else{
+            oldReview.setItemsStars(incoming.getItemStars());
+        }
+
+        if (incoming.getReviewerComments() != null &&!incoming.getReviewerComments().trim().isEmpty()) {
+            oldReview.setReviewerComments(incoming.getReviewerComments());
+        }else{
+            oldReview.setReviewerComments(null);
+        }
+
+        oldReview.setDateItemServed(incoming.getDateItemServed());
+
+        oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
+        oldReview.setModeratorComments(null);
+
+        Review review = reviewRepository.save(oldReview);
+
+        return review;
+    }
+
+    @Operation(summary = "Delete a review")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping
+    public Object deleteReview(@Parameter Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+
+        User current = getCurrentUser().getUser();
+        if(current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+            throw new AccessDeniedException("No permission to delete review");
+        }
+
+        reviewRepository.delete(review);
+        return genericMessage("Review with id %s deleted".formatted(id));
     }
 }
