@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">ReviewController.java</span></div><h1>ReviewController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.entities.Review;
+import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
+import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.models.EditedReview;
+import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
+
+import jakarta.validation.Valid;
+
+/**
+ * This is a REST controller for Reviews
+ */
+
+@Tag(name = &quot;Review&quot;)
+@RequestMapping(&quot;/api/reviews&quot;)
+@RestController
+<span class="fc" id="L51">@Slf4j</span>
+<span class="fc" id="L52">public class ReviewController extends ApiController {</span>
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleValidationExceptions(IllegalArgumentException ex) {
+<span class="fc" id="L56">        Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L57">        errors.put(&quot;error&quot;, ex.getMessage());</span>
+<span class="fc" id="L58">        return ResponseEntity.badRequest().body(errors);</span>
+    }
+
+    @Autowired
+    ReviewRepository reviewRepository;
+
+    @Autowired
+    MenuItemRepository menuItemRepository;
+
+    /**
+     * This method returns a list of all Reviews.
+     * 
+     * @return a list of all Reviews
+     */
+    @Operation(summary = &quot;List all Reviews&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @GetMapping(&quot;/all&quot;)
+    public Iterable&lt;Review&gt; allReviews() {
+<span class="fc" id="L76">        log.info(&quot;Attempting to log all reviews&quot;);</span>
+<span class="fc" id="L77">        Iterable&lt;Review&gt; reviews = reviewRepository.findAll();</span>
+<span class="fc" id="L78">        log.info(&quot;all reviews found, &quot;, reviews);</span>
+<span class="fc" id="L79">        return reviews;</span>
+    }
+
+    /**
+     * This method allows a user to submit a review
+     * 
+     * @return message that says an review was added to the database
+     * @param itemId         id of the item
+     * @param dateItemServed localDataTime
+     *                       All others params must not be parameters and instead
+     *                       derived from data sources that are dynamic (Date), or
+     *                       set to be null or some other signifier
+     */
+    @Operation(summary = &quot;Create a new review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @PostMapping(&quot;/post&quot;)
+    public Review postReview(
+            @Parameter(name = &quot;itemId&quot;) @RequestParam long itemId,
+            @Parameter(description = &quot;Comments by the reviewer, can be blank&quot;) @RequestParam(required = false) String reviewerComments,
+            @Parameter(name = &quot;itemsStars&quot;) @RequestParam Long itemsStars,
+            @Parameter(name = &quot;dateItemServed&quot;, description = &quot;date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)&quot;) @RequestParam(&quot;dateItemServed&quot;) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateItemServed) // For
+            throws JsonProcessingException {
+<span class="fc" id="L101">        LocalDateTime now = LocalDateTime.now();</span>
+<span class="fc" id="L102">        Review review = new Review();</span>
+<span class="fc" id="L103">        review.setDateItemServed(dateItemServed);</span>
+
+        // Ensures content of truly empty and sets to null if so
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if ((!reviewerComments.trim().isEmpty())) {</span>
+<span class="fc" id="L107">            review.setReviewerComments(reviewerComments);</span>
+        }
+
+        // Ensure user inputs rating 1-5
+<span class="fc bfc" id="L111" title="All 4 branches covered.">        if (itemsStars &lt; 1 || itemsStars &gt; 5) {</span>
+<span class="fc" id="L112">            throw new IllegalArgumentException(&quot;Items stars must be between 1 and 5.&quot;);</span>
+        }
+
+<span class="fc" id="L115">        review.setItemsStars(itemsStars);</span>
+
+<span class="fc" id="L117">        MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(</span>
+<span class="fc" id="L118">                () -&gt; new EntityNotFoundException(MenuItem.class, itemId)</span>
+        );
+<span class="fc" id="L120">        review.setItem(reviewedItem);</span>
+<span class="fc" id="L121">        CurrentUser user = getCurrentUser();</span>
+<span class="fc" id="L122">        review.setReviewer(user.getUser());</span>
+<span class="fc" id="L123">        log.info(&quot;reviews={}&quot;, review);</span>
+<span class="fc" id="L124">        review = reviewRepository.save(review);</span>
+<span class="fc" id="L125">        return review;</span>
+    }
+
+    /**
+     * This method allows a user to get a list of reviews that they have previously made.
+     * Only user can only get a list of their own reviews, and you cant request another persons reviews
+     * @return a list of reviews sent by a given user
+     */
+    @Operation(summary = &quot;Get all reviews a user has sent: only callable by the user&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @GetMapping(&quot;/userReviews&quot;)
+    public Iterable&lt;Review&gt; get_all_review_by_user_id(){
+<span class="fc" id="L137">        CurrentUser user = getCurrentUser();</span>
+<span class="fc" id="L138">        Iterable&lt;Review&gt; reviews = reviewRepository.findByReviewer(user.getUser());</span>
+<span class="fc" id="L139">        return reviews;</span>
+    }
+
+    @Operation(summary = &quot;Edit a review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @PutMapping(&quot;/reviewer&quot;)
+    public Review editReview(@Parameter Long id, @RequestBody @Valid EditedReview incoming) {
+
+<span class="fc" id="L147">        Review oldReview = reviewRepository.findById(id).orElseThrow(</span>
+<span class="fc" id="L148">                () -&gt; new EntityNotFoundException(Review.class, id)</span>
+        );
+<span class="fc" id="L150">        User current = getCurrentUser().getUser();</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if(current.getId() != oldReview.getReviewer().getId()) {</span>
+<span class="fc" id="L152">            throw new AccessDeniedException(&quot;No permission to edit review&quot;);</span>
+        }
+
+<span class="fc bfc" id="L155" title="All 4 branches covered.">        if(incoming.getItemStars() &lt; 1 || incoming.getItemStars() &gt; 5) {</span>
+<span class="fc" id="L156">            throw new IllegalArgumentException(&quot;Items stars must be between 1 and 5.&quot;);</span>
+        }else{
+<span class="fc" id="L158">            oldReview.setItemsStars(incoming.getItemStars());</span>
+        }
+
+<span class="fc bfc" id="L161" title="All 4 branches covered.">        if (incoming.getReviewerComments() != null &amp;&amp;!incoming.getReviewerComments().trim().isEmpty()) {</span>
+<span class="fc" id="L162">            oldReview.setReviewerComments(incoming.getReviewerComments());</span>
+        }else{
+<span class="fc" id="L164">            oldReview.setReviewerComments(null);</span>
+        }
+
+<span class="fc" id="L167">        oldReview.setDateItemServed(incoming.getDateItemServed());</span>
+
+<span class="fc" id="L169">        oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);</span>
+<span class="fc" id="L170">        oldReview.setModeratorComments(null);</span>
+
+<span class="fc" id="L172">        Review review = reviewRepository.save(oldReview);</span>
+
+<span class="fc" id="L174">        return review;</span>
+    }
+
+    @Operation(summary = &quot;Delete a review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @DeleteMapping(&quot;/reviewer&quot;)
+    public Object deleteReview(@Parameter Long id) {
+<span class="fc" id="L181">        Review review = reviewRepository.findById(id).orElseThrow(</span>
+<span class="fc" id="L182">                () -&gt; new EntityNotFoundException(Review.class, id)</span>
+        );
+
+<span class="fc" id="L185">        User current = getCurrentUser().getUser();</span>
+<span class="fc bfc" id="L186" title="All 4 branches covered.">        if(current.getId() != review.getReviewer().getId() &amp;&amp; !current.getAdmin()) {</span>
+<span class="fc" id="L187">            throw new AccessDeniedException(&quot;No permission to delete review&quot;);</span>
+        }
+
+<span class="fc" id="L190">        reviewRepository.delete(review);</span>
+<span class="fc" id="L191">        return genericMessage(&quot;Review with id %s deleted&quot;.formatted(id));</span>
+    }
+
+    @Operation(summary = &quot;Moderate a review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;/moderate&quot;)
+    public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
+<span class="fc" id="L198">        Review review = reviewRepository.findById(id).orElseThrow(</span>
+<span class="fc" id="L199">                () -&gt; new EntityNotFoundException(Review.class, id)</span>
+        );
+
+<span class="fc" id="L202">        review.setModeratorComments(moderatorComments);</span>
+<span class="fc" id="L203">        review.setStatus(status);</span>
+
+<span class="fc" id="L205">        review = reviewRepository.save(review);</span>
+<span class="fc" id="L206">        return review;</span>
+    }
+
+    @Operation(summary = &quot;See reviews that need moderation&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @GetMapping(&quot;/needsmoderation&quot;)
+    public Iterable&lt;Review&gt; needsmoderation() {
+<span class="fc" id="L213">        Iterable&lt;Review&gt; reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);</span>
+<span class="fc" id="L214">        return reviewsList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
