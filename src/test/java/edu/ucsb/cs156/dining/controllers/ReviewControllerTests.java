@@ -467,7 +467,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        MvcResult response = mockMvc.perform(put("/api/reviews")
+        MvcResult response = mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -510,13 +510,13 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        mockMvc.perform(put("/api/reviews")
+        mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(requestBodyTooLow)
                 .with(csrf())).andExpect(status().isBadRequest()).andReturn();
-        mockMvc.perform(put("/api/reviews")
+        mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -552,7 +552,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        mockMvc.perform(put("/api/reviews")
+        mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -588,7 +588,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        mockMvc.perform(put("/api/reviews")
+        mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -637,7 +637,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(reviewEdit);
 
-        MvcResult response = mockMvc.perform(put("/api/reviews")
+        MvcResult response = mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -693,7 +693,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(reviewEdit);
 
-        MvcResult response = mockMvc.perform(put("/api/reviews")
+        MvcResult response = mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -750,7 +750,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(reviewEdit);
 
-        MvcResult response = mockMvc.perform(put("/api/reviews")
+        MvcResult response = mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -777,7 +777,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(reviewEdit);
 
-        MvcResult response = mockMvc.perform(put("/api/reviews")
+        MvcResult response = mockMvc.perform(put("/api/reviews/reviewer")
                 .param("id", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
@@ -811,7 +811,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        MvcResult response = mockMvc.perform(delete("/api/reviews")
+        MvcResult response = mockMvc.perform(delete("/api/reviews/reviewer")
                 .param("id", "1")
                 .with(csrf())).andExpect(status().isForbidden()).andReturn();
 
@@ -838,7 +838,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        MvcResult response = mockMvc.perform(delete("/api/reviews")
+        MvcResult response = mockMvc.perform(delete("/api/reviews/reviewer")
                 .param("id", "1")
                 .with(csrf())).andExpect(status().isOk()).andReturn();
 
@@ -867,7 +867,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
 
-        MvcResult response = mockMvc.perform(delete("/api/reviews")
+        MvcResult response = mockMvc.perform(delete("/api/reviews/reviewer")
                 .param("id", "1")
                 .with(csrf())).andExpect(status().isOk()).andReturn();
 
@@ -881,7 +881,7 @@ public class ReviewControllerTests extends ControllerTestCase {
     public void nonexistent_cannot_delete() throws Exception{
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.empty());
 
-        MvcResult response = mockMvc.perform(delete("/api/reviews")
+        MvcResult response = mockMvc.perform(delete("/api/reviews/reviewer")
                 .param("id", "1")
                 .with(csrf())).andExpect(status().isNotFound()).andReturn();
 

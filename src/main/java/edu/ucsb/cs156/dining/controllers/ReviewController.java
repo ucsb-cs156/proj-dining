@@ -141,7 +141,7 @@ public class ReviewController extends ApiController {
 
     @Operation(summary = "Edit a review")
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PutMapping
+    @PutMapping("/reviewer")
     public Review editReview(@Parameter Long id, @RequestBody @Valid EditedReview incoming) {
 
         Review oldReview = reviewRepository.findById(id).orElseThrow(
@@ -176,7 +176,7 @@ public class ReviewController extends ApiController {
 
     @Operation(summary = "Delete a review")
     @PreAuthorize("hasRole('ROLE_USER')")
-    @DeleteMapping
+    @DeleteMapping("/reviewer")
     public Object deleteReview(@Parameter Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(Review.class, id)
