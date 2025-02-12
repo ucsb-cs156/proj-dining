@@ -3,6 +3,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import org.junit.jupiter.api.Test;
@@ -94,7 +95,7 @@ public class UsersControllerTests extends ControllerTestCase {
             .admin(false)
             .alias("Anonymous User") 
             .proposedAlias("Chipotle")
-            .status("Awaiting Moderation")
+            .status(ModerationStatus.AWAITING_REVIEW)
             .build();
         
   
@@ -123,7 +124,7 @@ public class UsersControllerTests extends ControllerTestCase {
         .email("user@example.org")
         .alias("Anonymous User")
         .proposedAlias("Chipotle")
-        .status("Awaiting Moderation")
+        .status(ModerationStatus.AWAITING_REVIEW)
         .build();
 
     User userEdited = User.builder()
@@ -131,7 +132,7 @@ public class UsersControllerTests extends ControllerTestCase {
         .email("user@example.org")
         .alias("Chipotle")  
         .proposedAlias(null) 
-        .status("Approved")
+        .status(ModerationStatus.APPROVED)
         .dateApproved(LocalDate.now())
         .build();
 
@@ -208,7 +209,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chip")
           .proposedAlias("Chop") 
-          .status("Awaiting Moderation")
+          .status(ModerationStatus.AWAITING_REVIEW)
           .build();
 
       User userUpdated = User.builder()
@@ -216,7 +217,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chop") 
           .proposedAlias(null)
-          .status("Approved")
+          .status(ModerationStatus.APPROVED)
           .dateApproved(LocalDate.now())
           .build();
 
@@ -247,7 +248,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chipotle")
           .proposedAlias("Taco Bell")
-          .status("Awaiting Moderation")
+          .status(ModerationStatus.AWAITING_REVIEW)
           .build();
 
       User userUnchanged = User.builder()
@@ -255,7 +256,7 @@ public class UsersControllerTests extends ControllerTestCase {
           .email("user@example.org")
           .alias("Chipotle") 
           .proposedAlias(null)
-          .status("Rejected")
+          .status(ModerationStatus.REJECTED)
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));

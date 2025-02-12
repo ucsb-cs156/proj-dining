@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -39,7 +40,8 @@ public class User {
  private boolean admin;
  private String alias;
  private String proposedAlias;
- private String status;
+ @Enumerated(EnumType.STRING)
+ private ModerationStatus status;
  private LocalDate dateApproved;
 
  @ToString.Exclude
