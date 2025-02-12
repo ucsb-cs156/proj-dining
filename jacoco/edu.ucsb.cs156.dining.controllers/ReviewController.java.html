@@ -98,30 +98,28 @@ import jakarta.validation.Valid;
 <span class="fc" id="L98">        LocalDateTime now = LocalDateTime.now();</span>
 <span class="fc" id="L99">        Review review = new Review();</span>
 <span class="fc" id="L100">        review.setDateItemServed(dateItemServed);</span>
-<span class="fc" id="L101">        review.setDateCreated(now);</span>
 
         // Ensures content of truly empty and sets to null if so
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        if ((!reviewerComments.trim().isEmpty())) {</span>
-<span class="fc" id="L105">            review.setReviewerComments(reviewerComments);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if ((!reviewerComments.trim().isEmpty())) {</span>
+<span class="fc" id="L104">            review.setReviewerComments(reviewerComments);</span>
         }
 
         // Ensure user inputs rating 1-5
-<span class="fc bfc" id="L109" title="All 4 branches covered.">        if (itemsStars &lt; 1 || itemsStars &gt; 5) {</span>
-<span class="fc" id="L110">            throw new IllegalArgumentException(&quot;Items stars must be between 1 and 5.&quot;);</span>
+<span class="fc bfc" id="L108" title="All 4 branches covered.">        if (itemsStars &lt; 1 || itemsStars &gt; 5) {</span>
+<span class="fc" id="L109">            throw new IllegalArgumentException(&quot;Items stars must be between 1 and 5.&quot;);</span>
         }
 
-<span class="fc" id="L113">        review.setItemsStars(itemsStars);</span>
+<span class="fc" id="L112">        review.setItemsStars(itemsStars);</span>
 
-<span class="fc" id="L115">        MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(</span>
-<span class="fc" id="L116">                () -&gt; new EntityNotFoundException(MenuItem.class, itemId)</span>
+<span class="fc" id="L114">        MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(</span>
+<span class="fc" id="L115">                () -&gt; new EntityNotFoundException(MenuItem.class, itemId)</span>
         );
-<span class="fc" id="L118">        review.setItem(reviewedItem);</span>
-<span class="fc" id="L119">        CurrentUser user = getCurrentUser();</span>
-<span class="fc" id="L120">        review.setReviewer(user.getUser());</span>
-<span class="fc" id="L121">        review.setDateEdited(now);</span>
-<span class="fc" id="L122">        log.info(&quot;reviews={}&quot;, review);</span>
-<span class="fc" id="L123">        reviewRepository.save(review);</span>
-<span class="fc" id="L124">        return review;</span>
+<span class="fc" id="L117">        review.setItem(reviewedItem);</span>
+<span class="fc" id="L118">        CurrentUser user = getCurrentUser();</span>
+<span class="fc" id="L119">        review.setReviewer(user.getUser());</span>
+<span class="fc" id="L120">        log.info(&quot;reviews={}&quot;, review);</span>
+<span class="fc" id="L121">        review = reviewRepository.save(review);</span>
+<span class="fc" id="L122">        return review;</span>
     }
 
     /**
@@ -133,9 +131,9 @@ import jakarta.validation.Valid;
     @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
     @GetMapping(&quot;/userReviews&quot;)
     public Iterable&lt;Review&gt; get_all_review_by_user_id(){
-<span class="fc" id="L136">        CurrentUser user = getCurrentUser();</span>
-<span class="fc" id="L137">        Iterable&lt;Review&gt; reviews = reviewRepository.findByReviewer(user.getUser());</span>
-<span class="fc" id="L138">        return reviews;</span>
+<span class="fc" id="L134">        CurrentUser user = getCurrentUser();</span>
+<span class="fc" id="L135">        Iterable&lt;Review&gt; reviews = reviewRepository.findByReviewer(user.getUser());</span>
+<span class="fc" id="L136">        return reviews;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
