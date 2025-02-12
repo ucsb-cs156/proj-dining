@@ -15,7 +15,7 @@ const usersFixtures = {
       admin: true,
       alias: "Alias1",
       proposedAlias: "Ali1",
-      status: "Awaiting Moderation",
+      status: "AWAITING_REVIEW",
       dateApproved: null,
     },
     {
@@ -33,7 +33,7 @@ const usersFixtures = {
       admin: false,
       alias: "Alias2",
       proposedAlias: null,
-      status: "Approved",
+      status: "APPROVED",
       dateApproved: "2024-11-01T10:30:00",
     },
     {
@@ -51,7 +51,7 @@ const usersFixtures = {
       admin: false,
       alias: "Alias3",
       proposedAlias: null,
-      status: "Rejected",
+      status: "REJECTED",
       dateApproved: null,
     },
   ],

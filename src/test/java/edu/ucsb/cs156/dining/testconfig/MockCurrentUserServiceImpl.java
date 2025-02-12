@@ -4,6 +4,8 @@ import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.services.CurrentUserServiceImpl;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -40,7 +42,7 @@ public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
       emailVerified = true;
       locale="";
       hostedDomain="example.org";
-      admin= (user.getUsername().equals("admin"));
+      admin= securityContext.getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
     User u = User.builder()
