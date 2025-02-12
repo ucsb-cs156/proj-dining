@@ -5,6 +5,8 @@ import edu.ucsb.cs156.dining.models.SystemInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +20,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service("systemInfo")
 @ConfigurationProperties
+@PropertySources(
+  @PropertySource("classpath:git.properties")
+)
 public class SystemInfoServiceImpl extends SystemInfoService {
 
   @Value("${spring.h2.console.enabled:false}")
@@ -29,7 +34,7 @@ public class SystemInfoServiceImpl extends SystemInfoService {
   @Value("${app.oauth.login:/oauth2/authorization/google}")
   private String oauthLogin;
 
-  @Value("${app.sourceRepo:https://github.com/ucsb-cs156/proj-courses}")
+  @Value("${app.sourceRepo:https://github.com/ucsb-cs156/proj-dining}")
   private String sourceRepo;
 
   @Value("${git.commit.message.short:unknown}")
