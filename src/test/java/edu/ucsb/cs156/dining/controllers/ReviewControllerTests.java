@@ -14,6 +14,7 @@ import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,8 +73,6 @@ public class ReviewControllerTests extends ControllerTestCase {
     @Autowired
     private CurrentUserService currentUserService;
 
-    @MockBean
-    DateTimeProvider dateTimeProvider;
 
     @BeforeEach
     void setup() {
@@ -82,7 +81,6 @@ public class ReviewControllerTests extends ControllerTestCase {
         when(menuItemRepository.findById(1L)).thenReturn(Optional.of(MenuItem.builder().id(1L).build()));
         when(menuItemRepository.existsById(5L)).thenReturn(false);
         when(menuItemRepository.existsById(313L)).thenReturn(true);
-        when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.of(2025,3,11,0,0,0)));
         // Assume no item exists with ID 999
         when(menuItemRepository.existsById(999L)).thenReturn(false);
     }
@@ -126,6 +124,15 @@ public class ReviewControllerTests extends ControllerTestCase {
         MenuItem menuItem = MenuItem.builder().id(1L).build();
 
         Review review = Review.builder()
+                .itemsStars(1l)
+                .reviewerComments("Worst flavor ever.")
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                .reviewer(user)
+                .status("Awaiting Moderation")
+                .item(menuItem)
+                .build();
+
+        Review reviewReturn = Review.builder()
                 .dateCreated(now)
                 .dateEdited(now)
                 .itemsStars(1l)
@@ -136,7 +143,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .item(menuItem)
                 .id(0L)
                 .build();
-        when(reviewRepository.save(eq(review))).thenReturn(review);
+        when(reviewRepository.save(eq(review))).thenReturn(reviewReturn);
 
         // Act
         MvcResult response = mockMvc.perform(
@@ -145,26 +152,13 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String jsonReview = mapper.writeValueAsString(review);
+        String jsonReview = mapper.writeValueAsString(reviewReturn);
 
         // Assert
         verify(reviewRepository).save(any(Review.class));
-        JsonNode responseJson = mapper.readTree(response.getResponse().getContentAsString());
-        JsonNode expectedJson = mapper.readTree(jsonReview);
+        String responseJson = response.getResponse().getContentAsString();
 
-        assertEquals(expectedJson.get("itemsStars").asInt(), responseJson.get("itemsStars").asInt());
-        assertEquals(expectedJson.get("status").asText(), responseJson.get("status").asText());
-        assertEquals(expectedJson.get("reviewerComments").asText(),
-                responseJson.get("reviewerComments").asText());
-        assertEquals(expectedJson.get("reviewer").asText(),
-                responseJson.get("reviewer").asText());
-        assertEquals(expectedJson.get("item").asText(), responseJson.get("item").asText());
-
-        // Manually compare important date fields with a threshold for acceptable
-        // variation
-        checkDates(expectedJson, responseJson, "dateItemServed");
-        checkDates(expectedJson, responseJson, "dateCreated");
-        checkDates(expectedJson, responseJson, "dateEdited");
+        assertEquals(responseJson, jsonReview);
     }
 
     @WithMockUser(roles = {"USER"})
@@ -215,17 +209,26 @@ public class ReviewControllerTests extends ControllerTestCase {
         MenuItem menuItem = MenuItem.builder().id(1L).build();
 
         Review review = Review.builder()
+                .itemsStars(1l)
+                .reviewerComments(null)
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                .reviewer(user)
+                .status("Awaiting Moderation")
+                .item(menuItem)
+                .build();
+
+        Review reviewReturn = Review.builder()
                 .dateCreated(now)
                 .dateEdited(now)
                 .itemsStars(1l)
-                .reviewerComments("   ")
+                .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
                 .status("Awaiting Moderation")
                 .item(menuItem)
                 .id(0L)
                 .build();
-        when(reviewRepository.save(eq(review))).thenReturn(review);
+        when(reviewRepository.save(eq(review))).thenReturn(reviewReturn);
 
         // Act
         MvcResult response = mockMvc.perform(
@@ -234,14 +237,13 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String jsonReview = mapper.writeValueAsString(review);
+        String jsonReview = mapper.writeValueAsString(reviewReturn);
 
         // Assert
         verify(reviewRepository).save(any(Review.class));
-        JsonNode responseJson = mapper.readTree(response.getResponse().getContentAsString());
-        JsonNode expectedJson = mapper.readTree(jsonReview);
+        String responseJson = response.getResponse().getContentAsString();
 
-        assertTrue(responseJson.get("reviewerComments").isNull());
+        assertEquals(jsonReview, responseJson);
     }
 
     @WithMockUser(roles = {"USER"})
@@ -255,6 +257,14 @@ public class ReviewControllerTests extends ControllerTestCase {
         MenuItem menuItem = MenuItem.builder().id(1L).build();
 
         Review review = Review.builder()
+                .itemsStars(1l)
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                .reviewer(user)
+                .status("Awaiting Moderation")
+                .item(menuItem)
+                .build();
+
+        Review reviewReturn = Review.builder()
                 .dateCreated(now)
                 .dateEdited(now)
                 .itemsStars(1l)
@@ -264,7 +274,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .item(menuItem)
                 .id(0L)
                 .build();
-        when(reviewRepository.save(eq(review))).thenReturn(review);
+        when(reviewRepository.save(eq(review))).thenReturn(reviewReturn);
 
         // Act
         MvcResult response = mockMvc.perform(
@@ -275,8 +285,9 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         // Assert
         verify(reviewRepository).save(any(Review.class));
-        JsonNode responseJson = mapper.readTree(response.getResponse().getContentAsString());
-        assertTrue(responseJson.get("reviewerComments").isNull());
+        String responseJson = response.getResponse().getContentAsString();
+        String reviewJson = mapper.writeValueAsString(reviewReturn);
+        assertEquals(responseJson, reviewJson);
 
     }
 
@@ -424,29 +435,6 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         // Assert: Ensure no reviews are saved due to invalid itemId
         verify(reviewRepository, times(0)).save(any(Review.class));
-    }
-
-    /**
-     * checkDates function is needed for checking and asserting the time of the
-     * expected response and the instantiated review
-     * There is a few millisecond delay from the mocked request and the creation of
-     * the objects instance,
-     * therefore, the time is off. Thus when checking against one another, we allow
-     * some tolerance.
-     *
-     * @param expectedJson JSON you're expecting to see
-     * @param responseJson JSON you actually received
-     * @param fieldName    field in the JSON
-     */
-    private void checkDates(JsonNode expectedJson, JsonNode responseJson, String fieldName) {
-        if (expectedJson.hasNonNull(fieldName) && responseJson.hasNonNull(fieldName)) {
-            LocalDateTime expectedDate = LocalDateTime.parse(expectedJson.get(fieldName).asText());
-            LocalDateTime actualDate = LocalDateTime.parse(responseJson.get(fieldName).asText());
-            assertTrue(Math.abs(Duration.between(expectedDate, actualDate).toMillis()) < 1000,
-                    fieldName + " times are too far apart");
-        } else {
-            throw new IllegalStateException(fieldName + " should not be null");
-        }
     }
 
 
