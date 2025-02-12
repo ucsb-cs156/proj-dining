@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">ReviewController.java</span></div><h1>ReviewController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
 
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
@@ -44,14 +45,14 @@ import jakarta.validation.Valid;
 @Tag(name = &quot;Review&quot;)
 @RequestMapping(&quot;/api/reviews&quot;)
 @RestController
-<span class="fc" id="L47">@Slf4j</span>
-<span class="fc" id="L48">public class ReviewController extends ApiController {</span>
+<span class="fc" id="L48">@Slf4j</span>
+<span class="fc" id="L49">public class ReviewController extends ApiController {</span>
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleValidationExceptions(IllegalArgumentException ex) {
-<span class="fc" id="L52">        Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L53">        errors.put(&quot;error&quot;, ex.getMessage());</span>
-<span class="fc" id="L54">        return ResponseEntity.badRequest().body(errors);</span>
+<span class="fc" id="L53">        Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L54">        errors.put(&quot;error&quot;, ex.getMessage());</span>
+<span class="fc" id="L55">        return ResponseEntity.badRequest().body(errors);</span>
     }
 
     @Autowired
@@ -69,10 +70,10 @@ import jakarta.validation.Valid;
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
     @GetMapping(&quot;/all&quot;)
     public Iterable&lt;Review&gt; allReviews() {
-<span class="fc" id="L72">        log.info(&quot;Attempting to log all reviews&quot;);</span>
-<span class="fc" id="L73">        Iterable&lt;Review&gt; reviews = reviewRepository.findAll();</span>
-<span class="fc" id="L74">        log.info(&quot;all reviews found, &quot;, reviews);</span>
-<span class="fc" id="L75">        return reviews;</span>
+<span class="fc" id="L73">        log.info(&quot;Attempting to log all reviews&quot;);</span>
+<span class="fc" id="L74">        Iterable&lt;Review&gt; reviews = reviewRepository.findAll();</span>
+<span class="fc" id="L75">        log.info(&quot;all reviews found, &quot;, reviews);</span>
+<span class="fc" id="L76">        return reviews;</span>
     }
 
     /**
@@ -94,35 +95,33 @@ import jakarta.validation.Valid;
             @Parameter(name = &quot;itemsStars&quot;) @RequestParam Long itemsStars,
             @Parameter(name = &quot;dateItemServed&quot;, description = &quot;date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)&quot;) @RequestParam(&quot;dateItemServed&quot;) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateItemServed) // For
             throws JsonProcessingException {
-<span class="fc" id="L97">        LocalDateTime now = LocalDateTime.now();</span>
-<span class="fc" id="L98">        Review review = new Review();</span>
-<span class="fc" id="L99">        review.setDateItemServed(dateItemServed);</span>
-<span class="fc" id="L100">        review.setDateCreated(now);</span>
+<span class="fc" id="L98">        LocalDateTime now = LocalDateTime.now();</span>
+<span class="fc" id="L99">        Review review = new Review();</span>
+<span class="fc" id="L100">        review.setDateItemServed(dateItemServed);</span>
+<span class="fc" id="L101">        review.setDateCreated(now);</span>
 
         // Ensures content of truly empty and sets to null if so
-<span class="fc bfc" id="L103" title="All 2 branches covered.">        if ((!reviewerComments.trim().isEmpty())) {</span>
-<span class="fc" id="L104">            review.setReviewerComments(reviewerComments);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if ((!reviewerComments.trim().isEmpty())) {</span>
+<span class="fc" id="L105">            review.setReviewerComments(reviewerComments);</span>
         }
 
         // Ensure user inputs rating 1-5
-<span class="fc bfc" id="L108" title="All 4 branches covered.">        if (itemsStars &lt; 1 || itemsStars &gt; 5) {</span>
-<span class="fc" id="L109">            throw new IllegalArgumentException(&quot;Items stars must be between 1 and 5.&quot;);</span>
+<span class="fc bfc" id="L109" title="All 4 branches covered.">        if (itemsStars &lt; 1 || itemsStars &gt; 5) {</span>
+<span class="fc" id="L110">            throw new IllegalArgumentException(&quot;Items stars must be between 1 and 5.&quot;);</span>
         }
 
-<span class="fc" id="L112">        review.setItemsStars(itemsStars);</span>
+<span class="fc" id="L113">        review.setItemsStars(itemsStars);</span>
 
-        // Check if the menu item exists
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (!menuItemRepository.existsById(itemId)) {</span>
-<span class="fc" id="L116">            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;MenuItem with id &quot; + itemId + &quot; not found&quot;);</span>
-        }
-
-<span class="fc" id="L119">        review.setItemId(itemId);</span>
-<span class="fc" id="L120">        CurrentUser user = getCurrentUser();</span>
-<span class="fc" id="L121">        review.setStudentId(user.getUser().getId());</span>
-<span class="fc" id="L122">        review.setDateEdited(now);</span>
-<span class="fc" id="L123">        log.info(&quot;reviews={}&quot;, review);</span>
-<span class="fc" id="L124">        reviewRepository.save(review);</span>
-<span class="fc" id="L125">        return review;</span>
+<span class="fc" id="L115">        MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(</span>
+<span class="fc" id="L116">                () -&gt; new EntityNotFoundException(MenuItem.class, itemId)</span>
+        );
+<span class="fc" id="L118">        review.setItem(reviewedItem);</span>
+<span class="fc" id="L119">        CurrentUser user = getCurrentUser();</span>
+<span class="fc" id="L120">        review.setReviewer(user.getUser());</span>
+<span class="fc" id="L121">        review.setDateEdited(now);</span>
+<span class="fc" id="L122">        log.info(&quot;reviews={}&quot;, review);</span>
+<span class="fc" id="L123">        reviewRepository.save(review);</span>
+<span class="fc" id="L124">        return review;</span>
     }
 
     /**
@@ -134,10 +133,9 @@ import jakarta.validation.Valid;
     @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
     @GetMapping(&quot;/userReviews&quot;)
     public Iterable&lt;Review&gt; get_all_review_by_user_id(){
-<span class="fc" id="L137">        CurrentUser user = getCurrentUser();</span>
-<span class="fc" id="L138">        long userId = user.getUser().getId();</span>
-<span class="fc" id="L139">        Iterable&lt;Review&gt; reviews = reviewRepository.findAllByStudentId(userId);</span>
-<span class="fc" id="L140">        return reviews;</span>
+<span class="fc" id="L136">        CurrentUser user = getCurrentUser();</span>
+<span class="fc" id="L137">        Iterable&lt;Review&gt; reviews = reviewRepository.findByReviewer(user.getUser());</span>
+<span class="fc" id="L138">        return reviews;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
