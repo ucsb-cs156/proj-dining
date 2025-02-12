@@ -3,6 +3,7 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,7 @@ import java.time.LocalDate;
 @Tag(name=&quot;User information (admin only)&quot;)
 @RequestMapping(&quot;/api&quot;)
 @RestController
-<span class="fc" id="L38">public class UsersController extends ApiController {</span>
+<span class="fc" id="L39">public class UsersController extends ApiController {</span>
     @Autowired
     UserRepository userRepository;
 
@@ -54,9 +55,9 @@ import java.time.LocalDate;
             throws JsonProcessingException {
 
 
-<span class="fc" id="L57">        Iterable&lt;User&gt; users = userRepository.findAll();</span>
-<span class="fc" id="L58">        String body = mapper.writeValueAsString(users);</span>
-<span class="fc" id="L59">        return ResponseEntity.ok().body(body);</span>
+<span class="fc" id="L58">        Iterable&lt;User&gt; users = userRepository.findAll();</span>
+<span class="fc" id="L59">        String body = mapper.writeValueAsString(users);</span>
+<span class="fc" id="L60">        return ResponseEntity.ok().body(body);</span>
     }
 
     /**
@@ -69,9 +70,9 @@ import java.time.LocalDate;
     @GetMapping(&quot;/admin/usersWithProposedAlias&quot;)
     public ResponseEntity&lt;String&gt; getUsersWithProposedAlias()
             throws JsonProcessingException {
-<span class="fc" id="L72">        Iterable&lt;User&gt; users = userRepository.findByProposedAliasNotNull();</span>
-<span class="fc" id="L73">        String body = mapper.writeValueAsString(users);</span>
-<span class="fc" id="L74">        return ResponseEntity.ok().body(body);</span>
+<span class="fc" id="L73">        Iterable&lt;User&gt; users = userRepository.findByProposedAliasNotNull();</span>
+<span class="fc" id="L74">        String body = mapper.writeValueAsString(users);</span>
+<span class="fc" id="L75">        return ResponseEntity.ok().body(body);</span>
     }
 
     /**
@@ -83,18 +84,18 @@ import java.time.LocalDate;
     @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
     @PostMapping(&quot;/currentUser/updateAlias&quot;)
     public ResponseEntity&lt;User&gt; updateProposedAlias(@RequestParam String proposedAlias) {
-<span class="fc" id="L86">        CurrentUser currentUser = super.getCurrentUser();</span>
-<span class="fc" id="L87">        User user = currentUser.getUser();</span>
+<span class="fc" id="L87">        CurrentUser currentUser = super.getCurrentUser();</span>
+<span class="fc" id="L88">        User user = currentUser.getUser();</span>
 
-<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (userRepository.findByAlias(proposedAlias).isPresent()) {</span>
-<span class="fc" id="L90">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Alias already in use.&quot;);</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (userRepository.findByAlias(proposedAlias).isPresent()) {</span>
+<span class="fc" id="L91">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Alias already in use.&quot;);</span>
         }
     
-<span class="fc" id="L93">        user.setProposedAlias(proposedAlias);</span>
-<span class="fc" id="L94">        user.setStatus(&quot;Awaiting Moderation&quot;);</span>
-<span class="fc" id="L95">        User savedUser = userRepository.save(user);</span>
+<span class="fc" id="L94">        user.setProposedAlias(proposedAlias);</span>
+<span class="fc" id="L95">        user.setStatus(ModerationStatus.AWAITING_REVIEW);</span>
+<span class="fc" id="L96">        User savedUser = userRepository.save(user);</span>
     
-<span class="fc" id="L97">        return ResponseEntity.ok(savedUser);</span>
+<span class="fc" id="L98">        return ResponseEntity.ok(savedUser);</span>
     }
     
     /**
@@ -109,23 +110,23 @@ import java.time.LocalDate;
             @RequestParam long id, 
             @RequestParam Boolean approved) {
         
-<span class="fc" id="L112">        User user = userRepository.findById(id)</span>
-<span class="fc" id="L113">            .orElseThrow(() -&gt; new EntityNotFoundException(User.class, id));</span>
+<span class="fc" id="L113">        User user = userRepository.findById(id)</span>
+<span class="fc" id="L114">            .orElseThrow(() -&gt; new EntityNotFoundException(User.class, id));</span>
         
 
-<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (approved) {</span>
-<span class="fc" id="L117">            user.setAlias(user.getProposedAlias());  </span>
-<span class="fc" id="L118">            user.setStatus(&quot;Approved&quot;);</span>
-<span class="fc" id="L119">            user.setDateApproved(LocalDate.now());</span>
-<span class="fc" id="L120">            user.setProposedAlias(null);</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (approved) {</span>
+<span class="fc" id="L118">            user.setAlias(user.getProposedAlias());  </span>
+<span class="fc" id="L119">            user.setStatus(ModerationStatus.APPROVED);</span>
+<span class="fc" id="L120">            user.setDateApproved(LocalDate.now());</span>
+<span class="fc" id="L121">            user.setProposedAlias(null);</span>
         } else {
-<span class="fc" id="L122">            user.setStatus(&quot;Rejected&quot;);</span>
-<span class="fc" id="L123">            user.setProposedAlias(null);</span>
+<span class="fc" id="L123">            user.setStatus(ModerationStatus.REJECTED);</span>
+<span class="fc" id="L124">            user.setProposedAlias(null);</span>
         }
         
-<span class="fc" id="L126">        userRepository.save(user);</span>
+<span class="fc" id="L127">        userRepository.save(user);</span>
 
-<span class="fc" id="L128">        return user;</span>
+<span class="fc" id="L129">        return user;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
