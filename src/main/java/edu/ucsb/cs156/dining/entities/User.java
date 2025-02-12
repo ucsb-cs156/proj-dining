@@ -1,16 +1,15 @@
 package edu.ucsb.cs156.dining.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
 * This is a JPA entity that represents a user.
@@ -21,6 +20,9 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity(name = "users")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +41,11 @@ public class User {
  private String proposedAlias;
  private String status;
  private LocalDate dateApproved;
+
+ @ToString.Exclude
+ @OneToMany(mappedBy="reviewer")
+ @Fetch(FetchMode.JOIN)
+ private List<Review> reviews;
  
  public String getAlias() {
         if (this.alias == null) {
