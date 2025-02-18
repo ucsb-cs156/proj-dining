@@ -190,5 +190,28 @@ import jakarta.validation.Valid;
 <span class="fc" id="L190">        reviewRepository.delete(review);</span>
 <span class="fc" id="L191">        return genericMessage(&quot;Review with id %s deleted&quot;.formatted(id));</span>
     }
+
+    @Operation(summary = &quot;Moderate a review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;/moderate&quot;)
+    public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
+<span class="fc" id="L198">        Review review = reviewRepository.findById(id).orElseThrow(</span>
+<span class="fc" id="L199">                () -&gt; new EntityNotFoundException(Review.class, id)</span>
+        );
+
+<span class="fc" id="L202">        review.setModeratorComments(moderatorComments);</span>
+<span class="fc" id="L203">        review.setStatus(status);</span>
+
+<span class="fc" id="L205">        review = reviewRepository.save(review);</span>
+<span class="fc" id="L206">        return review;</span>
+    }
+
+    @Operation(summary = &quot;See reviews that need moderation&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @GetMapping(&quot;/needsmoderation&quot;)
+    public Iterable&lt;Review&gt; needsmoderation() {
+<span class="fc" id="L213">        Iterable&lt;Review&gt; reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);</span>
+<span class="fc" id="L214">        return reviewsList;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
