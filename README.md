@@ -2,8 +2,8 @@
 
 UCSB Dining Hall Menus and Reviews
 
-Sprint Planning Doc for F24:
-* <https://docs.google.com/document/d/1prjAP0cBet21_D_l_0oNEOuVAGAE6cI3cO7Or6jXIk4/edit?usp=sharing>
+Sprint Planning Doc for S25:
+* <https://docs.google.com/document/d/1VUmwQ6v9CETMAIM0KplYDxt7ZocQmSNv7fZM3tVoHfw/edit?usp=sharing>
 
 # Versions
 * Java: 21
