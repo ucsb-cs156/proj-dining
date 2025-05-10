@@ -20,6 +20,8 @@ will likely see an error such as:
 
 <img src="https://user-images.githubusercontent.com/1119017/149858436-c9baa238-a4f7-4c52-b995-0ed8bee97487.png" alt="Authorization Error; Error 401: invalid_client; The OAuth client was not found." width="400"/>
 
+You will also need a value for `UCSB_API_KEY`; you can obtain a value for that by following the instructions at this link: <https://ucsb-cs156.github.io/topics/apis/apis_ucsb_developer_api.html>
+
 # Getting Started on localhost
 
 * Open *two separate terminal windows*  
