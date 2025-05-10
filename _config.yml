@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156/proj-dining
 owner: ucsb-cs156
 repo_name: proj-dining
-pull_requests: []
+pull_requests: [{"author":{"id":"MDQ6VXNlcjExMTkwMTc=","is_bot":false,"login":"pconrad","name":"Phill Conrad"},"headRefName":"pc-betterDokkuDeploys","number":54,"title":"pc - make changes to dockerfile to reduce clutter when deploying on dokku","url":"https://github.com/ucsb-cs156/proj-dining/pull/54"}]
