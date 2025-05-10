@@ -39,7 +39,15 @@ RUN npm --version
 
 COPY . /home/app
 
-RUN mvn -B -Pproduction -DskipTests -f /home/app/pom.xml clean package
+ENV PRODUCTION=true
+ENV NPM_CONFIG_LOGLEVEL=error
+RUN mvn \
+   -B \
+   -ntp \
+   -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+   -DskipTests \
+   -Pproduction \
+   -f /home/app/pom.xml clean package
 
 RUN ["chmod", "+x", "/home/app/startup.sh"]
 ENTRYPOINT ["/home/app/startup.sh","/home/app/target/proj-dining-1.0.0.jar"]
