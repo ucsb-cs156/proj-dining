@@ -17,7 +17,7 @@ export default function MyReviewsIndexPage() {
   } = useBackend(
     ["/api/reviews/my"],
     { method: "GET", url: "/api/reviews/my" },
-    []
+    [],
   );
 
   // Backend mutation for deleting a review
@@ -31,7 +31,7 @@ export default function MyReviewsIndexPage() {
         toast("Review deleted");
       },
     },
-    ["/api/reviews/my"] // will revalidate after deletion
+    ["/api/reviews/my"], // will revalidate after deletion
   );
 
   // Handlers
@@ -59,4 +59,3 @@ export default function MyReviewsIndexPage() {
     </BasicLayout>
   );
 }
-
