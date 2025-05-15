@@ -6,12 +6,6 @@ export default function MyReviewsCreatePage() {
     <BasicLayout>
       <div className="pt-2">
         <h1>Create page not yet implemented</h1>
-        <p>
-          <a href="/placeholder/create">Create</a>
-        </p>
-        <p>
-          <a href="/placeholder/edit/1">Edit</a>
-        </p>
       </div>
     </BasicLayout>
   );
