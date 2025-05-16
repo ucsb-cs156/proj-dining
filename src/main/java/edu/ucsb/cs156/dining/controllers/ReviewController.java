@@ -213,4 +213,40 @@ public class ReviewController extends ApiController {
         Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
         return reviewsList;
     }
+    
+    @Operation(summary = "Get average rating for each menu item")
+    @GetMapping("/averageRatingPerMenuItem")
+    public List<MenuItemWithRating> getAverageRatingPerMenuItem() {
+    List<MenuItem> items = menuItemRepository.findAll();
+    List<MenuItemWithRating> result = new ArrayList<>();
+
+    for (MenuItem item : items) {
+        Iterable<Review> reviews = reviewRepository.findByItemId(item.getId());
+
+        int count = 0;
+        long sum = 0;
+
+        for (Review review : reviews) {
+            if (review.getItemsStars() != null) {
+                sum += review.getItemsStars();
+                count++;
+            }
+        }
+
+        Double avg = (count == 0) ? null : (sum / (double) count);
+
+        MenuItemWithRating entry = new MenuItemWithRating();
+        entry.setId(item.getId());
+        entry.setName(item.getName());
+        entry.setStation(item.getStation());
+        entry.setDiningCommonsCode(item.getDiningCommonsCode());
+        entry.setAverageRating(avg);
+
+        result.add(entry);
+    }
+
+        return result;
+    }
 }
+
+//do average review
