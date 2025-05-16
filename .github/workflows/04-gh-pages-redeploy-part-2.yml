@@ -80,7 +80,7 @@ jobs:
         attempt_limit: 3
         attempt_delay: 5000
         with: |
-          folder: site # The folder the action should deploy.
+          folder: fake_site_folder # The folder the action should deploy.
           branch: gh-pages # gh-pages
           clean: true # Automatically remove deleted files from the deploy branch
 
