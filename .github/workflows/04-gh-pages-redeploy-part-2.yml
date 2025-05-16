@@ -81,7 +81,7 @@ jobs:
         attempt_delay: 5000
         with: |
           folder: site # The folder the action should deploy.
-          branch: gh-pages
+          branch: EVIL-gh-pages # gh-pages
           clean: true # Automatically remove deleted files from the deploy branch
 
   deploy-main-docs:
