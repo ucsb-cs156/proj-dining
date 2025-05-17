@@ -249,7 +249,54 @@ public class ReviewControllerTests extends ControllerTestCase {
         
         assertEquals(jsonReview, responseJson);
     }
+    @WithMockUser(roles = {"USER"})
+    @Test
+    public void test_null_on_creating_new_review() throws Exception {
 
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        User user = currentUserService.getUser();
+        MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+        Review review = Review.builder()
+                .itemsStars(1L)
+                .reviewerComments(null) 
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                .reviewer(user)
+                .status(ModerationStatus.APPROVED)
+                .item(menuItem)
+                .build();
+
+        Review reviewReturn = Review.builder()
+                .dateCreated(now)
+                .dateEdited(now)
+                .itemsStars(1L)
+                .reviewerComments(null)
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                .reviewer(user)
+                .status(ModerationStatus.APPROVED)
+                .item(menuItem)
+                .id(0L)
+                .build();
+
+        when(reviewRepository.save(eq(review))).thenReturn(reviewReturn);
+
+        // Act
+        MvcResult response = mockMvc.perform(
+                        post("/api/reviews/post?itemId=1&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                .with(csrf())) 
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonReview = mapper.writeValueAsString(reviewReturn);
+
+        // Assert
+        verify(reviewRepository).save(any(Review.class));
+        String responseJson = response.getResponse().getContentAsString();
+
+        assertEquals(jsonReview, responseJson);
+    }
     @WithMockUser(roles = {"USER"})
     @Test
     public void test_no_string_on_creating_new_review() throws Exception {
