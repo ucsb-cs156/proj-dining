@@ -40,7 +40,6 @@ public class CurrentUserServiceImpl extends CurrentUserService {
   @Value("${app.admin.emails}")
   final private List<String> adminEmails = new ArrayList<String>();
 
-
   /**
    * This method returns the current user as a User object.
    * @return the current user
