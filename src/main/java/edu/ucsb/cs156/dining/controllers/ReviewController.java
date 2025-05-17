@@ -213,4 +213,19 @@ public class ReviewController extends ApiController {
         Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
         return reviewsList;
     }
+    @Operation(summary = "Get a specific single review ID")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public Review getReviewByID(@Parameter Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+
+        User current = getCurrentUser().getUser();
+        if(current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+            throw new AccessDeniedException("Only user who made this review or admin can get id");
+        }
+        return review;
+    }
+
 }
