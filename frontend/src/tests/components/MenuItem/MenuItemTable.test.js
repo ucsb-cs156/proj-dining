@@ -91,4 +91,57 @@ describe("MenuItemTable Tests", () => {
     });
     expect(mockAlert).toBeCalledWith("Reviews coming soon!");
   });
+
+  test("Average Review column renders correct values", async () => {
+    const items = [
+      {
+        id: 1,
+        name: "Pizza",
+        station: "Station A",
+        reviews: [{ itemsStars: 4 }, { itemsStars: 5 }, { itemsStars: 3 }],
+      },
+      {
+        id: 2,
+        name: "Pasta",
+        station: "Station B",
+        reviews: [], // No reviews
+      },
+      {
+        id: 3,
+        name: "Salad",
+        station: "Station C",
+        reviews: [{ itemsStars: 2 }],
+      },
+    ];
+
+    render(
+      <MenuItemTable
+        menuItems={items}
+        currentUser={currentUserFixtures.notLoggedIn}
+      />,
+    );
+
+    // Check header
+    expect(
+      screen.getByTestId("MenuItemTable-header-averageReview"),
+    ).toHaveTextContent("Average Review");
+
+    const pizzaCell = screen.getByTestId(
+      "MenuItemTable-cell-row-0-col-averageReview",
+    );
+    expect(pizzaCell).toHaveTextContent("4.0 ⭐");
+    expect(pizzaCell.textContent).not.toMatch(/^\s*-/);
+    const parsed = parseFloat(pizzaCell.textContent || "");
+    expect(parsed).toBeCloseTo(4.0);
+
+    // Row 1: Pasta => No reviews
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-1-col-averageReview"),
+    ).toHaveTextContent("🤷‍♂️ No Rating");
+
+    // Row 2: Salad => (2) / 1 = 2.0
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-2-col-averageReview"),
+    ).toHaveTextContent("2.0 ⭐");
+  });
 });
