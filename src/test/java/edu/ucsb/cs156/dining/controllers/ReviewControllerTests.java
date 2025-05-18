@@ -889,6 +889,51 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals("Review with id 1 not found", json.get("message"));
     }
 
+    @WithMockUser(roles = {"MODERATOR"})
+    @Test
+    public void moderator_can_moderate_a_review() throws Exception{
+        User user1 = User.builder().id(2L).build();
+
+        MenuItem menuItem1 = MenuItem.builder().id(1L).build();
+
+        Review review1 = Review.builder()
+                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+                .reviewer(user1)
+                .status(ModerationStatus.AWAITING_REVIEW)
+                .item(menuItem1)
+                .id(1L)
+                .build();
+
+        Review approved = Review.builder()
+                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+                .reviewer(user1)
+                .status(ModerationStatus.APPROVED)
+                .moderatorComments("acceptable")
+                .item(menuItem1)
+                .id(1L)
+                .build();
+
+        when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
+        when(reviewRepository.save(eq(approved))).thenReturn(approved);
+
+        MvcResult response = mockMvc.perform(put("/api/reviews/moderate")
+            .param("id", "1")
+            .param("status", "APPROVED")
+            .param("moderatorComments", "acceptable")
+            .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+
+        String jsonExpected = mapper.writeValueAsString(approved);
+        String jsonResponse = response.getResponse().getContentAsString();
+        verify(reviewRepository, times(1)).findById(eq(1L));
+        verify(reviewRepository, times(1)).save(eq(approved));
+        assertEquals(jsonExpected, jsonResponse);
+    }
+
     @WithMockUser(roles = {"ADMIN"})
     @Test
     public void admin_can_moderate_a_review() throws Exception{
@@ -934,9 +979,9 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals(jsonExpected, jsonResponse);
     }
 
-    @WithMockUser(roles = {"ADMIN"})
+    @WithMockUser(roles = {"MODERATOR"})
     @Test
-    public void nonexistent_cannot_approve() throws Exception{
+    public void moderator_nonexistent_cannot_approve() throws Exception{
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.empty());
 
         MvcResult response = mockMvc.perform(put("/api/reviews/moderate")
@@ -951,7 +996,22 @@ public class ReviewControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = {"ADMIN"})
     @Test
-    public void get_needs_moderation_returns_moderation_needed() throws Exception{
+    public void admin_nonexistent_cannot_approve() throws Exception{
+        when(reviewRepository.findById(eq(1L))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(put("/api/reviews/moderate")
+                .param("id", "1")
+                .param("status", "APPROVED")
+                .param("moderatorComments", "acceptable")
+                .with(csrf())).andExpect(status().isNotFound()).andReturn();
+
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("Review with id 1 not found", json.get("message"));
+    }
+
+    @WithMockUser(roles = {"MODERATOR"})
+    @Test
+    public void moderator_get_needs_moderation_returns_moderation_needed() throws Exception{
         User user1 = User.builder().id(2L).build();
 
         MenuItem menuItem1 = MenuItem.builder().id(1L).build();
@@ -991,6 +1051,46 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals(expectedJson,responseJson);
     }
 
+    @WithMockUser(roles = {"ADMIN"})
+    @Test
+    public void admin_get_needs_moderation_returns_moderation_needed() throws Exception{
+        User user1 = User.builder().id(2L).build();
 
+        MenuItem menuItem1 = MenuItem.builder().id(1L).build();
+
+        Review review1 = Review.builder()
+                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+                .reviewer(user1)
+                .status(ModerationStatus.AWAITING_REVIEW)
+                .item(menuItem1)
+                .id(1L)
+                .build();
+
+        Review review2 = Review.builder()
+                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+                .reviewer(user1)
+                .status(ModerationStatus.AWAITING_REVIEW)
+                .item(menuItem1)
+                .id(2L)
+                .build();
+
+
+        ArrayList<Review> returnableReviews = new ArrayList<>(Arrays.asList(review1, review2));
+
+        when(reviewRepository.findByStatus(eq(ModerationStatus.AWAITING_REVIEW))).thenReturn(returnableReviews);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/needsmoderation")
+                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        String expectedJson = mapper.writeValueAsString(returnableReviews);
+        String responseJson = response.getResponse().getContentAsString();
+        verify(reviewRepository, times(1)).findByStatus(eq(ModerationStatus.AWAITING_REVIEW));
+        assertEquals(expectedJson,responseJson);
+    }
 
 }
