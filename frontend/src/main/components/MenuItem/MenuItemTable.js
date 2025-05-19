@@ -1,11 +1,22 @@
+// src/main/components/MenuItem/MenuItemTable.jsx
+
+import React from "react";
 import OurTable, { ButtonColumn } from "../OurTable";
 import { hasRole } from "../../utils/currentUser";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
-  const reviewCallback = async (_cell) => {
-    alert("Reviews coming soon!");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const reviewCallback = (cell) => {
+    const id = cell.row.original.id;
+    navigate(`/reviews/create/${id}`, {
+      state: { from: location.pathname },
+    });
   };
+
   const columns = [
     {
       Header: "Item Name",
@@ -17,16 +28,34 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     },
     {
       Header: "Average Review",
+      id: "averageReview",
       accessor: (row) => {
         const reviews = row.reviews;
-        if (!reviews || reviews.length === 0) return "🤷‍♂️ No Rating";
+        if (!reviews) {
+          return "🤷‍♂️ No Rating";
+        }
+        const validRatings = reviews
+          .map((r) => {
+            const num = Number(r.itemsStars);
+            return isNaN(num) ? null : num;
+          })
+          .filter(
+            (stars) => Number.isFinite(stars) && stars >= 1 && stars <= 5,
+          );
+
+        if (validRatings.length === 0) {
+          return "🤷‍♂️ No Rating";
+        }
+
         const avg =
-          reviews.reduce((sum, r) => sum + r.itemsStars, 0) / reviews.length;
+          validRatings.reduce((sum, stars) => sum + stars, 0) /
+          validRatings.length;
+
         return `${avg.toFixed(1)} ⭐`;
       },
-      id: "averageReview",
     },
   ];
+
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
       ButtonColumn("Review Item", "warning", reviewCallback, testid),

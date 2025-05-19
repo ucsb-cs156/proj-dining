@@ -17,7 +17,6 @@ function ReviewForm({
   } = useForm({ defaultValues: initialContents || {} });
 
   const navigate = useNavigate();
-  const testIdPrefix = "ReviewForm";
 
   const renderItemInput = () => {
     if (hideItemId) return null;
@@ -26,7 +25,6 @@ function ReviewForm({
       <Form.Group className="mb-3">
         <Form.Label htmlFor="itemId">Menu Item ID</Form.Label>
         <Form.Control
-          data-testid={`${testIdPrefix}-itemId`}
           id="itemId"
           type="number"
           min="1"
@@ -53,7 +51,6 @@ function ReviewForm({
         <Form.Group className="mb-3">
           <Form.Label htmlFor="id">Id</Form.Label>
           <Form.Control
-            data-testid={`${testIdPrefix}-id`}
             id="id"
             type="text"
             {...register("id")}
@@ -68,17 +65,20 @@ function ReviewForm({
       <Form.Group className="mb-3">
         <Form.Label htmlFor="stars">Stars</Form.Label>
         <Form.Control
-          data-testid={`${testIdPrefix}-stars`}
           id="stars"
           type="number"
           step="1"
           min="1"
           max="5"
+          placeholder="Please enter an integer from 1 to 5"
+          title="Enter a whole number between 1 and 5"
           isInvalid={Boolean(errors.stars)}
           {...register("stars", {
             required: "Stars is required.",
             min: { value: 1, message: "Minimum 1 star" },
             max: { value: 5, message: "Maximum 5 stars" },
+            validate: (v) =>
+              Number.isInteger(Number(v)) || "Please enter a whole number.",
           })}
         />
         <Form.Control.Feedback type="invalid">
@@ -91,7 +91,6 @@ function ReviewForm({
           Comments <span className="text-muted">(optional)</span>
         </Form.Label>
         <Form.Control
-          data-testid={`${testIdPrefix}-comments`}
           id="comments"
           as="textarea"
           rows={3}
@@ -109,15 +108,8 @@ function ReviewForm({
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Button type="submit" data-testid={`${testIdPrefix}-submit`}>
-        {buttonLabel}
-      </Button>
-      <Button
-        variant="secondary"
-        className="ms-2"
-        onClick={() => navigate(-1)}
-        data-testid={`${testIdPrefix}-cancel`}
-      >
+      <Button type="submit">{buttonLabel}</Button>
+      <Button variant="secondary" className="ms-2" onClick={() => navigate(-1)}>
         Cancel
       </Button>
     </Form>

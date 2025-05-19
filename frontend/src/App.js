@@ -7,7 +7,7 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 // import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
-import CreateReviewPage from "main/pages/CreateReviewsPage/CreateReviewsPage";
+import CreateReviewPage from "main/pages/ReviewsPage/CreateReviewsPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
@@ -49,7 +49,7 @@ function App() {
             />
           </>
         )}
-        {hasRole(currentUser, "ROLE_ADMIN") && (
+        {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route
               exact
