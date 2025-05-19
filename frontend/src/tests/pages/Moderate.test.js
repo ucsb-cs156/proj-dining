@@ -12,7 +12,7 @@ describe("ModeratePage tests", () => {
   const renderPage = () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
+        <MemoryRouter> 
           <Moderate />
         </MemoryRouter>
       </QueryClientProvider>,
@@ -40,7 +40,10 @@ describe("ModeratePage tests", () => {
     await screen.findByText("Moderation Page");
     // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+      screen.getByText("Moderation Page"),
+      screen.getByText("Proposed Alias"),
+      screen.getByText("Approve"),
+      screen.getByText("Reject"),
     ).toBeInTheDocument();
   });
 
@@ -62,7 +65,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "Moderation Page",
       ),
     ).not.toBeInTheDocument();
   });
@@ -82,7 +85,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "Moderation Page",
       ),
     ).not.toBeInTheDocument();
   });
@@ -104,7 +107,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "Moderation Page",
       ),
     ).not.toBeInTheDocument();
   });
@@ -126,7 +129,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "Moderation Page",
       ),
     ).not.toBeInTheDocument();
   });
