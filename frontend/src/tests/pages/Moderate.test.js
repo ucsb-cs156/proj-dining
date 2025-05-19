@@ -12,7 +12,7 @@ describe("ModeratePage tests", () => {
   const renderPage = () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter> 
+        <MemoryRouter>
           <Moderate />
         </MemoryRouter>
       </QueryClientProvider>,
@@ -39,12 +39,10 @@ describe("ModeratePage tests", () => {
     // Single assertion inside waitFor
     await screen.findByText("Moderation Page");
     // Additional assertion outside waitFor
-    expect(
-      screen.getByText("Moderation Page"),
-      screen.getByText("Proposed Alias"),
-      screen.getByText("Approve"),
-      screen.getByText("Reject"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Moderation Page")).toBeInTheDocument();
+    expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
+    expect(screen.getByText("Approve")).toBeInTheDocument();
+    expect(screen.getByText("Reject")).toBeInTheDocument();
   });
 
   test("redirects non-admin user to homepage", async () => {
@@ -63,11 +61,7 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "Moderation Page",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 
   test("redirects to homepage if currentUser is undefined", async () => {
@@ -83,11 +77,7 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "Moderation Page",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 
   test("redirects to homepage if currentUser.loggedIn is undefined", async () => {
@@ -105,11 +95,7 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "Moderation Page",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 
   test("handles case where currentUser is null and skips hasRole", async () => {
@@ -127,10 +113,6 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "Moderation Page",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 });

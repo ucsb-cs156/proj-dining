@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { useBackendMutation } from "main/utils/useBackend";
 import { useQueryClient } from "react-query";
 
-
 export default function AliasTable({ alias }) {
   const testid = "AliasTable";
   const queryClient = useQueryClient();
@@ -41,7 +40,6 @@ export default function AliasTable({ alias }) {
     },
   });
 
-
   const columns = [
     {
       Header: "Proposed Alias",
@@ -51,35 +49,35 @@ export default function AliasTable({ alias }) {
       Header: "Approve",
       accessor: "approve",
       // green button to approve the alias
-        Cell: (cell) => (
-            <button
-                className="btn btn-success"
-                onClick={() => {
-                    const user = cell.row.original;
-                    approveMutation.mutate(user)
-                }
-                // disabled={approveMutation.isLoading}
+      Cell: (cell) => (
+        <button
+          className="btn btn-success"
+          onClick={
+            () => {
+              const user = cell.row.original;
+              approveMutation.mutate(user);
             }
-
-            >
-                Approve
-            </button>
-        ),
+            // disabled={approveMutation.isLoading}
+          }
+        >
+          Approve
+        </button>
+      ),
     },
     {
       Header: "Reject",
       accessor: "reject",
       Cell: (cell) => (
-            <button
-                className="btn btn-danger"
-                onClick={() => {
-                    const user = cell.row.original;
-                    rejectMutation.mutate(user)
-                }}
-            >
-                Reject
-            </button>
-        ),
+        <button
+          className="btn btn-danger"
+          onClick={() => {
+            const user = cell.row.original;
+            rejectMutation.mutate(user);
+          }}
+        >
+          Reject
+        </button>
+      ),
     },
   ];
 
