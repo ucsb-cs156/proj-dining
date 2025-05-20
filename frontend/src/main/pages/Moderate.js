@@ -20,10 +20,17 @@ const Moderate = () => {
     return <Navigate to="/" />;
   }
 
+  // TODO: Replace this placeholder with the actual Reviews Table component when available
   return (
     <BasicLayout>
       <div className="pt-2">
-        <h2>Moderation Page</h2>
+        <h1>Moderation Page</h1>
+
+        <h4> Alias Table </h4>
+        <AliasTable alias={data} />
+        <br />
+        <h4> Reviews Table </h4>
+        {/* Placeholder: Using AliasTable for Reviews Table until ReviewsTable component is implemented */}
         <AliasTable alias={data} />
       </div>
     </BasicLayout>
