@@ -24,7 +24,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     {
       Header: "Avg Rating",
       accessor: "avgRating",
-      Cell: ({ value }) => value == null ? "—" : value.toFixed(1)
+      Cell: ({ value }) => (value == null ? "—" : value.toFixed(1)),
     },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
