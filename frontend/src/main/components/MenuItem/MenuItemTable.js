@@ -23,7 +23,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     },
     {
       Header: "Avg Rating",
-      accessor: "avgRating",
+      accessor: "averageRating",
       Cell: ({ value }) => (value == null ? "—" : value.toFixed(1)),
     },
   ];
