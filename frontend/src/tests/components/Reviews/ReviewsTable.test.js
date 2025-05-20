@@ -9,6 +9,9 @@ describe("ReviewTable Tests", () => {
     render(
       <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
     );
+    expect(screen.getByTestId("ReviewTable-header-itemId")).toHaveTextContent(
+      "Item ID",
+    );
     expect(
       screen.getByTestId("ReviewTable-header-itemsStars"),
     ).toHaveTextContent("Score");
@@ -74,6 +77,10 @@ describe("ReviewTable Tests", () => {
       );
       expect(editBtn).toBeInTheDocument();
       expect(deleteBtn).toBeInTheDocument();
+      expect(editBtn).toHaveTextContent("Edit");
+      expect(deleteBtn).toHaveTextContent("Delete");
+      expect(editBtn.className).toMatch(/btn-primary/);
+      expect(deleteBtn.className).toMatch(/btn-danger/);
       fireEvent.click(editBtn);
       fireEvent.click(deleteBtn);
     }
@@ -110,6 +117,10 @@ describe("ReviewTable Tests", () => {
       );
       expect(approveBtn).toBeInTheDocument();
       expect(rejectBtn).toBeInTheDocument();
+      expect(approveBtn).toHaveTextContent("Approve");
+      expect(rejectBtn).toHaveTextContent("Reject");
+      expect(approveBtn.className).toMatch(/btn-success/);
+      expect(rejectBtn.className).toMatch(/btn-danger/);
       fireEvent.click(approveBtn);
       fireEvent.click(rejectBtn);
     }
