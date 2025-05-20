@@ -55,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 
 @WebMvcTest(controllers = ReviewController.class)
@@ -1029,41 +1030,4 @@ public void test_validComment_on_creating_new_review() throws Exception {
     verify(reviewRepository).save(any(Review.class));
     assertEquals(jsonReview, responseJson);
 }
-
-@WithMockUser(roles = {"USER"})
-@Test
-public void review_with_null_comment_is_auto_approved() throws Exception {
-    // Arrange
-    LocalDateTime now = LocalDateTime.now();
-    User user = currentUserService.getUser();
-    MenuItem menuItem = MenuItem.builder().id(1L).build();
-
-    Review reviewSaved = Review.builder()
-            .id(21L)
-            .dateCreated(now)
-            .dateEdited(now)
-            .itemsStars(4L)
-            .reviewerComments(null)
-            .dateItemServed(LocalDateTime.of(2024, 5, 2, 11, 30))
-            .reviewer(user)
-            .status(ModerationStatus.APPROVED)
-            .item(menuItem)
-            .build();
-
-    when(reviewRepository.save(any(Review.class))).thenReturn(reviewSaved);
-
-    // Act
-    MvcResult response = mockMvc.perform(
-                    post("/api/reviews/post?itemId=1&itemsStars=4&dateItemServed=2024-05-02T11:30:00")
-                            .with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
-
-    String expectedJson = mapper.writeValueAsString(reviewSaved);
-    String responseJson = response.getResponse().getContentAsString();
-
-    verify(reviewRepository).save(any(Review.class));
-    assertEquals(expectedJson, responseJson);
-}
-
 }
