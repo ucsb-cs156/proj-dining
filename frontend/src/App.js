@@ -24,52 +24,51 @@ function App() {
   const { data: currentUser } = useCurrentUser();
 
   const router = createBrowserRouter(
-      [
-        { 
-          index: true, 
-          element: <HomePage /> 
-        },
-        { 
-          path: "profile",
-          element: <ProfilePage />
-        },
-        hasRole(currentUser, "ROLE_ADMIN") && {
-          path: "admin/users",
-          element: <AdminUsersPage />,
-        },
-        hasRole(currentUser, "ROLE_ADMIN") && {
-          path: "moderate",
-          element: <Moderate />,
-        },
-        hasRole(currentUser, "ROLE_USER") && {
-          path: "myreviews",
-          element: <MyReviewsIndexPage />,
-        },
-        hasRole(currentUser, "ROLE_USER") && {
-          path: "placeholder",
-          element: <PlaceholderIndexPage />,
-        },
-        hasRole(currentUser, "ROLE_ADMIN") && {
-          path: "placeholder/create",
-          element: <PlaceholderCreatePage />,
-        },
-        hasRole(currentUser, "ROLE_ADMIN") && {
-          path: "placeholder/edit/:id",
-          element: <PlaceholderEditPage />,
-        },
-        {
-          path: "diningcommons/:dateTime/:diningCommonsCode",
-          element: <MealTimesPage />,
-        },
-        {
-          path:
-            "diningcommons/:dateTime/:diningCommonsCode/:meal",
-          element: <MenuItemPage />,
-        },
-      ].filter(Boolean)
-    );
+    [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
+      },
+      hasRole(currentUser, "ROLE_ADMIN") && {
+        path: "admin/users",
+        element: <AdminUsersPage />,
+      },
+      hasRole(currentUser, "ROLE_ADMIN") && {
+        path: "moderate",
+        element: <Moderate />,
+      },
+      hasRole(currentUser, "ROLE_USER") && {
+        path: "myreviews",
+        element: <MyReviewsIndexPage />,
+      },
+      hasRole(currentUser, "ROLE_USER") && {
+        path: "placeholder",
+        element: <PlaceholderIndexPage />,
+      },
+      hasRole(currentUser, "ROLE_ADMIN") && {
+        path: "placeholder/create",
+        element: <PlaceholderCreatePage />,
+      },
+      hasRole(currentUser, "ROLE_ADMIN") && {
+        path: "placeholder/edit/:id",
+        element: <PlaceholderEditPage />,
+      },
+      {
+        path: "diningcommons/:dateTime/:diningCommonsCode",
+        element: <MealTimesPage />,
+      },
+      {
+        path: "diningcommons/:dateTime/:diningCommonsCode/:meal",
+        element: <MenuItemPage />,
+      },
+    ].filter(Boolean),
+  );
 
-    return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />;
 }
 
 export default App;
