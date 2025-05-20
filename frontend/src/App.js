@@ -70,7 +70,7 @@ function App() {
         path: "diningcommons/:date-time/:dining-commons-code/:meal",
         element: <MenuItemPage />,
       },
-    ].filter(Boolean)
+    ].filter(Boolean),
   );
 
   return <RouterProvider router={router} />;
