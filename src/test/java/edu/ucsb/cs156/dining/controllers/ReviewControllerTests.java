@@ -54,6 +54,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -1078,4 +1079,55 @@ public class ReviewControllerTests extends ControllerTestCase {
         verify(reviewRepository).save(any(Review.class));
         assertEquals(expectedJson, responseJson);
         }
+
+        @WithMockUser(roles = {"USER"})
+        @Test
+        public void test_whitespaceOnlyComment_autoApproves_and_sets_null_comment() throws Exception {
+
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        User user = currentUserService.getUser();
+        MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+        Review reviewReturn = Review.builder()
+                .dateCreated(now)
+                .dateEdited(now)
+                .itemsStars(1L)
+                .reviewerComments("   ") // should be treated as null
+                .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+                .reviewer(user)
+                .status(ModerationStatus.APPROVED) // auto-approved
+                .item(menuItem)
+                .id(0L)
+                .build();
+
+        when(reviewRepository.save(any(Review.class))).thenReturn(reviewReturn);
+
+        // Act
+        MvcResult response = mockMvc.perform(
+                        post("/api/reviews/post")
+                                .param("itemId", "1")
+                                .param("reviewerComments", "   ") // three spaces
+                                .param("itemsStars", "1")
+                                .param("dateItemServed", "2021-12-12T08:08:08")
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        ArgumentCaptor<Review> reviewCaptor = ArgumentCaptor.forClass(Review.class);
+        verify(reviewRepository).save(reviewCaptor.capture());
+        Review savedReview = reviewCaptor.getValue();
+
+        // 🔥 These assertions ensure mutation is killed
+        assertNull(savedReview.getReviewerComments());
+        assertEquals(ModerationStatus.APPROVED, savedReview.getStatus());
+
+        // Optional: response body check
+        String jsonReview = mapper.writeValueAsString(reviewReturn);
+        String responseJson = response.getResponse().getContentAsString();
+        assertEquals(jsonReview, responseJson);
+        }
+
 }
