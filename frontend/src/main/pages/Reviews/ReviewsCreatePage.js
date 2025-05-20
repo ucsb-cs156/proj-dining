@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 
 export default function ReviewCreatePage() {
   const { id } = useParams();
-  // Stryker disable all : placeholder for future implementation
+  // Stryker disable all : placeholder for future implementations
   return (
     <BasicLayout>
       <div className="pt-2">
