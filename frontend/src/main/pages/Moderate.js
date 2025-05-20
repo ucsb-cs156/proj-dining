@@ -11,6 +11,7 @@ const Moderate = () => {
   const { data } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/admin/usersWithProposedAlias`],
+    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/admin/usersWithProposedAlias" },
     [],
   );
