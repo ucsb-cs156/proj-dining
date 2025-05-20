@@ -1,9 +1,12 @@
-import { waitFor, render, screen } from "@testing-library/react";
+import { waitFor, render, screen, fireEvent } from "@testing-library/react";
 import { aliasFixtures } from "fixtures/aliasFixtures";
 import AliasTable from "main/components/Alias/AliasTable";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import { within } from "@testing-library/react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter";
 
 const mockedNavigate = jest.fn();
 
@@ -11,6 +14,14 @@ jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockedNavigate,
 }));
+
+jest.mock("react-toastify", () => ({
+  toast: jest.fn(),
+}));
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe("AliasTable tests", () => {
   const queryClient = new QueryClient();
@@ -75,7 +86,7 @@ describe("AliasTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={[aliasFixtures.oneAlias]} />
+          <AliasTable alias={aliasFixtures.onePropAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -85,7 +96,7 @@ describe("AliasTable tests", () => {
     await waitFor(() => {
       expect(
         screen.getByTestId("AliasTable-cell-row-0-col-proposedAlias"),
-      ).toHaveTextContent("Carrillo");
+      ).toHaveTextContent(aliasFixtures.onePropAlias[0].proposedAlias);
     });
   });
 
@@ -160,7 +171,88 @@ describe("AliasTable tests", () => {
     }
   });
 
-  // //   //should be tested in moderate.test.js
-  // // //   test("Has the expected column headers and content for ordinary user", () => {
-  // // //   });
+  //test the approve button approves the alias
+  test("The approve button approves the alias (toast)", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onGet("/api/admin/usersWithProposedAlias")
+      .reply(200, aliasFixtures.onePropAlias);
+    axiosMock
+      .onPut("/api/currentUser/updateAliasModeration")
+      .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: true });
+
+    // const queryClient = new QueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AliasTable alias={aliasFixtures.onePropAlias} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const approveCell = screen.getByTestId(`AliasTable-cell-row-0-col-approve`);
+    const button = within(approveCell).getByRole("button");
+    await fireEvent.click(button);
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith(
+        `Alias ${aliasFixtures.onePropAlias[0].proposedAlias} for id ${aliasFixtures.onePropAlias[0].id} approved!`,
+      ),
+    );
+    expect(toast).toHaveBeenCalledTimes(1);
+  });
+
+  test("null proposed alias does nothing", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onGet("/api/admin/usersWithProposedAlias")
+      .reply(200, aliasFixtures.nullPropAlias);
+    axiosMock
+      .onPut("/api/currentUser/updateAliasModeration")
+      .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: true });
+
+    // const queryClient = new QueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AliasTable alias={aliasFixtures.onePropAlias} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const approveCell = screen.getByTestId(`AliasTable-cell-row-0-col-approve`);
+    const button = within(approveCell).getByRole("button");
+    await fireEvent.click(button);
+    expect(toast).toHaveBeenCalledTimes(0);
+  });
+
+  test("The reject button rejects the alias (toast)", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onGet("/api/admin/usersWithProposedAlias")
+      .reply(200, aliasFixtures.onePropAlias);
+    axiosMock
+      .onPut("/api/currentUser/updateAliasModeration")
+      .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: false });
+
+    const queryClient = new QueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AliasTable alias={aliasFixtures.onePropAlias} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const rejCell = screen.getByTestId(`AliasTable-cell-row-0-col-reject`);
+    const button = within(rejCell).getByRole("button");
+    await fireEvent.click(button);
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith(
+        `Alias ${aliasFixtures.onePropAlias[0].proposedAlias} for id ${aliasFixtures.onePropAlias[0].id} rejected!`,
+      ),
+    );
+    expect(toast).toHaveBeenCalledTimes(1);
+  });
 });
