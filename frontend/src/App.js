@@ -10,6 +10,7 @@ import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage"
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
+import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
@@ -46,6 +47,10 @@ function App() {
         element: <MyReviewsIndexPage />,
       },
       hasRole(currentUser, "ROLE_USER") && {
+        path: "reviews/post/:id",
+        element: <ReviewsCreatePage />,
+      },
+      hasRole(currentUser, "ROLE_USER") && {
         path: "placeholder",
         element: <PlaceholderIndexPage />,
       },
@@ -65,7 +70,7 @@ function App() {
         path: "diningcommons/:date-time/:dining-commons-code/:meal",
         element: <MenuItemPage />,
       },
-    ].filter(Boolean),
+    ].filter(Boolean)
   );
 
   return <RouterProvider router={router} />;

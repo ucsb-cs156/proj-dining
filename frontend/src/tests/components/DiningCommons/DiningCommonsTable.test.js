@@ -20,8 +20,6 @@ describe("DiningCommonsTable tests", () => {
     "Has Dining Cam",
     "Has Sack Meal",
     "Has Takeout Meal",
-    "Latitude",
-    "Longitude",
   ];
   const expectedFields = [
     "code",
@@ -29,8 +27,6 @@ describe("DiningCommonsTable tests", () => {
     "hasDiningCam",
     "hasSackMeal",
     "hasTakeoutMeal",
-    "latitude",
-    "longitude",
   ];
   const testId = "DiningCommonsTable";
   const date = new Date("2025-03-11").toISOString().split("T")[0];
@@ -216,8 +212,6 @@ describe("DiningCommonsTable tests", () => {
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
-      "Latitude",
-      "Longitude",
     ];
     const expectedFields = [
       "code",
@@ -225,8 +219,6 @@ describe("DiningCommonsTable tests", () => {
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
-      "latitude",
-      "longitude",
     ];
     const testId = "DiningCommonsTable";
 
@@ -266,8 +258,6 @@ describe("DiningCommonsTable tests", () => {
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
-      "Latitude",
-      "Longitude",
     ];
     const expectedFields = [
       "code",
@@ -275,8 +265,6 @@ describe("DiningCommonsTable tests", () => {
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
-      "latitude",
-      "longitude",
     ];
     const testId = "DiningCommonsTable";
 
