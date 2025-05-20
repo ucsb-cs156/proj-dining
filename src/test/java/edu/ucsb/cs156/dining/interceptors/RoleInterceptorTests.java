@@ -157,8 +157,8 @@ public class RoleInterceptorTests extends ControllerTestCase {
                                 .anyMatch(grantedAuth -> grantedAuth.getAuthority().equals("ROLE_ADMIN"));
                 boolean role_moderator = authorities.stream()
                                 .anyMatch(grantedAuth -> grantedAuth.getAuthority().equals("ROLE_MODERATOR"));
-                assertTrue(role_admin, "ROLE_ADMIN should not be in roles list");
-                assertFalse(role_moderator, "ROLE_MODERATOR should be in roles list");
+                assertTrue(role_admin, "ROLE_ADMIN should be in roles list");
+                assertFalse(role_moderator, "ROLE_MODERATOR should not be in roles list");
         }
 
         @Test
@@ -195,6 +195,6 @@ public class RoleInterceptorTests extends ControllerTestCase {
                 boolean role_moderator = authorities.stream()
                                 .anyMatch(grantedAuth -> grantedAuth.getAuthority().equals("ROLE_MODERATOR"));
                 assertTrue(role_admin, "ROLE_ADMIN should not be in roles list");
-                assertTrue(role_moderator, "ROLE_MODERATOR should be in roles list");
+                assertTrue(role_moderator, "ROLE_MODERATOR should not be in roles list");
         }
 }
