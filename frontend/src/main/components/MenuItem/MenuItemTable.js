@@ -9,7 +9,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     alert("Reviews coming soon!");
   };
   const viewCallback = async (_cell) => {
-    navigate(`/reviews/${_cell.row.values.id}`);
+    navigate(`/reviews/${_cell.row.original.id}`);
   };
   const columns = [
     {

@@ -9,7 +9,6 @@ import {
   currentUserFixtures,
 } from "../../../fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
-import { IdCell } from "../../../main/components/MenuItem/MenuItemTable";
 
 const mockedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
