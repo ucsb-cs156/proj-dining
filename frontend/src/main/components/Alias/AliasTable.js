@@ -12,7 +12,7 @@ export default function AliasTable({ alias }) {
     // Stryker disable next-line all
     url: `/api/currentUser/updateAliasModeration`,
     method: "PUT",
-    
+
     /* Stryker disable all */ //not tested because it is mocked
     params: {
       id: user.id,
@@ -71,12 +71,10 @@ export default function AliasTable({ alias }) {
       Cell: (cell) => (
         <button
           className="btn btn-success"
-          onClick={
-            () => {
-              const user = cell.row.original;
-              approveMutation.mutate(user, user.proposedAlias);
-            }
-          }
+          onClick={() => {
+            const user = cell.row.original;
+            approveMutation.mutate(user, user.proposedAlias);
+          }}
         >
           Approve
         </button>
