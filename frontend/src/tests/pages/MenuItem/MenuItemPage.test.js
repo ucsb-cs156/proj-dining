@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import { menuItemFixtures } from "fixtures/menuItemFixtures";
 
