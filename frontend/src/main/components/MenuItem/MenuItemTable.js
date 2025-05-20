@@ -17,6 +17,11 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       Header: "Station",
       accessor: "station",
     },
+    {
+    Header: "ID",
+    accessor: "id",
+    Cell: () => null,
+  },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
