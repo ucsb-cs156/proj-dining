@@ -990,4 +990,80 @@ public class ReviewControllerTests extends ControllerTestCase {
         verify(reviewRepository, times(1)).findByStatus(eq(ModerationStatus.AWAITING_REVIEW));
         assertEquals(expectedJson,responseJson);
         }
+
+@WithMockUser(roles = {"USER"})
+@Test
+public void test_validComment_on_creating_new_review() throws Exception {
+
+    // Arrange
+    LocalDateTime now = LocalDateTime.now();
+
+    User user = currentUserService.getUser();
+    MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+    Review reviewReturn = Review.builder()
+            .dateCreated(now)
+            .dateEdited(now)
+            .itemsStars(1L)
+            .reviewerComments("hello ")
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+            .reviewer(user)
+            .status(ModerationStatus.AWAITING_REVIEW)
+            .item(menuItem)
+            .id(0L)
+            .build();
+
+    when(reviewRepository.save(any(Review.class))).thenReturn(reviewReturn);
+
+    // Act
+    MvcResult response = mockMvc.perform(
+                    post("/api/reviews/post?itemId=1&reviewerComments=hello%20&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                            .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    String jsonReview = mapper.writeValueAsString(reviewReturn);
+    String responseJson = response.getResponse().getContentAsString();
+
+    // Assert
+    verify(reviewRepository).save(any(Review.class));
+    assertEquals(jsonReview, responseJson);
+}
+
+@WithMockUser(roles = {"USER"})
+@Test
+public void review_with_null_comment_is_auto_approved() throws Exception {
+    // Arrange
+    LocalDateTime now = LocalDateTime.now();
+    User user = currentUserService.getUser();
+    MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+    Review reviewSaved = Review.builder()
+            .id(21L)
+            .dateCreated(now)
+            .dateEdited(now)
+            .itemsStars(4L)
+            .reviewerComments(null)
+            .dateItemServed(LocalDateTime.of(2024, 5, 2, 11, 30))
+            .reviewer(user)
+            .status(ModerationStatus.APPROVED)
+            .item(menuItem)
+            .build();
+
+    when(reviewRepository.save(any(Review.class))).thenReturn(reviewSaved);
+
+    // Act
+    MvcResult response = mockMvc.perform(
+                    post("/api/reviews/post?itemId=1&itemsStars=4&dateItemServed=2024-05-02T11:30:00")
+                            .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    String expectedJson = mapper.writeValueAsString(reviewSaved);
+    String responseJson = response.getResponse().getContentAsString();
+
+    verify(reviewRepository).save(any(Review.class));
+    assertEquals(expectedJson, responseJson);
+}
+
 }
