@@ -43,9 +43,6 @@ describe("MenuItemTable Tests", () => {
     expect(
       screen.getByTestId("MenuItemTable-header-station"),
     ).toHaveTextContent("Station");
-    // expect(screen.getByTestId("MenuItemTable-header-id")).toHaveTextContent(
-    //   "ID",
-    // );
     expect(
       screen.queryByTestId("MenuItemTable-row-cell-0-col-name"),
     ).not.toBeInTheDocument();
@@ -78,16 +75,8 @@ describe("MenuItemTable Tests", () => {
       expect(
         screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
       ).not.toBeInTheDocument();
-
-      // const idCell = screen.getByTestId(`MenuItemTable-cell-row-${i}-col-id`);
-      // expect(idCell).toBeInTheDocument();
     }
   });
-
-  // test("IdCell returns null", async () => {
-  //   const result = IdCell();
-  //   expect(result).toBeNull();
-  // });
 
   test("Buttons work correctly", async () => {
     const mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});

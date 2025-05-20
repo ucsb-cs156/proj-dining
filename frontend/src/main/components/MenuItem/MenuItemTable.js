@@ -2,9 +2,6 @@ import OurTable, { ButtonColumn } from "../OurTable";
 import { hasRole } from "../../utils/currentUser";
 import { useNavigate } from "react-router-dom";
 
-export function IdCell() {
-  return null;
-}
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
   const navigate = useNavigate();
@@ -22,9 +19,6 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     {
       Header: "Station",
       accessor: "station",
-    },
-    {
-      accessor: "id",
     },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
