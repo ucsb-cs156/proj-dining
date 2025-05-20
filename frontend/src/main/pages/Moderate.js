@@ -25,8 +25,6 @@ const Moderate = () => {
       <div className="pt-2">
         <h2>Moderation Page</h2>
         <AliasTable alias={data} />
-        {/* <DiningCommonsTable commons={data} date={date} /> */}
-        {/* create a table with 3 columns: alias, approve, reject */}
       </div>
     </BasicLayout>
   );
