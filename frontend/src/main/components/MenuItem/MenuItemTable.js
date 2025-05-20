@@ -1,6 +1,6 @@
 import OurTable, { ButtonColumn } from "../OurTable";
 import { hasRole } from "../../utils/currentUser";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
@@ -20,6 +20,11 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       Header: "Reviews",
       accessor: "id",
       Cell: ({ value }) => <Link to={`/reviews/${value}`}>Reviews</Link>,
+    },
+    {
+      Header: "Avg Rating",
+      accessor: "avgRating",
+      Cell: ({ value }) => value == null ? "—" : value.toFixed(1)
     },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
