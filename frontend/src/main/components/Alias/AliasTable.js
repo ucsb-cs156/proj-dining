@@ -12,11 +12,13 @@ export default function AliasTable({ alias }) {
     // Stryker disable next-line all
     url: `/api/currentUser/updateAliasModeration`,
     method: "PUT",
+    
+    /* Stryker disable all */ //not tested because it is mocked
     params: {
       id: user.id,
-      // Stryker disable next-line all
       approved: true,
     },
+    /* Stryker restore all */
   });
 
   const approveMutation = useBackendMutation(objectToAxiosParamsApprove, {
@@ -36,11 +38,12 @@ export default function AliasTable({ alias }) {
     url: `/api/currentUser/updateAliasModeration`,
     method: "PUT",
 
+    /* Stryker disable all */ //not tested because it is mocked
     params: {
       id: user.id,
-      // Stryker disable next-line all
       approved: false,
     },
+    /* Stryker restore all */
   });
 
   const rejectMutation = useBackendMutation(objectToAxiosParamsReject, {
@@ -48,11 +51,12 @@ export default function AliasTable({ alias }) {
       toast(`Alias ${propAlias.proposedAlias} for id ${user.id} rejected!`);
       //   queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]); //refresh the table
     },
-    // Stryker disable next-line all
+
+    /* Stryker disable all */
     onError: (err) => {
-      // Stryker disable next-line all
       toast.error(`Error rejecting alias: ${err.message}`);
     },
+    /* Stryker restore all */
   });
 
   const columns = [
@@ -72,7 +76,6 @@ export default function AliasTable({ alias }) {
               const user = cell.row.original;
               approveMutation.mutate(user, user.proposedAlias);
             }
-            // disabled={approveMutation.isLoading}
           }
         >
           Approve
