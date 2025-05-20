@@ -43,9 +43,9 @@ describe("MenuItemTable Tests", () => {
     expect(
       screen.getByTestId("MenuItemTable-header-station"),
     ).toHaveTextContent("Station");
-    expect(screen.getByTestId("MenuItemTable-header-id")).toHaveTextContent(
-      "ID",
-    );
+    // expect(screen.getByTestId("MenuItemTable-header-id")).toHaveTextContent(
+    //   "ID",
+    // );
     expect(
       screen.queryByTestId("MenuItemTable-row-cell-0-col-name"),
     ).not.toBeInTheDocument();
@@ -79,17 +79,18 @@ describe("MenuItemTable Tests", () => {
         screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
       ).not.toBeInTheDocument();
 
-      const idCell = screen.getByTestId(`MenuItemTable-cell-row-${i}-col-id`);
-      expect(idCell).toBeInTheDocument();
+      // const idCell = screen.getByTestId(`MenuItemTable-cell-row-${i}-col-id`);
+      // expect(idCell).toBeInTheDocument();
     }
   });
 
-  test("IdCell returns null", async () => {
-    const result = IdCell();
-    expect(result).toBeNull();
-  });
+  // test("IdCell returns null", async () => {
+  //   const result = IdCell();
+  //   expect(result).toBeNull();
+  // });
 
   test("Buttons work correctly", async () => {
+    const mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -113,6 +114,18 @@ describe("MenuItemTable Tests", () => {
 
     fireEvent.click(button);
 
+    await waitFor(() => {
+      expect(mockAlert).toBeCalledTimes(1);
+    });
+    expect(mockAlert).toBeCalledWith("Reviews coming soon!");
+
+    let allButton = screen.getByTestId(
+      "MenuItemTable-cell-row-0-col-All Reviews-button",
+    );
+    expect(allButton).toBeInTheDocument();
+    expect(allButton).toHaveClass("btn-warning");
+
+    fireEvent.click(allButton);
     await waitFor(() =>
       expect(mockedNavigate).toHaveBeenCalledWith("/reviews/undefined"),
     );

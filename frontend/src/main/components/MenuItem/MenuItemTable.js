@@ -9,6 +9,9 @@ export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
   const navigate = useNavigate();
   const reviewCallback = async (_cell) => {
+    alert("Reviews coming soon!");
+  };
+  const viewCallback = async (_cell) => {
     navigate(`/reviews/${_cell.row.values.id}`);
   };
   const columns = [
@@ -21,15 +24,14 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       accessor: "station",
     },
     {
-      Header: "ID",
       accessor: "id",
-      Cell: IdCell,
     },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
       ButtonColumn("Review Item", "warning", reviewCallback, testid),
     );
+    columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
   return <OurTable columns={columns} data={menuItems} testid={testid} />;
