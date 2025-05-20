@@ -2,11 +2,11 @@ import React from "react";
 import OurTable from "main/components/OurTable";
 import { toast } from "react-toastify";
 import { useBackendMutation } from "main/utils/useBackend";
-// import { useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 
 export default function AliasTable({ alias }) {
   const testid = "AliasTable";
-  //   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const objectToAxiosParamsApprove = (user) => ({
     // Stryker disable next-line all
@@ -23,8 +23,9 @@ export default function AliasTable({ alias }) {
 
   const approveMutation = useBackendMutation(objectToAxiosParamsApprove, {
     onSuccess: (user, propAlias) => {
+      //Stryker disable next-line all
+      queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]);
       toast(`Alias ${propAlias.proposedAlias} for id ${user.id} approved!`);
-      //   queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]);
     },
     // Stryker disable next-line all
     onError: (err) => {
@@ -48,8 +49,9 @@ export default function AliasTable({ alias }) {
 
   const rejectMutation = useBackendMutation(objectToAxiosParamsReject, {
     onSuccess: (user, propAlias) => {
+      //Stryker disable next-line all
+      queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]); //refresh the table
       toast(`Alias ${propAlias.proposedAlias} for id ${user.id} rejected!`);
-      //   queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]); //refresh the table
     },
 
     /* Stryker disable all */

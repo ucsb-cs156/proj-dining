@@ -181,7 +181,6 @@ describe("AliasTable tests", () => {
       .onPut("/api/currentUser/updateAliasModeration")
       .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: true });
 
-    // const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -211,7 +210,6 @@ describe("AliasTable tests", () => {
       .onPut("/api/currentUser/updateAliasModeration")
       .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: true });
 
-    // const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
