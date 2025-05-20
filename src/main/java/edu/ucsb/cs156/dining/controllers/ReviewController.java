@@ -103,7 +103,7 @@ public class ReviewController extends ApiController {
         review.setDateItemServed(dateItemServed);
 
         // Reviewer comments moderation logic
-        if (!reviewerComments.trim().isEmpty()) {
+        if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
             review.setStatus(ModerationStatus.AWAITING_REVIEW);
             review.setReviewerComments(reviewerComments);
         } else {
