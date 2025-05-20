@@ -54,7 +54,7 @@ describe("MenuItemTable Tests", () => {
       screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByTestId("MenuItemTable-header-avgRating")
+      screen.getByTestId("MenuItemTable-header-avgRating"),
     ).toHaveTextContent("Avg Rating");
   });
   test("Renders 5 Menu Items Correctly and Reviews link is correct", async () => {
@@ -76,7 +76,7 @@ describe("MenuItemTable Tests", () => {
         screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
       ).toHaveTextContent(fiveMenuItems[i].station);
       expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-avgRating`)
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-avgRating`),
       ).toHaveTextContent("—");
       // Check Reviews link
       const reviewsCell = screen.getByTestId(
@@ -134,7 +134,7 @@ describe("MenuItemTable Tests", () => {
     ).not.toBeInTheDocument();
   });
 
-   test("Avg Rating cell shows one decimal", () => {
+  test("Avg Rating cell shows one decimal", () => {
     const data = [
       {
         ...menuItemFixtures.oneMenuItem[0],
