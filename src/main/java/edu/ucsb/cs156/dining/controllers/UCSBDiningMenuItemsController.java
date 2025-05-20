@@ -79,36 +79,33 @@ public class UCSBDiningMenuItemsController extends ApiController {
   }
 
   private List<MenuItemWithAvg> buildMenuItemWithAvgList(List<MenuItem> items) {
-    return items.stream()
-      .map(mi -> {
-        Double avg = reviewRepository
-                       .findAverageScoreByItemId(mi.getId())
-                       .orElse(null);
-        return new MenuItemWithAvg(
-          mi.getId(),
-          mi.getName(),
-          mi.getStation(),
-          avg
-        );
-      })
-      .collect(Collectors.toList());
+    return items.stream().map(item -> {
+        Double avg = reviewRepository.findAverageScoreByItemId(item.getId()).orElse(null);
+        return new MenuItemWithAvg(item.getId(), item.getDiningCommonsCode(), item.getMealCode(), item.getName(), item.getStation(), avg);
+      }).collect(Collectors.toList());
   }
 }
 
 class MenuItemWithAvg {
     private Long id;
+    private String diningCommonsCode;
+    private String mealCode;
     private String name;
     private String station;
     private Double averageRating;
 
-    public MenuItemWithAvg(Long id, String name, String station, Double averageRating) {
+    public MenuItemWithAvg(Long id, String diningCommonsCode, String mealCode, String name, String station, Double averageRating) {
         this.id = id;
+        this.diningCommonsCode = diningCommonsCode;
+        this.mealCode = mealCode;
         this.name = name;
         this.station = station;
         this.averageRating = averageRating;
     }
-    // getters (and setters, if you need them)
+
     public Long getId() { return id; }
+    public String getDiningCommonsCode() { return diningCommonsCode; }
+    public String getMealCode(){ return mealCode; }
     public String getName() { return name; }
     public String getStation() { return station; }
     public Double getAverageRating() { return averageRating; }

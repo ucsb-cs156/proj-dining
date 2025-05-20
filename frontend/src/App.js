@@ -3,6 +3,7 @@ import { RouterProvider } from "react-router/dom";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
+import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 
 import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
@@ -57,11 +58,11 @@ function App() {
         element: <PlaceholderEditPage />,
       },
       {
-        path: "diningcommons/:dateTime/:diningCommonsCode",
+        path: "diningcommons/:date-time/:dining-commons-code",
         element: <MealTimesPage />,
       },
       {
-        path: "diningcommons/:dateTime/:diningCommonsCode/:meal",
+        path: "diningcommons/:date-time/:dining-commons-code/:meal",
         element: <MenuItemPage />,
       },
     ].filter(Boolean),

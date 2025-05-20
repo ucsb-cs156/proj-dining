@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import edu.ucsb.cs156.dining.controllers.UCSBDiningMenuItemsController;
 
 import java.util.Optional;
@@ -49,6 +50,9 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
   @MockBean
   MenuItemRepository menuItemRepository;
+
+  @MockBean
+  private ReviewRepository reviewRepository;
 
   private static final String NAME = "NAME";
   private static final String STATION = "STATION";
