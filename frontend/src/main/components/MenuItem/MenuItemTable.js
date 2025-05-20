@@ -18,10 +18,10 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       accessor: "station",
     },
     {
-    Header: "ID",
-    accessor: "id",
-    Cell: () => null,
-  },
+      Header: "ID",
+      accessor: "id",
+      Cell: () => null,
+    },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
