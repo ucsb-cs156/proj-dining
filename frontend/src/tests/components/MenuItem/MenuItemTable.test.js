@@ -54,7 +54,7 @@ describe("MenuItemTable Tests", () => {
       screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByTestId("MenuItemTable-header-avgRating"),
+      screen.getByTestId("MenuItemTable-header-averageRating"),
     ).toHaveTextContent("Avg Rating");
   });
   test("Renders 5 Menu Items Correctly and Reviews link is correct", async () => {
@@ -76,7 +76,7 @@ describe("MenuItemTable Tests", () => {
         screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
       ).toHaveTextContent(fiveMenuItems[i].station);
       expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-avgRating`),
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-averageRating`),
       ).toHaveTextContent("—");
       // Check Reviews link
       const reviewsCell = screen.getByTestId(
@@ -138,7 +138,7 @@ describe("MenuItemTable Tests", () => {
     const data = [
       {
         ...menuItemFixtures.oneMenuItem[0],
-        avgRating: 3.456,
+        averageRating: 3.456,
       },
     ];
     render(
@@ -150,15 +150,15 @@ describe("MenuItemTable Tests", () => {
       </MemoryRouter>,
     );
     expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-avgRating"),
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageRating"),
     ).toHaveTextContent("3.5");
   });
 
-  test("Avg Rating cell shows '—' when avgRating is null", () => {
+  test("Avg Rating cell shows '—' when averageRating is null", () => {
     const data = [
       {
         ...menuItemFixtures.oneMenuItem[0],
-        avgRating: null,
+        averageRating: null,
       },
     ];
     render(
@@ -171,7 +171,7 @@ describe("MenuItemTable Tests", () => {
     );
 
     expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-avgRating"),
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageRating"),
     ).toHaveTextContent("—");
   });
 });
