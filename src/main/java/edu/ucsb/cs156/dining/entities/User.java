@@ -44,6 +44,8 @@ public class User {
  private ModerationStatus status;
  private LocalDate dateApproved;
 
+ private boolean moderator;
+
  @ToString.Exclude
  @OneToMany(mappedBy="reviewer")
  @Fetch(FetchMode.JOIN)
