@@ -1,5 +1,4 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useParams } from "react-router-dom";
 
 export default function ReviewsPage() {
   return (
