@@ -1007,7 +1007,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .dateCreated(now)
                 .dateEdited(now)
                 .itemsStars(1L)
-                .reviewerComments("hello ")
+                .reviewerComments("This chicken is DRY!")
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
                 .status(ModerationStatus.AWAITING_REVIEW)
@@ -1019,23 +1019,29 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         // Act
         MvcResult response = mockMvc.perform(
-                        post("/api/reviews/post?itemId=1&reviewerComments=hello%20&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                        post("/api/reviews/post")
+                                .param("itemId", "1")
+                                .param("reviewerComments", "This chicken is DRY!")
+                                .param("itemsStars", "1")
+                                .param("dateItemServed", "2021-12-12T08:08:08")
                                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String jsonReview = mapper.writeValueAsString(reviewReturn);
-        String responseJson = response.getResponse().getContentAsString();
-
-        // Assert
+        // Assert the actual object passed to .save(...)
         ArgumentCaptor<Review> reviewCaptor = ArgumentCaptor.forClass(Review.class);
         verify(reviewRepository).save(reviewCaptor.capture());
         Review savedReview = reviewCaptor.getValue();
 
-        assertEquals("hello%20", savedReview.getReviewerComments());
+        assertEquals("This chicken is DRY!", savedReview.getReviewerComments());
         assertEquals(ModerationStatus.AWAITING_REVIEW, savedReview.getStatus());
+
+        // Optional: check returned JSON
+        String jsonReview = mapper.writeValueAsString(reviewReturn);
+        String responseJson = response.getResponse().getContentAsString();
         assertEquals(jsonReview, responseJson);
         }
+
 
         @WithMockUser(roles = {"USER"})
         @Test
