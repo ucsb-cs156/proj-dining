@@ -228,6 +228,8 @@ public class ReviewController extends ApiController {
         if (current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
             throw new AccessDeniedException("Only the user who made this review or an admin can get id");
         }
+
+
         return review;
     }
 }

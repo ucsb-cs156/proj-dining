@@ -1058,8 +1058,9 @@ public class ReviewControllerTests extends ControllerTestCase {
 
 
     // Unauthorized user (not reviewer or admin) is denied
+    @WithMockUser(roles = {"USER"})
+    @Test
     public void unauthorizedUserDenied() throws Exception{
-        User user = currentUserService.getUser();
         User user2 = User.builder().id(2L).build();
         MenuItem menuItem = MenuItem.builder().id(1L).build();
 
