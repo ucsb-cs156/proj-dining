@@ -216,7 +216,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .build();
 
@@ -227,7 +227,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -263,7 +263,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .itemsStars(1l)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .build();
 
@@ -273,7 +273,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .itemsStars(1l)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -989,8 +989,5 @@ public class ReviewControllerTests extends ControllerTestCase {
         String responseJson = response.getResponse().getContentAsString();
         verify(reviewRepository, times(1)).findByStatus(eq(ModerationStatus.AWAITING_REVIEW));
         assertEquals(expectedJson,responseJson);
-    }
-
-
-
+        }
 }

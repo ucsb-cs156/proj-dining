@@ -102,10 +102,15 @@ public class ReviewController extends ApiController {
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
 
-        // Ensures content of truly empty and sets to null if so
-        if ((!reviewerComments.trim().isEmpty())) {
+        // Reviewer comments moderation logic
+        if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
             review.setReviewerComments(reviewerComments);
+            review.setStatus(ModerationStatus.AWAITING_REVIEW);
+        } else {
+            review.setReviewerComments(null); // treat truly empty comments as null
+            review.setStatus(ModerationStatus.APPROVED); // auto-approve
         }
+
 
         // Ensure user inputs rating 1-5
         if (itemsStars < 1 || itemsStars > 5) {
