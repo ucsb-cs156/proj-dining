@@ -30,12 +30,11 @@
             "columns": [
               {
                 "column": {
-                  "name": "MODERATOR",
-                  "type": "BOOLEAN",
                   "constraints": {
                     "nullable": false
                   },
-                  "defaultValueBoolean": false
+                  "name": "MODERATOR",
+                  "type": "BOOLEAN"
                 }
               }
             ]
