@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { ReviewFixtures  } from "fixtures/reviewFixtures";
+import { ReviewFixtures } from "fixtures/reviewFixtures";
 import { QueryClient, QueryClientProvider } from "react-query";
 import ReviewForm from "main/components/Review/ReviewForm";
 
@@ -38,7 +38,7 @@ describe("ReviewForm tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <Router>
-          <ReviewForm initialContents={ReviewFixtures .oneReview} />
+          <ReviewForm initialContents={ReviewFixtures.oneReview} />
         </Router>
       </QueryClientProvider>,
     );
