@@ -35,7 +35,7 @@ function App() {
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
           </>
         )}
-        {hasRole(currentUser, "ROLE_ADMIN") && (
+        {(hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
         {hasRole(currentUser, "ROLE_USER") && (
