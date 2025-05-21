@@ -72,7 +72,7 @@ function Review({ initialContents, submitAction, buttonLabel = "Create" }) {
             />
           ))}
         </div>
-        <Form.Control.Feedback type="invalid" style={{ display: "block" }}>
+        <Form.Control.Feedback type="invalid">
           {errors.itemsStars?.message}
         </Form.Control.Feedback>
       </Form.Group>
