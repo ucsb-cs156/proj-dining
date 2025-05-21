@@ -107,7 +107,6 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
   @Test
   public void get_menu_item_by_id_exists() throws Exception {
-    // Arrange
     MenuItem menuItem = new MenuItem();
     menuItem.setId(1L);
     menuItem.setDiningCommonsCode("portola");
@@ -117,7 +116,6 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
     when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
 
-    // Act & Assert
     mockMvc.perform(get("/api/diningcommons/menuitem?id=1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(1))
@@ -129,10 +127,8 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
   @Test
   public void get_menu_item_by_id_not_found() throws Exception {
-    // Arrange
     when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
 
-    // Act & Assert
     mockMvc.perform(get("/api/diningcommons/menuitem?id=1"))
             .andExpect(status().isNotFound())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException));
