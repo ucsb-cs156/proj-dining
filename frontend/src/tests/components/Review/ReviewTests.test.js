@@ -94,17 +94,6 @@ describe("ReviewForm tests", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/Star rating is required./)).toBeInTheDocument();
     expect(screen.getByText(/Star rating is required./)).toBeVisible();
-    // expect(screen.getByText(/Date Requested is required/)).toBeInTheDocument();
-    // expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
-    //expect(screen.getByText(/Done is required/)).toBeInTheDocument();
-
-    // const starError = screen.getByText(/Star rating is required./);
-    // expect(starError).toHaveStyle({ display: "block" });
-
-    // const feedbackElements = screen.getAllByText(/Star rating is required./);
-    // const feedback = feedbackElements.find((el) => el.tagName === "DIV"); // Form.Control.Feedback renders as div
-
-    // expect(feedback).toHaveStyle("display: block");
 
     expect(screen.getByTestId(`${testId}-dateItemServed`)).toBeInTheDocument();
     expect(
@@ -115,22 +104,6 @@ describe("ReviewForm tests", () => {
     const starInput = screen.getByTestId("Review-itemsStars-4");
     expect(starInput).toHaveAttribute("id", "itemsStars-4");
 
-    // expect(
-    //   screen.getByTestId("ReviewForm-explanation"),
-    // ).toBeInTheDocument();
-    // expect(
-    //   screen.getByTestId("ReviewForm-done"),
-    // ).toBeInTheDocument();
-    // expect(
-    //   screen.getByTestId("ReviewForm-submit"),
-    // ).toBeInTheDocument();
-    // expect(
-    //   screen.getByTestId("ReviewForm-professorEmail"),
-    // ).toBeInTheDocument();
-    // expect(
-    //   screen.getByTestId("ReviewForm-requesterEmail"),
-    // ).toBeInTheDocument();
-
     const nameInput = screen.getByTestId(`${testId}-reviewerComments`);
     fireEvent.change(nameInput, { target: { value: "a".repeat(256) } });
     fireEvent.click(submitButton);
@@ -140,15 +113,5 @@ describe("ReviewForm tests", () => {
         screen.getByText(/Max length 255 characters for reviwer comments./),
       ).toBeInTheDocument();
     });
-
-    // const nameInput2 = screen.getByTestId(`${testId}-requesterEmail`);
-    // fireEvent.change(nameInput2, { target: { value: "a".repeat(256) } });
-    // fireEvent.click(submitButton);
-
-    // await waitFor(() => {
-    //   expect(
-    //     screen.getByText(/Max length 255 characters for requester email/),
-    //   ).toBeInTheDocument();
-    // });
   });
 });
