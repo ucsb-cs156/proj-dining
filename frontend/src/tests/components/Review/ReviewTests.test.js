@@ -33,6 +33,10 @@ describe("ReviewForm tests", () => {
       const header = screen.getByText(headerText);
       expect(header).toBeInTheDocument();
     });
+
+    expect(screen.getByLabelText("1 ⭐")).toBeInTheDocument();
+    expect(screen.getByLabelText("3 ⭐")).toBeInTheDocument();
+    expect(screen.getByLabelText("5 ⭐")).toBeInTheDocument();
   });
 
   test("renders correctly when passing in initialContents", async () => {
@@ -89,6 +93,7 @@ describe("ReviewForm tests", () => {
       screen.getByText(/Date Item Served is required./),
     ).toBeInTheDocument();
     expect(screen.getByText(/Star rating is required./)).toBeInTheDocument();
+    expect(screen.getByText(/Star rating is required./)).toBeVisible();
     // expect(screen.getByText(/Date Requested is required/)).toBeInTheDocument();
     // expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
     //expect(screen.getByText(/Done is required/)).toBeInTheDocument();
