@@ -98,6 +98,9 @@ describe("ReviewForm tests", () => {
     // expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
     //expect(screen.getByText(/Done is required/)).toBeInTheDocument();
 
+    const starError = screen.getByText(/Star rating is required./);
+    expect(starError).toHaveStyle({ display: "block" });
+
     expect(screen.getByTestId(`${testId}-dateItemServed`)).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-reviewerComments`),
