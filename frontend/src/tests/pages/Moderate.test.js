@@ -15,7 +15,7 @@ describe("ModeratePage tests", () => {
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   };
 
@@ -40,7 +40,7 @@ describe("ModeratePage tests", () => {
     await screen.findByText("Moderation Page");
     // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)")
+      screen.getByText("This page is accessible only to admins. (Placeholder)"),
     ).toBeInTheDocument();
   });
 
@@ -67,7 +67,7 @@ describe("ModeratePage tests", () => {
 
     // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)")
+      screen.getByText("This page is accessible only to admins. (Placeholder)"),
     ).toBeInTheDocument();
   });
 
@@ -84,13 +84,13 @@ describe("ModeratePage tests", () => {
 
     // Single assertion inside waitFor
     await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument()
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)"
-      )
+        "This page is accessible only to admins. (Placeholder)",
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -104,13 +104,13 @@ describe("ModeratePage tests", () => {
 
     // Single assertion inside waitFor
     await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument()
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)"
-      )
+        "This page is accessible only to admins. (Placeholder)",
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -126,13 +126,13 @@ describe("ModeratePage tests", () => {
 
     // Single assertion inside waitFor
     await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument()
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)"
-      )
+        "This page is accessible only to admins. (Placeholder)",
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -148,13 +148,13 @@ describe("ModeratePage tests", () => {
 
     // Single assertion inside waitFor
     await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument()
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)"
-      )
+        "This page is accessible only to admins. (Placeholder)",
+      ),
     ).not.toBeInTheDocument();
   });
 });
