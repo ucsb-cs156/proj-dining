@@ -68,13 +68,4 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     return ResponseEntity.ok().body(menuitems);
   }
-  @Operation(summary = "Get a single specific menu item by id")
-  @GetMapping(value = "/menuitem", produces = "application/json")
-  public ResponseEntity<MenuItem> getMenuItemById(
-      @Parameter(description = "ID of the menu item") @RequestParam Long id
-  ) {
-    MenuItem menuItem = menuItemRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(MenuItem.class, id));
 
-    return ResponseEntity.ok().body(menuItem);
-  }
