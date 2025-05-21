@@ -7,7 +7,7 @@ export default function MyReviewsIndexPage() {
       <div className="pt-2">
         <h1>Index page not yet implemented</h1>
         <p>
-          <a href="/reviews/create/1">Create</a>
+          <a href="/reviews/post/1">Create</a>
         </p>
         <p>
           <a href="/reviews/edit/1">Edit</a>
