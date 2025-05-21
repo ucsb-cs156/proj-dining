@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
@@ -31,15 +31,17 @@ describe("ReviewsCreatePage tests", () => {
     // act
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <ReviewsCreatePage />
+        <MemoryRouter initialEntries={["/reviews/post/1"]}>
+          <Routes>
+            <Route path="/reviews/post/:id" element={<ReviewsCreatePage />} />
+          </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
     );
 
     // assert
 
-    await screen.findByText("Post a review for Menu Item");
+    await screen.findByText("Post a review for Menu Item 1");
     await screen.findByText("Coming Soon!");
   });
 });
