@@ -78,4 +78,3 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     return ResponseEntity.ok().body(menuItem);
   }
-}
