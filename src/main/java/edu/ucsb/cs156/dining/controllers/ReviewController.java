@@ -125,6 +125,26 @@ public class ReviewController extends ApiController {
         return review;
     }
 
+    @Operation(summary = "Get a single review by id")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public Review getReview(@Parameter(name = "id") @RequestParam Long id) {
+        log.info("Attempting to get review with id {}", id);
+        
+        Review review = reviewRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+        
+        // Check if user has permission to view this review
+        User currentUser = getCurrentUser().getUser();
+        
+        // User can view their own reviews or if they are an admin
+        if (currentUser.getId() != review.getReviewer().getId() && !currentUser.getAdmin()) {
+            throw new AccessDeniedException("You don't have permission to view this review");
+        }
+        
+        return review;
+    }
+
     /**
      * This method allows a user to get a list of reviews that they have previously made.
      * Only user can only get a list of their own reviews, and you cant request another persons reviews
