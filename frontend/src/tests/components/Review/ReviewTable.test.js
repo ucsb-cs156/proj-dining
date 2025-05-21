@@ -212,6 +212,7 @@ describe("ReviewTable Tests", () => {
     );
 
     const headerRow = screen.getByTestId("ReviewTable-header-group-0");
+    // eslint-disable-next-line testing-library/no-node-access
     expect(headerRow.childElementCount).toBe(8); // 3 default + 1 itemName + 2 user + 2 moderator
   });
 });

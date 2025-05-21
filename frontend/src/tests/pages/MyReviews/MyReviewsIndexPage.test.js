@@ -1,7 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import MyReviewsIndexPage, {
   extractReview,
-  useHandlers,
 } from "main/pages/MyReviews/MyReviewsIndexPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
@@ -65,11 +64,7 @@ describe("MyReviewsIndexPage", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
-      ).toBeInTheDocument(),
-    );
+    await screen.findByTestId("ReviewTable-cell-row-0-col-score");
 
     expect(
       screen.getByTestId("ReviewTable-cell-row-0-col-score"),
@@ -91,11 +86,7 @@ describe("MyReviewsIndexPage", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
-      ).toBeInTheDocument(),
-    );
+    await screen.findByTestId("ReviewTable-cell-row-0-col-score");
 
     const editButton = screen.getByTestId(
       "ReviewTable-cell-row-0-col-Edit-button",
@@ -125,11 +116,7 @@ describe("MyReviewsIndexPage", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
-      ).toBeInTheDocument(),
-    );
+    await screen.findByTestId("ReviewTable-cell-row-0-col-score");
 
     const deleteButton = screen.getByTestId(
       "ReviewTable-cell-row-0-col-Delete-button",
@@ -140,7 +127,7 @@ describe("MyReviewsIndexPage", () => {
   });
 
   test("clicking Delete triggers toast", async () => {
-    const mockDelete = jest.fn((review) => {
+    const mockDelete = jest.fn(() => {
       if (mockedOnSuccess) mockedOnSuccess(); // simulate success callback
     });
 
@@ -160,11 +147,7 @@ describe("MyReviewsIndexPage", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
-      ).toBeInTheDocument(),
-    );
+    await screen.findByTestId("ReviewTable-cell-row-0-col-score");
 
     const deleteButton = screen.getByTestId(
       "ReviewTable-cell-row-0-col-Delete-button",
@@ -193,11 +176,7 @@ describe("MyReviewsIndexPage", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
-      ).toBeInTheDocument(),
-    );
+    await screen.findByTestId("ReviewTable-cell-row-0-col-score");
 
     const deleteButton = screen.getByTestId(
       "ReviewTable-cell-row-0-col-Delete-button",
@@ -245,11 +224,7 @@ describe("MyReviewsIndexPage", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
-      ).toBeInTheDocument(),
-    );
+    await screen.findByTestId("ReviewTable-cell-row-0-col-score");
 
     expect(
       screen.queryByTestId("ReviewTable-header-Approve"),
