@@ -43,15 +43,6 @@
               },
               {
                 "column": {
-                  "constraints": {
-                    "nullable": false
-                  },
-                  "name": "MODERATOR",
-                  "type": "BOOLEAN"
-                }
-              },
-              {
-                "column": {
                   "name": "EMAIL",
                   "type": "VARCHAR(255)"
                 }

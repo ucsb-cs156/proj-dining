@@ -1,0 +1,46 @@
+{ "databaseChangeLog": [
+  {
+    "changeSet": {
+      "id": "Users-02-moderator-add",
+      "author": "nathanalexander626",
+      "preConditions": [
+        {
+          "onFail": "MARK_RAN"
+        },
+        {
+          "tableExists": {
+            "tableName": "USERS"
+          }
+        },
+        {
+          "not": [
+            {
+              "columnExists": {
+                "tableName": "USERS",
+                "columnName": "MODERATOR"
+              }
+            }
+          ]
+        }
+      ],
+      "changes": [
+        {
+          "addColumn": {
+            "tableName": "USERS",
+            "columns": [
+              {
+                "column": {
+                  "name": "MODERATOR",
+                  "type": "BOOLEAN",
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "defaultValueBoolean": false
+                }
+              }
+            ]
+          }
+        }]
+    }
+  }
+]}
