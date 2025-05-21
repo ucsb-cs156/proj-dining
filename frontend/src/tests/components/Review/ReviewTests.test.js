@@ -84,7 +84,9 @@ describe("ReviewForm tests", () => {
     fireEvent.click(submitButton);
 
     await screen.findByText(/Reviewer Comment is required./);
-    expect(screen.getByText(/Date Item Served is required./)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Date Item Served is required./),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Star rating is required./)).toBeInTheDocument();
     // expect(screen.getByText(/Date Requested is required/)).toBeInTheDocument();
     // expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
