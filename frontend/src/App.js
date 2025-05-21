@@ -11,6 +11,7 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
+import ReviewsForMenuItemPage from "main/pages/Reviews/ReviewsForMenuItemPage"
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
@@ -70,6 +71,10 @@ function App() {
         path: "diningcommons/:date-time/:dining-commons-code/:meal",
         element: <MenuItemPage />,
       },
+      {
+        path: "reviews/:id",
+        element: <ReviewsForMenuItemPage />,
+      }
     ].filter(Boolean),
   );
 

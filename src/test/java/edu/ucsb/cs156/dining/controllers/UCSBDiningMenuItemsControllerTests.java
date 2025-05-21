@@ -162,4 +162,44 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     assertEquals(0, list.size());
   }
 
+  // Menu ID not found test
+  @WithMockUser(roles = { "USER" })
+  @Test
+  public void menu_id_not_found() throws Exception {
+    Long id = 420L;
+
+    when(menuItemRepository.findById(id)).thenReturn(Optional.empty());
+
+    mockMvc.perform(get("/api/diningcommons/menuitem")
+          .param("id", String.valueOf(id))
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isNotFound())
+          .andExpect(jsonPath("$.message").value("MenuItem with id 420 not found"))
+          .andExpect(jsonPath("$.type").value("EntityNotFoundException"));
+  }
+
+  // Menu ID found test
+  @WithMockUser(roles = { "USER" })
+  @Test
+  public void menu_id_found() throws Exception {
+    Long id = 420L;
+    String diningCommonsCode = "portola";
+    String mealCode = "dinner";
+    String name = "Spicy Tuna Roll";
+    String station = "International";
+
+    MenuItem menuItem = new MenuItem(id, diningCommonsCode, mealCode, name, station, null);
+
+    when(menuItemRepository.findById(id)).thenReturn(Optional.of(menuItem));
+
+    mockMvc.perform(get("/api/diningcommons/menuitem")
+          .param("id", String.valueOf(id))
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id").value(id))
+          .andExpect(jsonPath("$.diningCommonsCode").value(diningCommonsCode))
+          .andExpect(jsonPath("$.mealCode").value(mealCode))
+          .andExpect(jsonPath("$.name").value(name))
+          .andExpect(jsonPath("$.station").value(station));
+  }
 }
