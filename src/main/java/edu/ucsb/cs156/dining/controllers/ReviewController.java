@@ -142,7 +142,6 @@ public class ReviewController extends ApiController {
             throw new AccessDeniedException("You don't have permission to view this review");
         }
         
-        log.info("Retrieved review with id {}", id);
         return review;
     }
 
