@@ -35,8 +35,12 @@ describe("MyReviewsIndexPage", () => {
 
   beforeEach(() => {
     axiosMock.reset();
-    axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
-    axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
     axiosMock.onGet("/api/reviews/my").reply(200, reviewFixtures.threeReviews);
     mockNavigate.mockClear();
     mockToast.mockClear();
@@ -52,23 +56,30 @@ describe("MyReviewsIndexPage", () => {
     jest.restoreAllMocks();
   });
 
-  
   test("renders reviews in table", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toBeInTheDocument()
+      expect(
+        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+      ).toBeInTheDocument(),
     );
 
-    expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toHaveTextContent("5");
-    expect(screen.getByTestId("ReviewTable-cell-row-1-col-itemName")).toHaveTextContent("Pasta");
-    expect(screen.getByTestId("ReviewTable-cell-row-2-col-Delete-button")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+    ).toHaveTextContent("5");
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-1-col-itemName"),
+    ).toHaveTextContent("Pasta");
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-2-col-Delete-button"),
+    ).toBeInTheDocument();
   });
 
   test("clicking Edit calls navigate with correct review id", async () => {
@@ -77,14 +88,18 @@ describe("MyReviewsIndexPage", () => {
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toBeInTheDocument()
+      expect(
+        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+      ).toBeInTheDocument(),
     );
 
-    const editButton = screen.getByTestId("ReviewTable-cell-row-0-col-Edit-button");
+    const editButton = screen.getByTestId(
+      "ReviewTable-cell-row-0-col-Edit-button",
+    );
     editButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     const arg = mockNavigate.mock.calls[0][0];
@@ -96,23 +111,29 @@ describe("MyReviewsIndexPage", () => {
 
   test("clicking Delete triggers deleteMutation", async () => {
     const mockDelete = jest.fn();
-    jest.spyOn(require("main/utils/useBackend"), "useBackendMutation").mockReturnValue({
-      mutate: mockDelete,
-    });
+    jest
+      .spyOn(require("main/utils/useBackend"), "useBackendMutation")
+      .mockReturnValue({
+        mutate: mockDelete,
+      });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider> 
-    ); 
-
-    await waitFor(() =>
-      expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toBeInTheDocument()
+      </QueryClientProvider>,
     );
 
-    const deleteButton = screen.getByTestId("ReviewTable-cell-row-0-col-Delete-button");
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+      ).toBeInTheDocument(),
+    );
+
+    const deleteButton = screen.getByTestId(
+      "ReviewTable-cell-row-0-col-Delete-button",
+    );
     deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(mockDelete).toHaveBeenCalled();
@@ -124,26 +145,30 @@ describe("MyReviewsIndexPage", () => {
     });
 
     let mockedOnSuccess;
-    jest.spyOn(require("main/utils/useBackend"), "useBackendMutation").mockImplementation(
-      (_configFn, options) => {
+    jest
+      .spyOn(require("main/utils/useBackend"), "useBackendMutation")
+      .mockImplementation((_configFn, options) => {
         mockedOnSuccess = options.onSuccess;
         return { mutate: mockDelete };
-      }
-    );
+      });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toBeInTheDocument()
+      expect(
+        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+      ).toBeInTheDocument(),
     );
 
-    const deleteButton = screen.getByTestId("ReviewTable-cell-row-0-col-Delete-button");
+    const deleteButton = screen.getByTestId(
+      "ReviewTable-cell-row-0-col-Delete-button",
+    );
     deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(mockToast).toHaveBeenCalledWith("Review deleted");
@@ -153,24 +178,30 @@ describe("MyReviewsIndexPage", () => {
     const mockDelete = jest.fn();
     let capturedConfig;
 
-    jest.spyOn(require("main/utils/useBackend"), "useBackendMutation").mockImplementation((configFn) => {
-      capturedConfig = configFn(reviewFixtures.threeReviews[0]);
-      return { mutate: mockDelete };
-    });
+    jest
+      .spyOn(require("main/utils/useBackend"), "useBackendMutation")
+      .mockImplementation((configFn) => {
+        capturedConfig = configFn(reviewFixtures.threeReviews[0]);
+        return { mutate: mockDelete };
+      });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toBeInTheDocument()
+      expect(
+        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+      ).toBeInTheDocument(),
     );
 
-    const deleteButton = screen.getByTestId("ReviewTable-cell-row-0-col-Delete-button");
+    const deleteButton = screen.getByTestId(
+      "ReviewTable-cell-row-0-col-Delete-button",
+    );
     deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(capturedConfig).toEqual({
@@ -181,8 +212,9 @@ describe("MyReviewsIndexPage", () => {
 
   test("calls useBackend with correct key and config", () => {
     jest.spyOn(require("main/utils/useBackend"), "useBackend").mockRestore();
-    
-    const spy = jest.spyOn(require("main/utils/useBackend"), "useBackend")
+
+    const spy = jest
+      .spyOn(require("main/utils/useBackend"), "useBackend")
       .mockReturnValue({
         data: reviewFixtures.threeReviews,
         error: null,
@@ -194,7 +226,7 @@ describe("MyReviewsIndexPage", () => {
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     const [[key, config, queryDeps]] = spy.mock.calls;
@@ -210,35 +242,37 @@ describe("MyReviewsIndexPage", () => {
         <MemoryRouter>
           <MyReviewsIndexPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId("ReviewTable-cell-row-0-col-score")).toBeInTheDocument()
+      expect(
+        screen.getByTestId("ReviewTable-cell-row-0-col-score"),
+      ).toBeInTheDocument(),
     );
 
-    expect(screen.queryByTestId("ReviewTable-header-Approve")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("ReviewTable-header-Reject")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("ReviewTable-header-Approve"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("ReviewTable-header-Reject"),
+    ).not.toBeInTheDocument();
   });
-
 
   test("extractReview returns input if row.original not present", () => {
     const input = { id: 2 };
     expect(extractReview(input)).toEqual({ id: 2 });
   });
 
-test("extractReview handles null row property correctly", () => {
-  // This will catch the mutation from reviewOrCell?.row?.original to reviewOrCell.row?.original
-  const input = null;
-  expect(() => extractReview(input)).not.toThrow();
-  expect(extractReview(input)).toBe(input);
-  
-  // Also test with undefined
-  const undefinedInput = undefined;
-  expect(() => extractReview(undefinedInput)).not.toThrow();
-  expect(extractReview(undefinedInput)).toBe(undefinedInput);
-});
+  test("extractReview handles null row property correctly", () => {
+    // This will catch the mutation from reviewOrCell?.row?.original to reviewOrCell.row?.original
+    const input = null;
+    expect(() => extractReview(input)).not.toThrow();
+    expect(extractReview(input)).toBe(input);
 
-
-
+    // Also test with undefined
+    const undefinedInput = undefined;
+    expect(() => extractReview(undefinedInput)).not.toThrow();
+    expect(extractReview(undefinedInput)).toBe(undefinedInput);
+  });
 });

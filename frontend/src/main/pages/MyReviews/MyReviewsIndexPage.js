@@ -35,7 +35,7 @@ export default function MyReviewsIndexPage() {
   } = useBackend(
     ["/api/reviews/my"],
     { method: "GET", url: "/api/reviews/my" },
-    []
+    [],
   );
 
   const deleteMutation = useBackendMutation(
