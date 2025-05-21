@@ -33,10 +33,16 @@ describe("MenuItemTable Tests", () => {
       screen.getByTestId("MenuItemTable-header-station"),
     ).toHaveTextContent("Station");
     expect(
+      screen.getByTestId("MenuItemTable-header-averageRating"),
+    ).toHaveTextContent("Average Rating")
+    expect(
       screen.queryByTestId("MenuItemTable-row-cell-0-col-name"),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("MenuItemTable-row-cell-0-col-station"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("MenuItemTable-row-cell-0-col-averageRating"),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
