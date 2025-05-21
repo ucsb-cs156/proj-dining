@@ -92,12 +92,11 @@ describe("ReviewForm tests", () => {
     // expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
     //expect(screen.getByText(/Done is required/)).toBeInTheDocument();
 
-    // expect(
-    //   screen.getByTestId("ReviewForm-dateRequested"),
-    // ).toBeInTheDocument();
-    // expect(
-    //   screen.getByTestId("ReviewForm-dateNeeded"),
-    // ).toBeInTheDocument();
+    expect(screen.getByTestId(`${testId}-dateItemServed`)).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-reviewerComments`),
+    ).toBeInTheDocument();
+
     // expect(
     //   screen.getByTestId("ReviewForm-explanation"),
     // ).toBeInTheDocument();
@@ -114,15 +113,15 @@ describe("ReviewForm tests", () => {
     //   screen.getByTestId("ReviewForm-requesterEmail"),
     // ).toBeInTheDocument();
 
-    // const nameInput = screen.getByTestId(`${testId}-professorEmail`);
-    // fireEvent.change(nameInput, { target: { value: "a".repeat(256) } });
-    // fireEvent.click(submitButton);
+    const nameInput = screen.getByTestId(`${testId}-reviewerComments`);
+    fireEvent.change(nameInput, { target: { value: "a".repeat(256) } });
+    fireEvent.click(submitButton);
 
-    // await waitFor(() => {
-    //   expect(
-    //     screen.getByText(/Max length 255 characters for professor email/),
-    //   ).toBeInTheDocument();
-    // });
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Max length 255 characters for reviwer comments./),
+      ).toBeInTheDocument();
+    });
 
     // const nameInput2 = screen.getByTestId(`${testId}-requesterEmail`);
     // fireEvent.change(nameInput2, { target: { value: "a".repeat(256) } });
