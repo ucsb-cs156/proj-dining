@@ -101,6 +101,11 @@ describe("ReviewForm tests", () => {
     const starError = screen.getByText(/Star rating is required./);
     expect(starError).toHaveStyle({ display: "block" });
 
+    const feedbackElements = screen.getAllByText(/Star rating is required./);
+    const feedback = feedbackElements.find((el) => el.tagName === "DIV"); // Form.Control.Feedback renders as div
+
+    expect(feedback).toHaveStyle("display: block");
+
     expect(screen.getByTestId(`${testId}-dateItemServed`)).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-reviewerComments`),
