@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ReviewTable from "main/components/Review/ReviewTable";
 
-// ✅ Named export for testing
 export function extractReview(reviewOrCell) {
   return reviewOrCell?.row?.original ?? reviewOrCell;
 }
 
-// ✅ Named export for testing
 export function useHandlers(navigate, deleteMutation) {
   return {
     handleEdit: (reviewOrCell) => {
