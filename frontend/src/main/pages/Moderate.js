@@ -34,26 +34,25 @@ const Moderate = () => {
         {/* Placeholder: until ReviewsTable component is implemented */}
         {/* Stryker disable all */}
         <Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th>Score</th>
-                    <th>Comments</th>
-                    <th>Date Served</th>
-                    <th>Item Name</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colSpan="6" className="text-center">
-                        Reviews Table Placeholder
-                    </td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Comments</th>
+              <th>Date Served</th>
+              <th>Item Name</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan="6" className="text-center">
+                Reviews Table Placeholder
+              </td>
+            </tr>
+          </tbody>
         </Table>
         {/* Stryker restore all */}
-        
       </div>
     </BasicLayout>
   );
