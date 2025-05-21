@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,6 +43,7 @@ import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
 import jakarta.validation.Valid;
 
+import edu.ucsb.cs156.dining.models.MenuItemReviewAverageRating;
 /**
  * This is a REST controller for Reviews
  */
@@ -215,10 +218,11 @@ public class ReviewController extends ApiController {
     }
     
     @Operation(summary = "Get average rating for each menu item")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/averageRatingPerMenuItem")
-    public List<MenuItemWithRating> getAverageRatingPerMenuItem() {
-    List<MenuItem> items = menuItemRepository.findAll();
-    List<MenuItemWithRating> result = new ArrayList<>();
+    public Iterable<MenuItemReviewAverageRating> getAverageRatingPerMenuItem() {
+    Iterable<MenuItem> items = menuItemRepository.findAll();
+    List<MenuItemReviewAverageRating> result = new ArrayList<>();
 
     for (MenuItem item : items) {
         Iterable<Review> reviews = reviewRepository.findByItemId(item.getId());
@@ -233,9 +237,17 @@ public class ReviewController extends ApiController {
             }
         }
 
-        Double avg = (count == 0) ? null : (sum / (double) count);
+        Double avg;
 
-        MenuItemWithRating entry = new MenuItemWithRating();
+        if (count == 0){
+            avg = null; 
+        }
+        else {
+            avg = (sum / (double) count); 
+
+        }
+        
+        MenuItemReviewAverageRating entry = new MenuItemReviewAverageRating();
         entry.setId(item.getId());
         entry.setName(item.getName());
         entry.setStation(item.getStation());
