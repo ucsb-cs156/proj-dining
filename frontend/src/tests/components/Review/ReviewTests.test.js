@@ -70,66 +70,66 @@ describe("ReviewForm tests", () => {
     await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith(-1));
   });
 
-  // test("that the correct validations are performed", async () => {
-  //   render(
-  //     <QueryClientProvider client={queryClient}>
-  //       <Router>
-  //         <ReviewForm />
-  //       </Router>
-  //     </QueryClientProvider>,
-  //   );
+  test("that the correct validations are performed", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ReviewForm />
+        </Router>
+      </QueryClientProvider>,
+    );
 
-  //   expect(await screen.findByText(/Create/)).toBeInTheDocument();
-  //   const submitButton = screen.getByText(/Create/);
-  //   fireEvent.click(submitButton);
+    expect(await screen.findByText(/Create/)).toBeInTheDocument();
+    const submitButton = screen.getByText(/Create/);
+    fireEvent.click(submitButton);
 
-  //   await screen.findByText(/Requester email is required/);
-  //   expect(screen.getByText(/Professor email is required/)).toBeInTheDocument();
-  //   expect(screen.getByText(/Explanation is required/)).toBeInTheDocument();
-  //   expect(screen.getByText(/Date Requested is required/)).toBeInTheDocument();
-  //   expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
-  //   //expect(screen.getByText(/Done is required/)).toBeInTheDocument();
+    await screen.findByText(/Reviewer Comment is required./);
+    expect(screen.getByText(/Date Item Served is required./)).toBeInTheDocument();
+    expect(screen.getByText(/Star rating is required./)).toBeInTheDocument();
+    // expect(screen.getByText(/Date Requested is required/)).toBeInTheDocument();
+    // expect(screen.getByText(/Date Needed is required/)).toBeInTheDocument();
+    //expect(screen.getByText(/Done is required/)).toBeInTheDocument();
 
-  //   expect(
-  //     screen.getByTestId("ReviewForm-dateRequested"),
-  //   ).toBeInTheDocument();
-  //   expect(
-  //     screen.getByTestId("ReviewForm-dateNeeded"),
-  //   ).toBeInTheDocument();
-  //   expect(
-  //     screen.getByTestId("ReviewForm-explanation"),
-  //   ).toBeInTheDocument();
-  //   expect(
-  //     screen.getByTestId("ReviewForm-done"),
-  //   ).toBeInTheDocument();
-  //   expect(
-  //     screen.getByTestId("ReviewForm-submit"),
-  //   ).toBeInTheDocument();
-  //   expect(
-  //     screen.getByTestId("ReviewForm-professorEmail"),
-  //   ).toBeInTheDocument();
-  //   expect(
-  //     screen.getByTestId("ReviewForm-requesterEmail"),
-  //   ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-dateRequested"),
+    // ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-dateNeeded"),
+    // ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-explanation"),
+    // ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-done"),
+    // ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-submit"),
+    // ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-professorEmail"),
+    // ).toBeInTheDocument();
+    // expect(
+    //   screen.getByTestId("ReviewForm-requesterEmail"),
+    // ).toBeInTheDocument();
 
-  //   const nameInput = screen.getByTestId(`${testId}-professorEmail`);
-  //   fireEvent.change(nameInput, { target: { value: "a".repeat(256) } });
-  //   fireEvent.click(submitButton);
+    // const nameInput = screen.getByTestId(`${testId}-professorEmail`);
+    // fireEvent.change(nameInput, { target: { value: "a".repeat(256) } });
+    // fireEvent.click(submitButton);
 
-  //   await waitFor(() => {
-  //     expect(
-  //       screen.getByText(/Max length 255 characters for professor email/),
-  //     ).toBeInTheDocument();
-  //   });
+    // await waitFor(() => {
+    //   expect(
+    //     screen.getByText(/Max length 255 characters for professor email/),
+    //   ).toBeInTheDocument();
+    // });
 
-  //   const nameInput2 = screen.getByTestId(`${testId}-requesterEmail`);
-  //   fireEvent.change(nameInput2, { target: { value: "a".repeat(256) } });
-  //   fireEvent.click(submitButton);
+    // const nameInput2 = screen.getByTestId(`${testId}-requesterEmail`);
+    // fireEvent.change(nameInput2, { target: { value: "a".repeat(256) } });
+    // fireEvent.click(submitButton);
 
-  //   await waitFor(() => {
-  //     expect(
-  //       screen.getByText(/Max length 255 characters for requester email/),
-  //     ).toBeInTheDocument();
-  //   });
-  // });
+    // await waitFor(() => {
+    //   expect(
+    //     screen.getByText(/Max length 255 characters for requester email/),
+    //   ).toBeInTheDocument();
+    // });
+  });
 });
