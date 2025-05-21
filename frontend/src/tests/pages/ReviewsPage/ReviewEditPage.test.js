@@ -39,4 +39,4 @@ describe("ReviewEditPage tests", () => {
     await screen.findByText("Edit review with id 42");
     expect(screen.getByText("Coming soon!")).toBeInTheDocument();
   });
-}); 
+});
