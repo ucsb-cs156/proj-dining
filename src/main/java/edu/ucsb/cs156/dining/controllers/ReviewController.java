@@ -213,4 +213,23 @@ public class ReviewController extends ApiController {
         Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
         return reviewsList;
     }
+
+
+    @Operation(summary = "Get a review by id")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public Review getReviewById(@Parameter Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+        User current = getCurrentUser().getUser();
+        // Note: Once moderator is implmented, we can change this, and add another check for if user is a moderator
+        // and if the review is moderated
+        if (current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+            throw new AccessDeniedException("Only the user who made this review or an admin can get id");
+        }
+
+
+        return review;
+    }
 }
