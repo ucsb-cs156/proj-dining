@@ -52,9 +52,10 @@ public class RoleInterceptor implements HandlerInterceptor{
                         .collect(Collectors.toSet());
                 if (user.getAdmin()) {
                     revisedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-                }
-                if (user.getModerator()) {
+                    revisedAuthorities.remove(new SimpleGrantedAuthority("ROLE_STUDENT"));
+                } else if (user.getModerator()) {
                     revisedAuthorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+                    revisedAuthorities.remove(new SimpleGrantedAuthority("ROLE_STUDENT"));
                 }
                 Authentication newAuth = new OAuth2AuthenticationToken(principal, revisedAuthorities,
                         (((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()));
