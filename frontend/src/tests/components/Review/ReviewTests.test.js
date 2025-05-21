@@ -27,6 +27,7 @@ describe("ReviewForm tests", () => {
     );
 
     expect(await screen.findByText(/Create/)).toBeInTheDocument();
+    expect(screen.getByTestId("Review-submit")).toBeInTheDocument();
 
     expectedHeaders.forEach((headerText) => {
       const header = screen.getByText(headerText);
@@ -96,6 +97,10 @@ describe("ReviewForm tests", () => {
     expect(
       screen.getByTestId(`${testId}-reviewerComments`),
     ).toBeInTheDocument();
+    expect(screen.getByTestId("Review-itemsStars-4")).toBeInTheDocument();
+
+    const starInput = screen.getByTestId("Review-itemsStars-4");
+    expect(starInput).toHaveAttribute("id", "itemsStars-4");
 
     // expect(
     //   screen.getByTestId("ReviewForm-explanation"),
