@@ -4,13 +4,13 @@ import OurTable, { ButtonColumn } from "main/components/OurTable";
 export default function ReviewTable({
   reviews,
   userOptions = false,
-  moderatorOptions = false,
+  moderatorOptions = false, 
   onEdit,
   onDelete,
   onApprove,
   onReject,
 }) {
-  const testid = "ReviewTable";
+  const testid = "ReviewTable"; 
 
   const columns = [
     {

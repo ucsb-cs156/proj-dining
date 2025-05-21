@@ -1,15 +1,33 @@
 import React from "react";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useBackendMutation } from "main/utils/useBackend";
-import { useBackend } from "main/utils/useBackend";
+import { useBackend, useBackendMutation } from "main/utils/useBackend";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ReviewTable from "main/components/Review/ReviewTable";
 
+// ✅ Named export for testing
+export function extractReview(reviewOrCell) {
+  return reviewOrCell?.row?.original ?? reviewOrCell;
+}
+
+// ✅ Named export for testing
+export function useHandlers(navigate, deleteMutation) {
+  return {
+    handleEdit: (reviewOrCell) => {
+      const review = extractReview(reviewOrCell);
+      navigate(`/reviews/edit/${review.id}`);
+    },
+    handleDelete: (reviewOrCell) => {
+      const review = extractReview(reviewOrCell);
+      deleteMutation.mutate(review);
+    },
+  };
+}
+
+// ✅ Default export for rendering the page
 export default function MyReviewsIndexPage() {
   const navigate = useNavigate();
 
-  // Fetch reviews written by the current user
   const {
     data: reviews,
     error: _error,
@@ -17,10 +35,9 @@ export default function MyReviewsIndexPage() {
   } = useBackend(
     ["/api/reviews/my"],
     { method: "GET", url: "/api/reviews/my" },
-    [],
+    []
   );
 
-  // Backend mutation for deleting a review
   const deleteMutation = useBackendMutation(
     (review) => ({
       url: `/api/reviews/${review.id}`,
@@ -31,17 +48,9 @@ export default function MyReviewsIndexPage() {
         toast("Review deleted");
       },
     },
-    ["/api/reviews/my"], // will revalidate after deletion
   );
 
-  // Handlers
-  const handleEdit = (review) => {
-    navigate(`/reviews/edit/${review.id}`);
-  };
-
-  const handleDelete = async (review) => {
-    deleteMutation.mutate(review);
-  };
+  const { handleEdit, handleDelete } = useHandlers(navigate, deleteMutation);
 
   return (
     <BasicLayout>
@@ -49,7 +58,6 @@ export default function MyReviewsIndexPage() {
         <h1>My Reviews</h1>
         <ReviewTable
           reviews={reviews}
-          currentUser={{}} // not used in this case, safe placeholder
           userOptions={true}
           moderatorOptions={false}
           onEdit={handleEdit}
