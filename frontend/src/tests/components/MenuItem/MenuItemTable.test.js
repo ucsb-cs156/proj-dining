@@ -34,7 +34,7 @@ describe("MenuItemTable Tests", () => {
     ).toHaveTextContent("Station");
     expect(
       screen.getByTestId("MenuItemTable-header-averageRating"),
-    ).toHaveTextContent("Average Rating")
+    ).toHaveTextContent("Average Rating");
     expect(
       screen.queryByTestId("MenuItemTable-row-cell-0-col-name"),
     ).not.toBeInTheDocument();
