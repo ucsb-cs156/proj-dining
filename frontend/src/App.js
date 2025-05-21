@@ -9,6 +9,7 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
+import ReviewsEditPage from "main/pages/Reviews/ReviewsEditPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
@@ -38,6 +39,11 @@ function App() {
               exact
               path="/reviews/post/:id"
               element={<ReviewsCreatePage />}
+            />
+            <Route
+              exact
+              path="/reviews/edit/:id"
+              element={<ReviewsEditPage />}
             />
           </>
         )}
