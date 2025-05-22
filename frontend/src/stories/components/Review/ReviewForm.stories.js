@@ -17,7 +17,7 @@ Empty.args = {
   Reviews: [],
 };
 
-export const OneReview  = Template.bind({});
+export const OneReview = Template.bind({});
 
 OneReview.args = {
   Reviews: reviewFixtures.oneReview,
