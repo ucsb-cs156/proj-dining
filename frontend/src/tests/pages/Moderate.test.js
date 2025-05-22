@@ -27,7 +27,7 @@ describe("ModeratePage tests", () => {
 
   test("renders correctly for admin user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, email: "admin@ucsb.edu", admin: true },
+      user: { id: 1, email: "admin@ucsb.edu", admin: true, moderator: false },
       roles: [{ authority: "ROLE_ADMIN" }],
     });
     axiosMock
@@ -46,7 +46,12 @@ describe("ModeratePage tests", () => {
 
   test("renders correctly for moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, email: "moderator@ucsb.edu", moderator: true },
+      user: {
+        id: 2,
+        email: "moderator@ucsb.edu",
+        admin: false,
+        moderator: true,
+      },
       roles: [{ authority: "ROLE_MODERATOR" }],
     });
     axiosMock
@@ -55,17 +60,22 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Single assertion inside waitFor
-    await screen.findByText("Moderation Page");
-    // Additional assertion outside waitFor
-    expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
-    ).toBeInTheDocument();
+    // Wait for the page to render and stabilize with the expected content for a moderator
+    await waitFor(() => {
+      expect(screen.getByText("Moderation Page")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "This page is accessible only to admins. (Placeholder)",
+        ),
+      ).toBeInTheDocument();
+      // This is the crucial check: "Admin" text should not be present for a moderator
+      expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+    });
   });
 
   test("redirects non-admin user to homepage", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 3, email: "user@ucsb.edu", admin: false },
+      user: { id: 3, email: "user@ucsb.edu", admin: false, moderator: false },
       roles: [{ authority: "ROLE_USER" }],
     });
     axiosMock
