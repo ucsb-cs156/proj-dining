@@ -8,7 +8,7 @@ export default function EditReviewPage() {
     <BasicLayout>
       <div className="pt-2">
         <h1>Edit review with id {id}</h1>
-        <p>Coming soon! This page will need to be added as a route in App.js.</p>
+        <p>Coming soon!</p>
       </div>
     </BasicLayout>
   );
