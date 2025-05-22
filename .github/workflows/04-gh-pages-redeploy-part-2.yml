@@ -143,12 +143,17 @@ jobs:
         check_artifacts: true
         if_no_artifact_found: error
     - name: b-chromatic Deploy chromatic (Main) 🚀
-      uses: JamesIves/github-pages-deploy-action@v4
+      if: always() # always upload artifacts, even if tests fail
+      uses: Wandalen/wretry.action@master
       with:
-        branch: gh-pages # The branch the action should deploy to.
-        folder:  ${{ env.chromatic_dest}} # The folder where the files come from
-        clean: true # Automatically remove deleted files from the deploy branch
-        target-folder: chromatic # The folder that we serve our files from
+        action: JamesIves/github-pages-deploy-action@v4
+        attempt_limit: 3
+        attempt_delay: 5000  
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder:  ${{ env.chromatic_dest}} # The folder where the files come from
+          clean: true # Automatically remove deleted files from the deploy branch
+          target-folder: chromatic # The folder that we serve our files from
 
     - name: c-jacoco Make directory in case it doesn't exist
       run: mkdir -p ${{ env.jacoco_dest }}

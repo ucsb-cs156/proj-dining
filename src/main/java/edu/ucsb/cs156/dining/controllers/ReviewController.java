@@ -117,6 +117,13 @@ public class ReviewController extends ApiController {
         MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(
                 () -> new EntityNotFoundException(MenuItem.class, itemId)
         );
+
+        if (review.getReviewerComments() == null) {
+            review.setStatus(ModerationStatus.APPROVED);
+        } else {
+            review.setStatus(ModerationStatus.AWAITING_REVIEW);
+        }
+        
         review.setItem(reviewedItem);
         CurrentUser user = getCurrentUser();
         review.setReviewer(user.getUser());
@@ -160,13 +167,14 @@ public class ReviewController extends ApiController {
 
         if (incoming.getReviewerComments() != null &&!incoming.getReviewerComments().trim().isEmpty()) {
             oldReview.setReviewerComments(incoming.getReviewerComments());
+            // oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
         }else{
             oldReview.setReviewerComments(null);
+            // oldReview.setStatus(ModerationStatus.APPROVED);
         }
 
         oldReview.setDateItemServed(incoming.getDateItemServed());
 
-        oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
         oldReview.setModeratorComments(null);
 
         Review review = reviewRepository.save(oldReview);
