@@ -51,7 +51,7 @@ describe("ModeratePage tests", () => {
 
   test("renders correctly for admin user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, admin: true },
+      user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
     });
     axiosMock
@@ -69,7 +69,7 @@ describe("ModeratePage tests", () => {
 
   test("redirects non-admin user to homepage", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, admin: false },
+      user: { id: 2, email: "user@ucsb.edu", admin: false },
       roles: [{ authority: "ROLE_USER" }],
     });
     axiosMock
@@ -101,7 +101,7 @@ describe("ModeratePage tests", () => {
   test("fetches and displays alias proposals", async () => {
     const proposals = aliasFixtures.threeAlias;
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, admin: true },
+      user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
     });
     axiosMock
@@ -118,7 +118,7 @@ describe("ModeratePage tests", () => {
 
   test("useBackend called with correct args", () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, admin: true },
+      user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
     });
     axiosMock
@@ -135,7 +135,7 @@ describe("ModeratePage tests", () => {
 
   test("shows error toast when rejecting alias fails", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, admin: true },
+      user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
     });
     axiosMock
