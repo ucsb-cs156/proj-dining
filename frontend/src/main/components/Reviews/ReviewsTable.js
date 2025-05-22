@@ -38,6 +38,7 @@ export default function ReviewsTable({
     {
       Header: "Score",
       accessor: "itemsStars",
+      Cell: ({ value }) => "⭐".repeat(value),
     },
     {
       Header: "Comments",
@@ -46,6 +47,9 @@ export default function ReviewsTable({
     {
       Header: "Date Served",
       accessor: "dateItemServed",
+      Cell: ({ value }) => (
+        <span>{new Date(value).toLocaleDateString("en-US")}</span>
+      ),
     },
   ];
 

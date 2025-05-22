@@ -162,4 +162,30 @@ describe("ReviewsTable tests", () => {
     fireEvent.click(rejectButton);
     expect(rejectCallback).toHaveBeenCalledTimes(1);
   });
+
+  test("Renders stars icons and formatted date correctly", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+
+    const scoreCell = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-itemsStars`,
+    );
+    expect(scoreCell).toHaveTextContent("⭐⭐⭐⭐");
+
+    const review = ReviewFixtures.threeReviews[0];
+    const formattedDate = new Date(review.dateItemServed).toLocaleDateString(
+      "en-US",
+    );
+    const dateCell = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-dateItemServed`,
+    );
+    expect(dateCell).toHaveTextContent(formattedDate);
+  });
 });
