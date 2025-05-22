@@ -195,6 +195,7 @@ describe("CreateReviewPage branch coverage", () => {
   });
 
   it("uses itemId from form when no id param", async () => {
+    // eslint-disable-next-line
     const { navigateMock } = renderPage();
 
     axios.post.mockResolvedValue({
