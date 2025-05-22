@@ -22,7 +22,6 @@ export function useHandlers(navigate, deleteMutation) {
   };
 }
 
-// ✅ Default export for rendering the page
 export default function MyReviewsIndexPage() {
   const navigate = useNavigate();
 
@@ -31,15 +30,18 @@ export default function MyReviewsIndexPage() {
     error: _error,
     status: _status,
   } = useBackend(
-    ["/api/reviews/my"],
-    { method: "GET", url: "/api/reviews/my" },
+    ["/api/reviews/userReviews"],
+    { method: "GET", url: "/api/reviews/userReviews" },
     [],
   );
 
   const deleteMutation = useBackendMutation(
     (review) => ({
-      url: `/api/reviews/${review.id}`,
+      url: `/api/reviews/reviewer`,
       method: "DELETE",
+      params: {
+        id: review.id
+      }
     }),
     {
       onSuccess: () => {
