@@ -17,13 +17,13 @@ Empty.args = {
   Reviews: [],
 };
 
-export const oneReview = Template.bind({});
+export const OneReview  = Template.bind({});
 
-oneReview.args = {
+OneReview.args = {
   Reviews: reviewFixtures.oneReview,
 };
 
-export const threeReviews = Template.bind({});
-threeReviews.args = {
+export const ThreeReviews = Template.bind({});
+ThreeReviews.args = {
   Reviews: reviewFixtures.threeReviews,
 };
