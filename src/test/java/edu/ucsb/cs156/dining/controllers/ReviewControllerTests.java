@@ -1043,6 +1043,33 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals(jsonReview, responseJson);
         }
 
+    @WithMockUser(roles = {"USER"})
+    @Test
+    public void user_cannot_get_someone_elses_review() throws Exception {
+        // Arrange
+        User otherUser = User.builder().id(999L).build(); // Different from current mock user
+        MenuItem menuItem = MenuItem.builder().id(1L).build();
+        
+        Review review = Review.builder()
+            .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+            .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+            .reviewer(otherUser)
+            .reviewerComments("Great food!")
+            .itemsStars(4L)
+            .status(ModerationStatus.APPROVED)
+            .item(menuItem)
+            .id(1L)
+            .build();
+    
+        when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review));
+    
+        // Act & Assert
+        mockMvc.perform(
+            get("/api/reviews/get?id=1")
+                .with(csrf()))
+            .andExpect(status().isForbidden());
+    }
 
         @WithMockUser(roles = {"USER"})
         @Test
