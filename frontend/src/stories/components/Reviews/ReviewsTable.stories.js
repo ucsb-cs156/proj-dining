@@ -13,21 +13,21 @@ const Template = (args) => {
 
 export const RegView = Template.bind({});
 RegView.args = {
-  reviews: ReviewFixtures.oneReview,
+  reviews: ReviewFixtures.threeReviews,
   userOptions: false,
   moderatorOptions: false,
 };
 
 export const UserView = Template.bind({});
 UserView.args = {
-  reviews: ReviewFixtures.oneReview,
+  reviews: ReviewFixtures.threeReviews,
   userOptions: true,
   moderatorOptions: false,
 };
 
 export const ModView = Template.bind({});
 ModView.args = {
-  reviews: ReviewFixtures.oneReview,
+  reviews: ReviewFixtures.threeReviews,
   userOptions: false,
   moderatorOptions: true,
 };
