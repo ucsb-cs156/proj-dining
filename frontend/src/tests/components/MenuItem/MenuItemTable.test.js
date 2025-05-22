@@ -2,12 +2,19 @@ import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import MenuItemTable from "../../../main/components/MenuItem/MenuItemTable";
 import { menuItemFixtures } from "../../../fixtures/menuItemFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
+import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import {
   apiCurrentUserFixtures,
   currentUserFixtures,
 } from "../../../fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
+
+const mockedNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockedNavigate,
+}));
 
 describe("MenuItemTable Tests", () => {
   let axiosMock;
@@ -20,10 +27,13 @@ describe("MenuItemTable Tests", () => {
   });
   test("Headers appear and empty table renders correctly without buttons", async () => {
     render(
-      <MenuItemTable
-        menuItems={[]}
-        currentUser={currentUserFixtures.notLoggedIn}
-      />,
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={[]}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+        ,
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId("MenuItemTable-header-name")).toHaveTextContent(
@@ -45,10 +55,13 @@ describe("MenuItemTable Tests", () => {
   test("Renders 5 Menu Items Correctly correctly without buttons", async () => {
     let fiveMenuItems = menuItemFixtures.fiveMenuItems;
     render(
-      <MenuItemTable
-        menuItems={fiveMenuItems}
-        currentUser={currentUserFixtures.notLoggedIn}
-      />,
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={fiveMenuItems}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+        ,
+      </MemoryRouter>,
     );
 
     for (let i = 0; i < fiveMenuItems.length; i++) {
@@ -73,10 +86,13 @@ describe("MenuItemTable Tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
     render(
-      <MenuItemTable
-        menuItems={menuItemFixtures.oneMenuItem}
-        currentUser={currentUserFixtures.userOnly}
-      />,
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={menuItemFixtures.oneMenuItem}
+          currentUser={currentUserFixtures.userOnly}
+        />
+        ,
+      </MemoryRouter>,
     );
     let button = screen.getByTestId(
       "MenuItemTable-cell-row-0-col-Review Item-button",
@@ -90,5 +106,16 @@ describe("MenuItemTable Tests", () => {
       expect(mockAlert).toBeCalledTimes(1);
     });
     expect(mockAlert).toBeCalledWith("Reviews coming soon!");
+
+    let allButton = screen.getByTestId(
+      "MenuItemTable-cell-row-0-col-All Reviews-button",
+    );
+    expect(allButton).toBeInTheDocument();
+    expect(allButton).toHaveClass("btn-warning");
+
+    fireEvent.click(allButton);
+    await waitFor(() =>
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/undefined"),
+    );
   });
 });
