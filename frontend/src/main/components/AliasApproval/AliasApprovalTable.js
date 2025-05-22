@@ -24,7 +24,6 @@ export default function AliasApprovalTable({ commons, onApprove, onReject }) {
           data-testid={`approve-button-${row.original.id}`}
           onClick={() => onApprove(row.original)}
           disabled={row.original.status !== "AWAITING_REVIEW"}
-          className="px-2 py-1 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
         >
           Approve
         </button>
@@ -38,7 +37,6 @@ export default function AliasApprovalTable({ commons, onApprove, onReject }) {
           data-testid={`reject-button-${row.original.id}`}
           onClick={() => onReject(row.original)}
           disabled={row.original.status !== "AWAITING_REVIEW"}
-          className="px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
         >
           Reject
         </button>
@@ -46,6 +44,9 @@ export default function AliasApprovalTable({ commons, onApprove, onReject }) {
     },
   ];
 
+  if (!commons || commons.length === 0) {
+    return <div>No data available</div>;
+  }
   return (
     <OurTable testid="AliasApprovalTable" columns={columns} data={commons} />
   );
