@@ -22,6 +22,7 @@ describe("AppNavbar tests", () => {
     );
 
     await screen.findByText("Welcome, pconrad.cis@gmail.com");
+    expect(screen.queryByText("Moderate")).not.toBeInTheDocument();
   });
 
   test("renders correctly for admin user", async () => {
@@ -39,6 +40,8 @@ describe("AppNavbar tests", () => {
     await screen.findByText("Welcome, phtcon@ucsb.edu");
     const adminMenu = screen.getByTestId("appnavbar-admin-dropdown");
     expect(adminMenu).toBeInTheDocument();
+    const moderatorMenu = screen.getByText("Moderate");
+    expect(moderatorMenu).toBeInTheDocument();
   });
 
   test("renders correctly for moderator user", async () => {
