@@ -1,10 +1,15 @@
 import OurTable, { ButtonColumn } from "../OurTable";
 import { hasRole } from "../../utils/currentUser";
+import { useNavigate } from "react-router-dom";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
+  const navigate = useNavigate();
   const reviewCallback = async (_cell) => {
     alert("Reviews coming soon!");
+  };
+  const viewCallback = async (_cell) => {
+    navigate(`/reviews/${_cell.row.original.id}`);
   };
   const columns = [
     {
@@ -20,6 +25,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     columns.push(
       ButtonColumn("Review Item", "warning", reviewCallback, testid),
     );
+    columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
   return <OurTable columns={columns} data={menuItems} testid={testid} />;
