@@ -40,6 +40,9 @@ public class CurrentUserServiceImpl extends CurrentUserService {
   @Value("${app.admin.emails}")
   final private List<String> adminEmails = new ArrayList<String>();
 
+  @Value("${app.moderator.emails}")
+  final private List<String> moderatorEmails = new ArrayList<String>();
+
   /**
    * This method returns the current user as a User object.
    * @return the current user
@@ -86,8 +89,14 @@ public class CurrentUserServiceImpl extends CurrentUserService {
         u.setAdmin(true);
         userRepository.save(u);
       }
+      if (moderatorEmails.contains(email) && !u.getModerator()) {
+        u.setModerator(true);
+        userRepository.save(u);
+      }
       return u;
+
     }
+    
 
     User u = User.builder()
         .googleSub(googleSub)
@@ -100,6 +109,7 @@ public class CurrentUserServiceImpl extends CurrentUserService {
         .locale(locale)
         .hostedDomain(hostedDomain)
         .admin(adminEmails.contains(email))
+        .moderator(moderatorEmails.contains(email))
         .build();
     userRepository.save(u);
     return u;
