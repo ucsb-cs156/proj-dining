@@ -2,25 +2,28 @@ import React from "react";
 import OurTable, { ButtonColumn } from "../OurTable";
 import { useNavigate } from "react-router-dom";
 import { useBackendMutation } from "main/utils/useBackend";
-import {
-  cellToAxiosParamsDelete,
-  onDeleteSuccess,
-} from "main/utils/Reviews";
+import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/utils/Reviews";
 
-export default function ReviewsTable({ reviews, userOptions, moderatorOptions, approveCallback, rejectCallback }) {
-    const navigate = useNavigate();
+export default function ReviewsTable({
+  reviews,
+  userOptions,
+  moderatorOptions,
+  approveCallback,
+  rejectCallback,
+}) {
+  const navigate = useNavigate();
 
-    const editCallback = (cell) => {
-      navigate(`/reviews/edit/${cell.row.original.id}`);
-    };
+  const editCallback = (cell) => {
+    navigate(`/reviews/edit/${cell.row.original.id}`);
+  };
 
-    // Stryker disable all
-    const deleteMutation = useBackendMutation(
-        cellToAxiosParamsDelete,
-        { onSuccess: onDeleteSuccess },
-        ["/api/reviews/all"],
-    );
-    // Stryker restore all
+  // Stryker disable all
+  const deleteMutation = useBackendMutation(
+    cellToAxiosParamsDelete,
+    { onSuccess: onDeleteSuccess },
+    ["/api/reviews/all"],
+  );
+  // Stryker restore all
 
   // Stryker disable next-line all
   const deleteCallback = async (cell) => {
@@ -48,18 +51,16 @@ export default function ReviewsTable({ reviews, userOptions, moderatorOptions, a
 
   if (userOptions) {
     columns.push({
-        Header: "Item Name",
-        accessor: "itemName",
+      Header: "Item Name",
+      accessor: "itemName",
     });
-    columns.push(
-      ButtonColumn("Edit", "primary", editCallback, "Reviewstable"),
-    );
+    columns.push(ButtonColumn("Edit", "primary", editCallback, "Reviewstable"));
     columns.push(
       ButtonColumn("Delete", "danger", deleteCallback, "Reviewstable"),
     );
   }
 
-if (moderatorOptions) {
+  if (moderatorOptions) {
     columns.push(
       ButtonColumn("Approve", "primary", approveCallback, "Reviewstable"),
     );
@@ -68,7 +69,5 @@ if (moderatorOptions) {
     );
   }
 
-  return (
-    <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />
-  );
+  return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
 }

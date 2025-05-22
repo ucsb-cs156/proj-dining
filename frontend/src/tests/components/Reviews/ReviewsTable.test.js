@@ -17,9 +17,14 @@ describe("ReviewsTable tests", () => {
 
   test("Has the base column headers and content", () => {
     render(
-        <QueryClientProvider client={queryClient}>
-        <ReviewsTable reviews={ReviewFixtures.threeReviews} userOptions={false} moderatorOptions={false} />,
-        </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+        />
+        ,
+      </QueryClientProvider>,
     );
 
     expect(screen.getByText("Item Id")).toBeInTheDocument();
@@ -27,10 +32,18 @@ describe("ReviewsTable tests", () => {
     expect(screen.getByText("Comments")).toBeInTheDocument();
     expect(screen.getByText("Date Served")).toBeInTheDocument();
 
-    expect(screen.getByTestId(`Reviewstable-cell-row-0-col-itemId`)).toBeInTheDocument();
-    expect(screen.getByTestId(`Reviewstable-cell-row-0-col-itemsStars`)).toBeInTheDocument();
-    expect(screen.getByTestId(`Reviewstable-cell-row-0-col-reviewerComments`)).toBeInTheDocument();
-    expect(screen.getByTestId(`Reviewstable-cell-row-0-col-dateItemServed`)).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-itemId`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-itemsStars`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-reviewerComments`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-dateItemServed`),
+    ).toBeInTheDocument();
 
     const editButton = screen.queryByTestId(
       `Reviewstable-cell-row-0-col-Edit-button`,
@@ -53,12 +66,16 @@ describe("ReviewsTable tests", () => {
     expect(rejectButton).not.toBeInTheDocument();
   });
 
-
   test("Regular user buttons appear and work properly", async () => {
     render(
-        <QueryClientProvider client={queryClient}>
-        <ReviewsTable reviews={ReviewFixtures.threeReviews} userOptions={true} moderatorOptions={false} />,
-        </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={true}
+          moderatorOptions={false}
+        />
+        ,
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
@@ -68,7 +85,9 @@ describe("ReviewsTable tests", () => {
     });
 
     expect(screen.getByText("Item Name")).toBeInTheDocument();
-    expect(screen.getByTestId("Reviewstable-cell-row-0-col-itemName")).toHaveTextContent("Make Your Own Waffle (v)");
+    expect(
+      screen.getByTestId("Reviewstable-cell-row-0-col-itemName"),
+    ).toHaveTextContent("Make Your Own Waffle (v)");
 
     //edit button
     const editButton = screen.getByTestId(
@@ -101,15 +120,20 @@ describe("ReviewsTable tests", () => {
     expect(axiosMock.history.delete[0].params).toEqual({ itemId: 7 });
   });
 
-
   test("Moderator buttons appear and work properly", async () => {
     const approveCallback = jest.fn();
     const rejectCallback = jest.fn();
     render(
-        <QueryClientProvider client={queryClient}>
-        <ReviewsTable reviews={ReviewFixtures.threeReviews} userOptions={false} moderatorOptions={true} 
-          approveCallback={approveCallback} rejectCallback={rejectCallback}/>,
-        </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+          approveCallback={approveCallback}
+          rejectCallback={rejectCallback}
+        />
+        ,
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
@@ -138,5 +162,4 @@ describe("ReviewsTable tests", () => {
     fireEvent.click(rejectButton);
     expect(rejectCallback).toHaveBeenCalledTimes(1);
   });
-  
 });

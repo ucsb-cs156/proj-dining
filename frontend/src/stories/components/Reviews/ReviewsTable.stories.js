@@ -13,21 +13,21 @@ const Template = (args) => {
 
 export const reg = Template.bind({});
 reg.args = {
-    reviews: ReviewFixtures.oneReview,
-    userOptions: false,
-    moderatorOptions: false
+  reviews: ReviewFixtures.oneReview,
+  userOptions: false,
+  moderatorOptions: false,
 };
 
 export const user = Template.bind({});
 user.args = {
-    reviews: ReviewFixtures.oneReview,
-    userOptions: true,
-    moderatorOptions: false
+  reviews: ReviewFixtures.oneReview,
+  userOptions: true,
+  moderatorOptions: false,
 };
 
 export const moderator = Template.bind({});
 moderator.args = {
-    reviews: ReviewFixtures.oneReview,
-    userOptions: false,
-    moderatorOptions: true
+  reviews: ReviewFixtures.oneReview,
+  userOptions: false,
+  moderatorOptions: true,
 };
