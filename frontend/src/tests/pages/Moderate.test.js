@@ -44,9 +44,11 @@ describe("ModeratePage tests", () => {
       data: aliasFixtures.threeAlias,
       isLoading: false,
     });
-    useBackendMutation.mockImplementation((_, { onSuccess, onError }) => ({
-      mutate: () => onError(new Error("Request failed with status code 500")),
-    }));
+    useBackendMutation.mockImplementation(
+      (_, { onSuccess: _onSuccess, onError }) => ({
+        mutate: () => onError(new Error("Request failed with status code 500")),
+      }),
+    );
   });
 
   test("renders correctly for admin user", async () => {
