@@ -1,6 +1,6 @@
 import React from "react";
 import ReviewForm from "main/components/Review/ReviewForm";
-import { ReviewFixtures } from "fixtures/reviewFixtures";
+import { reviewFixtures } from "fixtures/reviewFixtures";
 
 export default {
   title: "components/Review/ReviewForm",
@@ -20,10 +20,10 @@ Empty.args = {
 export const oneReview = Template.bind({});
 
 oneReview.args = {
-  Reviews: ReviewFixtures.oneReview,
+  Reviews: reviewFixtures.oneReview,
 };
 
 export const threeReviews = Template.bind({});
 threeReviews.args = {
-  Reviews: ReviewFixtures.threeReviews,
+  Reviews: reviewFixtures.threeReviews,
 };
