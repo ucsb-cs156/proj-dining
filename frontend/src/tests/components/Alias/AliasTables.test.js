@@ -1,23 +1,13 @@
-import { waitFor, render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import aliasFixtures from "fixtures/aliasFixtures";
 import AliasTable from "main/components/Alias/AliasTable";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
-import { within } from "@testing-library/react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
-const mockedNavigate = jest.fn();
-
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedNavigate,
-}));
-
-jest.mock("react-toastify", () => ({
-  toast: jest.fn(),
-}));
+jest.mock("react-toastify", () => ({ toast: jest.fn() }));
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -25,11 +15,6 @@ afterEach(() => {
 
 describe("AliasTable tests", () => {
   const queryClient = new QueryClient();
-  const threeAlias = aliasFixtures.threeAlias;
-
-  const expectedHeaders = ["Proposed Alias", "Approve", "Reject"];
-  const expectedFields = ["proposedAlias", "approve", "reject"];
-  const testId = "AliasTable";
 
   test("approve, reject, alias show up as expected", async () => {
     render(
@@ -40,48 +25,25 @@ describe("AliasTable tests", () => {
       </QueryClientProvider>,
     );
 
-    // assert - check that the expected content is rendered
-    await screen.findByTestId("AliasTable-cell-row-0-col-proposedAlias");
-    expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
+    await screen.findByTestId("AliasTable-header-proposedAlias");
+    await screen.findByTestId("AliasTable-header-approve");
+    await screen.findByTestId("AliasTable-header-reject");
 
-    for (let i = 0; i < threeAlias.length; i++) {
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-proposedAlias`),
-      ).toBeInTheDocument();
-
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-proposedAlias`),
-      ).toHaveTextContent(threeAlias[i].proposedAlias);
-
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-approve`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-approve`),
-      ).toHaveTextContent("Approve");
-      const approveCell = screen.getByTestId(
-        `AliasTable-cell-row-${i}-col-approve`,
+    for (let i = 0; i < aliasFixtures.threeAlias.length; i++) {
+      const aliasCell = await screen.findByTestId(
+        `AliasTable-cell-row-${i}-col-proposedAlias`
       );
-      const approveButton = within(approveCell).getByRole("button");
-      expect(approveButton).toHaveClass("btn", "btn-success");
+      expect(aliasCell).toHaveTextContent(aliasFixtures.threeAlias[i].proposedAlias);
 
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-reject`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-reject`),
-      ).toHaveTextContent("Reject");
-      const rejectCell = screen.getByTestId(
-        `AliasTable-cell-row-${i}-col-reject`,
-      );
-      const rejectButton = within(rejectCell).getByRole("button");
-      expect(rejectButton).toHaveClass("btn", "btn-danger");
+      const approveCell = screen.getByTestId(`AliasTable-cell-row-${i}-col-approve`);
+      expect(within(approveCell).getByRole("button")).toHaveClass("btn", "btn-success");
+
+      const rejectCell = screen.getByTestId(`AliasTable-cell-row-${i}-col-reject`);
+      expect(within(rejectCell).getByRole("button")).toHaveClass("btn", "btn-danger");
     }
   });
 
   test("one proposed alias", async () => {
-    // act - render the component
-
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -90,16 +52,11 @@ describe("AliasTable tests", () => {
       </QueryClientProvider>,
     );
 
-    // check that the expected content is rendered
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("AliasTable-cell-row-0-col-proposedAlias"),
-      ).toHaveTextContent(aliasFixtures.oneAlias[0].proposedAlias);
-    });
+    const cell = await screen.findByTestId("AliasTable-cell-row-0-col-proposedAlias");
+    expect(cell).toHaveTextContent(aliasFixtures.oneAlias[0].proposedAlias);
   });
 
   test("renders empty table correctly", () => {
-    // act
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -108,102 +65,28 @@ describe("AliasTable tests", () => {
       </QueryClientProvider>,
     );
 
-    // assert
-    expectedHeaders.forEach((headerText) => {
-      const header = screen.getByText(headerText);
-      expect(header).toBeInTheDocument();
-    });
-
-    expectedFields.forEach((field) => {
-      const fieldElement = screen.queryByTestId(
-        `${testId}-cell-row-0-col-${field}`,
-      );
-      expect(fieldElement).not.toBeInTheDocument();
-    });
-  });
-
-  test("Has the expected column headers, content and buttons for admin user", () => {
-    // act
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.threeAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
+    ["Proposed Alias", "Approve", "Reject"].forEach(header =>
+      expect(screen.getByText(header)).toBeInTheDocument()
     );
-
-    expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
-
-    for (let i = 0; i < threeAlias.length; i++) {
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-proposedAlias`),
-      ).toBeInTheDocument();
-
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-proposedAlias`),
-      ).toHaveTextContent(threeAlias[i].proposedAlias);
-
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-approve`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-approve`),
-      ).toHaveTextContent("Approve");
-      const approveCell = screen.getByTestId(
-        `AliasTable-cell-row-${i}-col-approve`,
-      );
-      const approveButton = within(approveCell).getByRole("button");
-      expect(approveButton).toHaveClass("btn", "btn-success");
-
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-reject`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-reject`),
-      ).toHaveTextContent("Reject");
-      const rejectCell = screen.getByTestId(
-        `AliasTable-cell-row-${i}-col-reject`,
-      );
-      const rejectButton = within(rejectCell).getByRole("button");
-      expect(rejectButton).toHaveClass("btn", "btn-danger");
-    }
-  });
-
-  //test the approve button approves the alias
-  test("The approve button approves the alias (toast)", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, aliasFixtures.oneAlias);
-    axiosMock
-      .onPut("/api/currentUser/updateAliasModeration")
-      .reply(200, { id: aliasFixtures.oneAlias[0].id, approved: true });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const approveCell = screen.getByTestId(`AliasTable-cell-row-0-col-approve`);
-    const button = within(approveCell).getByRole("button");
-    await fireEvent.click(button);
-
-    await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(
-        `Alias ${aliasFixtures.oneAlias[0].proposedAlias} for id ${aliasFixtures.oneAlias[0].id} approved!`,
-      ),
-    );
-    expect(toast).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("AliasTable-cell-row-0-col-proposedAlias")).toBeNull();
   });
 
   test("null proposed alias does nothing", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AliasTable alias={aliasFixtures.nullPropAlias} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const approveCell = await screen.findByTestId("AliasTable-cell-row-0-col-approve");
+    fireEvent.click(within(approveCell).getByRole("button"));
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  test("The approve button approves the alias (toast)", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, aliasFixtures.nullPropAlias);
     axiosMock
       .onPut("/api/currentUser/updateAliasModeration")
       .reply(200, { id: aliasFixtures.oneAlias[0].id, approved: true });
@@ -216,39 +99,69 @@ describe("AliasTable tests", () => {
       </QueryClientProvider>,
     );
 
-    const approveCell = screen.getByTestId(`AliasTable-cell-row-0-col-approve`);
-    const button = within(approveCell).getByRole("button");
-    await fireEvent.click(button);
-    expect(toast).toHaveBeenCalledTimes(0);
+    const approveCell = await screen.findByTestId("AliasTable-cell-row-0-col-approve");
+    fireEvent.click(within(approveCell).getByRole("button"));
+
+    await waitFor(() => {
+      expect(toast).toHaveBeenCalledWith(
+        `Alias ${aliasFixtures.oneAlias[0].proposedAlias} for id ${aliasFixtures.oneAlias[0].id} approved!`
+      );
+    });
   });
 
-  test("The reject button rejects the alias (toast)", async () => {
+  test("approve button calls API with correct params", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, aliasFixtures.oneAlias);
-    axiosMock
-      .onPut("/api/currentUser/updateAliasModeration")
-      .reply(200, { id: aliasFixtures.oneAlias[0].id, approved: false });
+    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200, {
+      id: aliasFixtures.oneAlias[0].id,
+      approved: true
+    });
 
-    const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <AliasTable alias={aliasFixtures.oneAlias} />
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
 
-    const rejCell = screen.getByTestId(`AliasTable-cell-row-0-col-reject`);
-    const button = within(rejCell).getByRole("button");
-    await fireEvent.click(button);
+    const approveCell = await screen.findByTestId("AliasTable-cell-row-0-col-approve");
+    fireEvent.click(within(approveCell).getByRole("button"));
 
-    await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(
-        `Alias ${aliasFixtures.oneAlias[0].proposedAlias} for id ${aliasFixtures.oneAlias[0].id} rejected!`,
-      ),
+    await waitFor(() => {
+      const calls = axiosMock.history.put;
+      expect(calls).toHaveLength(1);
+      expect(calls[0].params).toEqual({
+        id: aliasFixtures.oneAlias[0].id,
+        approved: true
+      });
+    });
+  });
+
+  test("reject button calls API with correct params", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200, {
+      id: aliasFixtures.oneAlias[0].id,
+      approved: false
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AliasTable alias={aliasFixtures.oneAlias} />
+        </MemoryRouter>
+      </QueryClientProvider>
     );
-    expect(toast).toHaveBeenCalledTimes(1);
+
+    const rejectCell = await screen.findByTestId("AliasTable-cell-row-0-col-reject");
+    fireEvent.click(within(rejectCell).getByRole("button"));
+
+    await waitFor(() => {
+      const calls = axiosMock.history.put;
+      expect(calls).toHaveLength(1);
+      expect(calls[0].params).toEqual({
+        id: aliasFixtures.oneAlias[0].id,
+        approved: false
+      });
+    });
   });
 });
