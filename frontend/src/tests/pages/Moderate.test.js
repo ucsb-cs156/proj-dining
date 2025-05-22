@@ -60,17 +60,16 @@ describe("ModeratePage tests", () => {
 
     renderPage();
 
-    // Wait for the page to render and stabilize with the expected content for a moderator
     await waitFor(() => {
-      expect(screen.getByText("Moderation Page")).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          "This page is accessible only to admins. (Placeholder)",
-        ),
-      ).toBeInTheDocument();
-      // This is the crucial check: "Admin" text should not be present for a moderator
       expect(screen.queryByText("Admin")).not.toBeInTheDocument();
     });
+
+    // Single assertion inside waitFor
+    await screen.findByText("Moderation Page");
+    // Additional assertion outside waitFor
+    expect(
+      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+    ).toBeInTheDocument();
   });
 
   test("redirects non-admin user to homepage", async () => {
