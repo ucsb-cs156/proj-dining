@@ -150,7 +150,7 @@ describe("CreateReviewPage branch coverage", () => {
   });
 
   it("submits successfully using fetched item name and includes dateServed", async () => {
-    // Mock item fetch - this needs to be set up BEFORE rendering
+    // Mock item fetch BEFORE rendering
     axios.get.mockResolvedValue({ data: { name: "Fetched Dish" } });
 
     const { navigateMock } = renderPage({
@@ -167,7 +167,7 @@ describe("CreateReviewPage branch coverage", () => {
       },
     });
 
-    // Wait for the item to load (following the pattern of the working test)
+    // Wait for the item to load
     await waitFor(() => {
       expect(screen.getByTestId("item-name").textContent).toBe("Fetched Dish");
     });
@@ -205,7 +205,7 @@ describe("CreateReviewPage branch coverage", () => {
       },
     });
 
-    // Mock the form to return itemId in formData (need to update the mock)
+    // Mock the form to return itemId in form data (need to update the mock)
     const submitButton = screen.getByTestId("submit-button");
     // Simulate clicking with itemId in form data
     fireEvent.click(submitButton);
@@ -444,5 +444,212 @@ describe("CreateReviewPage branch coverage", () => {
     await waitFor(() => expect(axios.post).toHaveBeenCalled());
 
     expect(toast.error).toHaveBeenCalledWith("Error creating review.");
+  });
+});
+
+// ----- MUTATION KILLING TESTS -----
+describe("CreateReviewPage mutation killing tests", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    axios.post.mockReset();
+    axios.get.mockReset();
+    toast.success.mockClear();
+    toast.error.mockClear();
+  });
+
+  // Kills mutation: if (id) -> if (true)
+  // This mutation would cause the component to always try to fetch, even without an ID
+  it("does not fetch item when no id param is provided", () => {
+    renderPage({ idParam: undefined });
+
+    // Should not make any axios.get calls when no ID is provided
+    expect(axios.get).not.toHaveBeenCalled();
+
+    // Should show default item name behavior
+    expect(screen.getByTestId("item-name").textContent).toBe("no-item-name");
+  });
+
+  // Kills mutation: }, [id]); -> }, []);
+  // This mutation would prevent re-fetching when the ID changes
+  it("refetches item when id param changes", async () => {
+    // Set up mocks first
+    useCurrentUser.mockReturnValue({
+      data: { root: { user: { email: "test@test.com" } } },
+    });
+    useLocation.mockReturnValue({ state: {} });
+    useNavigate.mockReturnValue(jest.fn());
+
+    // First render with id=1
+    axios.get.mockResolvedValue({ data: { name: "Item 1" } });
+    useParams.mockReturnValue({ id: "1" });
+
+    const { rerender } = render(<CreateReviewPage />);
+
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith(
+        "/api/diningcommons/menuitem?id=1",
+      );
+    });
+
+    // Clear the mock and change the ID
+    axios.get.mockClear();
+    axios.get.mockResolvedValue({ data: { name: "Item 2" } });
+    useParams.mockReturnValue({ id: "2" });
+
+    // Re-render the component
+    rerender(<CreateReviewPage />);
+
+    // Should fetch the new item
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith(
+        "/api/diningcommons/menuitem?id=2",
+      );
+    });
+  });
+
+  // Kills mutation: console.error("Error fetching item:", error) -> console.error("", error)
+  // This ensures the error logging works correctly
+  it("logs error message when item fetch fails", async () => {
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    axios.get.mockRejectedValue(new Error("Network error"));
+
+    renderPage({ idParam: "123" });
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Error fetching item:",
+        expect.any(Error),
+      );
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+  // Kills mutation: `Menu Item #${itemId}` -> ``
+  // This ensures the fallback item name logic works
+  it("shows Menu Item #id fallback when no item name available and no fetched name", async () => {
+    // Mock a successful post but with no item name in response
+    axios.post.mockResolvedValue({
+      data: {
+        // No item property and no name
+        itemsStars: 3,
+        reviewerComments: "Test comment",
+      },
+    });
+
+    // Render with ID but don't mock axios.get (so itemName stays as fallback)
+    renderPage({ idParam: "456" });
+
+    // Wait for any loading to complete
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
+    });
+
+    // Should show the fallback
+    expect(screen.getByTestId("item-name").textContent).toBe("Menu Item #456");
+
+    // Submit to trigger the toast logic
+    fireEvent.click(screen.getByTestId("submit-button"));
+
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith(
+        expect.stringContaining("Menu Item #456"),
+        { autoClose: 8000 },
+      );
+    });
+  });
+
+  // Add this test to your mutation killing tests section to kill the surviving mutant
+
+  it("uses Menu Item #id fallback when all name sources are empty/undefined", async () => {
+    // Mock axios.get to return empty name
+    axios.get.mockResolvedValue({ data: { name: "" } });
+
+    // Mock axios.post to return a response with no item name
+    axios.post.mockResolvedValue({
+      data: {
+        // No item property at all
+        itemsStars: 4,
+        reviewerComments: "Test review",
+      },
+    });
+
+    renderPage({ idParam: "789" });
+
+    // Wait for item fetch to complete
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
+    });
+
+    // At this point, itemName should be "Menu Item #789" because:
+    // - axios.get returned empty name, so itemName becomes "Menu Item #789"
+    // - The ReviewForm should show this fallback name
+    expect(screen.getByTestId("item-name").textContent).toBe("Menu Item #789");
+
+    // Submit the form
+    fireEvent.click(screen.getByTestId("submit-button"));
+
+    await waitFor(() => {
+      expect(axios.post).toHaveBeenCalled();
+    });
+
+    // The toast should use the fallback name because:
+    // - review.item?.name is undefined (no item in response)
+    // - itemName is "Menu Item #789" (fallback from empty fetch)
+    // - The mutant would make this empty string, breaking the display
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith(
+        expect.stringContaining("Menu Item #789"),
+        { autoClose: 8000 },
+      );
+    });
+
+    // Verify the exact toast message structure
+    const toastCall = toast.success.mock.calls[0][0];
+    expect(toastCall).toContain('✅ Review submitted for "Menu Item #789"');
+    expect(toastCall).toContain("⭐ Rating: 4");
+    expect(toastCall).toContain("💬 Comment: Test review");
+  });
+
+  // Alternative test that more directly targets the mutation
+  it("ensures fallback string is not empty when itemId exists", async () => {
+    // Don't mock axios.get at all, so it will fail and use fallback
+    axios.get.mockRejectedValue(new Error("Not found"));
+
+    // Mock successful post with no item name
+    axios.post.mockResolvedValue({
+      data: {
+        itemsStars: 2,
+        reviewerComments: "Another test",
+      },
+    });
+
+    renderPage({ idParam: "999" });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
+    });
+
+    // Submit to trigger the toast logic that uses the fallback
+    fireEvent.click(screen.getByTestId("submit-button"));
+
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalled();
+    });
+
+    // The key assertion: the toast message should contain the item ID
+    // If the mutant survives (empty string), this would fail
+    const toastMessage = toast.success.mock.calls[0][0];
+    expect(toastMessage).toMatch(/Menu Item #999/);
+    expect(toastMessage).not.toMatch(/Review submitted for ""\s*⭐/); // Should not have empty name
   });
 });

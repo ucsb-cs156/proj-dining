@@ -69,8 +69,7 @@ export default function CreateReviewPage({ id: idFromProps }) {
       });
 
       const review = response.data;
-      const displayName =
-        review.item?.name || itemName || `Menu Item #${itemId}`;
+      const displayName = review.item?.name || itemName;
       const rating = review.itemsStars;
       const comment =
         review.reviewerComments?.trim() || "No comments provided.";
