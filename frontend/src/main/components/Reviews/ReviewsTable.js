@@ -5,9 +5,9 @@ import { useBackendMutation } from "main/utils/useBackend";
 import {
   cellToAxiosParamsDelete,
   onDeleteSuccess,
-} from "main/utils/ReviewsUtils";
+} from "main/utils/Reviews";
 
-export default function MenuItemReviewTable({ reviews, userOptions, moderatorOptions }) {
+export default function ReviewsTable({ reviews, userOptions, moderatorOptions, approveCallback, rejectCallback }) {
     const navigate = useNavigate();
 
     const deleteMutation = useBackendMutation(
@@ -22,20 +22,11 @@ export default function MenuItemReviewTable({ reviews, userOptions, moderatorOpt
   const deleteCallback = async (cell) => {
     deleteMutation.mutate(cell);
   };
-  const approveCallback = (cell) => {
-        console.log("Approve clicked for item", cell.row.original.id);
-        // TODO: Add mutation to mark review as approved
-    };
-
-    const rejectCallback = (cell) => {
-        console.log("Reject clicked for item ", cell.row.original.id);
-        // TODO: Add mutation to mark review as rejected
-    };
 
   const columns = [
     {
       Header: "Item Id",
-      accessor: "ItemId",
+      accessor: "itemId",
     },
     {
       Header: "Score",
@@ -54,7 +45,7 @@ export default function MenuItemReviewTable({ reviews, userOptions, moderatorOpt
   if (userOptions) {
     columns.push({
         Header: "Item Name",
-        accessor: "item.name",
+        accessor: "itemName",
     });
     columns.push(
       ButtonColumn("Edit", "primary", editCallback, "Reviewstable"),
