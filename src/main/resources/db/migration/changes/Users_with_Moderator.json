@@ -1,8 +1,8 @@
 { "databaseChangeLog": [
   {
     "changeSet": {
-      "id": "Users-1",
-      "author": "MattP",
+      "id": "Users_with_Moderator",
+      "author": "ZFahim10",
       "preConditions": [
         {
           "onFail": "MARK_RAN"
@@ -38,6 +38,15 @@
                     "nullable": false
                   },
                   "name": "ADMIN",
+                  "type": "BOOLEAN"
+                }
+              },
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "name": "MODERATOR",
                   "type": "BOOLEAN"
                 }
               },
