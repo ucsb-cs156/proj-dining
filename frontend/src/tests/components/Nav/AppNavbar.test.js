@@ -65,19 +65,18 @@ describe("AppNavbar tests", () => {
   test("does NOT render Moderate link for regular users", async () => {
     const currentUser = currentUserFixtures.userOnly;
     const doLogin = jest.fn();
-  
+
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <AppNavbar currentUser={currentUser} doLogin={doLogin} />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
-  
+
     await screen.findByText("Welcome, pconrad.cis@gmail.com");
     expect(screen.queryByText("Moderate")).not.toBeInTheDocument();
   });
-  
 
   test("renders H2Console and Swagger links correctly", async () => {
     const currentUser = currentUserFixtures.adminUser;
