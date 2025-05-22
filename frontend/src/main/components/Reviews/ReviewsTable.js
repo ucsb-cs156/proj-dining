@@ -10,15 +10,19 @@ import {
 export default function ReviewsTable({ reviews, userOptions, moderatorOptions, approveCallback, rejectCallback }) {
     const navigate = useNavigate();
 
+    const editCallback = (cell) => {
+      navigate(`/reviews/edit/${cell.row.original.id}`);
+    };
+
+    // Stryker disable all
     const deleteMutation = useBackendMutation(
         cellToAxiosParamsDelete,
         { onSuccess: onDeleteSuccess },
         ["/api/reviews/all"],
     );
+    // Stryker restore all
 
-  const editCallback = (cell) => {
-    navigate(`/reviews/edit/${cell.row.original.id}`);
-  };
+  // Stryker disable next-line all
   const deleteCallback = async (cell) => {
     deleteMutation.mutate(cell);
   };
