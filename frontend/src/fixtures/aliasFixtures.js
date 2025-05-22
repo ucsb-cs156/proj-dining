@@ -79,4 +79,4 @@ const aliasFixtures = {
   ],
 };
 
-export default aliasApprovalFixtures;
+export default aliasFixtures;
