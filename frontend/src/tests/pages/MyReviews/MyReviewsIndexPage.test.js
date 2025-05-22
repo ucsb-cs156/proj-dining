@@ -3,7 +3,7 @@ import MyReviewsIndexPage, {
   extractReview,
 } from "main/pages/MyReviews/MyReviewsIndexPage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
 import { reviewFixtures } from "fixtures/reviewFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";

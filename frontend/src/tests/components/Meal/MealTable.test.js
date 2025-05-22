@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { mealFixtures } from "fixtures/mealFixtures";
 import MealTable from "main/components/Meal/MealTable";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
 const mockedNavigate = jest.fn();
 

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import { mealFixtures } from "fixtures/mealFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
