@@ -152,7 +152,7 @@ public class UsersController extends ApiController {
         if(!adminEmails.contains(user.getEmail())) {
             user.setAdmin(!user.getAdmin());
             if(user.getModerator()) {
-                user.setModerator(!user.getModerator());
+                user.setModerator(false);
             }
         }
         
@@ -178,7 +178,7 @@ public class UsersController extends ApiController {
         if(!adminEmails.contains(user.getEmail())) {
             user.setModerator(!user.getModerator());
             if(user.getAdmin()) {
-                user.setAdmin(!user.getAdmin());
+                user.setAdmin(false);
             }
         }
         
