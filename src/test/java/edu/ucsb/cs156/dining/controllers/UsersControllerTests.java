@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
@@ -35,6 +36,7 @@ import java.time.LocalDate;
 
 @WebMvcTest(controllers = UsersController.class)
 @Import(TestConfig.class)
+@TestPropertySource(properties = { "ADMIN_EMAILS=superadmin@example.org" })
 public class UsersControllerTests extends ControllerTestCase {
 
   @MockBean
@@ -450,14 +452,14 @@ public class UsersControllerTests extends ControllerTestCase {
       // arrange
       User userOrig = User.builder()
           .id(7L)
-          .email("ndalexander@ucsb.edu")
+          .email("superadmin@example.org")
           .admin(true)
           .moderator(false)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
-          .email("ndalexander@ucsb.edu")
+          .email("superadmin@example.org")
           .admin(true)
           .moderator(false)
           .build();
@@ -609,14 +611,14 @@ public class UsersControllerTests extends ControllerTestCase {
       // arrange
       User userOrig = User.builder()
           .id(7L)
-          .email("ndalexander@ucsb.edu")
+          .email("superadmin@example.org")
           .admin(true)
           .moderator(false)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
-          .email("ndalexander@ucsb.edu")
+          .email("superadmin@example.org")
           .admin(true)
           .moderator(false)
           .build();
