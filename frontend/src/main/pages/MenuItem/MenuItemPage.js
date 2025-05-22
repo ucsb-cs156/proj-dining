@@ -23,10 +23,48 @@ export default function MenuItemPage() {
     [],
   );
 
+  const { data: aliases = [] } = useBackend(
+    ["/api/admin/usersWithProposedAlias"],
+    { method: "GET", url: "/api/admin/usersWithProposedAlias" },
+    [],
+  );
+
+  // approve/reject mutations
+  const approveMutation = useBackendMutation(
+    (alias) => ({
+      url: "/api/currentUser/updateAliasModeration",
+      method: "PUT",
+      params: { id: alias.id, approved: true },
+    }),
+    {
+      onSuccess: () => {
+        /* optionally refetch */
+      },
+    },
+  );
+  const rejectMutation = useBackendMutation(
+    (alias) => ({
+      url: "/api/currentUser/updateAliasModeration",
+      method: "PUT",
+      params: { id: alias.id, approved: false },
+    }),
+    {
+      onSuccess: () => {
+        /* optionally refetch */
+      },
+    },
+  );
+
   return (
     <BasicLayout>
       <h2>{meal.at(0).toUpperCase() + meal.substring(1)}</h2>
       <MenuItemTable currentUser={currentUser} menuItems={menuItems} />
+      <h3 className="mt-4">Aliases Pending Approval</h3>
+      <AliasApprovalTable
+        commons={aliases}
+        onApprove={approveMutation.mutate}
+        onReject={rejectMutation.mutate}
+      />
     </BasicLayout>
   );
 }
