@@ -44,9 +44,28 @@ describe("ModeratePage tests", () => {
     ).toBeInTheDocument();
   });
 
+  test("renders correctly for moderator user", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: { id: 2, email: "moderator@ucsb.edu", moderator: true },
+      roles: [{ authority: "ROLE_MODERATOR" }],
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+
+    // Single assertion inside waitFor
+    await screen.findByText("Moderation Page");
+    // Additional assertion outside waitFor
+    expect(
+      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+    ).toBeInTheDocument();
+  });
+
   test("redirects non-admin user to homepage", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, email: "user@ucsb.edu", admin: false },
+      user: { id: 3, email: "user@ucsb.edu", admin: false },
       roles: [{ authority: "ROLE_USER" }],
     });
     axiosMock
