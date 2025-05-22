@@ -70,23 +70,19 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("shows 'required' errors and prevents submit when required fields empty", async () => {
     renderWithProviders(
-      <ReviewForm 
-        submitAction={submitAction} 
-        itemName="Test Item"
-      />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
     fireEvent.click(screen.getByRole("button", { name: /create/i }));
     expect(await screen.findByText(/Stars is required/)).toBeVisible();
-    expect(await screen.findByText(/Date and time served is required/)).toBeVisible();
+    expect(
+      await screen.findByText(/Date and time served is required/),
+    ).toBeVisible();
     expect(submitAction).not.toHaveBeenCalled();
   });
 
   it("validates stars: below 1, above 5, non-integer", async () => {
     renderWithProviders(
-      <ReviewForm 
-        submitAction={submitAction} 
-        itemName="Test Item"
-      />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
     const starsInput = screen.getByLabelText(/Stars/i);
 
@@ -109,10 +105,7 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("validates comments max length of 255", async () => {
     renderWithProviders(
-      <ReviewForm 
-        submitAction={submitAction} 
-        itemName="Test Item"
-      />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
     const comments = screen.getByLabelText(/Comments/i);
     fireEvent.change(comments, { target: { value: "x".repeat(256) } });
@@ -125,17 +118,14 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("validates dateServed is required", async () => {
     renderWithProviders(
-      <ReviewForm 
-        submitAction={submitAction} 
-        itemName="Test Item"
-      />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
-    
+
     // Fill only stars to test dateServed validation
     fireEvent.change(screen.getByLabelText(/Stars/i), {
       target: { value: "4" },
     });
-    
+
     fireEvent.click(screen.getByRole("button", { name: /create/i }));
     expect(
       await screen.findByText(/Date and time served is required/),
@@ -145,10 +135,7 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("submits successfully with valid inputs", async () => {
     renderWithProviders(
-      <ReviewForm 
-        submitAction={submitAction} 
-        itemName="Test Pizza"
-      />,
+      <ReviewForm submitAction={submitAction} itemName="Test Pizza" />,
     );
 
     fireEvent.change(screen.getByLabelText(/Stars/i), {
@@ -174,10 +161,7 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("submits successfully with empty comments (optional field)", async () => {
     renderWithProviders(
-      <ReviewForm 
-        submitAction={submitAction} 
-        itemName="Test Pizza"
-      />,
+      <ReviewForm submitAction={submitAction} itemName="Test Pizza" />,
     );
 
     fireEvent.change(screen.getByLabelText(/Stars/i), {
@@ -212,9 +196,9 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("uses default buttonLabel = 'Create' when not provided", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={submitAction} 
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
         itemName="Test Item"
       />,
     );
@@ -225,9 +209,9 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("uses custom buttonLabel when provided", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={submitAction} 
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
         itemName="Test Item"
         buttonLabel="Update Review"
       />,
@@ -252,18 +236,20 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
     expect(screen.getByLabelText(/Stars/i)).toHaveValue(3);
     expect(screen.getByLabelText(/Comments/i)).toHaveValue("Pretty decent");
-    expect(screen.getByLabelText(/Date & Time Served/i)).toHaveValue("2023-12-25T18:30");
+    expect(screen.getByLabelText(/Date & Time Served/i)).toHaveValue(
+      "2023-12-25T18:30",
+    );
   });
 
   it("renders all required form elements", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={submitAction} 
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
         itemName="Test Item"
       />,
     );
-    
+
     expect(screen.getByLabelText(/Item Being Reviewed/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Stars/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Comments/i)).toBeInTheDocument();
@@ -272,9 +258,9 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("renders the stars input using label", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={jest.fn()} 
+      <ReviewForm
+        initialContents={{}}
+        submitAction={jest.fn()}
         itemName="Test Item"
       />,
     );
@@ -283,9 +269,9 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("renders the comments textarea using label", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={jest.fn()} 
+      <ReviewForm
+        initialContents={{}}
+        submitAction={jest.fn()}
         itemName="Test Item"
       />,
     );
@@ -294,9 +280,9 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("renders datetime input using label", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={jest.fn()} 
+      <ReviewForm
+        initialContents={{}}
+        submitAction={jest.fn()}
         itemName="Test Item"
       />,
     );
@@ -305,12 +291,9 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("handles missing itemName prop gracefully", () => {
     renderWithProviders(
-      <ReviewForm 
-        initialContents={{}} 
-        submitAction={jest.fn()}
-      />,
+      <ReviewForm initialContents={{}} submitAction={jest.fn()} />,
     );
-    
+
     const itemField = screen.getByLabelText(/Item Being Reviewed/i);
     expect(itemField).toHaveValue("");
     expect(itemField).toBeDisabled();

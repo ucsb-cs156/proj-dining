@@ -14,7 +14,7 @@ export default function CreateReviewPage({ id: idFromProps }) {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/reviews/create";
-  
+
   const [itemName, setItemName] = useState("");
   const [isLoadingItem, setIsLoadingItem] = useState(!!id);
 
@@ -23,7 +23,9 @@ export default function CreateReviewPage({ id: idFromProps }) {
     if (id) {
       const fetchItemName = async () => {
         try {
-          const response = await axios.get(`/api/diningcommons/menuitem?id=${id}`);
+          const response = await axios.get(
+            `/api/diningcommons/menuitem?id=${id}`,
+          );
           setItemName(response.data.name || `Menu Item #${id}`);
         } catch (error) {
           console.error("Error fetching item:", error);
@@ -32,7 +34,7 @@ export default function CreateReviewPage({ id: idFromProps }) {
           setIsLoadingItem(false);
         }
       };
-      
+
       fetchItemName();
     }
   }, [id]);
@@ -67,7 +69,8 @@ export default function CreateReviewPage({ id: idFromProps }) {
       });
 
       const review = response.data;
-      const displayName = review.item?.name || itemName || `Menu Item #${itemId}`;
+      const displayName =
+        review.item?.name || itemName || `Menu Item #${itemId}`;
       const rating = review.itemsStars;
       const comment =
         review.reviewerComments?.trim() || "No comments provided.";

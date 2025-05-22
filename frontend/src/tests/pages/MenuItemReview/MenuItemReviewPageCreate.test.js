@@ -96,25 +96,27 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("fetches item name and passes it to ReviewForm when idParam present", async () => {
     axios.get.mockResolvedValue({ data: { name: "Fetched Item Name" } });
-    
+
     renderPage({ idParam: "7" });
-    
+
     // Initially shows loading
     expect(screen.getByText("Loading item information...")).toBeInTheDocument();
-    
+
     // Wait for the item to load
     await waitFor(() => {
-      expect(screen.getByTestId("item-name").textContent).toBe("Fetched Item Name");
+      expect(screen.getByTestId("item-name").textContent).toBe(
+        "Fetched Item Name",
+      );
     });
-    
+
     expect(axios.get).toHaveBeenCalledWith("/api/diningcommons/menuitem?id=7");
   });
 
   it("falls back to Menu Item #id when item fetch fails", async () => {
     axios.get.mockRejectedValue(new Error("Not found"));
-    
+
     renderPage({ idParam: "7" });
-    
+
     await waitFor(() => {
       expect(screen.getByTestId("item-name").textContent).toBe("Menu Item #7");
     });
@@ -122,9 +124,9 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("falls back to Menu Item #id when item name is empty", async () => {
     axios.get.mockResolvedValue({ data: { name: "" } });
-    
+
     renderPage({ idParam: "7" });
-    
+
     await waitFor(() => {
       expect(screen.getByTestId("item-name").textContent).toBe("Menu Item #7");
     });
@@ -132,12 +134,14 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("refuses to submit when not logged in", async () => {
     renderPage({ currentUserData: {} });
-    
+
     // Wait for any loading to complete
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     fireEvent.click(screen.getByTestId("submit-button"));
     expect(toast.error).toHaveBeenCalledWith(
       "You must be logged in to submit a review.",
@@ -146,14 +150,14 @@ describe("CreateReviewPage branch coverage", () => {
   });
 
   it("submits successfully using fetched item name and includes dateServed", async () => {
+    // Mock item fetch - this needs to be set up BEFORE rendering
+    axios.get.mockResolvedValue({ data: { name: "Fetched Dish" } });
+
     const { navigateMock } = renderPage({
       idParam: "100",
       fromPath: "/came-from",
     });
-    
-    // Mock item fetch
-    axios.get.mockResolvedValue({ data: { name: "Fetched Dish" } });
-    
+
     // Mock review submission
     axios.post.mockResolvedValue({
       data: {
@@ -163,7 +167,7 @@ describe("CreateReviewPage branch coverage", () => {
       },
     });
 
-    // Wait for item to load
+    // Wait for the item to load (following the pattern of the working test)
     await waitFor(() => {
       expect(screen.getByTestId("item-name").textContent).toBe("Fetched Dish");
     });
@@ -192,7 +196,7 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("uses itemId from form when no id param", async () => {
     const { navigateMock } = renderPage();
-    
+
     axios.post.mockResolvedValue({
       data: {
         item: { name: "Form Item" },
@@ -205,9 +209,9 @@ describe("CreateReviewPage branch coverage", () => {
     const submitButton = screen.getByTestId("submit-button");
     // Simulate clicking with itemId in form data
     fireEvent.click(submitButton);
-    
+
     await waitFor(() => expect(axios.post).toHaveBeenCalled());
-    
+
     // The mock form doesn't include itemId, so it would be NaN
     // This test might need adjustment based on how your form actually works
   });
@@ -223,10 +227,12 @@ describe("CreateReviewPage branch coverage", () => {
     axios.post.mockResolvedValueOnce({ data: mockReview });
 
     renderPage({ idParam: "12" });
-    
+
     // Wait for item loading
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByTestId("submit-button"));
@@ -241,12 +247,14 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("shows 'not found' error on 404 + 'MenuItem'", async () => {
     renderPage({ idParam: "88" });
-    
+
     // Wait for item loading
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     axios.post.mockRejectedValue({
       response: { status: 404, data: { message: "MenuItem missing" } },
     });
@@ -259,11 +267,13 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("falls back to generic error on 404 without 'MenuItem'", async () => {
     renderPage({ idParam: "55" });
-    
+
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     axios.post.mockRejectedValue({
       response: { status: 404, data: { message: "Something else" } },
     });
@@ -276,11 +286,13 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("falls back to generic error when no response object", async () => {
     renderPage({ idParam: "99" });
-    
+
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     axios.post.mockRejectedValue(new Error("Network failure"));
 
     fireEvent.click(screen.getByTestId("submit-button"));
@@ -291,11 +303,13 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("does not crash when currentUser is undefined (optional-chaining guard)", async () => {
     renderPage({ currentUserData: undefined });
-    
+
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     expect(() =>
       fireEvent.click(screen.getByTestId("submit-button")),
     ).not.toThrow();
@@ -303,7 +317,7 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("uses fetched itemName when review.item is undefined", async () => {
     axios.get.mockResolvedValue({ data: { name: "Fetched Name" } });
-    
+
     axios.post.mockResolvedValueOnce({
       data: {
         // item is completely missing
@@ -330,11 +344,13 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("falls back to generic error when status ≠ 404 but message includes 'MenuItem'", async () => {
     renderPage({ idParam: "77" });
-    
+
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     axios.post.mockRejectedValue({
       response: { status: 500, data: { message: "MenuItem missing" } },
     });
@@ -347,11 +363,13 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("handles null data property safely", async () => {
     renderPage();
-    
+
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     axios.post.mockRejectedValue({
       response: {
         status: 400,
@@ -391,7 +409,9 @@ describe("CreateReviewPage branch coverage", () => {
     render(<CreateReviewPage />);
 
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByTestId("submit-button"));
@@ -409,11 +429,13 @@ describe("CreateReviewPage branch coverage", () => {
 
   it("handles error response with error field instead of message", async () => {
     renderPage({ idParam: "55" });
-    
+
     await waitFor(() => {
-      expect(screen.queryByText("Loading item information...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Loading item information..."),
+      ).not.toBeInTheDocument();
     });
-    
+
     axios.post.mockRejectedValue({
       response: { status: 400, data: { error: "Some error" } },
     });
