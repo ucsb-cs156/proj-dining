@@ -8,7 +8,6 @@ import { MemoryRouter } from "react-router-dom";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import { extractAllReviewsForItem } from "main/components/MenuItem/MenuItemTable";
 import MenuItemTable from "main/components/MenuItem/MenuItemTable";
-import { useNavigate, useLocation } from "react-router-dom";
 
 const mockToast = jest.fn();
 jest.mock("react-toastify", () => {
@@ -311,7 +310,7 @@ describe("MenuItemPage", () => {
     expect(result[0].itemsStars).toBe(5);
   });
 
-  test("extractAllReviewsForItem recurses into arrays", () => {
+  test("extractAllRevsiewsForItem recurses into arrays", () => {
     const nested = [
       [
         { itemsStars: 3, item: 10 },
