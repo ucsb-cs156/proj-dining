@@ -184,8 +184,11 @@ describe("MyReviewsIndexPage", () => {
     deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(capturedConfig).toEqual({
-      url: `/api/reviews/${reviewFixtures.threeReviews[0].id}`,
+      url: "/api/reviews/reviewer",
       method: "DELETE",
+      params: {
+        id: reviewFixtures.threeReviews[0].id,
+      },
     });
   });
 
@@ -209,9 +212,9 @@ describe("MyReviewsIndexPage", () => {
     );
 
     const [[key, config, queryDeps]] = spy.mock.calls;
-    expect(key).toEqual(["/api/reviews/my"]);
+    expect(key).toEqual(["/api/reviews/userReviews"]);
     expect(key[0]).not.toEqual("");
-    expect(config).toEqual({ method: "GET", url: "/api/reviews/my" });
+    expect(config).toEqual({ method: "GET", url: "/api/reviews/userReviews" });
     expect(queryDeps).toEqual([]);
   });
 

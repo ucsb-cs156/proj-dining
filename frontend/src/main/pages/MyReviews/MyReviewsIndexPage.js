@@ -40,8 +40,8 @@ export default function MyReviewsIndexPage() {
       url: `/api/reviews/reviewer`,
       method: "DELETE",
       params: {
-        id: review.id
-      }
+        id: review.id,
+      },
     }),
     {
       onSuccess: () => {
