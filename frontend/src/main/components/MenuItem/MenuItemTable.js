@@ -15,6 +15,17 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       Header: "Station",
       accessor: "station",
     },
+    {
+      Header: "Average Review",
+      accessor: (row) => {
+        const reviews = row.reviews;
+        if (!reviews || reviews.length === 0) return "🤷‍♂️ No Rating";
+        const avg =
+          reviews.reduce((sum, r) => sum + r.itemsStars, 0) / reviews.length;
+        return `${avg.toFixed(1)} ⭐`;
+      },
+      id: "averageReview",
+    },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
