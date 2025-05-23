@@ -33,7 +33,7 @@ describe("ReviewsForMenuItemPage", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock.onGet("/api/diningcommons/menuitem?id=42").timeout(); // simulate loading state
+    axiosMock.onGet("/api/diningcommons/menuitem?id=42").timeout();
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -41,7 +41,6 @@ describe("ReviewsForMenuItemPage", () => {
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBe(3);
     });
-    // Optionally, check that the table is not present
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
@@ -49,7 +48,7 @@ describe("ReviewsForMenuItemPage", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(500); // simulate error state
+    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(500);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -57,7 +56,6 @@ describe("ReviewsForMenuItemPage", () => {
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBe(3);
     });
-    // Optionally, check that the table is not present
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
@@ -118,7 +116,7 @@ describe("ReviewsForMenuItemPage", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(200, null); // data is null
+    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(200, null);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -191,7 +189,6 @@ describe("ReviewsForMenuItemPage", () => {
     });
 
     const queryClient = new QueryClient();
-    // Render with itemid 42
     const { unmount } = render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/42"]}>
@@ -214,7 +211,6 @@ describe("ReviewsForMenuItemPage", () => {
       screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
     ).toHaveTextContent("Great!");
     unmount();
-    // Remount with itemid 99
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/99"]}>
@@ -265,7 +261,6 @@ describe("ReviewsForMenuItemPage", () => {
       ],
     });
     const queryClient = new QueryClient();
-    // Render with itemid 101
     const { unmount } = render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/101"]}>
@@ -288,7 +283,6 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
     ).toHaveTextContent("First!");
     unmount();
-    // Remount with itemid 202
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/202"]}>
