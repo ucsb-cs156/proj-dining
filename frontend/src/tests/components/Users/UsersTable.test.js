@@ -20,6 +20,7 @@ describe("UserTable tests", () => {
       "Last Name",
       "Email",
       "Admin",
+      "Moderator",
       "Alias",
       "Proposed Alias",
     ];
@@ -29,6 +30,7 @@ describe("UserTable tests", () => {
       "familyName",
       "email",
       "admin",
+      "moderator",
       "alias",
       "proposedAlias",
     ];
