@@ -12,8 +12,8 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
-jest.mock("react-router-dom");
-const { MemoryRouter } = jest.requireActual("react-router-dom");
+jest.mock("react-router");
+const { MemoryRouter } = jest.requireActual("react-router");
 
 describe("utils/currentUser tests", () => {
   describe("useCurrentUser tests", () => {

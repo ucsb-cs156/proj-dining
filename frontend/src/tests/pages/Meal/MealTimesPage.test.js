@@ -7,8 +7,8 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
 const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => {
-  const originalModule = jest.requireActual("react-router-dom");
+jest.mock("react-router", () => {
+  const originalModule = jest.requireActual("react-router");
   return {
     __esModule: true,
     ...originalModule,

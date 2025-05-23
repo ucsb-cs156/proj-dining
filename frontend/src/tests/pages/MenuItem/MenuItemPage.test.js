@@ -19,8 +19,8 @@ jest.mock("react-toastify", () => {
   };
 });
 
-jest.mock("react-router-dom", () => {
-  const originalModule = jest.requireActual("react-router-dom");
+jest.mock("react-router", () => {
+  const originalModule = jest.requireActual("react-router");
   return {
     __esModule: true,
     ...originalModule,
