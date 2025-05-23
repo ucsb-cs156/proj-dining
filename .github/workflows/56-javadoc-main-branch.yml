@@ -44,9 +44,10 @@ jobs:
         action: JamesIves/github-pages-deploy-action@v4
         attempt_limit: 3
         attempt_delay: 5000
-        branch: gh-pages # The branch the action should deploy to.
-        folder: target/site/apidocs # The folder where the javadoc files are located
-        clean: true # Automatically remove deleted files from the deploy branch
-        target-folder: javadoc # The folder that we serve our javadoc files from
+        input: |
+          branch: gh-pages # The branch the action should deploy to.
+          folder: target/site/apidocs # The folder where the javadoc files are located
+          clean: true # Automatically remove deleted files from the deploy branch
+          target-folder: javadoc # The folder that we serve our javadoc files from
 
   
