@@ -10,7 +10,7 @@ export default function ReviewsForMenuItemPage() {
     // Stryker disable next-line all: don't test internal caching of React Query
     ["reviewsForMenuItem", itemid],
     // Stryker disable next-line all: default method is get, so replacing with an empty string will do nothing
-    { method: "GET", url: `/api/diningcommons/menuitem?id=${itemid}` }
+    { method: "GET", url: `/api/diningcommons/menuitem?id=${itemid}` },
     // no initial data
   );
 
@@ -36,7 +36,7 @@ export default function ReviewsForMenuItemPage() {
     (Array.isArray(data?.reviews) ? data.reviews : []).filter(
       (review) =>
         review.reviewerComments !== null &&
-        review.reviewerComments !== undefined
+        review.reviewerComments !== undefined,
     );
 
   return (
