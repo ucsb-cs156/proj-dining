@@ -6,7 +6,11 @@ import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 const Moderate = () => {
   const { data: currentUser } = useCurrentUser();
 
-  if (!currentUser.loggedIn || !hasRole(currentUser, "ROLE_ADMIN")) {
+  if (
+    !currentUser.loggedIn ||
+    (!hasRole(currentUser, "ROLE_ADMIN") &&
+      !hasRole(currentUser, "ROLE_MODERATOR"))
+  ) {
     return <Navigate to="/" />;
   }
 
