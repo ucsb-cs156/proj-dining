@@ -71,16 +71,16 @@ describe("ModeratePage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
-  
+
     renderPage();
-  
+
     await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument()
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)"
-      )
+        "This page is accessible only to admins. (Placeholder)",
+      ),
     ).not.toBeInTheDocument();
   });
 
