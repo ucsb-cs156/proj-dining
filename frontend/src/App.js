@@ -7,6 +7,8 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
+import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
+import MyReviewsEditPage from "main/pages/MyReviews/MyReviewsEditPage";
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -35,6 +37,14 @@ function App() {
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
           </>
         )}
+
+        {hasRole(currentUser, "ROLE_ADMIN") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsCreatePage />} />
+            <Route exact path="/myreviews" element={<MyReviewsEditPage />} />
+          </>
+        )}
+
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
