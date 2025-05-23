@@ -72,7 +72,6 @@ describe("MenuItemTable Tests", () => {
       expect(
         screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
       ).toHaveTextContent(fiveMenuItems[i].station);
-      // Check Reviews link
       const reviewsCell = screen.getByTestId(
         `MenuItemTable-cell-row-${i}-col-id`,
       );
