@@ -16,7 +16,7 @@ export default {
         if (url.searchParams.get("id") === "42") {
           return HttpResponse.json(
             { reviews: ReviewFixtures.threeReviews },
-            { status: 200 }
+            { status: 200 },
           );
         }
         return HttpResponse.json({ reviews: [] }, { status: 200 });
