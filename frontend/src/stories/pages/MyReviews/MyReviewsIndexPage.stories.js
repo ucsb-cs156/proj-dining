@@ -29,25 +29,6 @@ ThreeItemsOrdinaryUser.parameters = {
   ],
 };
 
-// export const ThreeItemsModeratorUser = Template.bind({});
-
-// ThreeItemsModeratorUser.parameters = {
-//   msw: [
-//     http.get("/api/currentUser", () => {
-//       return HttpResponse.json(apiCurrentUserFixtures.moderatorUser);
-//     }),
-//     http.get("/api/systemInfo", () => {
-//       return HttpResponse.json(systemInfoFixtures.showingNeither);
-//     }),
-//     http.get("/api/reviews/all", () => {
-//       return HttpResponse.json(ReviewFixtures.threeReviews);
-//     }),
-//     http.delete("/api/reviews", () => {
-//       return HttpResponse.json({}, { status: 200 });
-//     }),
-// ],
-// };
-
 export const ThreeItemsAdminUser = Template.bind({});
 
 ThreeItemsAdminUser.parameters = {
