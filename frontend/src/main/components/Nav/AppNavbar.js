@@ -65,13 +65,6 @@ export default function AppNavbar({
                   </Nav.Link>
                 </>
               )}
-              {hasRole(currentUser, "ROLE_MODERATOR") && (
-                <>
-                  <Nav.Link as={Link} to="/moderate">
-                    Moderate
-                  </Nav.Link>
-                </>
-              )}
               {currentUser && currentUser.loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/placeholder">
