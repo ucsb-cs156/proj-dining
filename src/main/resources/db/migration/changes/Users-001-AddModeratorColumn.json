@@ -2,7 +2,7 @@
   "databaseChangeLog": [
     {
       "changeSet": {
-        "id": "Users-AddModeratorColumn",
+        "id": "Users-001-AddModeratorColumn",
         "author": "ZFahim10",
         "preConditions": [
           {
