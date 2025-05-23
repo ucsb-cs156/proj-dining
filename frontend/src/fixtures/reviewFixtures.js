@@ -1,4 +1,4 @@
-const ReviewFixtures = {
+const reviewFixtures = {
   oneReview: {
     id: 1,
     studentId: 1,
@@ -47,4 +47,4 @@ const ReviewFixtures = {
   ],
 };
 
-export { ReviewFixtures };
+export { reviewFixtures };
