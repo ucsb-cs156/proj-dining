@@ -1,18 +1,35 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+import { useBackend } from "main/utils/useBackend";
+import ReviewTable from "main/components/Reviews/ReviewTable";
 
 export default function MyReviewsIndexPage() {
-  // Stryker disable all : placeholder for future implementation
+  const { data, isLoading, error } = useBackend(
+    // Stryker disable next-line all: don't test internal caching of React Query
+    ["/api/reviews/userReviews"],
+    // Stryker disable next-line all: default method is get, so replacing with an empty string will do nothing
+    { method: "GET", url: `/api/reviews/userReviews` },
+  );
+
+  if (isLoading) {
+    return (
+      <BasicLayout>
+        <p>Loading...</p>
+      </BasicLayout>
+    );
+  }
+
+  // Stryker disable next-line all : Don't mutate error block
+  if (error) {
+    return (
+      <BasicLayout>
+        <p>Error loading reviews.</p>
+      </BasicLayout>
+    );
+  }
   return (
     <BasicLayout>
-      <div className="pt-2">
-        <h1>Index page not yet implemented</h1>
-        <p>
-          <a href="/placeholder/create">Create</a>
-        </p>
-        <p>
-          <a href="/placeholder/edit/1">Edit</a>
-        </p>
-      </div>
+      <h1>My Reviews</h1>
+      <ReviewTable data={data} userOptions={true} moderatorOptions={false} />
     </BasicLayout>
   );
 }
