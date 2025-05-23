@@ -61,10 +61,10 @@ jobs:
           action: JamesIves/github-pages-deploy-action@v4
           attempt_limit: 3
           attempt_delay: 5000
-            branch: gh-pages # The branch the action should deploy to.
-            folder: frontend/chromatic_static # source
-            clean: true # Automatically remove deleted files from the deploy branch
-            target-folder: chromatic # destination 
+          branch: gh-pages # The branch the action should deploy to.
+          folder: frontend/chromatic_static # source
+          clean: true # Automatically remove deleted files from the deploy branch
+          target-folder: chromatic # destination 
        
      
    

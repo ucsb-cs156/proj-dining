@@ -102,11 +102,10 @@ jobs:
         action: JamesIves/github-pages-deploy-action@v4
         attempt_limit: 3
         attempt_delay: 5000
-        with: |
-          branch: gh-pages # The branch the action should deploy to.
-          folder: frontend/chromatic_static_${{ needs.get-pr-num.outputs.pr_number }} # The folder that the build-chromatic script generates files.
-          clean: true # Automatically remove deleted files from the deploy branch
-          target-folder: prs/${{ needs.get-pr-num.outputs.pr_number }}/chromatic # The folder that we serve our chromatic files from 
+        branch: gh-pages # The branch the action should deploy to.
+        folder: frontend/chromatic_static_${{ needs.get-pr-num.outputs.pr_number }} # The folder that the build-chromatic script generates files.
+        clean: true # Automatically remove deleted files from the deploy branch
+        target-folder: prs/${{ needs.get-pr-num.outputs.pr_number }}/chromatic # The folder that we serve our chromatic files from 
     
   
  
