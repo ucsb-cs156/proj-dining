@@ -32,26 +32,26 @@ describe("MenuItemTable Tests", () => {
           menuItems={[]}
           currentUser={currentUserFixtures.notLoggedIn}
         />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId("MenuItemTable-header-name")).toHaveTextContent(
-      "Item Name",
+      "Item Name"
     );
     expect(
-      screen.getByTestId("MenuItemTable-header-station"),
+      screen.getByTestId("MenuItemTable-header-station")
     ).toHaveTextContent("Station");
     expect(screen.getByTestId("MenuItemTable-header-id")).toHaveTextContent(
-      "Reviews",
+      "Reviews"
     );
     expect(
-      screen.queryByTestId("MenuItemTable-row-cell-0-col-name"),
+      screen.queryByTestId("MenuItemTable-row-cell-0-col-name")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("MenuItemTable-row-cell-0-col-station"),
+      screen.queryByTestId("MenuItemTable-row-cell-0-col-station")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
+      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button")
     ).not.toBeInTheDocument();
   });
   test("Renders 5 Menu Items Correctly and Reviews link is correct", async () => {
@@ -62,24 +62,24 @@ describe("MenuItemTable Tests", () => {
           menuItems={fiveMenuItems}
           currentUser={currentUserFixtures.notLoggedIn}
         />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     for (let i = 0; i < fiveMenuItems.length; i++) {
       expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`),
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`)
       ).toHaveTextContent(fiveMenuItems[i].name);
       expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`)
       ).toHaveTextContent(fiveMenuItems[i].station);
       const reviewsCell = screen.getByTestId(
-        `MenuItemTable-cell-row-${i}-col-id`,
+        `MenuItemTable-cell-row-${i}-col-id`
       );
       const link = within(reviewsCell).getByRole("link", { name: "Reviews" });
       expect(link).toHaveTextContent("Reviews");
       expect(link).toHaveAttribute("href", `/reviews/${fiveMenuItems[i].id}`);
       expect(
-        screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
+        screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button")
       ).not.toBeInTheDocument();
     }
   });
@@ -98,10 +98,10 @@ describe("MenuItemTable Tests", () => {
           menuItems={menuItemFixtures.oneMenuItem}
           currentUser={currentUserFixtures.userOnly}
         />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     let button = screen.getByTestId(
-      "MenuItemTable-cell-row-0-col-Review Item-button",
+      "MenuItemTable-cell-row-0-col-Review Item-button"
     );
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass("btn-warning");
@@ -120,10 +120,10 @@ describe("MenuItemTable Tests", () => {
           menuItems={menuItemFixtures.oneMenuItem}
           currentUser={currentUserFixtures.notLoggedIn}
         />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
+      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button")
     ).not.toBeInTheDocument();
   });
 });

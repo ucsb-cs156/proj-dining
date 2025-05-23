@@ -16,7 +16,7 @@ function renderWithProviders(route = "/reviews/42") {
           <Route path="/reviews/:itemid" element={<ReviewsForMenuItemPage />} />
         </Routes>
       </MemoryRouter>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
 }
 
@@ -33,7 +33,7 @@ describe("ReviewsForMenuItemPage", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock.onGet("/api/diningcommons/menuitem?id=42").timeout(); // simulate loading state
+    axiosMock.onGet("/api/diningcommons/menuitem?id=42").timeout();
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -41,7 +41,6 @@ describe("ReviewsForMenuItemPage", () => {
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBe(3);
     });
-    // Optionally, check that the table is not present
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
@@ -49,7 +48,7 @@ describe("ReviewsForMenuItemPage", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(500); // simulate error state
+    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(500);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -57,7 +56,6 @@ describe("ReviewsForMenuItemPage", () => {
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBe(3);
     });
-    // Optionally, check that the table is not present
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
@@ -78,7 +76,7 @@ describe("ReviewsForMenuItemPage", () => {
       .reply(200, apiCurrentUserFixtures.userOnly);
     renderWithProviders();
     expect(
-      await screen.findByText("Reviews for Menu Item 42"),
+      await screen.findByText("Reviews for Menu Item 42")
     ).toBeInTheDocument();
     expect(await screen.findByText("Great!")).toBeInTheDocument();
     expect(await screen.findByText("Yum!")).toBeInTheDocument();
@@ -103,7 +101,7 @@ describe("ReviewsForMenuItemPage", () => {
       .reply(200, apiCurrentUserFixtures.userOnly);
     renderWithProviders();
     expect(
-      await screen.findByText("Reviews for Menu Item 42"),
+      await screen.findByText("Reviews for Menu Item 42")
     ).toBeInTheDocument();
     const table = await screen.findByRole("table");
     const rows = within(table).getAllByRole("row");
@@ -118,13 +116,13 @@ describe("ReviewsForMenuItemPage", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(200, null); // data is null
+    axiosMock.onGet("/api/diningcommons/menuitem?id=42").reply(200, null);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
     renderWithProviders();
     expect(
-      await screen.findByText("Reviews for Menu Item 42"),
+      await screen.findByText("Reviews for Menu Item 42")
     ).toBeInTheDocument();
     const table = await screen.findByRole("table");
     const rows = within(table).getAllByRole("row");
@@ -147,19 +145,19 @@ describe("ReviewsForMenuItemPage", () => {
       .reply(200, apiCurrentUserFixtures.userOnly);
     renderWithProviders();
     expect(
-      await screen.findByText("Reviews for Menu Item 42"),
+      await screen.findByText("Reviews for Menu Item 42")
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Edit" }),
+      screen.queryByRole("button", { name: "Edit" })
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Delete" }),
+      screen.queryByRole("button", { name: "Delete" })
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Approve" }),
+      screen.queryByRole("button", { name: "Approve" })
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Reject" }),
+      screen.queryByRole("button", { name: "Reject" })
     ).not.toBeInTheDocument();
   });
 
@@ -191,7 +189,6 @@ describe("ReviewsForMenuItemPage", () => {
     });
 
     const queryClient = new QueryClient();
-    // Render with itemid 42
     const { unmount } = render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/42"]}>
@@ -202,19 +199,18 @@ describe("ReviewsForMenuItemPage", () => {
             />
           </Routes>
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
     expect(
-      await screen.findByText("Reviews for Menu Item 42"),
+      await screen.findByText("Reviews for Menu Item 42")
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-itemId"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-itemId")
     ).toHaveTextContent("42");
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments")
     ).toHaveTextContent("Great!");
     unmount();
-    // Remount with itemid 99
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/99"]}>
@@ -225,16 +221,16 @@ describe("ReviewsForMenuItemPage", () => {
             />
           </Routes>
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
     expect(
-      await screen.findByText("Reviews for Menu Item 99"),
+      await screen.findByText("Reviews for Menu Item 99")
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-itemId"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-itemId")
     ).toHaveTextContent("99");
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments")
     ).toHaveTextContent("Meh!");
   });
 
@@ -265,7 +261,6 @@ describe("ReviewsForMenuItemPage", () => {
       ],
     });
     const queryClient = new QueryClient();
-    // Render with itemid 101
     const { unmount } = render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/101"]}>
@@ -276,19 +271,18 @@ describe("ReviewsForMenuItemPage", () => {
             />
           </Routes>
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
     expect(
-      await screen.findByText("Reviews for Menu Item 101"),
+      await screen.findByText("Reviews for Menu Item 101")
     ).toBeInTheDocument();
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId")
     ).toHaveTextContent("101");
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments")
     ).toHaveTextContent("First!");
     unmount();
-    // Remount with itemid 202
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/202"]}>
@@ -299,16 +293,16 @@ describe("ReviewsForMenuItemPage", () => {
             />
           </Routes>
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
     expect(
-      await screen.findByText("Reviews for Menu Item 202"),
+      await screen.findByText("Reviews for Menu Item 202")
     ).toBeInTheDocument();
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId")
     ).toHaveTextContent("202");
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments")
     ).toHaveTextContent("Second!");
   });
 
@@ -322,7 +316,7 @@ describe("ReviewsForMenuItemPage", () => {
       .reply(200, apiCurrentUserFixtures.userOnly);
     renderWithProviders("/reviews/303");
     expect(
-      await screen.findByText("Reviews for Menu Item 303"),
+      await screen.findByText("Reviews for Menu Item 303")
     ).toBeInTheDocument();
     const table = screen.getByRole("table");
     const rows = within(table).getAllByRole("row");
@@ -339,7 +333,7 @@ describe("ReviewsForMenuItemPage", () => {
       .reply(200, apiCurrentUserFixtures.userOnly);
     renderWithProviders("/reviews/404");
     expect(
-      await screen.findByText("Reviews for Menu Item 404"),
+      await screen.findByText("Reviews for Menu Item 404")
     ).toBeInTheDocument();
     const table = screen.getByRole("table");
     const rows = within(table).getAllByRole("row");

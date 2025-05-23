@@ -11,7 +11,6 @@ export default function ReviewsForMenuItemPage() {
     ["reviewsForMenuItem", itemid],
     // Stryker disable next-line all: default method is get, so replacing with an empty string will do nothing
     { method: "GET", url: `/api/diningcommons/menuitem?id=${itemid}` },
-    // no initial data
   );
 
   if (isLoading) {
