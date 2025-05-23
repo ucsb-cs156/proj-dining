@@ -210,31 +210,12 @@ describe("CreateReviewPage branch coverage", () => {
     // (We don’t re-check toast.error here, the other test covers that.)
   });
 
-  //   it("falls back to 'No comments provided.' when response has no reviewerComments (kills non-optional-chain trim)", async () => {
-  //     // omit `reviewerComments` entirely
-  //     axios.post.mockResolvedValue({
-  //       data: {
-  //         item: { name: "Test" },
-  //         itemsStars: 1,
-  //         // no reviewerComments
-  //       },
-  //     });
-
-  //     fireEvent.click(screen.getByTestId("submit-button"));
-  //     await waitFor(() => expect(axios.post).toHaveBeenCalled());
-
-  //     expect(toast.success).toHaveBeenCalledWith(
-  //       `✅ Review submitted for "Test"\n⭐ Rating: 1\n💬 Comment: No comments provided.`,
-  //       { autoClose: 8000 },
-  //     );
-  //   });
-
   it("falls back to default comment when reviewerComments is undefined (kills optional chaining mutation)", async () => {
     const mockReview = {
       itemId: 12,
       item: { name: "Test Dish" },
       itemsStars: 4,
-      // reviewerComments is undefined
+      // reviewerComments is undefined intentially
     };
 
     axios.post.mockResolvedValueOnce({ data: mockReview });
