@@ -81,7 +81,7 @@ jobs:
         action: JamesIves/github-pages-deploy-action@v4
         attempt_limit: 3
         attempt_delay: 5000
-        input: |
+        with: |
           folder: site # The folder the action should deploy.
           branch: gh-pages
           clean: false # Automatically remove deleted files from the deploy branch

@@ -373,7 +373,7 @@ jobs:
         action: JamesIves/github-pages-deploy-action@v4
         attempt_limit: 3
         attempt_delay: 5000
-        input: |
+        with: |
           branch: gh-pages # The branch the action should deploy to.
           folder: ${{ env.stryker_dest }} # The folder where we put the files
           clean: true # Automatically remove deleted files from the deploy branch
