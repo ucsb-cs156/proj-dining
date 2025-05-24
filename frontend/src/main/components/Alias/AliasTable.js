@@ -58,7 +58,6 @@ export default function AliasTable({ alias }) {
     onError: (err) => {
       toast.error(`Error rejecting alias: ${err.message}`);
     },
-    /* Stryker restore all */
   });
 
   const columns = [
