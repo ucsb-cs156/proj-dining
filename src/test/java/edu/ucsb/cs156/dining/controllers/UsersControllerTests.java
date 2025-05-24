@@ -415,14 +415,12 @@ public class UsersControllerTests extends ControllerTestCase {
           .id(7L)
           .email("superadmin@example.org")
           .admin(true)
-          .moderator(false)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
           .email("superadmin@example.org")
           .admin(true)
-          .moderator(false)
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
