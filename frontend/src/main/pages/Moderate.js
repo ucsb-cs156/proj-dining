@@ -5,6 +5,8 @@ import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 
 const Moderate = () => {
   const { data: currentUser } = useCurrentUser();
+  console.log("Current user:", currentUser);
+  console.log("Roles list:", currentUser?.root?.rolesList);
 
   if (
     !currentUser.loggedIn ||
