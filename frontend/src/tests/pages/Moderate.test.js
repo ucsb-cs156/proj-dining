@@ -39,9 +39,10 @@ describe("ModeratePage tests", () => {
     // Single assertion inside waitFor
     await screen.findByText("Moderation Page");
     // Additional assertion outside waitFor
-    expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Moderation Page")).toBeInTheDocument();
+    expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
+    expect(screen.getByText("Approve")).toBeInTheDocument();
+    expect(screen.getByText("Reject")).toBeInTheDocument();
   });
 
   test("redirects non-admin user to homepage", async () => {
@@ -60,11 +61,7 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 
   test("redirects to homepage if currentUser is undefined", async () => {
@@ -80,11 +77,7 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 
   test("redirects to homepage if currentUser.loggedIn is undefined", async () => {
@@ -102,11 +95,7 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 
   test("handles case where currentUser is null and skips hasRole", async () => {
@@ -124,10 +113,6 @@ describe("ModeratePage tests", () => {
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
     // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
   });
 });
