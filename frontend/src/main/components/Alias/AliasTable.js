@@ -27,11 +27,6 @@ export default function AliasTable({ alias }) {
       queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]);
       toast(`Alias ${propAlias.proposedAlias} for id ${user.id} approved!`);
     },
-    // Stryker disable next-line all
-    onError: (err) => {
-      // Stryker disable next-line all
-      toast.error(`Error approving alias: ${err.message}`);
-    },
   });
 
   const objectToAxiosParamsReject = (user) => ({
@@ -53,6 +48,8 @@ export default function AliasTable({ alias }) {
       queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]); //refresh the table
       toast(`Alias ${propAlias.proposedAlias} for id ${user.id} rejected!`);
     },
+
+
   });
 
   const columns = [
