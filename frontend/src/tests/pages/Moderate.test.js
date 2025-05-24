@@ -40,7 +40,7 @@ describe("ModeratePage tests", () => {
     await screen.findByText("Moderation Page");
     // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+      screen.getByText("This page is accessible only to admins and moderators. (Placeholder)"),
     ).toBeInTheDocument();
   });
 
@@ -67,7 +67,7 @@ describe("ModeratePage tests", () => {
 
     // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+      screen.getByText("This page is accessible only to admins and moderators. (Placeholder)"),
     ).toBeInTheDocument();
   });
 
@@ -89,7 +89,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
@@ -109,7 +109,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
@@ -131,7 +131,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
@@ -153,7 +153,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
