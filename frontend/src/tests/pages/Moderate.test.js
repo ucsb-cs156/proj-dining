@@ -24,12 +24,6 @@ describe("ModeratePage tests", () => {
     axiosMock.reset();
     axiosMock.resetHistory();
   });
-  afterEach(() => {
-    axiosMock.reset();
-    queryClient.removeQueries({
-      predicate: (query) => query.queryKey[0] !== "currentUser",
-    });
-  });
 
   test("renders correctly for admin user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {

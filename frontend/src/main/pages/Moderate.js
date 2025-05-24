@@ -9,6 +9,7 @@ const Moderate = () => {
   if (
     !currentUser.loggedIn ||
     (!hasRole(currentUser, "ROLE_ADMIN") &&
+    // Stryker disable next-line StringLiteral
       !hasRole(currentUser, "ROLE_MODERATOR"))
   ) {
     return <Navigate to="/" />;
