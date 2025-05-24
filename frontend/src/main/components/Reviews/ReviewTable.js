@@ -10,7 +10,7 @@ export default function ReviewTable({
   onReject,
 }) {
   const columns = [
-    { Header: "Item ID", accessor: "itemId" },
+    { Header: "Item ID", accessor: (row) => row.item?.id ?? row.itemId ?? "" },
     { Header: "Score", accessor: "itemsStars" },
     { Header: "Comments", accessor: "reviewerComments" },
     { Header: "Date Served", accessor: "dateItemServed" },
