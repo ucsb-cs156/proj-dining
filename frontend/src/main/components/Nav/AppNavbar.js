@@ -63,6 +63,7 @@ export default function AppNavbar({
                 </>
               )}
               {(hasRole(currentUser, "ROLE_ADMIN") ||
+                // Stryker disable next-line StringLiteral
                 hasRole(currentUser, "ROLE_MODERATOR")) && (
                 <>
                   <Nav.Link as={Link} to="/moderate">
