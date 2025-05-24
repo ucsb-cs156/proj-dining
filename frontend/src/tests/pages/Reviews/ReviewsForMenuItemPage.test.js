@@ -205,7 +205,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 42"),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-itemId"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("42");
     expect(
       screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
@@ -227,7 +227,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 99"),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-itemId"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("99");
     expect(
       screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
@@ -277,7 +277,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 101"),
     ).toBeInTheDocument();
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("101");
     expect(
       await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
@@ -299,7 +299,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 202"),
     ).toBeInTheDocument();
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("202");
     expect(
       await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
