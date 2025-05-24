@@ -1,5 +1,5 @@
 import { waitFor, render, screen, fireEvent } from "@testing-library/react";
-import { aliasFixtures } from "fixtures/aliasFixtures";
+import usersFixtures from "fixtures/usersFixtures";
 import AliasTable from "main/components/Alias/AliasTable";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
@@ -25,7 +25,7 @@ afterEach(() => {
 
 describe("AliasTable tests", () => {
   const queryClient = new QueryClient();
-  const fourAlias = aliasFixtures.fourAlias;
+  const fourAlias = usersFixtures.fourAlias;
   const expectedHeaders = ["Proposed Alias", "Approve", "Reject"];
   const expectedFields = ["proposedAlias", "approve", "reject"];
   const testId = "AliasTable";
@@ -36,7 +36,7 @@ describe("AliasTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={aliasFixtures.fourAlias} />
+          <AliasTable alias={usersFixtures.fourAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -86,7 +86,7 @@ describe("AliasTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={aliasFixtures.onePropAlias} />
+          <AliasTable alias={usersFixtures.onePropAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -96,7 +96,7 @@ describe("AliasTable tests", () => {
     await waitFor(() => {
       expect(
         screen.getByTestId("AliasTable-cell-row-0-col-proposedAlias"),
-      ).toHaveTextContent(aliasFixtures.onePropAlias[0].proposedAlias);
+      ).toHaveTextContent(usersFixtures.onePropAlias[0].proposedAlias);
     });
   });
 
@@ -129,7 +129,7 @@ describe("AliasTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={aliasFixtures.fourAlias} />
+          <AliasTable alias={usersFixtures.fourAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -176,15 +176,15 @@ describe("AliasTable tests", () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
       .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, aliasFixtures.onePropAlias);
+      .reply(200, usersFixtures.onePropAlias);
     axiosMock
       .onPut("/api/currentUser/updateAliasModeration")
-      .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: true });
+      .reply(200, { id: usersFixtures.onePropAlias[0].id, approved: true });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={aliasFixtures.onePropAlias} />
+          <AliasTable alias={usersFixtures.onePropAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -195,7 +195,7 @@ describe("AliasTable tests", () => {
 
     await waitFor(() =>
       expect(toast).toHaveBeenCalledWith(
-        `Alias ${aliasFixtures.onePropAlias[0].proposedAlias} for id ${aliasFixtures.onePropAlias[0].id} approved!`,
+        `Alias ${usersFixtures.onePropAlias[0].proposedAlias} for id ${usersFixtures.onePropAlias[0].id} approved!`,
       ),
     );
     expect(toast).toHaveBeenCalledTimes(1);
@@ -205,15 +205,15 @@ describe("AliasTable tests", () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
       .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, aliasFixtures.nullPropAlias);
+      .reply(200, usersFixtures.nullPropAlias);
     axiosMock
       .onPut("/api/currentUser/updateAliasModeration")
-      .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: true });
+      .reply(200, { id: usersFixtures.onePropAlias[0].id, approved: true });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={aliasFixtures.onePropAlias} />
+          <AliasTable alias={usersFixtures.onePropAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -228,16 +228,16 @@ describe("AliasTable tests", () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
       .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, aliasFixtures.onePropAlias);
+      .reply(200, usersFixtures.onePropAlias);
     axiosMock
       .onPut("/api/currentUser/updateAliasModeration")
-      .reply(200, { id: aliasFixtures.onePropAlias[0].id, approved: false });
+      .reply(200, { id: usersFixtures.onePropAlias[0].id, approved: false });
 
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AliasTable alias={aliasFixtures.onePropAlias} />
+          <AliasTable alias={usersFixtures.onePropAlias} />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -248,7 +248,7 @@ describe("AliasTable tests", () => {
 
     await waitFor(() =>
       expect(toast).toHaveBeenCalledWith(
-        `Alias ${aliasFixtures.onePropAlias[0].proposedAlias} for id ${aliasFixtures.onePropAlias[0].id} rejected!`,
+        `Alias ${usersFixtures.onePropAlias[0].proposedAlias} for id ${usersFixtures.onePropAlias[0].id} rejected!`,
       ),
     );
     expect(toast).toHaveBeenCalledTimes(1);
