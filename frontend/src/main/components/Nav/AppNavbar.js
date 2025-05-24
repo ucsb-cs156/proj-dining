@@ -62,15 +62,19 @@ export default function AppNavbar({
                   </NavDropdown>
                 </>
               )}
-              {(hasRole(currentUser, "ROLE_ADMIN") ||
+
+              {
                 // Stryker disable next-line StringLiteral
-                hasRole(currentUser, "ROLE_MODERATOR")) && (
-                <>
-                  <Nav.Link as={Link} to="/moderate">
-                    Moderate
-                  </Nav.Link>
-                </>
-              )}
+                (hasRole(currentUser, "ROLE_ADMIN") ||
+                  // Stryker disable next-line StringLiteral
+                  hasRole(currentUser, "ROLE_MODERATOR")) && (
+                  <>
+                    <Nav.Link as={Link} to="/moderate">
+                      Moderate
+                    </Nav.Link>
+                  </>
+                )
+              }
               {currentUser && currentUser.loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/placeholder">
