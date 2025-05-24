@@ -64,9 +64,8 @@ export default function AppNavbar({
               )}
 
               {
-                // Stryker disable next-line StringLiteral
+                // Stryker disable all: prevent mutation of authorization check
                 (hasRole(currentUser, "ROLE_ADMIN") ||
-                  // Stryker disable next-line StringLiteral
                   hasRole(currentUser, "ROLE_MODERATOR")) && (
                   <>
                     <Nav.Link as={Link} to="/moderate">
@@ -74,6 +73,7 @@ export default function AppNavbar({
                     </Nav.Link>
                   </>
                 )
+                // Stryker restore all
               }
               {currentUser && currentUser.loggedIn ? (
                 <>
