@@ -138,7 +138,7 @@ public class UsersController extends ApiController {
 
     /**
      * This method allows an admin to toggle the admin status of a user.
-     * Turns moderators into admins, will not toggle status of admin in adminEmails.
+     * Will not toggle status of admin in adminEmails.
      * @param id the id of the user to toggle
      * @return the updated user
      */
@@ -151,9 +151,6 @@ public class UsersController extends ApiController {
         
         if(!adminEmails.contains(user.getEmail())) {
             user.setAdmin(!user.getAdmin());
-            if(user.getModerator()) {
-                user.setModerator(false);
-            }
         }
         
         userRepository.save(user);
@@ -163,7 +160,6 @@ public class UsersController extends ApiController {
 
     /**
      * This method allows an admin to toggle the moderator status of a user.
-     * Turns admins into moderators unless they are part of the adminEmails.
      * @param id the id of the user to toggle
      * @return the updated user
      */
@@ -175,12 +171,7 @@ public class UsersController extends ApiController {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(User.class, id));
         
-        if(!adminEmails.contains(user.getEmail())) {
-            user.setModerator(!user.getModerator());
-            if(user.getAdmin()) {
-                user.setAdmin(false);
-            }
-        }
+        user.setModerator(!user.getModerator());
         
         userRepository.save(user);
 

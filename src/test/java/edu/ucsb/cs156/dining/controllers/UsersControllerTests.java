@@ -349,49 +349,12 @@ public class UsersControllerTests extends ControllerTestCase {
           .id(7L)
           .email("user@example.org")
           .admin(false)
-          .moderator(false)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
           .email("user@example.org")
           .admin(true)
-          .moderator(false)
-          .build();
-
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
-
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleAdmin")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
-
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = { "ADMIN" })
-  public void admin_can_toggle_admin_of_moderator() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(false)
-          .moderator(true)
-          .build();
-
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(true)
-          .moderator(false)
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
@@ -419,14 +382,12 @@ public class UsersControllerTests extends ControllerTestCase {
           .id(7L)
           .email("user@example.org")
           .admin(true)
-          .moderator(false)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
           .email("user@example.org")
           .admin(false)
-          .moderator(false)
           .build();
 
       when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
@@ -507,14 +468,12 @@ public class UsersControllerTests extends ControllerTestCase {
       User userOrig = User.builder()
           .id(7L)
           .email("user@example.org")
-          .admin(false)
           .moderator(false)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
           .email("user@example.org")
-          .admin(false)
           .moderator(true)
           .build();
 
@@ -542,84 +501,12 @@ public class UsersControllerTests extends ControllerTestCase {
       User userOrig = User.builder()
           .id(7L)
           .email("user@example.org")
-          .admin(false)
           .moderator(true)
           .build();
 
       User userUpdated = User.builder()
           .id(7L)
           .email("user@example.org")
-          .admin(false)
-          .moderator(false)
-          .build();
-
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
-
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleModerator")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
-
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = { "ADMIN" })
-  public void admin_can_toggle_moderator_of_basic_admin() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(true)
-          .moderator(false)
-          .build();
-
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(false)
-          .moderator(true)
-          .build();
-
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
-
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleModerator")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
-
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = { "ADMIN" })
-  public void admin_cannot_toggle_moderator_of_super_admin() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("superadmin@example.org")
-          .admin(true)
-          .moderator(false)
-          .build();
-
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("superadmin@example.org")
-          .admin(true)
           .moderator(false)
           .build();
 
