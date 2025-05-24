@@ -48,8 +48,6 @@ export default function AliasTable({ alias }) {
       queryClient.invalidateQueries(["/api/admin/usersWithProposedAlias"]); //refresh the table
       toast(`Alias ${propAlias.proposedAlias} for id ${user.id} rejected!`);
     },
-
-
   });
 
   const columns = [
