@@ -1106,7 +1106,7 @@ public class ReviewControllerTests extends ControllerTestCase {
             .andExpect(status().isForbidden());
     }
 
-       @WithMockUser(roles = {"USER"})
+@WithMockUser(roles = {"USER"})
 @Test
 public void review_with_null_comment_is_auto_approved() throws Exception {
     // Arrange

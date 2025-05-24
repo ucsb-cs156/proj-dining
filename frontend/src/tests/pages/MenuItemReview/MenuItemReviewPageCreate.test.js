@@ -215,7 +215,7 @@ describe("CreateReviewPage branch coverage", () => {
       itemId: 12,
       item: { name: "Test Dish" },
       itemsStars: 4,
-      // reviewerComments is undefined
+      // reviewerComments is undefined intentially
     };
 
     axios.post.mockResolvedValueOnce({ data: mockReview });
