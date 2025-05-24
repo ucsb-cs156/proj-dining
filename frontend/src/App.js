@@ -9,6 +9,7 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
+import ReviewEditPage from "main/pages/MyReviews/ReviewEditPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
@@ -35,6 +36,11 @@ function App() {
         {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
+            <Route
+              exact
+              path="/myreviews/edit/:id"
+              element={<ReviewEditPage />}
+            />
             <Route
               exact
               path="/reviews/post/:id"
