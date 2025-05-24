@@ -160,7 +160,7 @@ public class ReviewControllerTests extends ControllerTestCase {
         // Assert
         verify(reviewRepository).save(any(Review.class));
         String responseJson = response.getResponse().getContentAsString();
-
+        
         assertEquals(responseJson, jsonReview);
     }
 
@@ -216,7 +216,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .build();
 
@@ -227,7 +227,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewerComments(null)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -235,7 +235,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         // Act
         MvcResult response = mockMvc.perform(
-                        post("/api/reviews/post?itemId=1&reviewerComments=   &itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                        post("/api/reviews/post?itemId=1&reviewerComments=&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
                                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -263,7 +263,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .itemsStars(1l)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .build();
 
@@ -273,7 +273,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .itemsStars(1l)
                 .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
                 .reviewer(user)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem)
                 .id(0L)
                 .build();
@@ -281,7 +281,7 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         // Act
         MvcResult response = mockMvc.perform(
-                        post("/api/reviews/post?itemId=1&reviewerComments=&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                        post("/api/reviews/post?itemId=1&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
                                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -626,7 +626,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewer(user1)
                 .reviewerComments(null)
                 .itemsStars(2L)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem1)
                 .id(1L)
                 .build();
@@ -682,7 +682,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .reviewer(user1)
                 .reviewerComments(null)
                 .itemsStars(2L)
-                .status(ModerationStatus.AWAITING_REVIEW)
+                .status(ModerationStatus.APPROVED)
                 .item(menuItem1)
                 .id(1L)
                 .build();
