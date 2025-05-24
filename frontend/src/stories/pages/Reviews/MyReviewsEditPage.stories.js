@@ -18,7 +18,7 @@ export default {
         const url = new URL(request.url);
         console.log(
           "Storybook GET /api/reviews/get",
-          url.searchParams.get("id")
+          url.searchParams.get("id"),
         );
         return HttpResponse.json(review, { status: 200 });
       }),
