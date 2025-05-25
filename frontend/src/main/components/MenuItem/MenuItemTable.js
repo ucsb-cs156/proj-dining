@@ -15,10 +15,6 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       Header: "Station",
       accessor: "station",
     },
-    {
-      Header: "Average Rating",
-      accessor: "averageRating",
-    },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
