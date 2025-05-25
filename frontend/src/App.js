@@ -1,5 +1,4 @@
-import { createBrowserRouter } from "react-router";
-import { RouterProvider } from "react-router/dom";
+import { BrowserRouter, Routes, Route } from "react-router";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
@@ -24,56 +23,44 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   const { data: currentUser } = useCurrentUser();
 
-  const router = createBrowserRouter(
-    [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: "profile",
-        element: <ProfilePage />,
-      },
-      hasRole(currentUser, "ROLE_ADMIN") && {
-        path: "admin/users",
-        element: <AdminUsersPage />,
-      },
-      hasRole(currentUser, "ROLE_ADMIN") && {
-        path: "moderate",
-        element: <Moderate />,
-      },
-      hasRole(currentUser, "ROLE_USER") && {
-        path: "myreviews",
-        element: <MyReviewsIndexPage />,
-      },
-      hasRole(currentUser, "ROLE_USER") && {
-        path: "reviews/post/:id",
-        element: <ReviewsCreatePage />,
-      },
-      hasRole(currentUser, "ROLE_USER") && {
-        path: "placeholder",
-        element: <PlaceholderIndexPage />,
-      },
-      hasRole(currentUser, "ROLE_ADMIN") && {
-        path: "placeholder/create",
-        element: <PlaceholderCreatePage />,
-      },
-      hasRole(currentUser, "ROLE_ADMIN") && {
-        path: "placeholder/edit/:id",
-        element: <PlaceholderEditPage />,
-      },
-      {
-        path: "diningcommons/:date-time/:dining-commons-code",
-        element: <MealTimesPage />,
-      },
-      {
-        path: "diningcommons/:date-time/:dining-commons-code/:meal",
-        element: <MenuItemPage />,
-      },
-    ].filter(Boolean),
-  );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        {hasRole(currentUser, "ROLE_ADMIN") && (
+          <>
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/moderate" element={<Moderate />} />
+            <Route
+              path="/placeholder/create"
+              element={<PlaceholderCreatePage />}
+            />
+            <Route
+              path="/placeholder/edit/:id"
+              element={<PlaceholderEditPage />}
+            />
+          </>
+        )}
+        {hasRole(currentUser, "ROLE_USER") && (
+          <>
+            <Route path="/myreviews" element={<MyReviewsIndexPage />} />
+            <Route path="/reviews/post/:id" element={<ReviewsCreatePage />} />
+            <Route path="/placeholder" element={<PlaceholderIndexPage />} />
+          </>
+        )}
 
-  return <RouterProvider router={router} />;
+        <Route
+          path="/diningcommons/:date-time/:dining-commons-code"
+          element={<MealTimesPage />}
+        />
+        <Route
+          path="/diningcommons/:date-time/:dining-commons-code/:meal"
+          element={<MenuItemPage />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
