@@ -47,6 +47,62 @@ const apiCurrentUserFixtures = {
       },
     ],
   },
+  moderatorUser: {
+    user: {
+      id: 3,
+      email: "fahimzaman@ucsb.edu",
+      googleSub: "116154159694345734170",
+      pictureUrl:
+        "https://lh3.googleusercontent.com/a/ACg8ocKmBJaQpZKv_bFH_IN2jTPTHTtI_HF8UFpCKZDWfMCwnY4aUg=s96-c",
+      fullName: "Fahim Zaman",
+      givenName: "Fahim",
+      familyName: "Zaman",
+      emailVerified: true,
+      locale: null,
+      hostedDomain: "ucsb.edu",
+      admin: true,
+      alias: "Anonymous User",
+      proposedAlias: null,
+      status: null,
+      dateApproved: null,
+      moderator: true,
+      reviews: [],
+    },
+    roles: [
+      {
+        authority: "ROLE_MEMBER",
+      },
+      {
+        authority: "SCOPE_openid",
+      },
+      {
+        authority: "OAUTH2_USER",
+        attributes: {
+          sub: "116154159694345734170",
+          name: "Fahim Zaman",
+          given_name: "Fahim",
+          family_name: "Zaman",
+          picture:
+            "https://lh3.googleusercontent.com/a/ACg8ocKmBJaQpZKv_bFH_IN2jTPTHTtI_HF8UFpCKZDWfMCwnY4aUg=s96-c",
+          email: "fahimzaman@ucsb.edu",
+          email_verified: true,
+          hd: "ucsb.edu",
+        },
+      },
+      {
+        authority: "ROLE_USER",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+      },
+      {
+        authority: "ROLE_MODERATOR",
+      },
+    ],
+  },
   userOnly: {
     user: {
       id: 2,
