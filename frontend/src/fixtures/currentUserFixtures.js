@@ -172,6 +172,20 @@ const currentUserFixtures = {
       ],
     },
   },
+  moderatorUser: {
+    loggedIn: true,
+    root: {
+      ...apiCurrentUserFixtures.moderatorUser,
+      rolesList: [
+        "ROLE_MEMBER",
+        "SCOPE_openid",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+        "ROLE_USER",
+        "ROLE_MODERATOR",
+      ],
+    },
+  },
   userOnly: {
     loggedIn: true,
     root: {
