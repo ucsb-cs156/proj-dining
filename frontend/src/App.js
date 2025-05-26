@@ -10,6 +10,7 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
+import ReviewsEditPage from "main/pages/Reviews/ReviewsEditPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
@@ -30,6 +31,9 @@ function App() {
       <Routes>
         <Route index element={<HomePage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route exact path="/" element={<HomePage />} />
+        <Route exact path="/profile" element={<ProfilePage />} />
+
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <>
             <Route path="/admin/users" element={<AdminUsersPage />} />
@@ -44,10 +48,16 @@ function App() {
             />
           </>
         )}
+
         {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route path="/myreviews" element={<MyReviewsIndexPage />} />
             <Route path="/reviews/post/:id" element={<ReviewsCreatePage />} />
+            <Route
+              exact
+              path="/reviews/edit/:id"
+              element={<ReviewsEditPage />}
+            />
             <Route path="/placeholder" element={<PlaceholderIndexPage />} />
           </>
         )}
