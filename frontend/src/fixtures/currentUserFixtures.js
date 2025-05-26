@@ -75,7 +75,7 @@ const apiCurrentUserFixtures = {
       {
         authority: "SCOPE_https://www.googleapis.com/auth/userinfo.email",
       },
-            {
+      {
         authority: "ROLE_USER",
         attributes: {
           sub: "115856948234298493496",
