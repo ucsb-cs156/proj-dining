@@ -24,7 +24,7 @@ describe("AppNavbar tests", () => {
     await screen.findByText("Welcome, pconrad.cis@gmail.com");
   });
 
-  test("renders correctly for admin user", async () => {
+  test("admin dropdown renders correctly for admin user", async () => {
     const currentUser = currentUserFixtures.adminUser;
     const doLogin = jest.fn();
 
@@ -38,6 +38,40 @@ describe("AppNavbar tests", () => {
 
     await screen.findByText("Welcome, phtcon@ucsb.edu");
     const adminMenu = screen.getByTestId("appnavbar-admin-dropdown");
+    expect(adminMenu).toBeInTheDocument();
+  });
+
+  test("moderate renders correctly for admin user", async () => {
+    const currentUser = currentUserFixtures.adminUser;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, phtcon@ucsb.edu");
+    const adminMenu = screen.getByTestId("appnavbar-admin/moderator-dropdown");
+    expect(adminMenu).toBeInTheDocument();
+  });
+
+  test("moderate renders correctly for moderator user", async () => {
+    const currentUser = currentUserFixtures.moderatorUser;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, fahimzaman@ucsb.edu");
+    const adminMenu = screen.getByTestId("appnavbar-admin/moderator-dropdown");
     expect(adminMenu).toBeInTheDocument();
   });
 

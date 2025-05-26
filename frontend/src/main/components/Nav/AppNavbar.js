@@ -63,18 +63,19 @@ export default function AppNavbar({
                 </>
               )}
 
-              {
-                // Stryker disable all: prevent mutation of authorization check
-                (hasRole(currentUser, "ROLE_ADMIN") ||
-                  hasRole(currentUser, "ROLE_MODERATOR")) && (
-                  <>
-                    <Nav.Link as={Link} to="/moderate">
-                      Moderate
-                    </Nav.Link>
-                  </>
-                )
-                // Stryker restore all
-              }
+              {(hasRole(currentUser, "ROLE_ADMIN") ||
+                hasRole(currentUser, "ROLE_MODERATOR")) && (
+                <>
+                  <Nav.Link
+                    id="appnavbar-admin/moderator-dropdown"
+                    data-testid="appnavbar-admin/moderator-dropdown"
+                    as={Link}
+                    to="/moderate"
+                  >
+                    Moderate
+                  </Nav.Link>
+                </>
+              )}
               {currentUser && currentUser.loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/placeholder">
