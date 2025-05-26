@@ -13,7 +13,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
   const viewCallback = async (_cell) => {
     const itemId = _cell.row.original.id;
     navigate(`/reviews/${itemId}`);
-  };  
+  };
 
   const columns = [
     {
@@ -28,11 +28,10 @@ export default function MenuItemTable({ menuItems, currentUser }) {
 
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
-      ButtonColumn("Review Item", "warning", reviewCallback, testid)
+      ButtonColumn("Review Item", "warning", reviewCallback, testid),
     );
     columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
   return <OurTable columns={columns} data={menuItems} testid={testid} />;
 }
-

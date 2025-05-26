@@ -41,19 +41,19 @@ describe("MenuItemTable Tests", () => {
     );
 
     expect(screen.getByTestId("MenuItemTable-header-name")).toHaveTextContent(
-      "Item Name"
+      "Item Name",
     );
     expect(
-      screen.getByTestId("MenuItemTable-header-station")
+      screen.getByTestId("MenuItemTable-header-station"),
     ).toHaveTextContent("Station");
     expect(
-      screen.queryByTestId("MenuItemTable-row-cell-0-col-name")
+      screen.queryByTestId("MenuItemTable-row-cell-0-col-name"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("MenuItemTable-row-cell-0-col-station")
+      screen.queryByTestId("MenuItemTable-row-cell-0-col-station"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button")
+      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
     ).not.toBeInTheDocument();
   });
 
@@ -71,13 +71,13 @@ describe("MenuItemTable Tests", () => {
 
     for (let i = 0; i < fiveMenuItems.length; i++) {
       expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`)
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`),
       ).toHaveTextContent(fiveMenuItems[i].name);
       expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`)
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
       ).toHaveTextContent(fiveMenuItems[i].station);
       expect(
-        screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button")
+        screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
       ).not.toBeInTheDocument();
     }
   });
@@ -101,7 +101,7 @@ describe("MenuItemTable Tests", () => {
     );
 
     const button = screen.getByTestId(
-      "MenuItemTable-cell-row-0-col-Review Item-button"
+      "MenuItemTable-cell-row-0-col-Review Item-button",
     );
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass("btn-warning");
