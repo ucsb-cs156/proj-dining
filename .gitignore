@@ -1,3 +1,9 @@
+## Keys for automerge (see workflow 91)
+github-actions-bot.pub.asc
+github-actions-bot.sec.asc
+github-actions-bot.pub.asc.b64
+github-actions-bot.sec.asc.b64
+
 ## emacs ##
 *~
 
