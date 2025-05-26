@@ -28,12 +28,17 @@ describe("ReviewsTable tests", () => {
     );
 
     expect(screen.getByText("Item Id")).toBeInTheDocument();
+    expect(screen.getByText("Item Name")).toBeInTheDocument();
     expect(screen.getByText("Score")).toBeInTheDocument();
     expect(screen.getByText("Comments")).toBeInTheDocument();
     expect(screen.getByText("Date Served")).toBeInTheDocument();
+    expect(screen.getByText("Dining Commons Code")).toBeInTheDocument();
 
     expect(
-      screen.getByTestId(`Reviewstable-cell-row-0-col-itemId`),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-item.name`),
     ).toBeInTheDocument();
     expect(
       screen.getByTestId(`Reviewstable-cell-row-0-col-itemsStars`),
@@ -43,6 +48,9 @@ describe("ReviewsTable tests", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByTestId(`Reviewstable-cell-row-0-col-dateItemServed`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-item.diningCommonsCode`),
     ).toBeInTheDocument();
 
     const editButton = screen.queryByTestId(
@@ -77,17 +85,6 @@ describe("ReviewsTable tests", () => {
         ,
       </QueryClientProvider>,
     );
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`Reviewstable-cell-row-0-col-itemId`),
-      ).toHaveTextContent("7");
-    });
-
-    expect(screen.getByText("Item Name")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-itemName"),
-    ).toHaveTextContent("Make Your Own Waffle (v)");
 
     //edit button
     const editButton = screen.getByTestId(
@@ -138,7 +135,7 @@ describe("ReviewsTable tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByTestId(`Reviewstable-cell-row-0-col-itemId`),
+        screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
 

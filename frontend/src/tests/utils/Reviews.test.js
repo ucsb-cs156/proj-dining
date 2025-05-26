@@ -32,7 +32,7 @@ describe("Reviews", () => {
   describe("cellToAxiosParamsDelete", () => {
     test("It returns the correct params", () => {
       // arrange
-      const cell = { row: { values: { itemId: 1 } } };
+      const cell = { row: { values: { "item.id": 1 } } };
 
       // act
       const result = cellToAxiosParamsDelete(cell);

@@ -33,7 +33,11 @@ export default function ReviewsTable({
   const columns = [
     {
       Header: "Item Id",
-      accessor: "itemId",
+      accessor: "item.id",
+    },
+    {
+      Header: "Item Name",
+      accessor: "item.name",
     },
     {
       Header: "Score",
@@ -51,13 +55,13 @@ export default function ReviewsTable({
         <span>{new Date(value).toLocaleDateString("en-US")}</span>
       ),
     },
+    {
+      Header: "Dining Commons Code",
+      accessor: "item.diningCommonsCode",
+    },
   ];
 
   if (userOptions) {
-    columns.push({
-      Header: "Item Name",
-      accessor: "itemName",
-    });
     columns.push(ButtonColumn("Edit", "primary", editCallback, "Reviewstable"));
     columns.push(
       ButtonColumn("Delete", "danger", deleteCallback, "Reviewstable"),
