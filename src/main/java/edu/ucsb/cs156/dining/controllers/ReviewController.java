@@ -198,7 +198,7 @@ public class ReviewController extends ApiController {
     }
 
     @Operation(summary = "Moderate a review")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @PutMapping("/moderate")
     public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
         Review review = reviewRepository.findById(id).orElseThrow(
@@ -213,7 +213,7 @@ public class ReviewController extends ApiController {
     }
 
     @Operation(summary = "See reviews that need moderation")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @GetMapping("/needsmoderation")
     public Iterable<Review> needsmoderation() {
         Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
