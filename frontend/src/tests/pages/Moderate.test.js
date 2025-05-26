@@ -49,7 +49,12 @@ describe("ModeratePage tests", () => {
 
   test("renders correctly for moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, email: "moderator@ucsb.edu", admin: false, moderator: true },
+      user: {
+        id: 1,
+        email: "moderator@ucsb.edu",
+        admin: false,
+        moderator: true,
+      },
       roles: [{ authority: "ROLE_MODERATOR" }],
     });
     axiosMock
