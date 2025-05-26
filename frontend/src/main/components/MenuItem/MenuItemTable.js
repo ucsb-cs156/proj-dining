@@ -9,9 +9,12 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     const itemId = _cell.row.original.id;
     navigate(`/reviews/post/${itemId}`);
   };
+
   const viewCallback = async (_cell) => {
-    navigate(`/reviews/${_cell.row.original.id}`);
-  };
+    const itemId = _cell.row.original.id;
+    navigate(`/reviews/${itemId}`);
+  };  
+
   const columns = [
     {
       Header: "Item Name",
