@@ -71,8 +71,27 @@ describe("AppNavbar tests", () => {
     );
 
     await screen.findByText("Welcome, fahimzaman@ucsb.edu");
-    const adminMenu = screen.getByTestId("appnavbar-admin/moderator-dropdown");
-    expect(adminMenu).toBeInTheDocument();
+    const moderatorMenu = screen.getByTestId(
+      "appnavbar-admin/moderator-dropdown",
+    );
+    expect(moderatorMenu).toBeInTheDocument();
+  });
+
+  test("moderate does not renders for regular users", async () => {
+    const currentUser = currentUserFixtures.userOnly;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, pconrad.cis@gmail.com");
+    const modLink = screen.queryByTestId("appnavbar-admin/moderator-dropdown");
+    expect(modLink).toBeNull();
   });
 
   test("renders H2Console and Swagger links correctly", async () => {
