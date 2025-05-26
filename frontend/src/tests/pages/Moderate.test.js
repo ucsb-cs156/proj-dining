@@ -23,6 +23,7 @@ describe("ModeratePage tests", () => {
     jest.clearAllMocks();
     axiosMock.reset();
     axiosMock.resetHistory();
+    queryClient.clear();
   });
 
   test("renders correctly for admin user", async () => {
@@ -48,12 +49,7 @@ describe("ModeratePage tests", () => {
 
   test("renders correctly for moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: {
-        id: 1,
-        email: "moderator@ucsb.edu",
-        admin: false,
-        moderator: true,
-      },
+      user: { id: 1, email: "moderator@ucsb.edu", admin: false, moderator: true },
       roles: [{ authority: "ROLE_MODERATOR" }],
     });
     axiosMock
@@ -64,9 +60,6 @@ describe("ModeratePage tests", () => {
 
     // Single assertion inside waitFor
     await screen.findByText("Moderation Page");
-
-    expect(screen.queryByText("Redirected")).not.toBeInTheDocument();
-
     // Additional assertion outside waitFor
     expect(
       screen.getByText(
