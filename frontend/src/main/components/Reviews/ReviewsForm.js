@@ -107,9 +107,7 @@ function ReviewsForm({
               as="textarea"
               rows={3}
               isInvalid={Boolean(errors.reviewerComments)}
-              {...register("reviewerComments", {
-                required: "Reviewer Comments are required.",
-              })}
+              {...register("reviewerComments")}
             />
             <Form.Control.Feedback type="invalid">
               {errors.reviewerComments?.message}
