@@ -106,10 +106,8 @@ public class ReviewController extends ApiController {
 
         // Reviewer comments moderation logic
         if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
-            // review.setStatus(ModerationStatus.AWAITING_REVIEW);
             review.setReviewerComments(reviewerComments);
         } else {
-            // review.setReviewerComments(null);// treat truly empty comments as null
             review.setStatus(ModerationStatus.APPROVED); // auto-approve
         }
         
