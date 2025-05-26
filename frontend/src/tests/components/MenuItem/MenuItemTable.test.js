@@ -111,7 +111,6 @@ describe("MenuItemTable Tests", () => {
     await waitFor(() => {
       expect(mockedNavigate).toHaveBeenCalledWith("/reviews/post/1");
     });
-    expect(mockAlert).toBeCalledWith("Reviews coming soon!");
 
     let allButton = screen.getByTestId(
       "MenuItemTable-cell-row-0-col-All Reviews-button",
@@ -121,8 +120,7 @@ describe("MenuItemTable Tests", () => {
 
     fireEvent.click(allButton);
     await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/undefined"),
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/1"),
     );
   });
 });
-
