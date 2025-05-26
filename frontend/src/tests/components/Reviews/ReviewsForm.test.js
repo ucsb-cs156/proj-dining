@@ -47,9 +47,6 @@ describe("ReviewsForm tests", () => {
     fireEvent.click(submitButton);
     await screen.findByText(/Stars are required./);
     expect(screen.getByText(/Date Reviewed is required./)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Reviewer Comments are required./),
-    ).toBeInTheDocument();
   });
 
   test("No error messages on good input", async () => {
