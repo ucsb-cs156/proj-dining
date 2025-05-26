@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 
 export default function ReviewsForMenuItemPage() {
