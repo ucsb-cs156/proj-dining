@@ -19,6 +19,7 @@ import { hasRole, useCurrentUser } from "main/utils/currentUser";
 import "bootstrap/dist/css/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
+import ReviewsForMenuItemPage from "main/pages/Reviews/ReviewsForMenuItemPage";
 
 function App() {
   const { data: currentUser } = useCurrentUser();
@@ -82,6 +83,11 @@ function App() {
             element={<MenuItemPage />}
           />
         </>
+        <Route
+          exact
+          path="/reviews/:itemid"
+          element={<ReviewsForMenuItemPage />}
+        />
       </Routes>
     </BrowserRouter>
   );
