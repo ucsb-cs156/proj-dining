@@ -2,6 +2,7 @@ import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import MenuItemTable from "../../../main/components/MenuItem/MenuItemTable";
 import { menuItemFixtures } from "../../../fixtures/menuItemFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
+import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import {
   apiCurrentUserFixtures,
@@ -30,10 +31,13 @@ describe("MenuItemTable Tests", () => {
 
   test("Headers appear and empty table renders correctly without buttons", async () => {
     render(
-      <MenuItemTable
-        menuItems={[]}
-        currentUser={currentUserFixtures.notLoggedIn}
-      />
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={[]}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+        ,
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId("MenuItemTable-header-name")).toHaveTextContent(
@@ -56,10 +60,13 @@ describe("MenuItemTable Tests", () => {
   test("Renders 5 Menu Items correctly without buttons", async () => {
     let fiveMenuItems = menuItemFixtures.fiveMenuItems;
     render(
-      <MenuItemTable
-        menuItems={fiveMenuItems}
-        currentUser={currentUserFixtures.notLoggedIn}
-      />
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={fiveMenuItems}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+        ,
+      </MemoryRouter>,
     );
 
     for (let i = 0; i < fiveMenuItems.length; i++) {
@@ -84,10 +91,13 @@ describe("MenuItemTable Tests", () => {
       .reply(200, systemInfoFixtures.showingNeither);
 
     render(
-      <MenuItemTable
-        menuItems={menuItemFixtures.oneMenuItem}
-        currentUser={currentUserFixtures.userOnly}
-      />
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={menuItemFixtures.oneMenuItem}
+          currentUser={currentUserFixtures.userOnly}
+        />
+        ,
+      </MemoryRouter>,
     );
 
     const button = screen.getByTestId(
@@ -101,6 +111,18 @@ describe("MenuItemTable Tests", () => {
     await waitFor(() => {
       expect(mockedNavigate).toHaveBeenCalledWith("/reviews/post/1");
     });
+    expect(mockAlert).toBeCalledWith("Reviews coming soon!");
+
+    let allButton = screen.getByTestId(
+      "MenuItemTable-cell-row-0-col-All Reviews-button",
+    );
+    expect(allButton).toBeInTheDocument();
+    expect(allButton).toHaveClass("btn-warning");
+
+    fireEvent.click(allButton);
+    await waitFor(() =>
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/undefined"),
+    );
   });
 });
 

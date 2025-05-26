@@ -7,6 +7,8 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
+import ReviewsPage from "main/pages/Reviews/ReviewsPage";
+
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 
@@ -39,9 +41,11 @@ function App() {
               path="/reviews/post/:id"
               element={<PostReviewPage />}
             />
+            <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
           </>
         )}
-        {hasRole(currentUser, "ROLE_ADMIN") && (
+        {(hasRole(currentUser, "ROLE_ADMIN") ||
+          hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
         {hasRole(currentUser, "ROLE_USER") && (

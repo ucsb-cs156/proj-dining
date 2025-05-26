@@ -38,6 +38,7 @@ public class User {
  private String locale;
  private String hostedDomain;
  private boolean admin;
+ private boolean moderator;
  private String alias;
  private String proposedAlias;
  @Enumerated(EnumType.STRING)
