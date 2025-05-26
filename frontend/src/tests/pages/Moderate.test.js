@@ -27,7 +27,7 @@ describe("ModeratePage tests", () => {
 
   test("renders correctly for admin user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, email: "admin@ucsb.edu", admin: true },
+      user: { id: 1, email: "admin@ucsb.edu", admin: true, moderator: false },
       roles: [{ authority: "ROLE_ADMIN" }],
     });
     axiosMock
@@ -44,9 +44,37 @@ describe("ModeratePage tests", () => {
     ).toBeInTheDocument();
   });
 
+  test("renders correctly for moderator user", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: {
+        id: 2,
+        email: "moderator@ucsb.edu",
+        admin: false,
+        moderator: true,
+      },
+      roles: [{ authority: "ROLE_MODERATOR" }],
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+    });
+
+    // Single assertion inside waitFor
+    await screen.findByText("Moderation Page");
+    // Additional assertion outside waitFor
+    expect(
+      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+    ).toBeInTheDocument();
+  });
+
   test("redirects non-admin user to homepage", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, email: "user@ucsb.edu", admin: false },
+      user: { id: 3, email: "user@ucsb.edu", admin: false, moderator: false },
       roles: [{ authority: "ROLE_USER" }],
     });
     axiosMock
