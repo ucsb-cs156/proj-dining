@@ -46,6 +46,11 @@ function App() {
               path="/reviews/post/:id"
               element={<ReviewsCreatePage />}
             />
+            <Route
+              exact
+              path="/reviews/edit/:id"
+              element={<ReviewsEditPage />}
+            />
           </>
         )}
         {hasRole(currentUser, "ROLE_ADMIN") && (

@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
+import ReviewsEditPage from "main/pages/Reviews/ReviewsEditPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
@@ -8,7 +8,7 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
-describe("ReviewsCreatePage tests", () => {
+describe("ReviewsEditPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
 
   const setupUserOnly = () => {
@@ -31,17 +31,16 @@ describe("ReviewsCreatePage tests", () => {
     // act
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={["/reviews/post/1"]}>
+        <MemoryRouter initialEntries={["/reviews/edit/1"]}>
           <Routes>
-            <Route path="/reviews/post/:id" element={<ReviewsCreatePage />} />
+            <Route path="/reviews/edit/:id" element={<ReviewsEditPage />} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
     );
 
     // assert
-
-    await screen.findByText("Post a review for Menu Item 1");
+    await screen.findByText("Edit review with id 1");
     await screen.findByText("Coming Soon!");
   });
 });
