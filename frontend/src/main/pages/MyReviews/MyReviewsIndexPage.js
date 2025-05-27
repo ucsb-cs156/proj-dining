@@ -9,20 +9,6 @@ import { Button } from "react-bootstrap";
 export default function MyReviewsIndexPage() {
   const currentUser = useCurrentUser();
 
-  const createButton = () => {
-    if (hasRole(currentUser, "ROLE_USER")) {
-      return (
-        <Button
-          variant="primary"
-          href="/myreviews/create"
-          style={{ float: "right" }}
-        >
-          Create Review
-        </Button>
-      );
-    }
-  };
-
   const {
     data: reviews,
     error: _error,
@@ -40,7 +26,7 @@ export default function MyReviewsIndexPage() {
     <BasicLayout>
       <div className="pt-2">
         {createButton()}
-        <h1>Reviews</h1>
+        <h1>My Reviews</h1>
         <ReviewsTable reviews={reviews} userOptions={userOptions} />
       </div>
     </BasicLayout>

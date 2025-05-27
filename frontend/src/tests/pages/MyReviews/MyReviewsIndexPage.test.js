@@ -137,48 +137,4 @@ describe("MyReviewsIndexPage tests", () => {
       expect(mockToast).toBeCalledWith("Review deleted");
     });
   });
-
-  test("Renders with Create Button for regular user", async () => {
-    // arrange
-    setupUserOnly();
-    const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, []);
-
-    // act
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <MyReviewsIndexPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    // assert
-    await waitFor(() => {
-      expect(screen.getByText(/Create Review/)).toBeInTheDocument();
-    });
-    const button = screen.getByText(/Create Review/);
-    expect(button).toHaveAttribute("href", "/myreviews/create");
-    expect(button).toHaveAttribute("style", "float: right;");
-  });
-
-  test("Create button does not render if not user", async () => {
-    // arrange
-    const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, []);
-
-    // act
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <MyReviewsIndexPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    // assert
-    await waitFor(() => {
-      expect(screen.queryByText(/Create Review/)).not.toBeInTheDocument();
-    });
-  });
 });
