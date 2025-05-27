@@ -1,13 +1,13 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router";
 import { reviewFixtures } from "fixtures/reviewFixtures";
 import { QueryClient, QueryClientProvider } from "react-query";
 import ReviewForm from "main/components/Review/ReviewForm";
 
 const mockedNavigate = jest.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
   useNavigate: () => mockedNavigate,
 }));
 
