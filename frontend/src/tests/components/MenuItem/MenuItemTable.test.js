@@ -14,7 +14,7 @@ import {
   currentUserFixtures,
 } from "../../../fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
 describe("MenuItemTable Tests", () => {
   let axiosMock;

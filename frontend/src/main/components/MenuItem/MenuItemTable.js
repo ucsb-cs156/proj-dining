@@ -1,6 +1,6 @@
 import OurTable, { ButtonColumn } from "../OurTable";
 import { hasRole } from "../../utils/currentUser";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";

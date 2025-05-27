@@ -1,4 +1,5 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+import { Link } from "react-router";
 
 export default function PlaceholderIndexPage() {
   // Stryker disable all : placeholder for future implementation
@@ -7,10 +8,10 @@ export default function PlaceholderIndexPage() {
       <div className="pt-2">
         <h1>Index page not yet implemented</h1>
         <p>
-          <a href="/placeholder/create">Create</a>
+          <Link to="/placeholder/create">Create</Link>
         </p>
         <p>
-          <a href="/placeholder/edit/1">Edit</a>
+          <Link to="/placeholder/edit/1">Edit</Link>
         </p>
       </div>
     </BasicLayout>

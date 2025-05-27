@@ -1,5 +1,5 @@
 import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { hasRole } from "main/utils/currentUser";
 import AppNavbarLocalhost from "main/components/Nav/AppNavbarLocalhost";
 
@@ -56,7 +56,7 @@ export default function AppNavbar({
                     id="appnavbar-admin-dropdown"
                     data-testid="appnavbar-admin-dropdown"
                   >
-                    <NavDropdown.Item href="/admin/users">
+                    <NavDropdown.Item as={Link} to="/admin/users">
                       Users
                     </NavDropdown.Item>
                   </NavDropdown>

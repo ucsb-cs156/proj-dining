@@ -1,6 +1,6 @@
 import React from "react";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 
 const Moderate = () => {
