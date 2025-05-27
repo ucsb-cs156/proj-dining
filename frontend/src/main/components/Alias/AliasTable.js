@@ -1,3 +1,4 @@
+// src/components/Alias/AliasTable.js
 import React from "react";
 import OurTable from "main/components/OurTable";
 import { toast } from "react-toastify";
@@ -12,42 +13,45 @@ export default function AliasTable({ alias }) {
     params: { id: user.id, approved: true },
   });
   const approveMutation = useBackendMutation(objectToAxiosParamsApprove, {
-    onSuccess: (user, propAlias) => {
-      toast(`Alias ${propAlias.proposedAlias} for id ${user.id} approved!`);
+    onSuccess: (user) => {
+      toast.success(
+        `Alias "${user.proposedAlias}" for ID ${user.id} approved!`,
+      );
     },
     onError: (err) => {
       toast.error(`Error approving alias: ${err.message}`);
     },
   });
 
-  // --- reject mutation + toast ---
   const objectToAxiosParamsReject = (user) => ({
     url: `/api/currentUser/updateAliasModeration`,
     method: "PUT",
     params: { id: user.id, approved: false },
   });
   const rejectMutation = useBackendMutation(objectToAxiosParamsReject, {
-    onSuccess: (user, propAlias) => {
-      toast(`Alias ${propAlias.proposedAlias} for id ${user.id} rejected!`);
+    onSuccess: (user) => {
+      toast.success(
+        `Alias "${user.proposedAlias}" for ID ${user.id} rejected!`,
+      );
     },
     onError: (err) => {
       toast.error(`Error rejecting alias: ${err.message}`);
     },
   });
 
-  // --- table columns line up exactly with your tests :contentReference[oaicite:0]{index=0} ---
   const columns = [
-    { Header: "Proposed Alias", accessor: "proposedAlias" },
+    {
+      Header: "Proposed Alias",
+      accessor: "proposedAlias",
+      Cell: ({ value }) => value || "(No proposed alias)",
+    },
     {
       Header: "Approve",
       id: "approve",
-      Cell: ({ cell }) => (
+      Cell: ({ row }) => (
         <button
           className="btn btn-success"
-          onClick={() => {
-            const user = cell.row.original;
-            approveMutation.mutate(user, user.proposedAlias);
-          }}
+          onClick={() => approveMutation.mutate(row.original)}
         >
           Approve
         </button>
@@ -56,13 +60,10 @@ export default function AliasTable({ alias }) {
     {
       Header: "Reject",
       id: "reject",
-      Cell: ({ cell }) => (
+      Cell: ({ row }) => (
         <button
           className="btn btn-danger"
-          onClick={() => {
-            const user = cell.row.original;
-            rejectMutation.mutate(user, user.proposedAlias);
-          }}
+          onClick={() => rejectMutation.mutate(row.original)}
         >
           Reject
         </button>
@@ -70,7 +71,11 @@ export default function AliasTable({ alias }) {
     },
   ];
 
-  const displayedColumns = columns;
+  if (!alias || alias.length === 0) {
+    return (
+      <div data-testid="AliasTable-empty">No aliases awaiting approval</div>
+    );
+  }
 
-  return <OurTable data={alias} columns={displayedColumns} testid={testid} />;
+  return <OurTable data={alias} columns={columns} testid={testid} />;
 }
