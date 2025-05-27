@@ -6,7 +6,7 @@ import {
   within,
 } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router"; // 使用你的结构
+import { MemoryRouter } from "react-router";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import Moderate from "main/pages/Moderate";
@@ -14,7 +14,6 @@ import { useBackend } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 import usersFixtures from "fixtures/usersFixtures";
 
-// Mock useBackend
 jest.mock("main/utils/useBackend", () => ({
   useBackend: jest.fn(),
 }));
@@ -45,7 +44,6 @@ describe("ModeratePage tests", () => {
     axiosMock.resetHistory();
     queryClient.clear();
 
-    // 一致性mock useBackend返回数据
     useBackend.mockReturnValue({
       data: usersFixtures.threeUsers,
       error: null,
@@ -72,7 +70,7 @@ describe("ModeratePage tests", () => {
     ).toBeInTheDocument();
   });
 
-  test("triggers toast when clicking approve/reject", async () => {
+  test("triggers success toast when clicking approve/reject", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -100,6 +98,64 @@ describe("ModeratePage tests", () => {
     });
     fireEvent.click(rejectButton);
     await waitFor(() => expect(toast.success).toHaveBeenCalled());
+  });
+
+  test("triggers error toast when approve fails", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: { id: 1, email: "admin@ucsb.edu", admin: true },
+      roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+    axiosMock
+      .onPut("/api/currentUser/updateAliasModeration")
+      .reply(() => Promise.reject(new Error("Network Error")));
+
+    renderPage();
+
+    const approveCell = await screen.findByTestId(
+      "AliasTable-cell-row-0-col-Approve",
+    );
+    const approveButton = within(approveCell).getByRole("button", {
+      name: "Approve",
+    });
+    fireEvent.click(approveButton);
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith(
+        expect.stringContaining("Error approving alias"),
+      ),
+    );
+  });
+
+  test("triggers error toast when reject fails", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: { id: 1, email: "admin@ucsb.edu", admin: true },
+      roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+    axiosMock
+      .onPut("/api/currentUser/updateAliasModeration")
+      .reply(() => Promise.reject(new Error("Network Error")));
+
+    renderPage();
+
+    const rejectCell = await screen.findByTestId(
+      "AliasTable-cell-row-0-col-Reject",
+    );
+    const rejectButton = within(rejectCell).getByRole("button", {
+      name: "Reject",
+    });
+    fireEvent.click(rejectButton);
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith(
+        expect.stringContaining("Error rejecting alias"),
+      ),
+    );
   });
 
   test("redirects non-admin and non-moderator user to homepage", async () => {
