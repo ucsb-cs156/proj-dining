@@ -54,14 +54,14 @@ describe("MyReviewsIndexPage tests", () => {
     // assert
     await waitFor(() => {
       expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-itemId`),
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
     expect(
-      screen.getByTestId(`${testId}-cell-row-1-col-itemId`),
+      screen.getByTestId(`${testId}-cell-row-1-col-item.id`),
     ).toHaveTextContent("8");
     expect(
-      screen.getByTestId(`${testId}-cell-row-2-col-itemId`),
+      screen.getByTestId(`${testId}-cell-row-2-col-item.id`),
     ).toHaveTextContent("9");
   });
 
@@ -93,7 +93,7 @@ describe("MyReviewsIndexPage tests", () => {
     restoreConsole();
 
     expect(
-      screen.queryByTestId(`${testId}-cell-row-0-col-itemId`),
+      screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
     ).not.toBeInTheDocument();
   });
 
@@ -116,12 +116,12 @@ describe("MyReviewsIndexPage tests", () => {
     // assert
     await waitFor(() => {
       expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-itemId`),
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toBeInTheDocument();
     });
 
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-itemId`),
+      screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
     ).toHaveTextContent("7");
 
     const deleteButton = screen.getByTestId(
