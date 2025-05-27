@@ -8,23 +8,20 @@ import { useBackend } from "../utils/useBackend";
 
 const Moderate = () => {
   const { data: currentUser } = useCurrentUser();
-  const { data } = useBackend(
-    // don't test internal caching of React Query
-    [`/api/admin/usersWithProposedAlias`],
-    //  don't test internal caching of React Query
-    { method: "GET", url: "/api/admin/usersWithProposedAlias" },
-    [],
-  );
 
   if (!currentUser.loggedIn || !hasRole(currentUser, "ROLE_ADMIN")) {
     return <Navigate to="/" />;
   }
-
+  const { data } = useBackend(
+    [`/api/admin/usersWithProposedAlias`],
+    { method: "GET", url: "/api/admin/usersWithProposedAlias" },
+    [],
+  );
   return (
     <BasicLayout>
       <div className="pt-2">
         <h2>Moderation Page</h2>
-        <AliasTable alias={data} />
+        <AliasTable alias={data || []} />
       </div>
     </BasicLayout>
   );
