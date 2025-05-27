@@ -6,7 +6,7 @@ import {
   within,
 } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import Moderate from "main/pages/Moderate";
@@ -55,6 +55,7 @@ describe("Moderate Page Tests", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    queryClient.clear();
   });
 
   test("renders correctly for admin user", async () => {
@@ -70,15 +71,47 @@ describe("Moderate Page Tests", () => {
     renderPage();
     await screen.findByRole("heading", { level: 2, name: "Moderation Page" });
     expect(
+
       screen.getByTestId("AliasTable-header-proposedAlias"),
+
+      screen.getByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("renders correctly for moderator user", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: {
+        id: 1,
+        email: "moderator@ucsb.edu",
+        admin: false,
+        moderator: true,
+      },
+      roles: [{ authority: "ROLE_MODERATOR" }],
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+
+    // Single assertion inside waitFor
+    await screen.findByText("Moderation Page");
+    // Additional assertion outside waitFor
+    expect(
+      screen.getByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+
     ).toBeInTheDocument();
     expect(screen.getByTestId("AliasTable-header-approve")).toBeInTheDocument();
     expect(screen.getByTestId("AliasTable-header-reject")).toBeInTheDocument();
   });
 
-  test("redirects non-admin user to homepage", async () => {
+  test("redirects non-admin and non-moderator user to homepage", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, email: "user@ucsb.edu", admin: false },
+      user: { id: 2, email: "user@ucsb.edu", admin: false, moderator: false },
       roles: [{ authority: "ROLE_USER" }],
       loggedIn: true,
     });
@@ -87,11 +120,25 @@ describe("Moderate Page Tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
+
     await waitFor(() => {
       expect(
         screen.queryByRole("heading", { level: 2, name: "Moderation Page" }),
       ).not.toBeInTheDocument();
     });
+
+
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
+
   });
 
   test("redirects if currentUser data missing or not logged in", async () => {
@@ -101,11 +148,25 @@ describe("Moderate Page Tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
+
     await waitFor(() => {
       expect(
         screen.queryByRole("heading", { level: 2, name: "Moderation Page" }),
       ).not.toBeInTheDocument();
     });
+
+
+    // Single assertion inside waitFor
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
+
   });
 
   test("displays alias proposals from useBackend", async () => {
@@ -146,6 +207,13 @@ describe("Moderate Page Tests", () => {
       { method: "GET", url: "/api/admin/usersWithProposedAlias" },
       [],
     );
+
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
   });
 
   test("shows error toast when rejecting alias fails", async () => {
@@ -165,5 +233,12 @@ describe("Moderate Page Tests", () => {
     expect(toast.error).toHaveBeenCalledWith(
       "Error rejecting alias: Request failed with status code 500",
     );
+
+    // Additional assertion outside waitFor
+    expect(
+      screen.queryByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+    ).not.toBeInTheDocument();
   });
 });

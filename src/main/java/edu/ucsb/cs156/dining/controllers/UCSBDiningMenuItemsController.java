@@ -58,7 +58,6 @@ public class UCSBDiningMenuItemsController extends ApiController {
         Optional<MenuItem> exists = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningcommoncode, mealcode, entree.getName(), entree.getStation());
 
         MenuItem newMenuItem = exists.orElse(new MenuItem());
-          // MenuItem newMenuItem = new MenuItem();
           newMenuItem.setDiningCommonsCode(diningcommoncode);
           newMenuItem.setMealCode(mealcode);
           newMenuItem.setName(entree.getName());
