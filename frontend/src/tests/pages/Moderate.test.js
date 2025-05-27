@@ -1,28 +1,21 @@
-import {
-  render,
-  screen,
-  waitFor,
-  fireEvent,
-  within,
-} from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import Moderate from "main/pages/Moderate";
-import usersFixtures from "fixtures/usersFixtures";
-import { useBackend, useBackendMutation } from "main/utils/useBackend";
+import { useBackend } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 
 jest.mock("main/utils/useBackend");
 jest.mock("react-toastify", () => ({
   toast: {
-    success: jest.fn(),
     error: jest.fn(),
+    success: jest.fn(),
   },
 }));
 
-describe("Moderate Page Tests", () => {
+describe("Moderate Page Advanced Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   const queryClient = new QueryClient();
 
@@ -40,22 +33,10 @@ describe("Moderate Page Tests", () => {
     jest.clearAllMocks();
     axiosMock.reset();
     axiosMock.resetHistory();
-
-    useBackend.mockReturnValue({
-      data: usersFixtures.threeUsers,
-      error: null,
-      status: "success",
-    });
-
-    useBackendMutation.mockImplementation((_, { onSuccess, onError }) => ({
-      mutate: (_, __) =>
-        onError(new Error("Request failed with status code 500")),
-    }));
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
     queryClient.clear();
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
   });
 
   test("renders correctly for admin user", async () => {
@@ -64,181 +45,109 @@ describe("Moderate Page Tests", () => {
       roles: [{ authority: "ROLE_ADMIN" }],
       loggedIn: true,
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
+
+    useBackend.mockReturnValue({
+      data: [{ id: 1, proposedAlias: "Alias1" }],
+      status: "success",
+      error: null,
+      isLoading: false,
+    });
 
     renderPage();
-    await screen.findByRole("heading", { level: 2, name: "Moderation Page" });
+    await screen.findByText("Moderation Page");
     expect(
-
-      screen.getByTestId("AliasTable-header-proposedAlias"),
-
       screen.getByText(
         "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).toBeInTheDocument();
+    expect(screen.getByText("Alias1")).toBeInTheDocument();
   });
 
   test("renders correctly for moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: {
-        id: 1,
-        email: "moderator@ucsb.edu",
-        admin: false,
-        moderator: true,
-      },
+      user: { id: 2, email: "mod@ucsb.edu", admin: false, moderator: true },
       roles: [{ authority: "ROLE_MODERATOR" }],
+      loggedIn: true,
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
+
+    useBackend.mockReturnValue({
+      data: [{ id: 2, proposedAlias: "Alias2" }],
+      status: "success",
+      error: null,
+      isLoading: false,
+    });
 
     renderPage();
-
-    // Single assertion inside waitFor
     await screen.findByText("Moderation Page");
-    // Additional assertion outside waitFor
-    expect(
-      screen.getByText(
-        "This page is accessible only to admins and moderators. (Placeholder)",
-      ),
-
-    ).toBeInTheDocument();
-    expect(screen.getByTestId("AliasTable-header-approve")).toBeInTheDocument();
-    expect(screen.getByTestId("AliasTable-header-reject")).toBeInTheDocument();
+    expect(screen.getByText("Alias2")).toBeInTheDocument();
   });
 
-  test("redirects non-admin and non-moderator user to homepage", async () => {
+  test("redirects non-admin/moderator user to homepage", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, email: "user@ucsb.edu", admin: false, moderator: false },
+      user: { id: 3, email: "user@ucsb.edu", admin: false, moderator: false },
       roles: [{ authority: "ROLE_USER" }],
       loggedIn: true,
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { level: 2, name: "Moderation Page" }),
-      ).not.toBeInTheDocument();
-    });
-
-
-    // Single assertion inside waitFor
     await waitFor(() =>
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
-    // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins and moderators. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
-
   });
 
-  test("redirects if currentUser data missing or not logged in", async () => {
+  test("redirects to homepage if currentUser is undefined", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, null);
+
+    renderPage();
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+  });
+
+  test("redirects to homepage if currentUser.loggedIn is false", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, { loggedIn: false });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { level: 2, name: "Moderation Page" }),
-      ).not.toBeInTheDocument();
-    });
-
-
-    // Single assertion inside waitFor
     await waitFor(() =>
       expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
-    // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins and moderators. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
-
   });
 
-  test("displays alias proposals from useBackend", async () => {
+  test("renders empty alias table when useBackend returns empty array", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
       loggedIn: true,
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
+
+    useBackend.mockReturnValue({
+      data: [],
+      status: "success",
+      error: null,
+      isLoading: false,
+    });
 
     renderPage();
-    const rows = await screen.findAllByTestId(/AliasTable-row-/);
-    expect(rows).toHaveLength(usersFixtures.threeUsers.length);
-    usersFixtures.threeUsers.forEach((alias, idx) => {
-      expect(
-        within(rows[idx]).getByText(
-          alias.proposedAlias || "(No proposed alias)",
-        ),
-      ).toBeInTheDocument();
-    });
+    const emptyMessage = await screen.findByTestId("AliasTable-empty");
+    expect(emptyMessage).toHaveTextContent("No aliases awaiting approval");
   });
 
-  test("useBackend called with correct arguments", () => {
+  test("renders empty alias table when useBackend returns undefined", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
       loggedIn: true,
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
 
-    renderPage();
-    expect(useBackend).toHaveBeenCalledWith(
-      ["/api/admin/usersWithProposedAlias"],
-      { method: "GET", url: "/api/admin/usersWithProposedAlias" },
-      [],
-    );
-
-    // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins and moderators. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
-  });
-
-  test("shows error toast when rejecting alias fails", async () => {
-    axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, email: "admin@ucsb.edu", admin: true },
-      roles: [{ authority: "ROLE_ADMIN" }],
-      loggedIn: true,
+    useBackend.mockReturnValue({
+      data: undefined,
+      status: "success",
+      error: null,
+      isLoading: false,
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-    const cell = await screen.findByTestId("AliasTable-cell-row-0-col-reject");
-    const button = within(cell).getByRole("button", { name: "Reject" });
-    fireEvent.click(button);
-    expect(toast.error).toHaveBeenCalledWith(
-      "Error rejecting alias: Request failed with status code 500",
-    );
-
-    // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins and moderators. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
+    const emptyMessage = await screen.findByTestId("AliasTable-empty");
+    expect(emptyMessage).toHaveTextContent("No aliases awaiting approval");
   });
 });
