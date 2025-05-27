@@ -23,6 +23,7 @@ describe("ModeratePage tests", () => {
     jest.clearAllMocks();
     axiosMock.reset();
     axiosMock.resetHistory();
+    queryClient.clear();
   });
 
   test("renders correctly for admin user", async () => {
@@ -40,13 +41,41 @@ describe("ModeratePage tests", () => {
     await screen.findByText("Moderation Page");
     // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+      screen.getByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
     ).toBeInTheDocument();
   });
 
-  test("redirects non-admin user to homepage", async () => {
+  test("renders correctly for moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 2, email: "user@ucsb.edu", admin: false },
+      user: {
+        id: 1,
+        email: "moderator@ucsb.edu",
+        admin: false,
+        moderator: true,
+      },
+      roles: [{ authority: "ROLE_MODERATOR" }],
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+
+    // Single assertion inside waitFor
+    await screen.findByText("Moderation Page");
+    // Additional assertion outside waitFor
+    expect(
+      screen.getByText(
+        "This page is accessible only to admins and moderators. (Placeholder)",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("redirects non-admin and non-moderator user to homepage", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: { id: 2, email: "user@ucsb.edu", admin: false, moderator: false },
       roles: [{ authority: "ROLE_USER" }],
     });
     axiosMock
@@ -62,7 +91,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
@@ -82,7 +111,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
@@ -104,7 +133,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
@@ -126,7 +155,7 @@ describe("ModeratePage tests", () => {
     // Additional assertion outside waitFor
     expect(
       screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
+        "This page is accessible only to admins and moderators. (Placeholder)",
       ),
     ).not.toBeInTheDocument();
   });
