@@ -32,7 +32,7 @@ const Moderate = () => {
         `Alias "${alias.proposedAlias}" for ID ${alias.id} approved!`,
       );
     } catch (err) {
-      toast.error(`Error approving alias: ${err?.message || "Unknown error"}`);
+      toast.error(`Error approving alias: ${err.message || "Unknown error"}`);
     }
   };
 
@@ -45,7 +45,7 @@ const Moderate = () => {
         `Alias "${alias.proposedAlias}" for ID ${alias.id} rejected!`,
       );
     } catch (err) {
-      toast.error(`Error rejecting alias: ${err?.message || "Unknown error"}`);
+      toast.error(`Error rejecting alias: ${err.message || "Unknown error"}`);
     }
   };
 
