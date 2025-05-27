@@ -10,6 +10,7 @@ import {
 } from "../../../fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
 
+// ✅ Mock useNavigate from react-router-dom
 const mockedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -22,9 +23,12 @@ describe("MenuItemTable Tests", () => {
   beforeAll(() => {
     axiosMock = new AxiosMockAdapter(axios);
   });
+
   afterEach(() => {
     axiosMock.reset();
+    mockedNavigate.mockClear();
   });
+
   test("Headers appear and empty table renders correctly without buttons", async () => {
     render(
       <MemoryRouter>
@@ -724,13 +728,15 @@ describe("MenuItemTable Tests", () => {
   });
 
   test("Buttons work correctly", async () => {
-    const mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});
+    const _mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});
+
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
+
     render(
       <MemoryRouter>
         <MenuItemTable
@@ -740,7 +746,8 @@ describe("MenuItemTable Tests", () => {
         ,
       </MemoryRouter>,
     );
-    let button = screen.getByTestId(
+
+    const button = screen.getByTestId(
       "MenuItemTable-cell-row-0-col-Review Item-button",
     );
     expect(button).toBeInTheDocument();
@@ -749,9 +756,8 @@ describe("MenuItemTable Tests", () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockAlert).toBeCalledTimes(1);
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/post/1");
     });
-    expect(mockAlert).toBeCalledWith("Reviews coming soon!");
 
     let allButton = screen.getByTestId(
       "MenuItemTable-cell-row-0-col-All Reviews-button",
