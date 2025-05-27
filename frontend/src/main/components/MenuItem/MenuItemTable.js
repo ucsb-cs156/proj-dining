@@ -5,6 +5,35 @@ import OurTable, { ButtonColumn } from "../OurTable";
 import { hasRole } from "../../utils/currentUser";
 import { useNavigate, useLocation } from "react-router-dom";
 
+export const extractAllReviewsForItem = (raw, itemId) => {
+  const seen = new Set();
+  const reviews = [];
+
+  const recurse = (node) => {
+    // known issue with Stryker on recursion with array checking
+    // Stryker disable next-line all : recursion
+    if (Array.isArray(node)) {
+      node.forEach(recurse);
+    } else if (node) {
+      if (seen.has(node)) return;
+      seen.add(node);
+
+      const isReviewForItem =
+        typeof node.itemsStars !== "undefined" &&
+        (node.item.id === itemId || node.item === itemId);
+
+      if (isReviewForItem) {
+        reviews.push(node);
+      }
+
+      Object.values(node).forEach(recurse);
+    }
+  };
+
+  recurse(raw);
+  return reviews;
+};
+
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
   const navigate = useNavigate();
@@ -30,27 +59,24 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       Header: "Average Review",
       id: "averageReview",
       accessor: (row) => {
-        const reviews = row.reviews;
-        if (!reviews) {
-          return "🤷‍♂️ No Rating";
-        }
-        const validRatings = reviews
+        const extracted = extractAllReviewsForItem(row.reviews, row.id);
+
+        const validRatings = extracted
           .map((r) => {
             const num = Number(r.itemsStars);
-            return isNaN(num) ? null : num;
+            return Number.isFinite(num) && num >= 1 && num <= 5 ? num : null;
           })
-          .filter(
-            (stars) => Number.isFinite(stars) && stars >= 1 && stars <= 5,
-          );
+          .filter((num) => num !== null);
 
         if (validRatings.length === 0) {
           return "🤷‍♂️ No Rating";
         }
 
-        const avg =
-          validRatings.reduce((sum, stars) => sum + stars, 0) /
-          validRatings.length;
-
+        let total = 0;
+        for (const stars of validRatings) {
+          total = total + stars;
+        }
+        const avg = total / validRatings.length;
         return `${avg.toFixed(1)} ⭐`;
       },
     },
