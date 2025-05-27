@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
+import ReviewsEditPage from "main/pages/Reviews/ReviewsEditPage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, Routes, Route } from "react-router";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
-describe("MyReviewsIndexPage tests", () => {
+describe("ReviewsEditPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
 
   const setupUserOnly = () => {
@@ -29,22 +29,18 @@ describe("MyReviewsIndexPage tests", () => {
     setupUserOnly();
 
     // act
-
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <MyReviewsIndexPage />
+        <MemoryRouter initialEntries={["/reviews/edit/1"]}>
+          <Routes>
+            <Route path="/reviews/edit/:id" element={<ReviewsEditPage />} />
+          </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
     );
 
-    await screen.findByText("Index page not yet implemented");
-
     // assert
-    expect(
-      screen.getByText("Index page not yet implemented"),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Create")).toBeInTheDocument();
-    expect(screen.getByText("Edit")).toBeInTheDocument();
+    await screen.findByText("Edit review with id 1");
+    await screen.findByText("Coming Soon!");
   });
 });

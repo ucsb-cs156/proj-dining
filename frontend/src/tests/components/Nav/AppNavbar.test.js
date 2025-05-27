@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { currentUserFixtures } from "fixtures/currentUserFixtures";
 
 import AppNavbar from "main/components/Nav/AppNavbar";
@@ -24,7 +24,7 @@ describe("AppNavbar tests", () => {
     await screen.findByText("Welcome, pconrad.cis@gmail.com");
   });
 
-  test("renders correctly for admin user", async () => {
+  test("admin dropdown renders correctly for admin user", async () => {
     const currentUser = currentUserFixtures.adminUser;
     const doLogin = jest.fn();
 
@@ -39,6 +39,59 @@ describe("AppNavbar tests", () => {
     await screen.findByText("Welcome, phtcon@ucsb.edu");
     const adminMenu = screen.getByTestId("appnavbar-admin-dropdown");
     expect(adminMenu).toBeInTheDocument();
+  });
+
+  test("moderate renders correctly for admin user", async () => {
+    const currentUser = currentUserFixtures.adminUser;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, phtcon@ucsb.edu");
+    const adminMenu = screen.getByTestId("appnavbar-admin/moderator-dropdown");
+    expect(adminMenu).toBeInTheDocument();
+  });
+
+  test("moderate renders correctly for moderator user", async () => {
+    const currentUser = currentUserFixtures.moderatorUser;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, fahimzaman@ucsb.edu");
+    const moderatorMenu = screen.getByTestId(
+      "appnavbar-admin/moderator-dropdown",
+    );
+    expect(moderatorMenu).toBeInTheDocument();
+  });
+
+  test("moderate does not renders for regular users", async () => {
+    const currentUser = currentUserFixtures.userOnly;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, pconrad.cis@gmail.com");
+    const modLink = screen.queryByTestId("appnavbar-admin/moderator-dropdown");
+    expect(modLink).toBeNull();
   });
 
   test("renders H2Console and Swagger links correctly", async () => {
