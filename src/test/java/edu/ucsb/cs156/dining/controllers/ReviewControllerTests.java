@@ -14,6 +14,7 @@ import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+import edu.ucsb.cs156.dining.models.MenuItemReviewAverageRating;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,6 +92,7 @@ public class ReviewControllerTests extends ControllerTestCase {
     }
 
     // Authorization tests for /api/request
+    
 
     @Test
     public void logged_out_users_cannot_get_all() throws Exception {
@@ -116,6 +119,7 @@ public class ReviewControllerTests extends ControllerTestCase {
         mockMvc.perform(post("/api/reviews/post"))
                 .andExpect(status().is(403));
     }
+    
 
     @WithMockUser(roles = {"USER"})
     @Test
@@ -1082,7 +1086,6 @@ public class ReviewControllerTests extends ControllerTestCase {
         verify(reviewRepository, times(1)).findByStatus(eq(ModerationStatus.AWAITING_REVIEW));
         assertEquals(expectedJson,responseJson);
     }
-
     @WithMockUser(roles = {"USER"})
     @Test
     public void wrong_user_cannot_get_id() throws Exception{
@@ -1179,6 +1182,130 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         Map<String, Object> json = responseToJson(response);
         assertEquals("Review with id 1 not found", json.get("message"));
+
+    }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void get_average_rating_per_menu_item() throws Exception {
+        MenuItem menuItem = MenuItem.builder()
+                .id(1L)
+                .name("Chicken Alfredo")
+                .station("Lunch")
+                .diningCommonsCode("ortega")
+                .build();
+        
+        Review review1 = Review.builder().id(1L).itemsStars(5L).build();
+        Review review2 = Review.builder().id(2L).itemsStars(3L).build();
+
+
+        List<MenuItem> menuItems = Arrays.asList(menuItem);
+        List<Review> reviews = Arrays.asList(review1, review2);
+
+        when(menuItemRepository.findAll()).thenReturn(menuItems);
+        when(reviewRepository.findByItemId(eq(1L))).thenReturn(reviews);
+
+        MenuItemReviewAverageRating expected = MenuItemReviewAverageRating.builder()
+                .id(1L)
+                .name("Chicken Alfredo")
+                .station("Lunch")
+                .diningCommonsCode("ortega")
+                .averageRating(4.0)
+                .build();
+        List<MenuItemReviewAverageRating> expectedList = Arrays.asList(expected);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/averageRatingPerMenuItem")
+                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+        
+        String expectedJson = mapper.writeValueAsString(expectedList);
+
+        String responseJson = response.getResponse().getContentAsString();
+
+        verify(menuItemRepository, times(1)).findAll();
+        verify(reviewRepository, times(1)).findByItemId(eq(1L));
+
+        assertEquals(expectedJson, responseJson);
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void get_average_rating_when_no_reviews() throws Exception {
+        MenuItem menuItem = MenuItem.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .build();
+        
+        List<MenuItem> menuItems = Arrays.asList(menuItem);
+
+        List<Review> reviews = Arrays.asList(); // empty list
+
+        when(menuItemRepository.findAll()).thenReturn(menuItems);
+        when(reviewRepository.findByItemId(eq(1L))).thenReturn(reviews);
+
+        MenuItemReviewAverageRating expected = MenuItemReviewAverageRating.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .averageRating(null) 
+                .build();
+        
+        List<MenuItemReviewAverageRating> expectedList = Arrays.asList(expected);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/averageRatingPerMenuItem")
+                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+        
+        String expectedJson = mapper.writeValueAsString(expectedList);
+
+        String responseJson = response.getResponse().getContentAsString();
+
+        verify(menuItemRepository, times(1)).findAll();
+        verify(reviewRepository, times(1)).findByItemId(eq(1L));
+
+        assertEquals(expectedJson, responseJson);        
+    }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void get_average_rating_with_null_review() throws Exception {
+        MenuItem menuItem = MenuItem.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .build();
+        Review review1 = Review.builder().id(1L).itemsStars(4L).build();
+        Review review2 = Review.builder().id(2L).itemsStars(null).build();
+
+        List<MenuItem> menuItems = Arrays.asList(menuItem);
+        List<Review> reviews = Arrays.asList(review1, review2);
+        
+        when(menuItemRepository.findAll()).thenReturn(menuItems);
+        when(reviewRepository.findByItemId(eq(1L))).thenReturn(reviews);
+
+        MenuItemReviewAverageRating expected = MenuItemReviewAverageRating.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .averageRating(4.0)
+                .build();
+        
+        List<MenuItemReviewAverageRating> expectedList = Arrays.asList(expected);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/averageRatingPerMenuItem")
+            .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+
+        String expectedJson = mapper.writeValueAsString(expectedList);
+        String responseJson = response.getResponse().getContentAsString();
+
+        verify(menuItemRepository, times(1)).findAll();
+        verify(reviewRepository, times(1)).findByItemId(eq(1L));
+
+        assertEquals(expectedJson, responseJson);
     }
 
 }
