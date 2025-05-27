@@ -1,8 +1,9 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
+import { MemoryRouter, Routes, Route } from "react-router";
+
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
