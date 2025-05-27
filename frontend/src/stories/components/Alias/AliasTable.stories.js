@@ -1,6 +1,6 @@
 import React from "react";
 import AliasTable from "main/components/Alias/AliasTable";
-import aliasFixtures from "fixtures/aliasFixtures";
+import usersFixtures from "fixtures/usersFixtures";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 export default {
@@ -21,17 +21,12 @@ export default {
 
 const Template = (args) => <AliasTable {...args} />;
 
-export const OneAlias = Template.bind({});
-OneAlias.args = {
-  alias: aliasFixtures.oneAlias,
+export const EmptyTable = Template.bind({});
+EmptyTable.args = {
+  alias: [],
 };
 
-export const NullPropAlias = Template.bind({});
-NullPropAlias.args = {
-  alias: aliasFixtures.nullPropAlias,
-};
-
-export const ThreeAlias = Template.bind({});
-ThreeAlias.args = {
-  alias: aliasFixtures.threeAlias,
+export const ThreeUsers = Template.bind({});
+ThreeUsers.args = {
+  alias: usersFixtures.threeUsers,
 };
