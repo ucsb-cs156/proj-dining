@@ -6,10 +6,13 @@ export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
   const navigate = useNavigate();
   const reviewCallback = async (_cell) => {
-    alert("Reviews coming soon!");
+    const itemId = _cell.row.original.id;
+    navigate(`/reviews/post/${itemId}`);
   };
+
   const viewCallback = async (_cell) => {
-    navigate(`/reviews/${_cell.row.original.id}`);
+    const itemId = _cell.row.original.id;
+    navigate(`/reviews/${itemId}`);
   };
 
   const calculateAverageRating = (reviews) => {
