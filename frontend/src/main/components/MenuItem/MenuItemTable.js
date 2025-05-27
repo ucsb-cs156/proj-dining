@@ -15,6 +15,20 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     navigate(`/reviews/${itemId}`);
   };
 
+
+  const calculateAverageRating = (reviews) => {
+    if (!reviews || !Array.isArray(reviews) || reviews.length === 0)
+      return "No reviews";
+    const validRatings = reviews
+      .filter(
+        (r) => r && typeof r === "object" && typeof r.itemsStars === "number",
+      )
+      .map((r) => r.itemsStars);
+    if (validRatings.length === 0) return "No ratings";
+    const avg = validRatings.reduce((a, b) => a + b, 0) / validRatings.length;
+    return avg.toFixed(1);
+  };
+
   const columns = [
     {
       Header: "Item Name",
@@ -23,6 +37,11 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     {
       Header: "Station",
       accessor: "station",
+    },
+    {
+      Header: "Average Rating",
+      accessor: (row) => calculateAverageRating(row.reviews),
+      id: "averageRating",
     },
   ];
 
