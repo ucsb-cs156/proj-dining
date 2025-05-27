@@ -3,7 +3,7 @@ import MyReviewsIndexPage, {
   extractReview,
 } from "main/pages/MyReviews/MyReviewsIndexPage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
 import { reviewFixtures } from "fixtures/reviewFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
@@ -23,8 +23,8 @@ jest.mock("react-toastify", () => {
 });
 
 const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
 

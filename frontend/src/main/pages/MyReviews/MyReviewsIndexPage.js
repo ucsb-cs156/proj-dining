@@ -1,7 +1,7 @@
 import React from "react";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { useBackend, useBackendMutation } from "main/utils/useBackend";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import ReviewTable from "main/components/Review/ReviewTable";
 
