@@ -79,7 +79,7 @@ jobs:
         action: JamesIves/github-pages-deploy-action@v4
         attempt_limit: 3
         attempt_delay: 5000
-        with: |
+        input: |
           folder: site # The folder the action should deploy.
           branch: gh-pages
           clean: true # Automatically remove deleted files from the deploy branch
@@ -368,8 +368,13 @@ jobs:
 
     - name: f-stryker Deploy Stryker (PR ${{ matrix.value.number }}) 🚀
       uses: JamesIves/github-pages-deploy-action@v4
+      uses: Wandalen/wretry.action@master
       with:
-        branch: gh-pages # The branch the action should deploy to.
-        folder: ${{ env.stryker_dest }} # The folder where we put the files
-        clean: true # Automatically remove deleted files from the deploy branch
-        target-folder: prs/${{ matrix.value.number }}/stryker # The folder that we serve our files from
+        action: JamesIves/github-pages-deploy-action@v4
+        attempt_limit: 3
+        attempt_delay: 5000
+        with: |
+          branch: gh-pages # The branch the action should deploy to.
+          folder: ${{ env.stryker_dest }} # The folder where we put the files
+          clean: true # Automatically remove deleted files from the deploy branch
+          target-folder: prs/${{ matrix.value.number }}/stryker # The folder that we serve our files from
