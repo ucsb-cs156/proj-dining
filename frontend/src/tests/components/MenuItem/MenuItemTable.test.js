@@ -728,7 +728,7 @@ describe("MenuItemTable Tests", () => {
   });
 
   test("Buttons work correctly", async () => {
-    const mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});
+    const _mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});
 
     axiosMock
       .onGet("/api/currentUser")
