@@ -10,18 +10,19 @@ import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import Moderate from "main/pages/Moderate";
-import aliasFixtures from "fixtures/aliasFixtures";
+import usersFixtures from "fixtures/usersFixtures";
 import { useBackend, useBackendMutation } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 
 jest.mock("main/utils/useBackend");
 jest.mock("react-toastify", () => ({
   toast: {
+    success: jest.fn(),
     error: jest.fn(),
   },
 }));
 
-describe("ModeratePage tests", () => {
+describe("Moderate Page Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   const queryClient = new QueryClient();
 
@@ -41,20 +42,26 @@ describe("ModeratePage tests", () => {
     axiosMock.resetHistory();
 
     useBackend.mockReturnValue({
-      data: aliasFixtures.threeAlias,
-      isLoading: false,
+      data: usersFixtures.threeUsers,
+      error: null,
+      status: "success",
     });
-    useBackendMutation.mockImplementation(
-      (_, { onSuccess: _onSuccess, onError }) => ({
-        mutate: () => onError(new Error("Request failed with status code 500")),
-      }),
-    );
+
+    useBackendMutation.mockImplementation((_, { onSuccess, onError }) => ({
+      mutate: (_, __) =>
+        onError(new Error("Request failed with status code 500")),
+    }));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   test("renders correctly for admin user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
     });
     axiosMock
       .onGet("/api/systemInfo")
@@ -73,6 +80,7 @@ describe("ModeratePage tests", () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 2, email: "user@ucsb.edu", admin: false },
       roles: [{ authority: "ROLE_USER" }],
+      loggedIn: true,
     });
     axiosMock
       .onGet("/api/systemInfo")
@@ -86,7 +94,7 @@ describe("ModeratePage tests", () => {
     });
   });
 
-  test("redirects if currentUser data is missing or not logged in", async () => {
+  test("redirects if currentUser data missing or not logged in", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, { loggedIn: false });
     axiosMock
       .onGet("/api/systemInfo")
@@ -100,11 +108,11 @@ describe("ModeratePage tests", () => {
     });
   });
 
-  test("fetches and displays alias proposals", async () => {
-    const proposals = aliasFixtures.threeAlias;
+  test("displays alias proposals from useBackend", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
     });
     axiosMock
       .onGet("/api/systemInfo")
@@ -112,16 +120,21 @@ describe("ModeratePage tests", () => {
 
     renderPage();
     const rows = await screen.findAllByTestId(/AliasTable-row-/);
-    expect(rows).toHaveLength(proposals.length);
-    proposals.forEach((p, idx) => {
-      expect(within(rows[idx]).getByText(p.proposedAlias)).toBeInTheDocument();
+    expect(rows).toHaveLength(usersFixtures.threeUsers.length);
+    usersFixtures.threeUsers.forEach((alias, idx) => {
+      expect(
+        within(rows[idx]).getByText(
+          alias.proposedAlias || "(No proposed alias)",
+        ),
+      ).toBeInTheDocument();
     });
   });
 
-  test("useBackend called with correct args", () => {
+  test("useBackend called with correct arguments", () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
     });
     axiosMock
       .onGet("/api/systemInfo")
@@ -139,6 +152,7 @@ describe("ModeratePage tests", () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
     });
     axiosMock
       .onGet("/api/systemInfo")
