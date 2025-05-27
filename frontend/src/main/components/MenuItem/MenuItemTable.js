@@ -15,7 +15,6 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     navigate(`/reviews/${itemId}`);
   };
 
-
   const calculateAverageRating = (reviews) => {
     if (!reviews || !Array.isArray(reviews) || reviews.length === 0)
       return "No reviews";

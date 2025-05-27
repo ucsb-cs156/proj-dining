@@ -60,9 +60,7 @@ describe("MenuItemTable Tests", () => {
     ).not.toBeInTheDocument();
   });
 
-
   test("Renders 5 Menu Items Correctly with ratings", async () => {
-
     let fiveMenuItems = menuItemFixtures.fiveMenuItems;
     render(
       <MemoryRouter>
