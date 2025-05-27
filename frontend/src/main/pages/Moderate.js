@@ -1,24 +1,32 @@
 import React from "react";
+import { useBackend } from "main/utils/useBackend";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
-import { Navigate } from "react-router-dom";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+import ReviewsTable from "main/components/Reviews/ReviewsTable";
 
 const Moderate = () => {
-  const { data: currentUser } = useCurrentUser();
+  const currentUser = useCurrentUser();
 
-  if (
-    !currentUser.loggedIn ||
-    (!hasRole(currentUser, "ROLE_ADMIN") &&
-      !hasRole(currentUser, "ROLE_MODERATOR"))
-  ) {
-    return <Navigate to="/" />;
-  }
+  const {
+    data: reviews,
+    error: _error,
+    status: _status,
+  } = useBackend(
+    // Stryker disable next-line all : don't test internal caching of React Query
+    ["/api/reviews/all"],
+    { method: "GET", url: "/api/reviews/all" },
+    [],
+  );
+
+  const moderatorOptions =
+    hasRole(currentUser, "ROLE_ADMIN") ||
+    hasRole(currentUser, "ROLE_MODERATOR");
 
   return (
     <BasicLayout>
       <div className="pt-2">
         <h1>Moderation Page</h1>
-        <p>This page is accessible only to admins. (Placeholder)</p>
+        <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
       </div>
     </BasicLayout>
   );

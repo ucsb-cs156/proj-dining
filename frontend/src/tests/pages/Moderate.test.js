@@ -1,15 +1,68 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
-import axios from "axios";
-import AxiosMockAdapter from "axios-mock-adapter";
 import Moderate from "main/pages/Moderate";
 
-describe("ModeratePage tests", () => {
-  const axiosMock = new AxiosMockAdapter(axios);
-  const queryClient = new QueryClient();
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import { ReviewFixtures } from "fixtures/reviewFixtures";
+import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter";
+import mockConsole from "jest-mock-console";
 
-  const renderPage = () => {
+const mockToast = jest.fn();
+jest.mock("react-toastify", () => {
+  const originalModule = jest.requireActual("react-toastify");
+  return {
+    __esModule: true,
+    ...originalModule,
+    toast: (x) => mockToast(x),
+  };
+});
+
+describe("Moderate Page Tests", () => {
+  const axiosMock = new AxiosMockAdapter(axios);
+
+  const testId = "Reviewstable";
+
+  const setupModerator = () => {
+    axiosMock.reset();
+    axiosMock.resetHistory();
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.moderatorUser);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+  };
+
+  const setupAdmin = () => {
+    axiosMock.reset();
+    axiosMock.resetHistory();
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.adminUser);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+  };
+
+  const setupUserOnly = () => {
+    axiosMock.reset();
+    axiosMock.resetHistory();
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+  };
+
+  test("renders reviews with approve/reject buttons for moderator", async () => {
+    setupModerator();
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -17,145 +70,119 @@ describe("ModeratePage tests", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    axiosMock.reset();
-    axiosMock.resetHistory();
-  });
-
-  test("renders correctly for admin user", async () => {
-    axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, email: "admin@ucsb.edu", admin: true, moderator: false },
-      roles: [{ authority: "ROLE_ADMIN" }],
-    });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
-
-    renderPage();
-
-    // Single assertion inside waitFor
-    await screen.findByText("Moderation Page");
-    // Additional assertion outside waitFor
-    expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
-    ).toBeInTheDocument();
-  });
-
-  test("renders correctly for moderator user", async () => {
-    axiosMock.onGet("/api/currentUser").reply(200, {
-      user: {
-        id: 2,
-        email: "moderator@ucsb.edu",
-        admin: false,
-        moderator: true,
-      },
-      roles: [{ authority: "ROLE_MODERATOR" }],
-    });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
-
-    renderPage();
 
     await waitFor(() => {
-      expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).toHaveTextContent("7");
     });
-
-    // Single assertion inside waitFor
-    await screen.findByText("Moderation Page");
-    // Additional assertion outside waitFor
     expect(
-      screen.getByText("This page is accessible only to admins. (Placeholder)"),
+      screen.getByTestId(`${testId}-cell-row-1-col-item.id`),
+    ).toHaveTextContent("8");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-2-col-item.id`),
+    ).toHaveTextContent("9");
+
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-2-col-Approve-button`),
     ).toBeInTheDocument();
   });
 
-  test("redirects non-admin user to homepage", async () => {
-    axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 3, email: "user@ucsb.edu", admin: false, moderator: false },
-      roles: [{ authority: "ROLE_USER" }],
+  test("renders reviews with approve/reject buttons for admin", async () => {
+    setupAdmin();
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Moderate />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).toHaveTextContent("7");
     });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
-
-    renderPage();
-
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
     expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
+      screen.getByTestId(`${testId}-cell-row-1-col-item.id`),
+    ).toHaveTextContent("8");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-2-col-item.id`),
+    ).toHaveTextContent("9");
+
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-2-col-Approve-button`),
+    ).toBeInTheDocument();
+  });
+
+  test("handles error when backend is unavailable for moderator", async () => {
+    setupModerator();
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/reviews/all").timeout();
+    const restoreConsole = mockConsole();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Moderate />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
+    });
+
+    const errorMessage = console.error.mock.calls[0][0];
+    expect(errorMessage).toMatch(
+      "Error communicating with backend via GET on /api/reviews/all",
+    );
+    restoreConsole();
+
+    expect(
+      screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
     ).not.toBeInTheDocument();
   });
 
-  test("redirects to homepage if currentUser is undefined", async () => {
-    axiosMock.onGet("/api/currentUser").reply(200, null);
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
+  test("does NOT render approve/reject buttons for regular user", async () => {
+    setupUserOnly();
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
 
-    renderPage();
-
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Moderate />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
-    // Additional assertion outside waitFor
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).not.toBeInTheDocument();
+    });
+
     expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
+      screen.queryByTestId(`${testId}-cell-row-0-col-Approve-button`),
     ).not.toBeInTheDocument();
-  });
-
-  test("redirects to homepage if currentUser.loggedIn is undefined", async () => {
-    axiosMock
-      .onGet("/api/currentUser")
-      .reply(200, { loggedIn: undefined, root: null });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
-
-    renderPage();
-
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
     expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
-    ).not.toBeInTheDocument();
-  });
-
-  test("handles case where currentUser is null and skips hasRole", async () => {
-    axiosMock
-      .onGet("/api/currentUser")
-      .reply(200, { loggedIn: false, root: null });
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, { springH2ConsoleEnabled: false });
-
-    renderPage();
-
-    // Single assertion inside waitFor
-    await waitFor(() =>
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
-    );
-    // Additional assertion outside waitFor
-    expect(
-      screen.queryByText(
-        "This page is accessible only to admins. (Placeholder)",
-      ),
+      screen.queryByTestId(`${testId}-cell-row-0-col-Reject-button`),
     ).not.toBeInTheDocument();
   });
 });
