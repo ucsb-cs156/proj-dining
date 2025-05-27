@@ -2,13 +2,18 @@ import React from "react";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import { Navigate } from "react-router";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import AliasTable from "../components/Alias/AliasTable";
-import { useBackend } from "../utils/useBackend";
+import { useBackend } from "main/utils/useBackend";
+import AliasTable from "main/components/Alias/AliasTable";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Moderate = () => {
   const { data: currentUser } = useCurrentUser();
+
+  const { data } = useBackend(["/api/admin/usersWithProposedAlias"], {
+    method: "GET",
+    url: "/api/admin/usersWithProposedAlias",
+  });
 
   if (
     !currentUser.loggedIn ||
@@ -17,11 +22,6 @@ const Moderate = () => {
   ) {
     return <Navigate to="/" />;
   }
-
-  const { data } = useBackend(["/api/admin/usersWithProposedAlias"], {
-    method: "GET",
-    url: "/api/admin/usersWithProposedAlias",
-  });
 
   const handleApprove = async (alias) => {
     try {
@@ -32,7 +32,7 @@ const Moderate = () => {
         `Alias "${alias.proposedAlias}" for ID ${alias.id} approved!`,
       );
     } catch (err) {
-      toast.error(`Error approving alias: ${err.message}`);
+      toast.error(`Error approving alias: ${err?.message || "Unknown error"}`);
     }
   };
 
@@ -45,7 +45,7 @@ const Moderate = () => {
         `Alias "${alias.proposedAlias}" for ID ${alias.id} rejected!`,
       );
     } catch (err) {
-      toast.error(`Error rejecting alias: ${err.message}`);
+      toast.error(`Error rejecting alias: ${err?.message || "Unknown error"}`);
     }
   };
 
