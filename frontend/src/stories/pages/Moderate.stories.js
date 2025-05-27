@@ -1,7 +1,7 @@
 import React from "react";
 import { http, HttpResponse } from "msw";
 import Moderate from "main/pages/Moderate";
-import aliasFixtures from "fixtures/aliasFixtures";
+import usersFixtures from "fixtures/usersFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 
 export default {
@@ -41,7 +41,7 @@ AdminView.parameters = {
         return HttpResponse.json(apiCurrentUserFixtures.adminUser);
       }),
       http.get("/api/admin/usersWithProposedAlias", () => {
-        return HttpResponse.json(aliasFixtures.threeAlias);
+        return HttpResponse.json(usersFixtures.threeUsers);
       }),
     ],
   },
