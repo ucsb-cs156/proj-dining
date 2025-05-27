@@ -2,13 +2,14 @@ import React from "react";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import { Navigate } from "react-router";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { _Table, _Button } from "react-bootstrap";
 import AliasTable from "../components/Alias/AliasTable";
 import { useBackend } from "../utils/useBackend";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Moderate = () => {
   const { data: currentUser } = useCurrentUser();
-  // Redirect if not logged in or lacks proper role
+
   if (
     !currentUser.loggedIn ||
     (!hasRole(currentUser, "ROLE_ADMIN") &&
@@ -17,11 +18,36 @@ const Moderate = () => {
     return <Navigate to="/" />;
   }
 
-  const { data } = useBackend(
-    [`/api/admin/usersWithProposedAlias`],
-    { method: "GET", url: "/api/admin/usersWithProposedAlias" },
-    [],
-  );
+  const { data } = useBackend(["/api/admin/usersWithProposedAlias"], {
+    method: "GET",
+    url: "/api/admin/usersWithProposedAlias",
+  });
+
+  const handleApprove = async (alias) => {
+    try {
+      await axios.put("/api/currentUser/updateAliasModeration", null, {
+        params: { id: alias.id, approved: true },
+      });
+      toast.success(
+        `Alias "${alias.proposedAlias}" for ID ${alias.id} approved!`,
+      );
+    } catch (err) {
+      toast.error(`Error approving alias: ${err.message}`);
+    }
+  };
+
+  const handleReject = async (alias) => {
+    try {
+      await axios.put("/api/currentUser/updateAliasModeration", null, {
+        params: { id: alias.id, approved: false },
+      });
+      toast.success(
+        `Alias "${alias.proposedAlias}" for ID ${alias.id} rejected!`,
+      );
+    } catch (err) {
+      toast.error(`Error rejecting alias: ${err.message}`);
+    }
+  };
 
   return (
     <BasicLayout id="moderate-page" data-testid="moderate-page">
@@ -30,7 +56,11 @@ const Moderate = () => {
         <p>
           This page is accessible only to admins and moderators. (Placeholder)
         </p>
-        <AliasTable alias={data || []} />
+        <AliasTable
+          aliases={data || []}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
       </div>
     </BasicLayout>
   );
