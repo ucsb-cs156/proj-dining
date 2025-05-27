@@ -1,6 +1,5 @@
 const ReviewFormFixtures = {
-    name: "Pasta"
+  name: "Pasta",
 };
-
 
 export { ReviewFormFixtures };

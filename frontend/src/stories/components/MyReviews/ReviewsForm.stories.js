@@ -14,5 +14,5 @@ const Template = (args) => {
 export const RegView = Template.bind({});
 RegView.args = {
   initialItemName: ReviewFormFixtures.name,
-  submitAction: () => {}
+  submitAction: () => {},
 };
