@@ -1,3 +1,5 @@
+// src/tests/pages/Moderate.test.js
+
 import React from "react";
 import {
   render,
@@ -321,5 +323,81 @@ describe("ModeratePage enhanced tests", () => {
     renderPage();
     await screen.findByText("Moderation Page");
     expect(screen.queryByTestId("AliasTable-row-0")).not.toBeInTheDocument();
+  });
+  test("admin-only user still sees page (kills the &&->|| mutant)", async () => {
+    // Stub currentUser as logged in admin (but NOT moderator)
+    useCurrentUser.mockReturnValueOnce({
+      data: {
+        loggedIn: true,
+        admin: true,
+        id: 1,
+        root: { user: { email: "admin@ucsb.edu" } },
+      },
+      error: null,
+      status: "success",
+    });
+    // hasRole should only be true for ROLE_ADMIN
+    hasRole.mockImplementation((u, role) => role === "ROLE_ADMIN");
+
+    renderPage();
+    await screen.findByText("Moderation Page");
+  });
+
+  test("moderator‐only user still sees page (kills the literal ROLE_* mutant)", async () => {
+    useCurrentUser.mockReturnValueOnce({
+      data: {
+        loggedIn: true,
+        admin: false,
+        moderator: true,
+        id: 2,
+        root: { user: { email: "mod@ucsb.edu" } },
+      },
+      error: null,
+      status: "success",
+    });
+    // now only ROLE_MODERATOR is true
+    hasRole.mockImplementation((u, role) => role === "ROLE_MODERATOR");
+
+    renderPage();
+    await screen.findByText("Moderation Page");
+  });
+  test("admin‐only user still sees page (kills the &&->|| mutant)", async () => {
+    //currentUser is Admin，not Moderator
+    useCurrentUser.mockReturnValueOnce({
+      data: {
+        loggedIn: true,
+        admin: true,
+        moderator: false,
+        id: 1,
+        root: { user: { email: "admin@ucsb.edu" } },
+      },
+      error: null,
+      status: "success",
+    });
+    hasRole.mockImplementation((u, role) => role === "ROLE_ADMIN");
+
+    renderPage();
+    //  ( !admin && !mod ) => false，
+    // ( !admin || !mod ) => true，
+    await screen.findByText("Moderation Page");
+  });
+
+  test("moderator-only user still sees page (kills the ROLE_* literal mutants)", async () => {
+    useCurrentUser.mockReturnValueOnce({
+      data: {
+        loggedIn: true,
+        admin: false,
+        moderator: true,
+        id: 2,
+        root: { user: { email: "mod@ucsb.edu" } },
+      },
+      error: null,
+      status: "success",
+    });
+    // only ROLE_MODERATOR return true
+    hasRole.mockImplementation((u, role) => role === "ROLE_MODERATOR");
+
+    renderPage();
+    await screen.findByText("Moderation Page");
   });
 });
