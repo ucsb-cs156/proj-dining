@@ -43,8 +43,11 @@ describe("AliasApprovalTable tests", () => {
   //   expect(screen.getAllByRole("row")).toHaveLength(1);
   // });
 
-  it("renders the correct data-testid attributes for each header", () => {
+  it("renders the header even with no data", () => {
     render(<AliasApprovalTable aliases={AliasApprovalFixtures.noReview} />);
+
+    expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
+
     expect(
       screen.getByTestId("Aliasapprovaltable-header-proposedAlias"),
     ).toBeInTheDocument();
