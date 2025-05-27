@@ -14,6 +14,7 @@ import { useBackend } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 import usersFixtures from "fixtures/usersFixtures";
 
+// Mock useBackend
 jest.mock("main/utils/useBackend", () => ({
   useBackend: jest.fn(),
 }));
@@ -24,7 +25,7 @@ jest.mock("react-toastify", () => ({
   },
 }));
 
-describe("ModeratePage tests", () => {
+describe("ModeratePage enhanced tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   const queryClient = new QueryClient();
 
@@ -70,7 +71,7 @@ describe("ModeratePage tests", () => {
     ).toBeInTheDocument();
   });
 
-  test("triggers success toast when clicking approve/reject", async () => {
+  test("triggers toast success when clicking approve/reject", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -90,17 +91,29 @@ describe("ModeratePage tests", () => {
       name: "Approve",
     });
     fireEvent.click(approveButton);
-    await waitFor(() => expect(toast.success).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `Alias "${usersFixtures.threeUsers[0].proposedAlias}"`,
+        ),
+      ),
+    );
 
     const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
     const rejectButton = within(rejectCell).getByRole("button", {
       name: "Reject",
     });
     fireEvent.click(rejectButton);
-    await waitFor(() => expect(toast.success).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `Alias "${usersFixtures.threeUsers[0].proposedAlias}"`,
+        ),
+      ),
+    );
   });
 
-  test("triggers error toast when approve fails", async () => {
+  test("triggers error toast when axios.put fails (approve)", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -111,7 +124,7 @@ describe("ModeratePage tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
     axiosMock
       .onPut("/api/currentUser/updateAliasModeration")
-      .reply(() => Promise.reject(new Error("Network Error")));
+      .reply(() => Promise.reject(new Error("Mocked approve failure")));
 
     renderPage();
 
@@ -129,7 +142,7 @@ describe("ModeratePage tests", () => {
     );
   });
 
-  test("triggers error toast when reject fails", async () => {
+  test("triggers error toast when axios.put fails (reject)", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -140,7 +153,7 @@ describe("ModeratePage tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
     axiosMock
       .onPut("/api/currentUser/updateAliasModeration")
-      .reply(() => Promise.reject(new Error("Network Error")));
+      .reply(() => Promise.reject(new Error("Mocked reject failure")));
 
     renderPage();
 
@@ -158,7 +171,7 @@ describe("ModeratePage tests", () => {
     );
   });
 
-  test("redirects non-admin and non-moderator user to homepage", async () => {
+  test("redirects non-admin and non-moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 2, email: "user@ucsb.edu", admin: false, moderator: false },
       roles: [{ authority: "ROLE_USER" }],
@@ -169,9 +182,9 @@ describe("ModeratePage tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
   });
 
   test("redirects when currentUser is undefined", async () => {
@@ -181,9 +194,9 @@ describe("ModeratePage tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
   });
 
   test("redirects when currentUser.loggedIn is undefined", async () => {
@@ -193,20 +206,20 @@ describe("ModeratePage tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
   });
 
-  test("handles case where currentUser is null and skips hasRole", async () => {
+  test("handles currentUser null and skips hasRole", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, { loggedIn: false });
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-    await waitFor(() => {
-      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
   });
 });
