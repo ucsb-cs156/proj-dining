@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -67,5 +68,15 @@ public class UCSBDiningMenuItemsController extends ApiController {
     }
 
     return ResponseEntity.ok().body(menuitems);
+  }
+
+  @Operation(summary = "Get a specific menu item by its id")
+  @GetMapping(value = "/menuitem", produces = "application/json")
+  public MenuItem getMenuItem(
+      @Parameter(description= "id of the menu item") 
+      @RequestParam Long id
+  ) {
+      return menuItemRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFoundException(MenuItem.class, id));
   }
 }
