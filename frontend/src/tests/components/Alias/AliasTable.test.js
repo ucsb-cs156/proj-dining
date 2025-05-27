@@ -2,7 +2,7 @@ import { waitFor, render, screen, fireEvent } from "@testing-library/react";
 import usersFixtures from "fixtures/usersFixtures";
 import AliasTable from "main/components/Alias/AliasTable";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { within } from "@testing-library/react";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -10,8 +10,8 @@ import AxiosMockAdapter from "axios-mock-adapter";
 
 const mockedNavigate = jest.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
   useNavigate: () => mockedNavigate,
 }));
 
