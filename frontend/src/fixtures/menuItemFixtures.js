@@ -38,22 +38,25 @@ const menuItemFixtures = {
 
   withReviews: [
     {
+      id: 1,
       name: "Oatmeal (vgn)",
       station: "Grill (Cafe)",
       reviews: [
-        { itemsStars: 4, reviewerComments: "Really good!" },
-        { itemsStars: 5, reviewerComments: "Perfect!" },
+        { itemsStars: 4, reviewerComments: "Really good!", item: 1 },
+        { itemsStars: 5, reviewerComments: "Perfect!", item: 1 },
       ],
     },
     {
+      id: 2,
       name: "Blintz with Strawberry Compote (v)",
       station: "Grill (Cafe)",
       reviews: [],
     },
     {
+      id: 3,
       name: "Cage Free Scrambled Eggs (v)",
       station: "Grill (Cafe)",
-      reviews: [{ itemsStars: 2, reviewerComments: "Too salty" }],
+      reviews: [{ itemsStars: 2, reviewerComments: "Too salty", item: 3 }],
     },
   ],
 };

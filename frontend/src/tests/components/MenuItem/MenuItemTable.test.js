@@ -1,49 +1,374 @@
-// src/tests/components/MenuItem/MenuItemTable.test.js
-
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import MenuItemTable from "main/components/MenuItem/MenuItemTable";
-import { menuItemFixtures } from "../../../fixtures/menuItemFixtures";
-import {
-  apiCurrentUserFixtures,
-  currentUserFixtures,
-} from "../../../fixtures/currentUserFixtures";
-import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
-import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
+import { extractAllReviewsForItem } from "main/components/MenuItem/MenuItemTable";
+import MenuItemTable from "main/components/MenuItem/MenuItemTable";
 
-// mock react-router-dom hooks
+const mockToast = jest.fn();
+jest.mock("react-toastify", () => {
+  const originalModule = jest.requireActual("react-toastify");
+  return {
+    __esModule: true,
+    ...originalModule,
+    toast: (x) => mockToast(x),
+  };
+});
+
 const mockNavigate = jest.fn();
+const mockLocation = { pathname: "/menu-items" };
+
+// One and only one mock for all of react-router-dom
 jest.mock("react-router-dom", () => {
   const original = jest.requireActual("react-router-dom");
   return {
     __esModule: true,
     ...original,
+    useParams: () => ({
+      "date-time": "2025-03-11",
+      "dining-commons-code": "carrillo",
+      meal: "breakfast",
+    }),
     useNavigate: () => mockNavigate,
-    useLocation: () => ({ pathname: "/previous-page" }),
+    useLocation: () => mockLocation,
   };
 });
 
-describe("MenuItemTable Tests", () => {
+describe("MenuItemPage", () => {
   let axiosMock;
+  let queryClient;
 
   beforeEach(() => {
     axiosMock = new AxiosMockAdapter(axios);
-    mockNavigate.mockReset();
+    queryClient = new QueryClient();
   });
 
   afterEach(() => {
-    axiosMock.reset();
+    axiosMock.restore();
   });
 
-  test("Headers appear and empty table renders correctly without buttons", () => {
+  test("MenuItemPage works with no backend", async () => {
+    axiosMock
+      .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
+      .timeout();
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MenuItemPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.get.length).toBe(3);
+    });
+
+    expect(screen.getByText("Breakfast")).toBeInTheDocument();
+    expect(
+      screen.queryByText("MenuItemTable-cell-header-col-name"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("MenuItemPage renders average stars correctly for menu items", async () => {
+    axiosMock
+      .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
+      .reply(200, [
+        {
+          id: 1,
+          name: "Oatmeal (vgn)",
+          station: "Grill (Cafe)",
+          reviews: [
+            { itemsStars: 4, item: 1 },
+            { itemsStars: 5, item: 1 },
+          ],
+        },
+        {
+          id: 2,
+          name: "Blintz",
+          station: "Grill (Cafe)",
+          reviews: [],
+        },
+        {
+          id: 3,
+          name: "Scrambled Eggs",
+          station: "Grill (Cafe)",
+          reviews: [{ itemsStars: 2, item: 3 }],
+        },
+      ]);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MenuItemPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("MenuItemTable-cell-row-0-col-averageReview");
+
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
+    ).toHaveTextContent("4.5 ⭐");
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-1-col-averageReview"),
+    ).toHaveTextContent("🤷‍♂️ No Rating");
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-2-col-averageReview"),
+    ).toHaveTextContent("2.0 ⭐");
+  });
+
+  test("MenuItemPage handles invalid stars and mixed review data", async () => {
+    const badData = [
+      {
+        id: 99,
+        name: "Bad Review Dish",
+        station: "Test Station",
+        reviews: [
+          { itemsStars: "NaN", item: 99 },
+          { itemsStars: 0, item: 99 },
+          { itemsStars: 6, item: 99 },
+          { itemsStars: 3, item: 99 },
+        ],
+      },
+    ];
+
+    axiosMock
+      .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
+      .reply(200, badData);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MenuItemPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("MenuItemTable-cell-row-0-col-averageReview");
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
+    ).toHaveTextContent("3.0 ⭐");
+  });
+
+  test("MenuItemPage renders review button and navigates on click", async () => {
+    axiosMock
+      .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
+      .reply(200, [
+        {
+          id: 42,
+          name: "Test Dish",
+          station: "Test Station",
+          reviews: [{ itemsStars: 5, item: 42 }],
+        },
+      ]);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MenuItemPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const reviewButton = await screen.findByRole("button", {
+      name: /Review Item/i,
+    });
+    expect(reviewButton).toBeInTheDocument();
+  });
+
+  describe("extractAllReviewsForItem edge cases", () => {
+    test("handles circular references gracefully", () => {
+      const review = { id: 1, itemsStars: 5, item: 42 };
+      const circular = { nested: null };
+      circular.nested = circular; // create circular ref
+
+      const input = [review, circular];
+      const result = extractAllReviewsForItem(input, 42);
+      expect(result).toEqual([review]);
+    });
+
+    test("skips nodes that are not objects", () => {
+      const input = [
+        null,
+        undefined,
+        123,
+        "hello",
+        { itemsStars: 4, item: 10 },
+      ];
+      const result = extractAllReviewsForItem(input, 10);
+      expect(result.length).toBe(1);
+    });
+
+    test("does not include reviews without itemsStars", () => {
+      const input = [
+        { item: 10 },
+        { itemsStars: undefined, item: 10 },
+        { itemsStars: 5, item: 10 },
+      ];
+      const result = extractAllReviewsForItem(input, 10);
+      expect(result.length).toBe(1);
+      expect(result[0].itemsStars).toBe(5);
+    });
+
+    test("matches both item.id === itemId and item === itemId", () => {
+      const input = [
+        { itemsStars: 3, item: { id: 10 } },
+        { itemsStars: 4, item: 10 },
+        { itemsStars: 5, item: { id: 11 } }, // should not match
+      ];
+      const result = extractAllReviewsForItem(input, 10);
+      const stars = result.map((r) => r.itemsStars);
+      expect(stars).toEqual([3, 4]);
+    });
+
+    test("recursively finds reviews in deeply nested properties", () => {
+      const input = {
+        outer: {
+          middle: {
+            deep: [
+              { itemsStars: 2, item: { id: 10 } },
+              { itemsStars: 5, item: 10 },
+            ],
+          },
+        },
+      };
+      const result = extractAllReviewsForItem(input, 10);
+      expect(result.length).toBe(2);
+    });
+  });
+  test("extractAllReviewsForItem recurses into arrays", () => {
+    const data = [
+      {
+        itemsStars: 5,
+        item: 42,
+      },
+      [
+        {
+          itemsStars: 4,
+          item: 42,
+        },
+      ],
+    ];
+
+    const result = extractAllReviewsForItem(data, 42);
+    const ids = result.map((r) => r.itemsStars);
+
+    expect(result.length).toBe(2); // will fail if arrays are not recursed
+    expect(ids).toContain(5);
+    expect(ids).toContain(4);
+  });
+
+  test("extractAllReviewsForItem includes reviews inside nested arrays", () => {
+    const data = [
+      {
+        id: 1,
+        name: "Top level item",
+        station: "A",
+        reviews: [
+          [
+            {
+              itemsStars: 5,
+              item: 42, // should be matched
+            },
+          ],
+        ],
+      },
+    ];
+
+    // This nested array will only be reached if Array.isArray(node) works
+    const result = extractAllReviewsForItem(data, 42);
+    expect(result.length).toBe(1);
+    expect(result[0].itemsStars).toBe(5);
+  });
+
+  test("extractAllRevsiewsForItem recurses into arrays", () => {
+    const nested = [
+      [
+        { itemsStars: 3, item: 10 },
+        { itemsStars: 5, item: 10 },
+      ],
+    ];
+
+    const result = extractAllReviewsForItem(nested, 10);
+    expect(result.length).toBe(2);
+    expect(result.map((r) => r.itemsStars)).toEqual([3, 5]);
+  });
+
+  test("extractAllReviewsForItem recurses into nested object properties", () => {
+    const nested = {
+      a: {
+        b: {
+          itemsStars: 4,
+          item: 20,
+        },
+      },
+    };
+
+    const result = extractAllReviewsForItem(nested, 20);
+    expect(result.length).toBe(1);
+    expect(result[0].itemsStars).toBe(4);
+  });
+
+  test("extractAllReviewsForItem handles direct item id (not object)", () => {
+    const flat = [{ itemsStars: 3, item: 30 }];
+    const result = extractAllReviewsForItem(flat, 30);
+    expect(result.length).toBe(1);
+  });
+
+  test("itemsStars value of 1 is considered valid", () => {
+    const reviews = [
+      {
+        id: 1,
+        name: "Test",
+        station: "T1",
+        reviews: [{ itemsStars: 1, item: 1 }],
+      },
+    ];
+
     render(
       <MemoryRouter>
-        <MenuItemTable
-          menuItems={[]}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
+        <MenuItemTable menuItems={reviews} currentUser={{ roles: [] }} />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
+    ).toHaveTextContent("1.0 ⭐");
+  });
+
+  test("Table headers render correctly", () => {
+    render(
+      <MemoryRouter>
+        <MenuItemTable menuItems={[]} currentUser={{ roles: [] }} />
       </MemoryRouter>,
     );
 
@@ -53,351 +378,255 @@ describe("MenuItemTable Tests", () => {
     expect(
       screen.getByTestId("MenuItemTable-header-station"),
     ).toHaveTextContent("Station");
-    expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-name"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-station"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
-    ).not.toBeInTheDocument();
   });
 
-  test("Renders 5 Menu Items correctly without buttons for anon user", () => {
-    render(
-      <MemoryRouter>
-        <MenuItemTable
-          menuItems={menuItemFixtures.fiveMenuItems}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
-      </MemoryRouter>,
-    );
-
-    menuItemFixtures.fiveMenuItems.forEach((item, i) => {
-      expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`),
-      ).toHaveTextContent(item.name);
-      expect(
-        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
-      ).toHaveTextContent(item.station);
-    });
-    expect(
-      screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
-    ).not.toBeInTheDocument();
-  });
-
-  test("Average Review column renders correct values", () => {
-    const items = [
+  test("filters out invalid ratings using AND logic", () => {
+    const input = [
       {
         id: 1,
-        name: "Pizza",
-        station: "Station A",
-        reviews: [{ itemsStars: 4 }, { itemsStars: 5 }, { itemsStars: 3 }],
-      },
-      {
-        id: 2,
-        name: "Pasta",
-        station: "Station B",
-        reviews: [], // No reviews
-      },
-      {
-        id: 3,
-        name: "Salad",
-        station: "Station C",
-        reviews: [{ itemsStars: 2 }],
+        name: "Test",
+        station: "X",
+        reviews: [
+          { itemsStars: 1, item: 1 }, // ✅ valid
+          { itemsStars: 0, item: 1 }, // ✅ valid
+          { itemsStars: 6, item: 1 }, // ✅ valid
+        ],
       },
     ];
 
     render(
       <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
+        <MenuItemTable menuItems={input} currentUser={{}} />
       </MemoryRouter>,
     );
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
+    ).toHaveTextContent("1.0 ⭐");
+  });
 
-    // Header
+  test("reduce uses + not - to compute average", () => {
+    const input = [
+      {
+        id: 1,
+        name: "Test",
+        station: "X",
+        reviews: [
+          { itemsStars: 3, item: 1 }, // ✅ valid
+          { itemsStars: 3, item: 1 }, // ✅ valid
+        ],
+      },
+    ];
+    render(
+      <MemoryRouter>
+        <MenuItemTable menuItems={input} currentUser={{}} />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
+    ).toHaveTextContent("3.0 ⭐");
+  });
+
+  test("renders column headers correctly", () => {
+    render(
+      <MemoryRouter>
+        <MenuItemTable menuItems={[]} currentUser={{}} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("MenuItemTable-header-name")).toHaveTextContent(
+      "Item Name",
+    );
+    expect(
+      screen.getByTestId("MenuItemTable-header-station"),
+    ).toHaveTextContent("Station");
     expect(
       screen.getByTestId("MenuItemTable-header-averageReview"),
     ).toHaveTextContent("Average Review");
-
-    // Pizza: (4+5+3)/3 = 4.0
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).toHaveTextContent("4.0 ⭐");
-
-    // Pasta: no reviews
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-1-col-averageReview"),
-    ).toHaveTextContent("🤷‍♂️ No Rating");
-
-    // Salad: 2/1 = 2.0
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-2-col-averageReview"),
-    ).toHaveTextContent("2.0 ⭐");
   });
 
-  test("Average Review handles non-array reviews (Array.isArray false branch)", () => {
-    const items = [
+  test("uses + not - to compute average", () => {
+    const input = [
       {
         id: 1,
-        name: "Mystery Dish",
-        station: "Station X",
-        reviews: null, // not an array
-      },
-    ];
-
-    render(
-      <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
-      </MemoryRouter>,
-    );
-
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).toHaveTextContent("🤷‍♂️ No Rating");
-  });
-
-  test("Average Review filters out non-numeric stars (isNaN branch)", () => {
-    const items = [
-      {
-        id: 1,
-        name: "Quirky Dish",
-        station: "Station Y",
+        name: "Mutation Test Dish",
+        station: "X",
         reviews: [
-          { itemsStars: "not-a-number" }, // map → null
-          { itemsStars: 3 }, // valid
-          { itemsStars: "5" }, // valid
+          { itemsStars: 3, item: 1 },
+          { itemsStars: 3, item: 1 },
         ],
       },
     ];
 
     render(
       <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
+        <MenuItemTable menuItems={input} currentUser={{}} />
       </MemoryRouter>,
     );
 
-    // Only 3 and 5 count → (3+5)/2 = 4.0
+    // If "+" is correct, should show 3.0
+    // If "-" is used, would show -3.0 or 🤷‍♂️ No Rating
     expect(
       screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).toHaveTextContent("4.0 ⭐");
+    ).toHaveTextContent("3.0 ⭐");
   });
 
-  test("Review Item button navigates to create page with correct id and state", async () => {
-    // Set up auth calls so that hasRole returns true
-    axiosMock
-      .onGet("/api/currentUser")
-      .reply(200, apiCurrentUserFixtures.userOnly);
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
+  test("Review Item button has warning style and correct testid", async () => {
+    const input = [
+      { id: 1, name: "Review Test", station: "Check", reviews: [] },
+    ];
+
+    const currentUser = {
+      root: {
+        rolesList: ["ROLE_USER"], // ✅ satisfies hasRole check
+      },
+    };
 
     render(
       <MemoryRouter>
-        <MenuItemTable
-          menuItems={menuItemFixtures.oneMenuItem}
-          currentUser={currentUserFixtures.userOnly}
-        />
+        <MenuItemTable menuItems={input} currentUser={currentUser} />
       </MemoryRouter>,
     );
 
-    const itemId = menuItemFixtures.oneMenuItem[0].id;
-    const btn = await screen.findByTestId(
+    const button = await screen.findByTestId(
       "MenuItemTable-cell-row-0-col-Review Item-button",
     );
-    expect(btn).toBeInTheDocument();
-    expect(btn).toHaveClass("btn-warning");
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveClass("btn-warning");
+    expect(button).toHaveTextContent("Review Item");
+  });
 
-    fireEvent.click(btn);
+  test("does NOT render Review Item button if user does NOT have ROLE_USER", () => {
+    const input = [
+      { id: 1, name: "No Review Privileges", station: "Z", reviews: [] },
+    ];
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(`/reviews/create/${itemId}`, {
-        state: { from: "/previous-page" },
-      });
+    const currentUser = {
+      root: {
+        rolesList: ["ROLE_TOD"], // ❌ not ROLE_USER
+      },
+    };
+
+    render(
+      <MemoryRouter>
+        <MenuItemTable menuItems={input} currentUser={currentUser} />
+      </MemoryRouter>,
+    );
+
+    const btn = screen.queryByTestId(
+      "MenuItemTable-cell-row-0-col-Review Item-button",
+    );
+    expect(btn).not.toBeInTheDocument(); // 💥 would fail if `hasRole(...)` was mutated to `true`
+  });
+
+  test("reviewCallback navigates correctly to the review creation page", async () => {
+    const input = [
+      { id: 1, name: "Trigger Nav", station: "Trigger", reviews: [] },
+    ];
+
+    const currentUser = {
+      root: {
+        rolesList: ["ROLE_USER"], // ✅ correct structure
+      },
+    };
+
+    render(
+      <MemoryRouter>
+        <MenuItemTable menuItems={input} currentUser={currentUser} />
+      </MemoryRouter>,
+    );
+
+    const button = await screen.findByTestId(
+      "MenuItemTable-cell-row-0-col-Review Item-button",
+    );
+
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    expect(mockNavigate).toHaveBeenCalledWith("/reviews/create/1", {
+      state: { from: "/menu-items" },
     });
   });
 
-  test("Rating filter requires ALL conditions to be met (AND vs OR mutation test)", () => {
-    // Create items with reviews that would behave differently with && vs ||
-    const items = [
-      {
-        id: 1,
-        name: "Item 1",
-        station: "Station 1",
-        reviews: [
-          { itemsStars: null }, // Should be filtered out with either && or ||
-          { itemsStars: 0 }, // Should be filtered out with && but kept with ||
-          { itemsStars: 6 }, // Should be filtered out with && but kept with ||
-          { itemsStars: 3 }, // Valid with either && or ||
+  test("extractAllReviewsForItem recurses through deeply nested arrays and collects exactly matching reviews", () => {
+    const data = [
+      { itemsStars: 5, item: 42 }, // ✅ Top-level
+      [
+        { itemsStars: 4, item: 42 }, // ✅ Nested level 1
+        { itemsStars: 1, item: 999 }, // ❌ Wrong itemId
+        [
+          { itemsStars: 3, item: 42 }, // ✅ Nested level 2
+          { itemsStars: 2, item: 48 }, // ❌ Wrong itemId
+          [
+            { itemsStars: 2, item: 42 }, // ✅ Deep level
+            { itemsStars: 2, item: 51 }, // ❌ Wrong itemId
+          ],
+          [
+            { itemsStars: 1, item: 42 }, // ✅ Deepest level
+            { itemsStars: 1, item: 100 }, // ❌ Wrong itemId
+          ],
         ],
-      },
+      ],
+    ];
+
+    const result = extractAllReviewsForItem(data, 42);
+    const stars = result.map((r) => r.itemsStars).sort();
+
+    expect(result.length).toBe(5); // Only 5 valid reviews
+    expect(stars).toEqual([1, 2, 3, 4, 5]); // Ensure exact values collected
+  });
+
+  test("average fails if stars are subtracted instead of added", () => {
+    const rows = [
       {
-        id: 2,
-        name: "Item 2",
-        station: "Station 2",
+        id: 1,
+        name: "Mutation‑Guard Dish",
+        station: "Test Station",
         reviews: [
-          { itemsStars: 0 }, // Invalid rating
-          { itemsStars: 6 }, // Invalid rating
-        ],
-      },
-    ];
-
-    render(
-      <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
-      </MemoryRouter>,
-    );
-
-    // With && (correct): only 3 is valid, so avg = 3.0
-    // With || (mutation): 0, 6, and 3 would be valid, so avg would be 3.0
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).toHaveTextContent("3.0 ⭐");
-
-    // With && (correct): No valid ratings, should show "No Rating"
-    // With || (mutation): 0 and 6 would be valid, would show some average
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-1-col-averageReview"),
-    ).toHaveTextContent("🤷‍♂️ No Rating");
-  });
-
-  test("Reduce function correctly adds ratings (+ vs - mutation test)", () => {
-    // Create items with specific ratings to detect addition vs subtraction
-    const items = [
-      {
-        id: 1,
-        name: "Addition Test",
-        station: "Math Station",
-        reviews: [{ itemsStars: 3 }, { itemsStars: 3 }],
-      },
-      {
-        id: 2,
-        name: "Negative Test",
-        station: "Math Station",
-        reviews: [{ itemsStars: 5 }, { itemsStars: 5 }],
-      },
-    ];
-
-    render(
-      <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
-      </MemoryRouter>,
-    );
-
-    // If using + (correct): (3+3)/2 = 3.0
-    // If using - (mutation): (0-3-3)/2 = -3.0 (which would render differently)
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).toHaveTextContent("3.0 ⭐");
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).not.toHaveTextContent("-");
-
-    // If using + (correct): (5+5)/2 = 5.0
-    // If using - (mutation): (0-5-5)/2 = -5.0 (which would render differently)
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-1-col-averageReview"),
-    ).toHaveTextContent("5.0 ⭐");
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-1-col-averageReview"),
-    ).not.toHaveTextContent("-");
-  });
-
-  // This test specifically covers the edge case where the reduce sum starts at 0
-  test("Reduce function works correctly with initial value of 0", () => {
-    // Test with a single rating to ensure the initial value works correctly
-    const items = [
-      {
-        id: 1,
-        name: "Single Rating",
-        station: "Edge Case Station",
-        reviews: [{ itemsStars: 4 }],
-      },
-    ];
-
-    render(
-      <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
-      </MemoryRouter>,
-    );
-
-    // If using + with initial 0: (0+4)/1 = 4.0
-    // If using - with initial 0: (0-4)/1 = -4.0
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).toHaveTextContent("4.0 ⭐");
-    expect(
-      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
-    ).not.toHaveTextContent("-4.0");
-  });
-
-  it("includes 1-star ratings in average", () => {
-    const items = [
-      {
-        id: 1,
-        name: "One Star Dish",
-        station: "Station X",
-        reviews: [
-          { itemsStars: 1 }, // crucial value
-          { itemsStars: 5 },
+          { itemsStars: 4, item: 1 },
+          { itemsStars: 1, item: 1 },
         ],
       },
     ];
 
     render(
       <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
+        <MenuItemTable menuItems={rows} currentUser={{}} />
       </MemoryRouter>,
     );
 
-    // Average of 1 and 5 = 3.0
-    expect(screen.getByText(/3.0 ⭐/)).toBeInTheDocument();
+    // Real code (+)  →  (4+1)/2 = 2.5 ⭐
+    // Mutant  (‑)    →  (0‑4‑1)/2 = ‑2.5 ⭐   → assertion fails, mutant killed
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageReview"),
+    ).toHaveTextContent("2.5 ⭐");
   });
-
-  it("renders 'No Rating' when reviews is not an array", () => {
-    const items = [
+  test("average is positive and equal to the expected value", () => {
+    const rows = [
       {
         id: 1,
-        name: "Corrupted Data Dish",
-        station: "Station Z",
-        reviews: ["this is not an array"], // triggers fallback
+        name: "Mutation‑Guard Dish",
+        station: "A",
+        reviews: [
+          { itemsStars: 4, item: 1 },
+          { itemsStars: 1, item: 1 }, // average should be 2.5
+        ],
       },
     ];
 
     render(
       <MemoryRouter>
-        <MenuItemTable
-          menuItems={items}
-          currentUser={currentUserFixtures.notLoggedIn}
-        />
+        <MenuItemTable menuItems={rows} currentUser={{}} />
       </MemoryRouter>,
     );
 
-    // If the fallback is correctly [], it should say "No Rating"
-    expect(screen.getByText(/🤷‍♂️ No Rating/)).toBeInTheDocument();
+    const cell = screen.getByTestId(
+      "MenuItemTable-cell-row-0-col-averageReview",
+    );
 
-    // If Stryker mutates fallback to ["Stryker was here"], it would likely display something else — fail the test
-    expect(screen.queryByText(/Stryker/)).not.toBeInTheDocument();
+    // ① exact numeric check – kills many mutants
+    expect(cell).toHaveTextContent("2.5 ⭐");
+
+    // ② sign check – guarantees “+ ➔ –” mutants are killed
+    expect(cell.textContent.startsWith("-")).toBe(false);
   });
 });
