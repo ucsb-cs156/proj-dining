@@ -14,6 +14,7 @@ import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+import edu.ucsb.cs156.dining.models.MenuItemReviewAverageRating;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,6 +92,7 @@ public class ReviewControllerTests extends ControllerTestCase {
     }
 
     // Authorization tests for /api/request
+    
 
     @Test
     public void logged_out_users_cannot_get_all() throws Exception {
@@ -116,6 +119,7 @@ public class ReviewControllerTests extends ControllerTestCase {
         mockMvc.perform(post("/api/reviews/post"))
                 .andExpect(status().is(403));
     }
+    
 
     @WithMockUser(roles = {"USER"})
     @Test
@@ -156,7 +160,7 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String jsonReview = mapper.writeValueAsString(reviewReturn);
+                String jsonReview = mapper.writeValueAsString(reviewReturn);
 
         // Assert
         verify(reviewRepository).save(any(Review.class));
@@ -185,21 +189,21 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .andExpect(status().isBadRequest());
     }
 
-    // Test valid input at boundaries
-    @WithMockUser(roles = {"USER"})
-    @Test
-    public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
-        // Lower boundary test
-        mockMvc.perform(
-                        post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
-                                .with(csrf()))
-                .andExpect(status().isOk());
-        // Lower boundary test
-        mockMvc.perform(
-                        post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
-                                .with(csrf()))
-                .andExpect(status().isOk());
-    }
+        // Test valid input at boundaries
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void postReview_ShouldAcceptRatingAtBoundaries() throws Exception {
+                // Lower boundary test
+                mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=1&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andExpect(status().isOk());
+                // Lower boundary test
+                mockMvc.perform(
+                                post("/api/reviews/post?itemId=1&reviewerComments=Worst flavor ever.&itemsStars=5&dateItemServed=2021-12-12T08:08:08")
+                                                .with(csrf()))
+                                .andExpect(status().isOk());
+        }
 
 
     @WithMockUser(roles = {"USER"})
@@ -435,82 +439,81 @@ public class ReviewControllerTests extends ControllerTestCase {
                 .id(0L)
                 .build();
 
-        ArrayList<Review> reviews = new ArrayList<>();
-        reviews.addAll(Arrays.asList(review1, review2, review3));
+                ArrayList<Review> reviews = new ArrayList<>();
+                reviews.addAll(Arrays.asList(review1, review2, review3));
 
-        when(reviewRepository.findAll()).thenReturn(reviews);
-        // Act
-        MvcResult response = mockMvc.perform(get("/api/reviews/all"))
-                .andExpect(status().is(200)).andReturn();
+                when(reviewRepository.findAll()).thenReturn(reviews);
+                // Act
+                MvcResult response = mockMvc.perform(get("/api/reviews/all"))
+                                .andExpect(status().is(200)).andReturn();
 
-        // assert
-        verify(reviewRepository, times(1)).findAll();
-        String expectedJson = mapper.writeValueAsString(reviews);
-        String responseString = response.getResponse().getContentAsString();
-        assertEquals(expectedJson, responseString);
-    }
+                // assert
+                verify(reviewRepository, times(1)).findAll();
+                String expectedJson = mapper.writeValueAsString(reviews);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
 
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void a_logged_in_user_can_get_own_reviews_list() throws Exception {
+                // Arrange
+                User user1 = currentUserService.getUser();
+                User user2 = User.builder().id(2L).build();
 
-    @WithMockUser(roles = {"USER"})
-    @Test
-    public void a_logged_in_user_can_get_own_reviews_list() throws Exception {
-        // Arrange
-        User user1 = currentUserService.getUser();
-        User user2 = User.builder().id(2L).build();
+                MenuItem menuItem1 = MenuItem.builder().id(1L).build();
+                MenuItem menuItem2 = MenuItem.builder().id(313L).build();
 
-        MenuItem menuItem1 = MenuItem.builder().id(1L).build();
-        MenuItem menuItem2 = MenuItem.builder().id(313L).build();
+                Review review1 = Review.builder()
+                                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+                                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+                                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+                                .reviewer(user1)
+                                .status(ModerationStatus.AWAITING_REVIEW)
+                                .item(menuItem1)
+                                .id(1L)
+                                .build();
 
-        Review review1 = Review.builder()
-                .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
-                .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
-                .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
-                .reviewer(user1)
-                .status(ModerationStatus.AWAITING_REVIEW)
-                .item(menuItem1)
-                .id(1L)
-                .build();
+                Review review2 = Review.builder()
+                                .dateCreated(LocalDateTime.of(2024, 4, 28, 1, 47))
+                                .dateEdited(LocalDateTime.of(2024, 7, 2, 6, 47))
+                                .dateItemServed(LocalDateTime.of(2022, 2, 6, 8, 8))
+                                .reviewer(user2)
+                                .status(ModerationStatus.AWAITING_REVIEW)
+                                .item(menuItem1)
+                                .id(2L)
+                                .build();
 
-        Review review2 = Review.builder()
-                .dateCreated(LocalDateTime.of(2024, 4, 28, 1, 47))
-                .dateEdited(LocalDateTime.of(2024, 7, 2, 6, 47))
-                .dateItemServed(LocalDateTime.of(2022, 2, 6, 8, 8))
-                .reviewer(user2)
-                .status(ModerationStatus.AWAITING_REVIEW)
-                .item(menuItem1)
-                .id(2L)
-                .build();
+                Review review3 = Review.builder()
+                                .dateCreated(LocalDateTime.of(2024, 2, 17, 2, 47))
+                                .dateEdited(LocalDateTime.of(2024, 12, 15, 04, 26))
+                                .dateItemServed(LocalDateTime.of(2023, 1, 7, 3, 8))
+                                .reviewer(user2)
+                                .status(ModerationStatus.AWAITING_REVIEW)
+                                .item(menuItem2)
+                                .id(3L)
+                                .build();
 
-        Review review3 = Review.builder()
-                .dateCreated(LocalDateTime.of(2024, 2, 17, 2, 47))
-                .dateEdited(LocalDateTime.of(2024, 12, 15, 04, 26))
-                .dateItemServed(LocalDateTime.of(2023, 1, 7, 3, 8))
-                .reviewer(user2)
-                .status(ModerationStatus.AWAITING_REVIEW)
-                .item(menuItem2)
-                .id(3L)
-                .build();
+                ArrayList<Review> reviews = new ArrayList<>();
+                ArrayList<Review> valid_reviews = new ArrayList<>();
+                valid_reviews.addAll(Arrays.asList(review1));
+                reviews.addAll(Arrays.asList(review1, review2, review3));
+                when(reviewRepository.findByReviewer(eq(user1))).thenReturn(valid_reviews);
 
-        ArrayList<Review> reviews = new ArrayList<>();
-        ArrayList<Review> valid_reviews = new ArrayList<>();
-        valid_reviews.addAll(Arrays.asList(review1));
-        reviews.addAll(Arrays.asList(review1, review2, review3));
-        when(reviewRepository.findByReviewer(eq(user1))).thenReturn(valid_reviews);
+                // Act
+                MvcResult response = mockMvc.perform(
+                                get("/api/reviews/userReviews")
+                                                .with(csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
 
-        // Act
-        MvcResult response = mockMvc.perform(
-                        get("/api/reviews/userReviews")
-                                .with(csrf()))
-                .andExpect(status().isOk())
-                .andReturn();
+                // assert
+                verify(reviewRepository, times(1)).findByReviewer(eq(user1));
+                String expectedJson = mapper.writeValueAsString(valid_reviews);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
 
-        // assert
-        verify(reviewRepository, times(1)).findByReviewer(eq(user1));
-        String expectedJson = mapper.writeValueAsString(valid_reviews);
-        String responseString = response.getResponse().getContentAsString();
-        assertEquals(expectedJson, responseString);
-
-    }
+        }
 
 
     @WithMockUser(roles = {"USER"})
@@ -982,7 +985,7 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals("Review with id 1 not found", json.get("message"));
     }
 
-    @WithMockUser(roles = {"ADMIN"})
+    @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     @Test
     public void admin_can_moderate_a_review() throws Exception{
         User user1 = User.builder().id(2L).build();
@@ -1027,7 +1030,7 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals(jsonExpected, jsonResponse);
     }
 
-    @WithMockUser(roles = {"ADMIN"})
+    @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     @Test
     public void nonexistent_cannot_approve() throws Exception{
         when(reviewRepository.findById(eq(1L))).thenReturn(Optional.empty());
@@ -1042,7 +1045,7 @@ public class ReviewControllerTests extends ControllerTestCase {
         assertEquals("Review with id 1 not found", json.get("message"));
     }
 
-    @WithMockUser(roles = {"ADMIN"})
+    @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     @Test
     public void get_needs_moderation_returns_moderation_needed() throws Exception{
         User user1 = User.builder().id(2L).build();
@@ -1083,7 +1086,6 @@ public class ReviewControllerTests extends ControllerTestCase {
         verify(reviewRepository, times(1)).findByStatus(eq(ModerationStatus.AWAITING_REVIEW));
         assertEquals(expectedJson,responseJson);
     }
-
     @WithMockUser(roles = {"USER"})
     @Test
     public void wrong_user_cannot_get_id() throws Exception{
@@ -1180,6 +1182,130 @@ public class ReviewControllerTests extends ControllerTestCase {
 
         Map<String, Object> json = responseToJson(response);
         assertEquals("Review with id 1 not found", json.get("message"));
+
+    }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void get_average_rating_per_menu_item() throws Exception {
+        MenuItem menuItem = MenuItem.builder()
+                .id(1L)
+                .name("Chicken Alfredo")
+                .station("Lunch")
+                .diningCommonsCode("ortega")
+                .build();
+        
+        Review review1 = Review.builder().id(1L).itemsStars(5L).build();
+        Review review2 = Review.builder().id(2L).itemsStars(3L).build();
+
+
+        List<MenuItem> menuItems = Arrays.asList(menuItem);
+        List<Review> reviews = Arrays.asList(review1, review2);
+
+        when(menuItemRepository.findAll()).thenReturn(menuItems);
+        when(reviewRepository.findByItemId(eq(1L))).thenReturn(reviews);
+
+        MenuItemReviewAverageRating expected = MenuItemReviewAverageRating.builder()
+                .id(1L)
+                .name("Chicken Alfredo")
+                .station("Lunch")
+                .diningCommonsCode("ortega")
+                .averageRating(4.0)
+                .build();
+        List<MenuItemReviewAverageRating> expectedList = Arrays.asList(expected);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/averageRatingPerMenuItem")
+                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+        
+        String expectedJson = mapper.writeValueAsString(expectedList);
+
+        String responseJson = response.getResponse().getContentAsString();
+
+        verify(menuItemRepository, times(1)).findAll();
+        verify(reviewRepository, times(1)).findByItemId(eq(1L));
+
+        assertEquals(expectedJson, responseJson);
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void get_average_rating_when_no_reviews() throws Exception {
+        MenuItem menuItem = MenuItem.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .build();
+        
+        List<MenuItem> menuItems = Arrays.asList(menuItem);
+
+        List<Review> reviews = Arrays.asList(); // empty list
+
+        when(menuItemRepository.findAll()).thenReturn(menuItems);
+        when(reviewRepository.findByItemId(eq(1L))).thenReturn(reviews);
+
+        MenuItemReviewAverageRating expected = MenuItemReviewAverageRating.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .averageRating(null) 
+                .build();
+        
+        List<MenuItemReviewAverageRating> expectedList = Arrays.asList(expected);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/averageRatingPerMenuItem")
+                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+        
+        String expectedJson = mapper.writeValueAsString(expectedList);
+
+        String responseJson = response.getResponse().getContentAsString();
+
+        verify(menuItemRepository, times(1)).findAll();
+        verify(reviewRepository, times(1)).findByItemId(eq(1L));
+
+        assertEquals(expectedJson, responseJson);        
+    }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void get_average_rating_with_null_review() throws Exception {
+        MenuItem menuItem = MenuItem.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .build();
+        Review review1 = Review.builder().id(1L).itemsStars(4L).build();
+        Review review2 = Review.builder().id(2L).itemsStars(null).build();
+
+        List<MenuItem> menuItems = Arrays.asList(menuItem);
+        List<Review> reviews = Arrays.asList(review1, review2);
+        
+        when(menuItemRepository.findAll()).thenReturn(menuItems);
+        when(reviewRepository.findByItemId(eq(1L))).thenReturn(reviews);
+
+        MenuItemReviewAverageRating expected = MenuItemReviewAverageRating.builder()
+                .id(1L)
+                .name("Tofu Stir Fry")
+                .station("Dinner")
+                .diningCommonsCode("portola")
+                .averageRating(4.0)
+                .build();
+        
+        List<MenuItemReviewAverageRating> expectedList = Arrays.asList(expected);
+
+        MvcResult response = mockMvc.perform(get("/api/reviews/averageRatingPerMenuItem")
+            .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+
+        String expectedJson = mapper.writeValueAsString(expectedList);
+        String responseJson = response.getResponse().getContentAsString();
+
+        verify(menuItemRepository, times(1)).findAll();
+        verify(reviewRepository, times(1)).findByItemId(eq(1L));
+
+        assertEquals(expectedJson, responseJson);
     }
 
 }
