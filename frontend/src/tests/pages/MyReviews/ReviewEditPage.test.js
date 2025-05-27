@@ -45,7 +45,7 @@ describe("ReviewEditPage", () => {
             <Route path="/myreviews" element={<div>My Reviews Page</div>} />
           </Routes>
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   }
 
@@ -121,7 +121,7 @@ describe("ReviewEditPage", () => {
     await screen.findByText("My Reviews Page");
     expect(axiosMock.history.put[0].data).toContain('"itemStars":4');
     expect(axiosMock.history.put[0].data).toContain(
-      '"reviewerComments":"Updated comment"'
+      '"reviewerComments":"Updated comment"',
     );
     expect(axiosMock.history.put[0].data).toContain('"dateItemServed":');
   });
@@ -203,10 +203,12 @@ describe("ReviewEditPage", () => {
     await screen.findByDisplayValue("5");
     fireEvent.click(screen.getByText("Save"));
     await waitFor(() =>
-      axiosMock.history.put.some((req) => req.params && req.params.id === "202")
+      axiosMock.history.put.some(
+        (req) => req.params && req.params.id === "202",
+      ),
     );
     const putReq = axiosMock.history.put.find(
-      (req) => req.params && req.params.id === "202"
+      (req) => req.params && req.params.id === "202",
     );
     expect(putReq).toBeDefined();
     expect(putReq.params).toEqual({ id: "202" });
