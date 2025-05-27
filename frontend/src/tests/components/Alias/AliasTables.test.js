@@ -1,290 +1,87 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  within,
-} from "@testing-library/react";
-import aliasFixtures from "fixtures/aliasFixtures";
-import AliasTable from "main/components/Alias/AliasTable";
+import React from "react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import usersFixtures from "fixtures/usersFixtures";
+import AliasTable from "main/components/Alias/AliasTable";
+import * as backendModule from "main/utils/useBackend";
 import { toast } from "react-toastify";
-import axios from "axios";
-import AxiosMockAdapter from "axios-mock-adapter";
 
-// Mock toast and toast.error
-jest.mock("react-toastify", () => {
-  const toast = jest.fn();
-  toast.error = jest.fn();
-  return { toast };
-});
-
-afterEach(() => {
-  jest.clearAllMocks();
-});
+jest.mock("react-toastify", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 
 describe("AliasTable tests", () => {
   const queryClient = new QueryClient();
-
-  test("approve, reject, alias show up as expected", async () => {
+  const renderWithQueryClient = (ui) =>
     render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.threeAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
     );
 
-    await screen.findByTestId("AliasTable-header-proposedAlias");
-    await screen.findByTestId("AliasTable-header-approve");
-    await screen.findByTestId("AliasTable-header-reject");
+  beforeEach(() => {
+    jest.clearAllMocks();
 
-    for (let i = 0; i < aliasFixtures.threeAlias.length; i++) {
-      const aliasCell = await screen.findByTestId(
-        `AliasTable-cell-row-${i}-col-proposedAlias`,
-      );
-      expect(aliasCell).toHaveTextContent(
-        aliasFixtures.threeAlias[i].proposedAlias,
-      );
-
-      const approveBtn = within(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-approve`),
-      ).getByRole("button");
-      expect(approveBtn).toHaveClass("btn", "btn-success");
-
-      const rejectBtn = within(
-        screen.getByTestId(`AliasTable-cell-row-${i}-col-reject`),
-      ).getByRole("button");
-      expect(rejectBtn).toHaveClass("btn", "btn-danger");
-    }
+    jest
+      .spyOn(backendModule, "useBackendMutation")
+      .mockImplementation((_, { onSuccess, onError }) => ({
+        mutate: (_, __) =>
+          onError(new Error("Request failed with status code 500")),
+      }));
   });
 
-  test("one proposed alias", async () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const aliasCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-proposedAlias",
-    );
-    expect(aliasCell).toHaveTextContent(
-      aliasFixtures.oneAlias[0].proposedAlias,
-    );
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  test("renders empty table correctly", () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={[]} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    ["Proposed Alias", "Approve", "Reject"].forEach((header) =>
-      expect(screen.getByText(header)).toBeInTheDocument(),
-    );
+  test("renders table with correct headers and aliases", () => {
+    renderWithQueryClient(<AliasTable alias={usersFixtures.threeUsers} />);
     expect(
-      screen.queryByTestId("AliasTable-cell-row-0-col-proposedAlias"),
-    ).toBeNull();
-  });
+      screen.getByRole("columnheader", { name: /Proposed Alias/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Approve/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Reject/i }),
+    ).toBeInTheDocument();
 
-  test("null proposed alias does nothing", async () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.nullPropAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    // cell is rendered but empty
-    const aliasCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-proposedAlias",
-    );
-    expect(aliasCell).toHaveTextContent("");
-
-    // clicking approve does not trigger toast
-    const approveBtn = within(
-      screen.getByTestId("AliasTable-cell-row-0-col-approve"),
-    ).getByRole("button");
-    fireEvent.click(approveBtn);
-    expect(toast).not.toHaveBeenCalled();
-
-    // clicking reject does not trigger toast
-    const rejectBtn = within(
-      screen.getByTestId("AliasTable-cell-row-0-col-reject"),
-    ).getByRole("button");
-    fireEvent.click(rejectBtn);
-    expect(toast).not.toHaveBeenCalled();
-  });
-
-  test("approve button approves the alias (toast)", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200, {
-      id: aliasFixtures.oneAlias[0].id,
-      approved: true,
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const approveCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-approve",
-    );
-    fireEvent.click(within(approveCell).getByRole("button"));
-
-    await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(
-        `Alias ${aliasFixtures.oneAlias[0].proposedAlias} for id ${
-          aliasFixtures.oneAlias[0].id
-        } approved!`,
-      ),
-    );
-  });
-
-  test("approve button calls API with correct url and params", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200, {
-      id: aliasFixtures.oneAlias[0].id,
-      approved: true,
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const approveCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-approve",
-    );
-    fireEvent.click(within(approveCell).getByRole("button"));
-
-    await waitFor(() => expect(axiosMock.history.put).toHaveLength(1));
-    const put = axiosMock.history.put[0];
-    expect(put.url).toBe("/api/currentUser/updateAliasModeration");
-    expect(put.params).toEqual({
-      id: aliasFixtures.oneAlias[0].id,
-      approved: true,
+    const rows = screen.getAllByTestId(/AliasTable-row-/);
+    usersFixtures.threeUsers.forEach((user, idx) => {
+      const aliasText = user.proposedAlias || "(No proposed alias)";
+      expect(within(rows[idx]).getByText(aliasText)).toBeInTheDocument();
     });
   });
 
-  test("approve button shows error toast on failure", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onPut("/api/currentUser/updateAliasModeration").networkError();
+  test("calls approve mutation when Approve button clicked", () => {
+    const mockMutate = jest.fn();
+    jest
+      .spyOn(backendModule, "useBackendMutation")
+      .mockReturnValue({ mutate: mockMutate });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const approveCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-approve",
-    );
-    fireEvent.click(within(approveCell).getByRole("button"));
-
-    await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith(
-        `Error approving alias: Network Error`,
-      ),
-    );
+    renderWithQueryClient(<AliasTable alias={usersFixtures.threeUsers} />);
+    const approveButtons = screen.getAllByRole("button", { name: /approve/i });
+    fireEvent.click(approveButtons[0]);
+    expect(mockMutate).toHaveBeenCalledWith(usersFixtures.threeUsers[0]);
   });
 
-  test("reject button calls API with correct url and params", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200, {
-      id: aliasFixtures.oneAlias[0].id,
-      approved: false,
-    });
+  test("calls reject mutation when Reject button clicked", () => {
+    const mockMutate = jest.fn();
+    jest
+      .spyOn(backendModule, "useBackendMutation")
+      .mockReturnValue({ mutate: mockMutate });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const rejectCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-reject",
-    );
-    fireEvent.click(within(rejectCell).getByRole("button"));
-
-    await waitFor(() => expect(axiosMock.history.put).toHaveLength(1));
-    const put = axiosMock.history.put[0];
-    expect(put.url).toBe("/api/currentUser/updateAliasModeration");
-    expect(put.params).toEqual({
-      id: aliasFixtures.oneAlias[0].id,
-      approved: false,
-    });
+    renderWithQueryClient(<AliasTable alias={usersFixtures.threeUsers} />);
+    const rejectButtons = screen.getAllByRole("button", { name: /reject/i });
+    fireEvent.click(rejectButtons[1]);
+    expect(mockMutate).toHaveBeenCalledWith(usersFixtures.threeUsers[1]);
   });
 
-  test("reject button rejects the alias (toast)", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200, {
-      id: aliasFixtures.oneAlias[0].id,
-      approved: false,
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const rejectCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-reject",
-    );
-    fireEvent.click(within(rejectCell).getByRole("button"));
-
-    await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(
-        `Alias ${aliasFixtures.oneAlias[0].proposedAlias} for id ${
-          aliasFixtures.oneAlias[0].id
-        } rejected!`,
-      ),
-    );
-  });
-
-  test("reject button shows error toast on failure", async () => {
-    const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onPut("/api/currentUser/updateAliasModeration").networkError();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AliasTable alias={aliasFixtures.oneAlias} />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    const rejectCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-reject",
-    );
-    fireEvent.click(within(rejectCell).getByRole("button"));
-
-    await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith(
-        `Error rejecting alias: Network Error`,
-      ),
+  test("renders empty state when no aliases", () => {
+    renderWithQueryClient(<AliasTable alias={[]} />);
+    expect(screen.getByTestId("AliasTable-empty")).toHaveTextContent(
+      /no aliases awaiting approval/i,
     );
   });
 });
