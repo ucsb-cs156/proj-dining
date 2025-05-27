@@ -108,13 +108,13 @@ describe("ReviewsTable tests", () => {
 
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
-      .onDelete("/api/reviews")
+      .onDelete("/api/reviews/reviewer")
       .reply(200, { message: "Review deleted" });
 
     fireEvent.click(deleteButton);
 
     await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
-    expect(axiosMock.history.delete[0].params).toEqual({ itemId: 7 });
+    expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
   });
 
   test("Moderator buttons appear and work properly", async () => {

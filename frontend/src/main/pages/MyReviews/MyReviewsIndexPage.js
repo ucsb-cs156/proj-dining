@@ -14,7 +14,7 @@ export default function MyReviewsIndexPage() {
     status: _status,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/reviews/all"],
+    ["/api/reviews/reviewer/all"],
     { method: "GET", url: "/api/reviews/all" },
     [],
   );

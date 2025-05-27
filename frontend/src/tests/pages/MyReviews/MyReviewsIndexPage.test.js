@@ -102,7 +102,7 @@ describe("MyReviewsIndexPage tests", () => {
     setupUserOnly();
     const queryClient = new QueryClient();
     axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
-    axiosMock.onDelete("/api/reviews").reply(200, "Review deleted");
+    axiosMock.onDelete("/api/reviews/reviewer").reply(200, "Review deleted");
 
     // act
     render(

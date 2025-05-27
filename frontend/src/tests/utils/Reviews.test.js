@@ -31,17 +31,22 @@ describe("Reviews", () => {
   });
   describe("cellToAxiosParamsDelete", () => {
     test("It returns the correct params", () => {
-      // arrange
-      const cell = { row: { values: { "item.id": 1 } } };
+      const cell = {
+        row: {
+          original: {
+            id: 42,
+          },
+        },
+      };
 
-      // act
       const result = cellToAxiosParamsDelete(cell);
 
-      // assert
       expect(result).toEqual({
-        url: "/api/reviews",
+        url: "/api/reviews/reviewer",
         method: "DELETE",
-        params: { itemId: 1 },
+        params: {
+          id: 42,
+        },
       });
     });
   });
