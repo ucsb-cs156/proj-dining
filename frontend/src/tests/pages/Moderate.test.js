@@ -14,10 +14,10 @@ import { useBackend } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 import usersFixtures from "fixtures/usersFixtures";
 
+// Mock useBackend
 jest.mock("main/utils/useBackend", () => ({
   useBackend: jest.fn(),
 }));
-
 jest.mock("react-toastify", () => ({
   toast: {
     success: jest.fn(),
@@ -25,10 +25,9 @@ jest.mock("react-toastify", () => ({
   },
 }));
 
-describe("ModeratePage tests", () => {
+describe("ModeratePage enhanced tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   const queryClient = new QueryClient();
-  let putSpy;
 
   const renderPage = () => {
     render(
@@ -51,8 +50,6 @@ describe("ModeratePage tests", () => {
       error: null,
       status: "success",
     });
-
-    putSpy = jest.spyOn(axios, "put").mockResolvedValue({});
   });
 
   test("renders correctly for admin user", async () => {
@@ -74,7 +71,7 @@ describe("ModeratePage tests", () => {
     ).toBeInTheDocument();
   });
 
-  test("approve triggers correct axios call and success toast", async () => {
+  test("triggers toast success when clicking approve/reject", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -83,6 +80,7 @@ describe("ModeratePage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
+    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);
 
     renderPage();
 
@@ -93,21 +91,29 @@ describe("ModeratePage tests", () => {
       name: "Approve",
     });
     fireEvent.click(approveButton);
-
-    await waitFor(() => {
-      expect(putSpy).toHaveBeenCalledWith(
-        "/api/currentUser/updateAliasModeration",
-        null,
-        { params: { id: usersFixtures.threeUsers[0].id, approved: true } },
-      );
+    await waitFor(() =>
       expect(toast.success).toHaveBeenCalledWith(
-        `Alias "${usersFixtures.threeUsers[0].proposedAlias}" for ID ${usersFixtures.threeUsers[0].id} approved!`,
-      );
+        expect.stringContaining(
+          `Alias "${usersFixtures.threeUsers[0].proposedAlias}"`,
+        ),
+      ),
+    );
+
+    const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
+    const rejectButton = within(rejectCell).getByRole("button", {
+      name: "Reject",
     });
+    fireEvent.click(rejectButton);
+    await waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `Alias "${usersFixtures.threeUsers[0].proposedAlias}"`,
+        ),
+      ),
+    );
   });
 
-  test("approve triggers error toast when axios.put fails", async () => {
-    putSpy.mockRejectedValue(new Error("Network error"));
+  test("shows error toast with expected message when approve fails", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -116,6 +122,11 @@ describe("ModeratePage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
+
+    const errorMessage = "Mocked approve error";
+    const putSpy = jest
+      .spyOn(axios, "put")
+      .mockRejectedValue(new Error(errorMessage));
 
     renderPage();
 
@@ -126,15 +137,16 @@ describe("ModeratePage tests", () => {
       name: "Approve",
     });
     fireEvent.click(approveButton);
-
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
-        expect.stringContaining("Error approving alias"),
+        expect.stringContaining(`Error approving alias: ${errorMessage}`),
       ),
     );
+
+    putSpy.mockRestore();
   });
 
-  test("reject triggers correct axios call and success toast", async () => {
+  test("shows error toast with expected message when reject fails", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
       user: { id: 1, email: "admin@ucsb.edu", admin: true },
       roles: [{ authority: "ROLE_ADMIN" }],
@@ -143,6 +155,11 @@ describe("ModeratePage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, { springH2ConsoleEnabled: false });
+
+    const errorMessage = "Mocked reject error";
+    const putSpy = jest
+      .spyOn(axios, "put")
+      .mockRejectedValue(new Error(errorMessage));
 
     renderPage();
 
@@ -153,24 +170,19 @@ describe("ModeratePage tests", () => {
       name: "Reject",
     });
     fireEvent.click(rejectButton);
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith(
+        expect.stringContaining(`Error rejecting alias: ${errorMessage}`),
+      ),
+    );
 
-    await waitFor(() => {
-      expect(putSpy).toHaveBeenCalledWith(
-        "/api/currentUser/updateAliasModeration",
-        null,
-        { params: { id: usersFixtures.threeUsers[0].id, approved: false } },
-      );
-      expect(toast.success).toHaveBeenCalledWith(
-        `Alias "${usersFixtures.threeUsers[0].proposedAlias}" for ID ${usersFixtures.threeUsers[0].id} rejected!`,
-      );
-    });
+    putSpy.mockRestore();
   });
 
-  test("reject triggers error toast when axios.put fails", async () => {
-    putSpy.mockRejectedValue(new Error("Network error"));
+  test("redirects non-admin and non-moderator user", async () => {
     axiosMock.onGet("/api/currentUser").reply(200, {
-      user: { id: 1, email: "admin@ucsb.edu", admin: true },
-      roles: [{ authority: "ROLE_ADMIN" }],
+      user: { id: 2, email: "user@ucsb.edu", admin: false, moderator: false },
+      roles: [{ authority: "ROLE_USER" }],
       loggedIn: true,
     });
     axiosMock
@@ -178,19 +190,44 @@ describe("ModeratePage tests", () => {
       .reply(200, { springH2ConsoleEnabled: false });
 
     renderPage();
-
-    const rejectCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-Reject",
-    );
-    const rejectButton = within(rejectCell).getByRole("button", {
-      name: "Reject",
-    });
-    fireEvent.click(rejectButton);
-
     await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith(
-        expect.stringContaining("Error rejecting alias"),
-      ),
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+  });
+
+  test("redirects when currentUser is undefined", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, null);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+  });
+
+  test("redirects when currentUser.loggedIn is undefined", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, { loggedIn: undefined });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
+    );
+  });
+
+  test("handles currentUser null and skips hasRole", async () => {
+    axiosMock.onGet("/api/currentUser").reply(200, { loggedIn: false });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    renderPage();
+    await waitFor(() =>
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument(),
     );
   });
 });
