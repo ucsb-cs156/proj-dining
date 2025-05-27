@@ -1,5 +1,3 @@
-// src/tests/pages/Moderate.test.js
-
 import {
   render,
   screen,
@@ -385,5 +383,29 @@ describe("ModeratePage enhanced tests", () => {
     renderPage();
 
     await screen.findByText("Moderation Page");
+  });
+  test("aliases fallback to empty list when backend data is undefined", async () => {
+    // Stub currentUser as admin so we don't redirect
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      user: { id: 1, admin: true },
+      roles: [{ authority: "ROLE_ADMIN" }],
+      loggedIn: true,
+    });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, { springH2ConsoleEnabled: false });
+
+    // Force *all* useBackend calls to return undefined data
+    useBackend.mockReturnValue({
+      data: undefined,
+      error: null,
+      status: "success",
+    });
+
+    // Render and assert that no alias-row ever appears
+    renderPage();
+    await waitFor(() => {
+      expect(screen.queryByTestId("AliasTable-row-0")).not.toBeInTheDocument();
+    });
   });
 });
