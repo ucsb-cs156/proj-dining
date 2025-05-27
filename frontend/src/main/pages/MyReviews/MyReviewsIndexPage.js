@@ -1,7 +1,7 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { useBackend, useBackendMutation } from "main/utils/useBackend";
 import ReviewTable from "main/components/Reviews/ReviewTable";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";

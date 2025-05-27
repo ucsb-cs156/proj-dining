@@ -58,8 +58,8 @@ function App() {
             <Route path="/reviews/post/:id" element={<ReviewsCreatePage />} />
             <Route
               exact
-              path="/reviews/edit/:id"
-              element={<ReviewsEditPage />}
+              path="/myreviews/edit/:id"
+              element={<ReviewEditPage />}
             />
             <Route path="/placeholder" element={<PlaceholderIndexPage />} />
           </>
