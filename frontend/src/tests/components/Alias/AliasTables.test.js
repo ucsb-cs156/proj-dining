@@ -1,34 +1,69 @@
 import React from "react";
-import OurTable, { ButtonColumn } from "main/components/OurTable";
+import { render, screen, fireEvent, within } from "@testing-library/react";
+import AliasTable from "main/components/Alias/AliasTable";
+import usersFixtures from "fixtures/usersFixtures";
 
-export default function AliasTable({ aliases, onApprove, onReject }) {
-  const testid = "AliasTable";
+describe("AliasTable tests", () => {
+  const mockOnApprove = jest.fn();
+  const mockOnReject = jest.fn();
 
-  const columns = [
-    {
-      Header: "Proposed Alias",
-      accessor: "proposedAlias",
-      Cell: ({ value }) => value || "(No proposed alias)",
-    },
-    ButtonColumn(
-      "Approve",
-      "primary",
-      (cell) => onApprove(cell.row.original),
-      testid,
-    ),
-    ButtonColumn(
-      "Reject",
-      "danger",
-      (cell) => onReject(cell.row.original),
-      testid,
-    ),
-  ];
+  const aliases = usersFixtures.threeUsers;
 
-  if (!aliases || aliases.length === 0) {
-    return (
-      <div data-testid={`${testid}-empty`}>No aliases awaiting approval</div>
+  const renderTable = () =>
+    render(
+      <AliasTable
+        aliases={aliases}
+        onApprove={mockOnApprove}
+        onReject={mockOnReject}
+      />,
     );
-  }
 
-  return <OurTable data={aliases} columns={columns} testid={testid} />;
-}
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("renders table with provided aliases", () => {
+    renderTable();
+
+    aliases.forEach((alias, idx) => {
+      const row = screen.getByTestId(`AliasTable-row-${idx}`);
+      const aliasText = alias.proposedAlias || "(No proposed alias)";
+      expect(within(row).getByText(aliasText)).toBeInTheDocument();
+    });
+  });
+
+  test("calls onApprove when Approve button clicked", () => {
+    renderTable();
+
+    const approveCell = screen.getByTestId("AliasTable-cell-row-0-col-Approve");
+    const approveButton = within(approveCell).getByRole("button", {
+      name: "Approve",
+    });
+
+    fireEvent.click(approveButton);
+    expect(mockOnApprove).toHaveBeenCalledWith(aliases[0]);
+  });
+
+  test("calls onReject when Reject button clicked", () => {
+    renderTable();
+
+    const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
+    const rejectButton = within(rejectCell).getByRole("button", {
+      name: "Reject",
+    });
+
+    fireEvent.click(rejectButton);
+    expect(mockOnReject).toHaveBeenCalledWith(aliases[0]);
+  });
+
+  test("renders empty state when no aliases provided", () => {
+    render(
+      <AliasTable
+        aliases={[]}
+        onApprove={mockOnApprove}
+        onReject={mockOnReject}
+      />,
+    );
+    expect(screen.getByTestId("AliasTable-empty")).toBeInTheDocument();
+  });
+});
