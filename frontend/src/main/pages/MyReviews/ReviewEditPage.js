@@ -1,5 +1,5 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Form, Button, Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
