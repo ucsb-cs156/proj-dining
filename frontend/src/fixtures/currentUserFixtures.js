@@ -47,6 +47,58 @@ const apiCurrentUserFixtures = {
       },
     ],
   },
+  moderatorUser: {
+    user: {
+      id: 1,
+      email: "phtcon@ucsb.edu",
+      googleSub: "115856948234298493496",
+      pictureUrl:
+        "https://lh3.googleusercontent.com/-bQynVrzVIrU/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucmkGuVsELD1ZeV5iDUAUfe6_K-p8w/s96-c/photo.jpg",
+      fullName: "Phill Conrad",
+      givenName: "Phill",
+      familyName: "Conrad",
+      emailVerified: true,
+      locale: "en",
+      hostedDomain: "ucsb.edu",
+      moderator: true,
+      admin: true,
+    },
+    roles: [
+      {
+        authority: "ROLE_MEMBER",
+      },
+      {
+        authority: "SCOPE_openid",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+      },
+      {
+        authority: "ROLE_USER",
+        attributes: {
+          sub: "115856948234298493496",
+          name: "Phill Conrad",
+          given_name: "Phill",
+          family_name: "Conrad",
+          picture:
+            "https://lh3.googleusercontent.com/a/AATXAJyxrU2gDahCiNe4ampVZlv5176Jo0F0PG3KyYgk=s96-c",
+          email: "phtcon@ucsb.edu",
+          email_verified: true,
+          locale: "en",
+          hd: "ucsb.edu",
+        },
+      },
+      {
+        authority: "ROLE_ADMIN",
+      },
+      {
+        authority: "ROLE_MODERATOR",
+      },
+    ],
+  },
   userOnly: {
     user: {
       id: 2,
@@ -121,6 +173,20 @@ const currentUserFixtures = {
         "SCOPE_https://www.googleapis.com/auth/userinfo.email",
         "ROLE_USER",
         "ROLE_ADMIN",
+      ],
+    },
+  },
+  moderatorUser: {
+    loggedIn: true,
+    root: {
+      ...apiCurrentUserFixtures.moderatorUser,
+      rolesList: [
+        "ROLE_MEMBER",
+        "SCOPE_openid",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+        "ROLE_USER",
+        "ROLE_MODERATOR",
       ],
     },
   },
