@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,10 +104,14 @@ public class ReviewController extends ApiController {
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
 
-        // Ensures content of truly empty and sets to null if so
-        if ((!reviewerComments.trim().isEmpty())) {
+        // Reviewer comments moderation logic
+        if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
             review.setReviewerComments(reviewerComments);
+        } else {
+            review.setStatus(ModerationStatus.APPROVED); // auto-approve
         }
+        
+
 
         // Ensure user inputs rating 1-5
         if (itemsStars < 1 || itemsStars > 5) {
