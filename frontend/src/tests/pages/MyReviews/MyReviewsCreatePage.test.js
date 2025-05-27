@@ -1,0 +1,229 @@
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { BrowserRouter, MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ToastContainer } from "react-toastify";
+import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
+import AxiosMockAdapter from "axios-mock-adapter";
+import axios from "axios";
+
+// silence console.error during tests to keep logs clean
+beforeAll(() => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
+afterAll(() => {
+  console.error.mockRestore();
+});
+
+// Mock out BasicLayout so we don't pull in hooks that need a full app context
+jest.mock("main/layouts/BasicLayout/BasicLayout", () => ({ children }) => (
+  <>{children}</>
+));
+
+// Always provide working versions of the router hooks that the page expects
+const mockNavigate = jest.fn();
+jest.mock("react-router-dom", () => {
+  const original = jest.requireActual("react-router-dom");
+  return {
+    ...original,
+    useNavigate: () => mockNavigate,
+    useSearchParams: () => [
+      new URLSearchParams("itemId=42&itemName=Spaghetti"),
+    ],
+  };
+});
+
+describe("MyReviewsCreatePage - full coverage tests", () => {
+  const queryClient = new QueryClient();
+  let axiosMock;
+
+  // Helper to render with the standard happy‑path router (has query params)
+  const renderWithDefaultRouter = () =>
+    render(
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <MyReviewsCreatePage />
+          <ToastContainer />
+        </BrowserRouter>
+      </QueryClientProvider>,
+    );
+
+  beforeEach(() => {
+    mockNavigate.mockClear();
+    axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.reset();
+    // stub currentUser / systemInfo so the page loads
+    axiosMock.onGet("/api/currentUser").reply(200, {
+      root: { user: { email: "test@example.com" }, rolesList: [] },
+    });
+    axiosMock.onGet("/api/systemInfo").reply(200, {});
+  });
+
+  test("renders heading with item name from query params", async () => {
+    renderWithDefaultRouter();
+    expect(
+      await screen.findByRole("heading", { name: /review.*spaghetti/i }),
+    ).toBeInTheDocument();
+  });
+
+  test("renders form fields with expected defaults", async () => {
+    renderWithDefaultRouter();
+    expect(await screen.findByLabelText(/comments/i)).toHaveValue("");
+    expect(screen.getByLabelText(/stars/i)).toHaveValue("5");
+    const dateInput = screen.getByLabelText(/date and time/i);
+    expect(dateInput.value).not.toBe("");
+  });
+
+  test("submit button is enabled by default", async () => {
+    renderWithDefaultRouter();
+    const button = await screen.findByRole("button", {
+      name: /submit review/i,
+    });
+    expect(button).toBeEnabled();
+  });
+
+  test("submits form and navigates on successful post", async () => {
+    axiosMock.onPost("/api/reviews/post").reply(200, {});
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/comments/i), {
+      target: { value: "Great!" },
+    });
+    fireEvent.change(screen.getByLabelText(/stars/i), {
+      target: { value: "4" },
+    });
+    fireEvent.change(screen.getByLabelText(/date and time/i), {
+      target: { value: "2024-04-01T12:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    const post = axiosMock.history.post[0];
+    expect(post.params).toEqual({
+      itemId: "42",
+      reviewerComments: "Great!",
+      itemsStars: 4,
+      dateItemServed: "2024-04-01T12:00",
+    });
+
+    expect(
+      await screen.findByText(/review submitted for spaghetti/i),
+    ).toBeInTheDocument();
+    expect(mockNavigate).toHaveBeenCalledWith("/myreviews");
+  });
+
+  test("shows error toast on network error during post with fallback message", async () => {
+    axiosMock.onPost("/api/reviews/post").timeout();
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/comments/i), {
+      target: { value: "Oops" },
+    });
+    fireEvent.change(screen.getByLabelText(/stars/i), {
+      target: { value: "1" },
+    });
+    fireEvent.change(screen.getByLabelText(/date and time/i), {
+      target: { value: "2024-04-01T12:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(
+      await screen.findByText(
+        /Error submitting review: timeout of 0ms exceeded/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("shows server error message when response has error field", async () => {
+    axiosMock.onPost("/api/reviews/post").reply(500, { error: "Server error" });
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/comments/i), {
+      target: { value: "Oops" },
+    });
+    fireEvent.change(screen.getByLabelText(/stars/i), {
+      target: { value: "1" },
+    });
+    fireEvent.change(screen.getByLabelText(/date and time/i), {
+      target: { value: "2024-04-01T12:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(
+      await screen.findByText(/Error submitting review: Server error/i),
+    ).toBeInTheDocument();
+  });
+
+  test("shows fallback error message when response has no error field", async () => {
+    axiosMock.onPost("/api/reviews/post").reply(500, {});
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/comments/i), {
+      target: { value: "Test fallback" },
+    });
+    fireEvent.change(screen.getByLabelText(/stars/i), {
+      target: { value: "2" },
+    });
+    fireEvent.change(screen.getByLabelText(/date and time/i), {
+      target: { value: "2024-04-02T15:30" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(
+      await screen.findByText(
+        /Error submitting review: Request failed with status code 500/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  // NEW: force a null response body to exercise data?.error path and kill optional-chaining mutation
+  test("shows fallback error when response data is explicitly null", async () => {
+    axiosMock.onPost("/api/reviews/post").reply(500, null);
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/comments/i), {
+      target: { value: "Null body" },
+    });
+    fireEvent.change(screen.getByLabelText(/stars/i), {
+      target: { value: "3" },
+    });
+    fireEvent.change(screen.getByLabelText(/date and time/i), {
+      target: { value: "2024-04-03T10:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(
+      await screen.findByText(
+        /Error submitting review: Request failed with status code 500/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("gracefully handles missing query params without crashing", async () => {
+    // override searchParams to be empty
+    jest.doMock("react-router-dom", () => {
+      const original = jest.requireActual("react-router-dom");
+      return {
+        ...original,
+        useNavigate: () => mockNavigate,
+        useSearchParams: () => [new URLSearchParams("")],
+      };
+    });
+    // re-import page under new mock
+    const { default: MyReviewsCreatePageLocal } = await import(
+      "main/pages/MyReviews/MyReviewsCreatePage"
+    );
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/myreviews/create"]}>
+          <MyReviewsCreatePageLocal />
+          <ToastContainer />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: /review/i }),
+    ).toBeInTheDocument();
+  });
+});
