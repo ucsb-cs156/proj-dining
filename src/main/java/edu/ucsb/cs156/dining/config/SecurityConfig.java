@@ -38,7 +38,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -122,6 +121,10 @@ public class SecurityConfig {
           if (email.endsWith("@ucsb.edu")) {
             mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
           }
+
+          if (getModerator(email)) {
+            mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+          }
         }
 
       });
@@ -145,6 +148,20 @@ public class SecurityConfig {
     Optional<User> u = userRepository.findByEmail(email);
     return u.isPresent() && u.get().getAdmin();
   }
+
+  /**
+   * This method checks if the given email belongs to an moderator user either from a
+   * predefined
+   * list or by querying the user repository.
+   * 
+   * @param email email address of the user
+   * @return whether the user with the given email is a moderator
+   */
+  public boolean getModerator(String email) {
+    Optional<User> u = userRepository.findByEmail(email);
+    return u.isPresent() && u.get().getModerator();
+  }
+
 }
 
 final class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
