@@ -4,7 +4,6 @@ import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
 
 import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
-import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
@@ -23,6 +22,7 @@ import { hasRole, useCurrentUser } from "main/utils/currentUser";
 import "bootstrap/dist/css/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
+import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
 
 function App() {
   const { data: currentUser } = useCurrentUser();
@@ -66,7 +66,7 @@ function App() {
             />
           </>
         )}
-        {hasRole(currentUser, "ROLE_ADMIN") && (
+        {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route
               exact
@@ -75,8 +75,8 @@ function App() {
             />
             <Route
               exact
-              path="/placeholder/create"
-              element={<PlaceholderCreatePage />}
+              path="/myreviews/create"
+              element={<MyReviewsCreatePage />}
             />
           </>
         )}
