@@ -70,7 +70,7 @@ public class ReviewController extends ApiController {
      * @return a list of all Reviews
      */
     @Operation(summary = "List all Reviews")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<Review> allReviews() {
         log.info("Attempting to log all reviews");
