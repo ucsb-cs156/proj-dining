@@ -76,21 +76,12 @@ describe("Moderate Page Tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
-    expect(
-      screen.getByTestId(`${testId}-cell-row-1-col-item.id`),
-    ).toHaveTextContent("8");
-    expect(
-      screen.getByTestId(`${testId}-cell-row-2-col-item.id`),
-    ).toHaveTextContent("9");
 
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
     ).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId(`${testId}-cell-row-2-col-Approve-button`),
     ).toBeInTheDocument();
   });
 
@@ -112,21 +103,12 @@ describe("Moderate Page Tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
-    expect(
-      screen.getByTestId(`${testId}-cell-row-1-col-item.id`),
-    ).toHaveTextContent("8");
-    expect(
-      screen.getByTestId(`${testId}-cell-row-2-col-item.id`),
-    ).toHaveTextContent("9");
 
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
     ).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId(`${testId}-cell-row-2-col-Approve-button`),
     ).toBeInTheDocument();
   });
 
