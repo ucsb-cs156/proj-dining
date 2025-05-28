@@ -14,6 +14,7 @@ import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
 import Moderate from "main/pages/Moderate";
+import AliasApprovalPage from "main/pages/AliasApprovalPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -40,6 +41,17 @@ function App() {
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
+        )}
+        {(hasRole(currentUser, "ROLE_ADMIN") ||
+          hasRole(currentUser, "ROLE_MODERATOR")) && (
+          <>
+            <Route exact path="/moderate" element={<Moderate />} />
+            <Route
+              exact
+              path="/alias-approval"
+              element={<AliasApprovalPage />}
+            />
+          </>
         )}
         {hasRole(currentUser, "ROLE_USER") && (
           <>

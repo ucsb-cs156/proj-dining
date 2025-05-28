@@ -68,6 +68,9 @@ export default function AppNavbar({
                   <Nav.Link as={Link} to="/moderate">
                     Moderate
                   </Nav.Link>
+                  <Nav.Link as={Link} to="/alias-approval">
+                    Alias Approval
+                  </Nav.Link>
                 </>
               )}
               {currentUser && currentUser.loggedIn ? (
