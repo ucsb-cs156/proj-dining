@@ -99,14 +99,12 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 
-// Stryker disable all
 function Review({ initialContents, submitAction, buttonLabel = "Create" }) {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm({ defaultValues: initialContents || {} });
-  // Stryker restore all
 
   const navigate = useNavigate();
   const testIdPrefix = "Review";

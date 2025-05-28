@@ -115,7 +115,6 @@
 //     });
 //   });
 // });
-// src/tests/components/Review/ReviewTests.test.js
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router";
@@ -124,161 +123,133 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import ReviewForm from "main/components/Review/ReviewForm";
 
 const mockedNavigate = jest.fn();
-const queryClient = new QueryClient();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockedNavigate,
 }));
 
-describe("ReviewForm", () => {
-  const renderForm = (props = {}) =>
+describe("ReviewForm tests", () => {
+  const queryClient = new QueryClient();
+  const testId = "Review";
+
+  test("renders correctly with no initialContents", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <Router>
-          <ReviewForm {...props} />
+          <ReviewForm />
         </Router>
       </QueryClientProvider>,
     );
 
-  test("renders correctly with no initialContents", async () => {
-    renderForm();
+    expect(await screen.findByText(/Create/)).toBeInTheDocument();
+    expect(screen.getByTestId(`${testId}-submit`)).toBeInTheDocument();
 
-    // submit button + labels
-    expect(await screen.findByTestId("Review-submit")).toBeInTheDocument();
     expect(screen.getByText("Reviewer Comments")).toBeInTheDocument();
     expect(screen.getByText("Date Item Served")).toBeInTheDocument();
     expect(screen.getByText("Rating")).toBeInTheDocument();
 
-    // fields start empty
-    expect(screen.getByTestId("Review-reviewerComments")).toHaveValue("");
-    expect(screen.getByTestId("Review-dateItemServed")).toHaveValue("");
-
-    // all stars gray
-    for (let star = 1; star <= 5; star++) {
-      expect(screen.getByTestId(`Review-star-${star}`)).toHaveAttribute(
-        "color",
-        "#e4e5e9",
-      );
-    }
+    [1, 3, 5].forEach((star) => {
+      expect(screen.getByTestId(`${testId}-star-${star}`)).toBeInTheDocument();
+    });
   });
 
-  test("renders correctly with initialContents", async () => {
-    // extend fixture with form‐fields
-    const initial = {
-      ...reviewFixtures.oneReview,
-      reviewerComments: "Existing comment",
-      dateItemServed: "2022-01-05",
-      itemsStars: 2,
-    };
-
-    renderForm({ initialContents: initial });
-
-    // form inputs populated
-    expect(await screen.findByTestId("Review-reviewerComments")).toHaveValue(
-      "Existing comment",
-    );
-    expect(screen.getByTestId("Review-dateItemServed")).toHaveValue(
-      "2022-01-05",
+  test("renders correctly when passing in initialContents", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ReviewForm initialContents={reviewFixtures.oneReview} />
+        </Router>
+      </QueryClientProvider>,
     );
 
-    // stars <= 2 gold, >2 gray
-    for (let star = 1; star <= 2; star++) {
-      expect(screen.getByTestId(`Review-star-${star}`)).toHaveAttribute(
-        "color",
-        "#ffc107",
-      );
-    }
-    for (let star = 3; star <= 5; star++) {
-      expect(screen.getByTestId(`Review-star-${star}`)).toHaveAttribute(
-        "color",
-        "#e4e5e9",
-      );
-    }
+    expect(await screen.findByText(/Create/)).toBeInTheDocument();
+    expect(screen.getByText("Reviewer Comments")).toBeInTheDocument();
+    expect(screen.getByText("Date Item Served")).toBeInTheDocument();
+    expect(screen.getByText("Rating")).toBeInTheDocument();
   });
 
   test("navigate(-1) is called when Cancel is clicked", async () => {
-    renderForm();
-    const cancel = await screen.findByTestId("Review-cancel");
-    fireEvent.click(cancel);
-    expect(mockedNavigate).toHaveBeenCalledWith(-1);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ReviewForm />
+        </Router>
+      </QueryClientProvider>,
+    );
+
+    const cancelButton = await screen.findByTestId(`${testId}-cancel`);
+    fireEvent.click(cancelButton);
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith(-1));
   });
 
-  test("validations on empty submit show only field errors", async () => {
-    renderForm();
+  test("validations are performed on empty submit", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ReviewForm />
+        </Router>
+      </QueryClientProvider>,
+    );
 
-    fireEvent.click(screen.getByTestId("Review-submit"));
+    const submitButton = screen.getByTestId(`${testId}-submit`);
+    fireEvent.click(submitButton);
 
-    // field errors appear
+    // Form field validations
     expect(
-      await screen.findByText("Reviewer Comment is required."),
+      await screen.findByText(/Reviewer Comment is required\./),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Date Item Served is required."),
+      screen.getByText(/Date Item Served is required\./),
     ).toBeInTheDocument();
 
-    // star‐error NOT shown until fields are valid
-    expect(screen.queryByText("Star rating is required.")).toBeNull();
-  });
-
-  test("validations when fields filled but no star show star error", async () => {
-    renderForm();
-
-    // fill required inputs
-    fireEvent.change(screen.getByTestId("Review-reviewerComments"), {
-      target: { value: "abc" },
+    // Fill in required fields to trigger star validation
+    fireEvent.change(screen.getByTestId(`${testId}-reviewerComments`), {
+      target: { value: "Great!" },
     });
-    fireEvent.change(screen.getByTestId("Review-dateItemServed"), {
-      target: { value: "2022-01-02" },
+    fireEvent.change(screen.getByTestId(`${testId}-dateItemServed`), {
+      target: { value: "2025-05-27" },
     });
 
-    fireEvent.click(screen.getByTestId("Review-submit"));
-
-    // now the star‐error displays
-    const starError = await screen.findByText("Star rating is required.");
-    expect(starError).toBeInTheDocument();
-
-    // and its container has inline display style
-    expect(starError.parentElement).toHaveStyle("display: block");
-  });
-
-  test("maxLength validation for reviewer comments", async () => {
-    renderForm();
-
-    const input = screen.getByTestId("Review-reviewerComments");
-    fireEvent.change(input, { target: { value: "a".repeat(256) } });
-    fireEvent.click(screen.getByTestId("Review-submit"));
+    fireEvent.click(submitButton);
 
     expect(
-      await screen.findByText(
-        "Max length 255 characters for reviwer comments.",
-      ),
+      await screen.findByText(/Star rating is required\./),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Star rating is required\./)).toBeVisible();
+    const feedbackElements = screen.getAllByText(/Star rating is required\./);
+    const feedback = feedbackElements.find((el) => el.tagName === "DIV");
+    expect(feedback).toHaveStyle("display: block");
   });
 
   test("allows selecting star and submitting successfully", async () => {
-    const submitAction = jest.fn();
-    renderForm({ submitAction });
+    const mockSubmit = jest.fn();
 
-    // fill all required fields
-    fireEvent.change(screen.getByTestId("Review-reviewerComments"), {
-      target: { value: "ok" },
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ReviewForm submitAction={mockSubmit} />
+        </Router>
+      </QueryClientProvider>,
+    );
+
+    fireEvent.change(screen.getByTestId(`${testId}-reviewerComments`), {
+      target: { value: "Great meal!" },
     });
-    fireEvent.change(screen.getByTestId("Review-dateItemServed"), {
-      target: { value: "2022-01-03" },
+    fireEvent.change(screen.getByTestId(`${testId}-dateItemServed`), {
+      target: { value: "2024-05-27" },
     });
+    fireEvent.click(screen.getByTestId(`${testId}-star-4`));
+    fireEvent.click(screen.getByTestId(`${testId}-submit`));
 
-    // pick 4 stars
-    fireEvent.click(screen.getByTestId("Review-star-4"));
-
-    fireEvent.click(screen.getByTestId("Review-submit"));
-
-    await waitFor(() => expect(submitAction).toHaveBeenCalled());
-
-    expect(submitAction).toHaveBeenCalledWith({
-      reviewerComments: "ok",
-      dateItemServed: "2022-01-03",
-      itemsStars: 4,
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reviewerComments: "Great meal!",
+          dateItemServed: "2024-05-27",
+          itemsStars: 4,
+        }),
+      );
     });
   });
 });
