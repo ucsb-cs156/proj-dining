@@ -40,7 +40,9 @@ describe("MyReviewsIndexPage tests", () => {
     // arrange
     setupUserOnly();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/reviews/userReviews")
+      .reply(200, ReviewFixtures.threeReviews);
 
     // act
     render(
@@ -69,7 +71,7 @@ describe("MyReviewsIndexPage tests", () => {
     // arrange
     setupUserOnly();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").timeout();
+    axiosMock.onGet("/api/reviews/userReviews").timeout();
     const restoreConsole = mockConsole();
 
     // act
@@ -88,7 +90,7 @@ describe("MyReviewsIndexPage tests", () => {
 
     const errorMessage = console.error.mock.calls[0][0];
     expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/reviews/all",
+      "Error communicating with backend via GET on /api/reviews/userReviews",
     );
     restoreConsole();
 
@@ -101,7 +103,9 @@ describe("MyReviewsIndexPage tests", () => {
     // arrange
     setupUserOnly();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/reviews/userReviews")
+      .reply(200, ReviewFixtures.threeReviews);
     axiosMock.onDelete("/api/reviews/reviewer").reply(200, "Review deleted");
 
     // act
