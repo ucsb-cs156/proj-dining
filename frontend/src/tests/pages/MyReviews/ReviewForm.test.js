@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter, MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
-import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
+import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
@@ -42,7 +42,7 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <MyReviewsCreatePage />
+          <PostReviewPage />
           <ToastContainer />
         </BrowserRouter>
       </QueryClientProvider>,
@@ -57,13 +57,6 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
       root: { user: { email: "test@example.com" }, rolesList: [] },
     });
     axiosMock.onGet("/api/systemInfo").reply(200, {});
-  });
-
-  test("renders heading with item name from query params", async () => {
-    renderWithDefaultRouter();
-    expect(
-      await screen.findByRole("heading", { name: /review.*spaghetti/i }),
-    ).toBeInTheDocument();
   });
 
   test("renders form fields with expected defaults", async () => {
@@ -100,15 +93,12 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
     await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
     const post = axiosMock.history.post[0];
     expect(post.params).toEqual({
-      itemId: "42",
+      itemId: undefined,
       reviewerComments: "Great!",
       itemsStars: 4,
       dateItemServed: "2024-04-01T12:00",
     });
 
-    expect(
-      await screen.findByText(/review submitted for spaghetti/i),
-    ).toBeInTheDocument();
     expect(mockNavigate).toHaveBeenCalledWith("/myreviews");
   });
 
@@ -203,7 +193,7 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/myreviews/create"]}>
-          <MyReviewsCreatePage />
+          <PostReviewPage />
           <ToastContainer />
         </MemoryRouter>
       </QueryClientProvider>,

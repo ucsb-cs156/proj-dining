@@ -6,7 +6,7 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
-import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
+import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 
 jest.mock("react-router-dom", () => {
   const original = jest.requireActual("react-router-dom");
@@ -28,7 +28,7 @@ describe("MyReviewsCreatePage handles missing query params", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <MyReviewsCreatePage />
+          <PostReviewPage />
           <ToastContainer />
         </BrowserRouter>
       </QueryClientProvider>,
