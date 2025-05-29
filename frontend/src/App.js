@@ -22,7 +22,6 @@ import { hasRole, useCurrentUser } from "main/utils/currentUser";
 import "bootstrap/dist/css/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
-import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
 
 function App() {
   const { data: currentUser } = useCurrentUser();
@@ -72,11 +71,6 @@ function App() {
               exact
               path="/placeholder/edit/:id"
               element={<PlaceholderEditPage />}
-            />
-            <Route
-              exact
-              path="/myreviews/create"
-              element={<MyReviewsCreatePage />}
             />
           </>
         )}
