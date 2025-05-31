@@ -65,7 +65,7 @@ function App() {
             <Route path="/placeholder" element={<PlaceholderIndexPage />} />
           </>
         )}
-        <Route path="reviews/:id" element={<ReviewsForMenuItemPage />} />
+        <Route path="reviews/:itemid" element={<ReviewsForMenuItemPage />} />
         <Route
           path="/diningcommons/:date-time/:dining-commons-code"
           element={<MealTimesPage />}
