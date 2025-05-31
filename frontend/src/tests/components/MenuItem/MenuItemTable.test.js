@@ -53,6 +53,9 @@ describe("MenuItemTable Tests", () => {
     expect(
       screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId("MenuItemTable-header-averageRating"),
+    ).toHaveTextContent("Avg Rating");
   });
   test("Renders 5 Menu Items Correctly and Reviews link is correct", async () => {
     let fiveMenuItems = menuItemFixtures.fiveMenuItems;
@@ -72,6 +75,10 @@ describe("MenuItemTable Tests", () => {
       expect(
         screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
       ).toHaveTextContent(fiveMenuItems[i].station);
+      expect(
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-averageRating`),
+      ).toHaveTextContent("—");
+      // Check Reviews link
       const reviewsCell = screen.getByTestId(
         `MenuItemTable-cell-row-${i}-col-id`,
       );
@@ -125,5 +132,46 @@ describe("MenuItemTable Tests", () => {
     expect(
       screen.queryByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
     ).not.toBeInTheDocument();
+  });
+
+  test("Avg Rating cell shows one decimal", () => {
+    const data = [
+      {
+        ...menuItemFixtures.oneMenuItem[0],
+        averageRating: 3.456,
+      },
+    ];
+    render(
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={data}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageRating"),
+    ).toHaveTextContent("3.5");
+  });
+
+  test("Avg Rating cell shows '—' when averageRating is null", () => {
+    const data = [
+      {
+        ...menuItemFixtures.oneMenuItem[0],
+        averageRating: null,
+      },
+    ];
+    render(
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={data}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByTestId("MenuItemTable-cell-row-0-col-averageRating"),
+    ).toHaveTextContent("—");
   });
 });
