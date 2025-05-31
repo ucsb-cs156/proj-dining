@@ -10,6 +10,7 @@ import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 import ReviewsCreatePage from "main/pages/Reviews/ReviewsCreatePage";
+import ReviewsForMenuItemPage from "main/pages/Reviews/ReviewsForMenuItemPage";
 import ReviewsEditPage from "main/pages/Reviews/ReviewsEditPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -20,7 +21,6 @@ import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";
-import ReviewsForMenuItemPage from "main/pages/Reviews/ReviewsForMenuItemPage";
 
 function App() {
   const { data: currentUser } = useCurrentUser();
@@ -47,6 +47,7 @@ function App() {
             />
           </>
         )}
+
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
@@ -64,7 +65,7 @@ function App() {
             <Route path="/placeholder" element={<PlaceholderIndexPage />} />
           </>
         )}
-
+        <Route path="reviews/:itemid" element={<ReviewsForMenuItemPage />} />
         <Route
           path="/diningcommons/:date-time/:dining-commons-code"
           element={<MealTimesPage />}

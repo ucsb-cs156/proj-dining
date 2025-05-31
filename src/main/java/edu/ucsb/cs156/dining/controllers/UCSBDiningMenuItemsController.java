@@ -4,7 +4,10 @@ import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
@@ -35,14 +38,18 @@ import jakarta.validation.Valid;
 @Slf4j
 public class UCSBDiningMenuItemsController extends ApiController {
 
-  @Autowired UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
+  @Autowired 
+  UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
   
   @Autowired
   MenuItemRepository menuItemRepository;
 
-  @Operation(summary = "Get list of entrees being served at given meal, dining common, and day")
+  @Autowired
+  ReviewRepository reviewRepository;
+
+  @Operation(summary = "Get list of entrees being served at given meal, dining common, and day, with average rating")
   @GetMapping(value = "/{date-time}/{dining-commons-code}/{meal-code}", produces = "application/json")
-  public ResponseEntity<List<MenuItem>> get_menu_items(
+  public ResponseEntity<List<MenuItemWithAvg>> get_menu_items(
       @Parameter(description= "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)") 
       @PathVariable("date-time") String datetime,
       @PathVariable("dining-commons-code") String diningcommoncode,
@@ -52,7 +59,7 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);
 
-    List<MenuItem> menuitems = new ArrayList<>();
+    List<MenuItem> menuItems = new ArrayList<>();
 
     for (Entree entree : body) {
         Optional<MenuItem> exists = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningcommoncode, mealcode, entree.getName(), entree.getStation());
@@ -64,12 +71,22 @@ public class UCSBDiningMenuItemsController extends ApiController {
           newMenuItem.setStation(entree.getStation());
 
           menuItemRepository.save(newMenuItem);
-          menuitems.add(newMenuItem);
+          menuItems.add(newMenuItem);
     }
+    
+    List<MenuItemWithAvg> withAvgs = buildMenuItemWithAvgList(menuItems);
 
-    return ResponseEntity.ok().body(menuitems);
+    return ResponseEntity.ok().body(withAvgs);
   }
 
+  private List<MenuItemWithAvg> buildMenuItemWithAvgList(List<MenuItem> items) {
+    return items.stream().map(item -> {
+        Double avg = reviewRepository.findAverageScoreByItemId(item.getId()).orElse(null);
+        return new MenuItemWithAvg(item.getId(), item.getDiningCommonsCode(), item.getMealCode(), item.getName(), item.getStation(), avg);
+      }).collect(Collectors.toList());
+  }
+
+  
 
   @Operation(summary = "Get a single menu item by id")
   @GetMapping(value = "/menuitem", produces = "application/json")
@@ -86,3 +103,28 @@ public class UCSBDiningMenuItemsController extends ApiController {
       
     }
 }
+
+class MenuItemWithAvg {
+    private Long id;
+    private String diningCommonsCode;
+    private String mealCode;
+    private String name;
+    private String station;
+    private Double averageRating;
+
+    public MenuItemWithAvg(Long id, String diningCommonsCode, String mealCode, String name, String station, Double averageRating) {
+        this.id = id;
+        this.diningCommonsCode = diningCommonsCode;
+        this.mealCode = mealCode;
+        this.name = name;
+        this.station = station;
+        this.averageRating = averageRating;
+    }
+
+    public Long getId() { return id; }
+    public String getDiningCommonsCode() { return diningCommonsCode; }
+    public String getMealCode(){ return mealCode; }
+    public String getName() { return name; }
+    public String getStation() { return station; }
+    public Double getAverageRating() { return averageRating; }
+  }

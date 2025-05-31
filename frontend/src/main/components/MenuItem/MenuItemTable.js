@@ -21,6 +21,11 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       accessor: "id",
       Cell: ({ value }) => <Link to={`/reviews/${value}`}>Reviews</Link>,
     },
+    {
+      Header: "Avg Rating",
+      accessor: "averageRating",
+      Cell: ({ value }) => (value == null ? "—" : value.toFixed(1)),
+    },
   ];
   if (hasRole(currentUser, "ROLE_USER")) {
     columns.push(
