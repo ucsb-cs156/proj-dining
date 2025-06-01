@@ -464,4 +464,33 @@ describe("AliasApprovalTable tests", () => {
       OurTableModule.ButtonColumn = originalButtonColumn;
     }
   });
+
+  test("OurTable receives non-empty testid prop", () => {
+    const originalOurTable = jest.requireActual(
+      "main/components/OurTable",
+    ).default;
+    const ourTableSpy = jest.fn((props) => {
+      expect(props.testid).toBeTruthy();
+      expect(props.testid).not.toBe("");
+      expect(props.testid).toBe("AliasApprovalTable");
+
+      return originalOurTable(props);
+    });
+
+    const OurTableModule = require("main/components/OurTable");
+    const originalOurTableRef = OurTableModule.default;
+    OurTableModule.default = ourTableSpy;
+
+    try {
+      renderComponent();
+
+      expect(ourTableSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          testid: "AliasApprovalTable",
+        }),
+      );
+    } finally {
+      OurTableModule.default = originalOurTableRef;
+    }
+  });
 });
