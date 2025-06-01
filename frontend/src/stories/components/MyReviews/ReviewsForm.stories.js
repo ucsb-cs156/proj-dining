@@ -1,6 +1,6 @@
 import React from "react";
 import ReviewForm from "main/components/MyReviews/ReviewForm";
-import { ReviewFormFixtures } from "fixtures/reviewFormFixtures";
+import { ReviewFixtures } from "fixtures/reviewFixtures";
 
 export default {
   title: "components/MyReviews/ReviewsTable",
@@ -13,6 +13,6 @@ const Template = (args) => {
 
 export const RegView = Template.bind({});
 RegView.args = {
-  initialItemName: ReviewFormFixtures.name,
+  initialItemName: ReviewFixtures.oneReview.item.name,
   submitAction: () => {},
 };
