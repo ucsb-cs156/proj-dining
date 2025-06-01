@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.dining.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -21,9 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity(name = "menuitem")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class MenuItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +31,7 @@ public class MenuItem {
   private String station;
 
   @ToString.Exclude
+  @JsonIgnore
   @OneToMany(mappedBy = "item")
   @Fetch(FetchMode.JOIN)
   private List<Review> reviews;
