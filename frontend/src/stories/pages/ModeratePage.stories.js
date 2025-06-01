@@ -6,7 +6,7 @@ import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 
 export default {
   title: "pages/ModeratePage",
-  component: Moderate,
+  component: ModeratePage,
 };
 
 const Template = () => <ModeratePage />;
