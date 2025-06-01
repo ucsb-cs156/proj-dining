@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import edu.ucsb.cs156.dining.controllers.UCSBDiningMenuItemsController;
 
 import java.util.Optional;
@@ -49,6 +50,9 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
   @MockBean
   MenuItemRepository menuItemRepository;
+
+  @MockBean
+  private ReviewRepository reviewRepository;
 
   private static final String NAME = "NAME";
   private static final String STATION = "STATION";
@@ -102,6 +106,60 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
     Optional<MenuItem> found = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station);
     assertTrue(found.isPresent());
+  }
+
+  @WithMockUser(roles = { "USER" })
+  @Test
+  public void existing_item_with_no_reviews_results_in_null_rating() throws Exception {
+    String dateTime = "2023-10-11";
+    String diningCommonCode = "portola";
+    String mealCode = "dinner";
+
+    Entree entree = new Entree(NAME, STATION);
+    when(ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode))
+        .thenReturn(List.of(entree));
+
+    MenuItem existing = new MenuItem();
+    existing.setId(99L);
+    existing.setDiningCommonsCode(diningCommonCode);
+    existing.setMealCode(mealCode);
+    existing.setName(NAME);
+    existing.setStation(STATION);
+
+    when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(
+        diningCommonCode, mealCode, NAME, STATION))
+      .thenReturn(Optional.of(existing));
+
+    when(reviewRepository.findAverageScoreByItemId(99L))
+      .thenReturn(Optional.empty());
+
+    mockMvc.perform(get("/api/diningcommons/2023-10-11/portola/dinner")
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$[0].id").value(99))
+          .andExpect(jsonPath("$[0].averageRating").doesNotExist());
+
+    verify(menuItemRepository, times(1)).save(existing);
+  }  
+
+  @WithMockUser(roles = { "USER" })
+  @Test
+  public void returns_empty_list_when_no_entrees() throws Exception {
+    String dateTime = "2023-10-11";
+    String diningCommonCode = "portola";
+    String mealCode = "dinner";
+
+    when(ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode))
+        .thenReturn(List.of());
+
+    MvcResult result = mockMvc.perform(get("/api/diningcommons/2023-10-11/portola/dinner")
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andReturn();
+
+    String responseBody = result.getResponse().getContentAsString();
+    List<JsonNode> list = objectMapper.readValue(responseBody, new TypeReference<List<JsonNode>>(){});
+    assertEquals(0, list.size());
   }
 
   // Menu ID not found test
