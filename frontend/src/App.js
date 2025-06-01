@@ -73,11 +73,7 @@ function App() {
           path="/diningcommons/:date-time/:dining-commons-code/:meal"
           element={<MenuItemPage />}
         />
-        <Route
-          exact
-          path="/reviews/:itemid"
-          element={<ReviewsForMenuItemPage />}
-        />
+        <Route exact path="/reviews/:id" element={<ReviewsForMenuItemPage />} />
       </Routes>
     </BrowserRouter>
   );
