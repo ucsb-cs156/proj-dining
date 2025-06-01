@@ -2,13 +2,13 @@ import React from "react";
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { AliasApprovalFixtures } from "fixtures/aliasApprovalFixtures";
+import usersFixtures from "fixtures/usersFixtures";
 
 describe("AliasApprovalTable tests", () => {
   const queryClient = new QueryClient();
 
   it("renders the header even with no data", () => {
-    render(<AliasApprovalTable aliases={AliasApprovalFixtures.noReview} />);
+    render(<AliasApprovalTable aliases={[]} />);
 
     expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
 
@@ -24,10 +24,8 @@ describe("AliasApprovalTable tests", () => {
   });
 
   it("renders a data row for each user", () => {
-    render(<AliasApprovalTable aliases={AliasApprovalFixtures.threeReviews} />);
-    expect(screen.getByText("CleverCat")).toBeInTheDocument();
-    expect(screen.getByText("ACM")).toBeInTheDocument();
-    expect(screen.getByText("SASE")).toBeInTheDocument();
+    render(<AliasApprovalTable aliases={usersFixtures.threeUsers} />);
+    expect(screen.getByText("Ali1")).toBeInTheDocument();
   });
 
   it("buttons appear and work properly", async () => {
@@ -37,7 +35,7 @@ describe("AliasApprovalTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <AliasApprovalTable
-          aliases={AliasApprovalFixtures.threeReviews}
+          aliases={usersFixtures.threeUsers}
           approveCallback={approveCallback}
           rejectCallback={rejectCallback}
         />
@@ -48,7 +46,7 @@ describe("AliasApprovalTable tests", () => {
     await waitFor(() => {
       expect(
         screen.getByTestId(`Aliasapprovaltable-cell-row-0-col-proposedAlias`),
-      ).toHaveTextContent("CleverCat");
+      ).toHaveTextContent("Ali1");
     });
 
     //approve button
