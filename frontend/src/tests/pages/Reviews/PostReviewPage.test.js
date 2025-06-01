@@ -104,7 +104,7 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
       dateItemServed: "2024-04-01T12:00",
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/myreviews");
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
   test("shows error toast on network error during post with fallback message", async () => {
