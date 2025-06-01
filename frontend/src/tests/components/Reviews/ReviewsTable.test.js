@@ -7,43 +7,43 @@ describe("ReviewTable Tests", () => {
 
   test("Headers and data render correctly (minimal)", () => {
     render(
-      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />
     );
     expect(screen.getByTestId("ReviewTable-header-Item ID")).toHaveTextContent(
-      "Item ID",
+      "Item ID"
     );
     expect(
-      screen.getByTestId("ReviewTable-header-itemsStars"),
+      screen.getByTestId("ReviewTable-header-itemsStars")
     ).toHaveTextContent("Score");
     expect(
-      screen.getByTestId("ReviewTable-header-reviewerComments"),
+      screen.getByTestId("ReviewTable-header-reviewerComments")
     ).toHaveTextContent("Comments");
     expect(
-      screen.getByTestId("ReviewTable-header-dateItemServed"),
+      screen.getByTestId("ReviewTable-header-dateItemServed")
     ).toHaveTextContent("Date Served");
     // No action headers
     expect(
-      screen.queryByTestId("ReviewTable-header-Edit"),
+      screen.queryByTestId("ReviewTable-header-Edit")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("ReviewTable-header-Delete"),
+      screen.queryByTestId("ReviewTable-header-Delete")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("ReviewTable-header-Approve"),
+      screen.queryByTestId("ReviewTable-header-Approve")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("ReviewTable-header-Reject"),
+      screen.queryByTestId("ReviewTable-header-Reject")
     ).not.toBeInTheDocument();
     // Data rows
     for (let i = 0; i < data.length; i++) {
       expect(
-        screen.getByTestId(`ReviewTable-cell-row-${i}-col-itemsStars`),
+        screen.getByTestId(`ReviewTable-cell-row-${i}-col-itemsStars`)
       ).toHaveTextContent(String(data[i].itemsStars));
       expect(
-        screen.getByTestId(`ReviewTable-cell-row-${i}-col-reviewerComments`),
+        screen.getByTestId(`ReviewTable-cell-row-${i}-col-reviewerComments`)
       ).toHaveTextContent(data[i].reviewerComments);
       expect(
-        screen.getByTestId(`ReviewTable-cell-row-${i}-col-dateItemServed`),
+        screen.getByTestId(`ReviewTable-cell-row-${i}-col-dateItemServed`)
       ).toHaveTextContent(data[i].dateItemServed);
     }
   });
@@ -58,22 +58,22 @@ describe("ReviewTable Tests", () => {
         moderatorOptions={false}
         onEdit={onEdit}
         onDelete={onDelete}
-      />,
+      />
     );
     // Headers
     expect(screen.getByTestId("ReviewTable-header-Edit")).toHaveTextContent(
-      "Edit",
+      "Edit"
     );
     expect(screen.getByTestId("ReviewTable-header-Delete")).toHaveTextContent(
-      "Delete",
+      "Delete"
     );
     // Buttons
     for (let i = 0; i < data.length; i++) {
       const editBtn = screen.getByTestId(
-        `ReviewTable-cell-row-${i}-col-Edit-button`,
+        `ReviewTable-cell-row-${i}-col-Edit-button`
       );
       const deleteBtn = screen.getByTestId(
-        `ReviewTable-cell-row-${i}-col-Delete-button`,
+        `ReviewTable-cell-row-${i}-col-Delete-button`
       );
       expect(editBtn).toBeInTheDocument();
       expect(deleteBtn).toBeInTheDocument();
@@ -98,22 +98,22 @@ describe("ReviewTable Tests", () => {
         moderatorOptions={true}
         onApprove={onApprove}
         onReject={onReject}
-      />,
+      />
     );
     // Headers
     expect(screen.getByTestId("ReviewTable-header-Approve")).toHaveTextContent(
-      "Approve",
+      "Approve"
     );
     expect(screen.getByTestId("ReviewTable-header-Reject")).toHaveTextContent(
-      "Reject",
+      "Reject"
     );
     // Buttons
     for (let i = 0; i < data.length; i++) {
       const approveBtn = screen.getByTestId(
-        `ReviewTable-cell-row-${i}-col-Approve-button`,
+        `ReviewTable-cell-row-${i}-col-Approve-button`
       );
       const rejectBtn = screen.getByTestId(
-        `ReviewTable-cell-row-${i}-col-Reject-button`,
+        `ReviewTable-cell-row-${i}-col-Reject-button`
       );
       expect(approveBtn).toBeInTheDocument();
       expect(rejectBtn).toBeInTheDocument();
@@ -130,19 +130,19 @@ describe("ReviewTable Tests", () => {
 
   test("minimal props shows no action buttons", () => {
     render(
-      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />
     );
     expect(
-      screen.queryByTestId("ReviewTable-cell-row-0-col-Edit-button"),
+      screen.queryByTestId("ReviewTable-cell-row-0-col-Edit-button")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("ReviewTable-cell-row-0-col-Delete-button"),
+      screen.queryByTestId("ReviewTable-cell-row-0-col-Delete-button")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("ReviewTable-cell-row-0-col-Approve-button"),
+      screen.queryByTestId("ReviewTable-cell-row-0-col-Approve-button")
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("ReviewTable-cell-row-0-col-Reject-button"),
+      screen.queryByTestId("ReviewTable-cell-row-0-col-Reject-button")
     ).not.toBeInTheDocument();
   });
 
@@ -156,10 +156,64 @@ describe("ReviewTable Tests", () => {
       },
     ];
     render(
-      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />
     );
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID")
     ).toHaveTextContent(/^\s*$/); // empty or whitespace only
+  });
+
+  test("renders Item ID from item.id when item is an object with id", () => {
+    const data = [
+      {
+        id: 100,
+        item: { id: 42 },
+        reviewerComments: "Has item object with id",
+        itemsStars: 5,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID")
+    ).toHaveTextContent("42");
+  });
+
+  test("renders Item ID from item when item is a primitive", () => {
+    const data = [
+      {
+        id: 101,
+        item: 99,
+        reviewerComments: "Has item as primitive",
+        itemsStars: 4,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID")
+    ).toHaveTextContent("99");
+  });
+
+  test("renders Item ID from itemId when item is missing", () => {
+    const data = [
+      {
+        id: 102,
+        itemId: 77,
+        reviewerComments: "Has itemId only",
+        itemsStars: 3,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID")
+    ).toHaveTextContent("77");
   });
 });
