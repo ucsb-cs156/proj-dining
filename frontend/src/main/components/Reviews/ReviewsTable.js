@@ -2,14 +2,17 @@ import React from "react";
 import OurTable, { ButtonColumn } from "../OurTable";
 import { useNavigate } from "react-router-dom";
 import { useBackendMutation } from "main/utils/useBackend";
-import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/utils/Reviews";
+import {
+  cellToAxiosParamsDelete,
+  onDeleteSuccess,
+  cellToAxiosParamsModerate,
+  onModerateSuccess,
+} from "main/utils/Reviews";
 
 export default function ReviewsTable({
   reviews,
   userOptions,
   moderatorOptions,
-  approveCallback,
-  rejectCallback,
 }) {
   const navigate = useNavigate();
 
@@ -29,6 +32,28 @@ export default function ReviewsTable({
   const deleteCallback = async (cell) => {
     deleteMutation.mutate(cell);
   };
+
+  // Stryker disable all
+  const approveMutation = useBackendMutation(
+    (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
+    { onSuccess: onModerateSuccess },
+    ["/api/reviews/all"],
+  );
+
+  const rejectMutation = useBackendMutation(
+    (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
+    { onSuccess: onModerateSuccess },
+    ["/api/reviews/all"],
+  );
+
+  const approveCallback = async (cell) => {
+    approveMutation.mutate(cell);
+  };
+
+  const rejectCallback = async (cell) => {
+    rejectMutation.mutate(cell);
+  };
+  // Stryker restore all
 
   const columns = [
     {

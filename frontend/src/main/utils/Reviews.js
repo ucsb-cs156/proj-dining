@@ -14,3 +14,19 @@ export function cellToAxiosParamsDelete(cell) {
     },
   };
 }
+
+export function cellToAxiosParamsModerate(cell, status) {
+  return {
+    url: "/api/reviews/moderate",
+    method: "PUT",
+    params: {
+      id: cell.row.original.id,
+      status: status,
+      moderatorComments: "",
+    },
+  };
+}
+
+export function onModerateSuccess() {
+  console.log("Moderation success");
+}

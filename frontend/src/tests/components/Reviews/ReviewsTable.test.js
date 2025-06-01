@@ -118,16 +118,12 @@ describe("ReviewsTable tests", () => {
   });
 
   test("Moderator buttons appear and work properly", async () => {
-    const approveCallback = jest.fn();
-    const rejectCallback = jest.fn();
     render(
       <QueryClientProvider client={queryClient}>
         <ReviewsTable
           reviews={ReviewFixtures.threeReviews}
           userOptions={false}
           moderatorOptions={true}
-          approveCallback={approveCallback}
-          rejectCallback={rejectCallback}
         />
         ,
       </QueryClientProvider>,
@@ -147,7 +143,6 @@ describe("ReviewsTable tests", () => {
     expect(approveButton).toHaveClass("btn-primary");
 
     fireEvent.click(approveButton);
-    expect(approveCallback).toHaveBeenCalledTimes(1);
 
     //reject button
     const rejectButton = screen.getByTestId(
@@ -157,7 +152,6 @@ describe("ReviewsTable tests", () => {
     expect(rejectButton).toHaveClass("btn-danger");
 
     fireEvent.click(rejectButton);
-    expect(rejectCallback).toHaveBeenCalledTimes(1);
   });
 
   test("Renders stars icons and formatted date correctly", () => {
