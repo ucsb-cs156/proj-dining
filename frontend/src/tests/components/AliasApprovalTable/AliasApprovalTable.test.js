@@ -26,7 +26,9 @@ describe("AliasApprovalTable tests", () => {
   it("renders a data row for each user", () => {
     render(<AliasApprovalTable aliases={usersFixtures.threeUsers} />);
     expect(screen.getByText("Ali1")).toBeInTheDocument();
-    expect(screen.queryByText("Alias2")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("Aliasapprovaltable-cell-row-1-col-proposedAlias"),
+    ).not.toBeInTheDocument();
   });
 
   it("buttons appear and work properly", async () => {
