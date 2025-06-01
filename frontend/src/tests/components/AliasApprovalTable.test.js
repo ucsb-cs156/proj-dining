@@ -466,29 +466,30 @@ describe("AliasApprovalTable tests", () => {
   });
 
   test("OurTable receives non-empty testid prop", () => {
-  const originalOurTable = jest.requireActual("main/components/OurTable").default;
-  const ourTableSpy = jest.fn((props) => {
-    expect(props.testid).toBeTruthy();
-    expect(props.testid).not.toBe("");
-    expect(props.testid).toBe("AliasApprovalTable");
-    
-    return originalOurTable(props);
+    const originalOurTable = jest.requireActual(
+      "main/components/OurTable",
+    ).default;
+    const ourTableSpy = jest.fn((props) => {
+      expect(props.testid).toBeTruthy();
+      expect(props.testid).not.toBe("");
+      expect(props.testid).toBe("AliasApprovalTable");
+
+      return originalOurTable(props);
+    });
+
+    const OurTableModule = require("main/components/OurTable");
+    const originalOurTableRef = OurTableModule.default;
+    OurTableModule.default = ourTableSpy;
+
+    try {
+      renderComponent();
+
+      expect(ourTableSpy).toHaveBeenCalled();
+
+      const callArgs = ourTableSpy.mock.calls[0][0];
+      expect(callArgs.testid).toBe("AliasApprovalTable");
+    } finally {
+      OurTableModule.default = originalOurTableRef;
+    }
   });
-
-  const OurTableModule = require("main/components/OurTable");
-  const originalOurTableRef = OurTableModule.default;
-  OurTableModule.default = ourTableSpy;
-
-  try {
-    renderComponent();
-    
-    expect(ourTableSpy).toHaveBeenCalled();
-    
-    const callArgs = ourTableSpy.mock.calls[0][0];
-    expect(callArgs.testid).toBe("AliasApprovalTable");
-    
-  } finally {
-    OurTableModule.default = originalOurTableRef;
-  }
-});
 });
