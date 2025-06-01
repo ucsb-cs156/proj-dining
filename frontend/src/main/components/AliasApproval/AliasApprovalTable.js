@@ -18,5 +18,5 @@ export default function AliasApprovalTable({
   columns.push(ButtonColumn("Approve", "primary", approveCallback, testid));
   columns.push(ButtonColumn("Reject", "danger", rejectCallback, testid));
 
-  return <OurTable data={aliases} columns={columns} testid={testid} />;
+  return <OurTable data={aliases.filter(user => user.status === "AWAITING_REVIEW")} columns={columns} testid={testid} />;
 }
