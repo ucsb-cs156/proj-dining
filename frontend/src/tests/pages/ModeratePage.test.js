@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  render,
-  screen,
-  waitFor,
-  fireEvent,
-  within,
-} from "@testing-library/react";
+import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import ModeratePage from "main/pages/ModeratePage";
@@ -32,13 +26,7 @@ jest.mock("react-toastify", () => ({
   toast: { success: jest.fn(), error: jest.fn() },
 }));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
 const renderPage = () => {
   render(
@@ -67,9 +55,7 @@ describe("ModeratePage", () => {
       data: { loggedIn: true, root: { rolesList: ["ROLE_ADMIN"] } },
     });
 
-    hasRole.mockImplementation((user, role) =>
-      user.root.rolesList.includes(role)
-    );
+    hasRole.mockImplementation((user, role) => user.root.rolesList.includes(role));
   });
 
   test("useBackend is called with correct queryKey and axiosParameters", () => {
@@ -90,9 +76,7 @@ describe("ModeratePage", () => {
     renderPage();
 
     expect(await screen.findByTestId("AliasTable-empty")).toBeInTheDocument();
-    expect(
-      screen.getByText("No aliases awaiting approval")
-    ).toBeInTheDocument();
+    expect(screen.getByText("No aliases awaiting approval")).toBeInTheDocument();
   });
 
   test("shows 'No aliases awaiting approval' when backend returns null", async () => {
@@ -100,18 +84,14 @@ describe("ModeratePage", () => {
     renderPage();
 
     expect(await screen.findByTestId("AliasTable-empty")).toBeInTheDocument();
-    expect(
-      screen.getByText("No aliases awaiting approval")
-    ).toBeInTheDocument();
+    expect(screen.getByText("No aliases awaiting approval")).toBeInTheDocument();
   });
 
   test("renders for moderator user (not admin)", async () => {
     useCurrentUser.mockReturnValueOnce({
       data: { loggedIn: true, root: { rolesList: ["ROLE_MODERATOR"] } },
     });
-    hasRole.mockImplementation((user, role) =>
-      user.root.rolesList.includes(role)
-    );
+    hasRole.mockImplementation((user, role) => user.root.rolesList.includes(role));
 
     renderPage();
     expect(await screen.findByText("Moderation Page")).toBeInTheDocument();
@@ -125,29 +105,23 @@ describe("ModeratePage", () => {
 
     renderPage();
     await waitFor(() => {
-      expect(
-        screen.queryByText("Moderation Page")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Moderation Page")).not.toBeInTheDocument();
     });
   });
 
   test("approveMutation.mutate receives correct axios params object", async () => {
+    // Ensure both useBackendMutation hooks run
     renderPage();
 
     const calls = useBackendMutation.mock.calls;
     const objectToAxiosParamsApprove = calls[0][0];
 
-    const approveCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-Approve"
-    );
-    const approveButton = within(approveCell).getByRole("button", {
-      name: /approve/i,
-    });
+    // Click the Approve button
+    const approveCell = await screen.findByTestId("AliasTable-cell-row-0-col-Approve");
+    const approveButton = within(approveCell).getByRole("button", { name: /approve/i });
     fireEvent.click(approveButton);
 
-    const paramsApprove = objectToAxiosParamsApprove(
-      usersFixtures.threeUsers[0]
-    );
+    const paramsApprove = objectToAxiosParamsApprove(usersFixtures.threeUsers[0]);
     expect(paramsApprove).toEqual({
       url: "/api/currentUser/updateAliasModeration",
       method: "PUT",
@@ -163,17 +137,12 @@ describe("ModeratePage", () => {
     const calls = useBackendMutation.mock.calls;
     const objectToAxiosParamsReject = calls[1][0];
 
-    const rejectCell = await screen.findByTestId(
-      "AliasTable-cell-row-0-col-Reject"
-    );
-    const rejectButton = within(rejectCell).getByRole("button", {
-      name: /reject/i,
-    });
+    // Click the Reject button
+    const rejectCell = await screen.findByTestId("AliasTable-cell-row-0-col-Reject");
+    const rejectButton = within(rejectCell).getByRole("button", { name: /reject/i });
     fireEvent.click(rejectButton);
 
-    const paramsReject = objectToAxiosParamsReject(
-      usersFixtures.threeUsers[0]
-    );
+    const paramsReject = objectToAxiosParamsReject(usersFixtures.threeUsers[0]);
     expect(paramsReject).toEqual({
       url: "/api/currentUser/updateAliasModeration",
       method: "PUT",
@@ -184,20 +153,17 @@ describe("ModeratePage", () => {
   });
 
   test("displays toast.success on approve success", () => {
+    // Simulate onSuccess trigger
     useBackendMutation.mockImplementation((fn, key, options) => ({
       mutate: () => options.onSuccess({}, usersFixtures.threeUsers[0]),
     }));
 
     renderPage();
     const approveCell = screen.getByTestId("AliasTable-cell-row-0-col-Approve");
-    const approveButton = within(approveCell).getByRole("button", {
-      name: /approve/i,
-    });
+    const approveButton = within(approveCell).getByRole("button", { name: /approve/i });
     fireEvent.click(approveButton);
 
-    expect(toast.success).toHaveBeenCalledWith(
-      'Alias "Ali1" for ID 1 approved!'
-    );
+    expect(toast.success).toHaveBeenCalledWith('Alias "Ali1" for ID 1 approved!');
   });
 
   test("displays toast.error on approve error", () => {
@@ -207,14 +173,10 @@ describe("ModeratePage", () => {
 
     renderPage();
     const approveCell = screen.getByTestId("AliasTable-cell-row-0-col-Approve");
-    const approveButton = within(approveCell).getByRole("button", {
-      name: /approve/i,
-    });
+    const approveButton = within(approveCell).getByRole("button", { name: /approve/i });
     fireEvent.click(approveButton);
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Error approving alias: Some approve error"
-    );
+    expect(toast.error).toHaveBeenCalledWith("Error approving alias: Some approve error");
   });
 
   test("displays toast.success on reject success", () => {
@@ -224,14 +186,10 @@ describe("ModeratePage", () => {
 
     renderPage();
     const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
-    const rejectButton = within(rejectCell).getByRole("button", {
-      name: /reject/i,
-    });
+    const rejectButton = within(rejectCell).getByRole("button", { name: /reject/i });
     fireEvent.click(rejectButton);
 
-    expect(toast.success).toHaveBeenCalledWith(
-      'Alias "Ali1" for ID 1 rejected!'
-    );
+    expect(toast.success).toHaveBeenCalledWith('Alias "Ali1" for ID 1 rejected!');
   });
 
   test("displays toast.error on reject error", () => {
@@ -241,14 +199,10 @@ describe("ModeratePage", () => {
 
     renderPage();
     const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
-    const rejectButton = within(rejectCell).getByRole("button", {
-      name: /reject/i,
-    });
+    const rejectButton = within(rejectCell).getByRole("button", { name: /reject/i });
     fireEvent.click(rejectButton);
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Error rejecting alias: Some reject error"
-    );
+    expect(toast.error).toHaveBeenCalledWith("Error rejecting alias: Some reject error");
   });
 
   test("useBackendMutation is called with correct query key (should not be [] or [''])", () => {
@@ -271,14 +225,10 @@ describe("ModeratePage", () => {
 
     renderPage();
     const approveCell = screen.getByTestId("AliasTable-cell-row-0-col-Approve");
-    const approveButton = within(approveCell).getByRole("button", {
-      name: /approve/i,
-    });
+    const approveButton = within(approveCell).getByRole("button", { name: /approve/i });
     fireEvent.click(approveButton);
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Error approving alias: Unknown error"
-    );
+    expect(toast.error).toHaveBeenCalledWith("Error approving alias: Unknown error");
   });
 
   test("displays 'Unknown error' when reject error has no message", () => {
@@ -288,13 +238,9 @@ describe("ModeratePage", () => {
 
     renderPage();
     const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
-    const rejectButton = within(rejectCell).getByRole("button", {
-      name: /reject/i,
-    });
+    const rejectButton = within(rejectCell).getByRole("button", { name: /reject/i });
     fireEvent.click(rejectButton);
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Error rejecting alias: Unknown error"
-    );
+    expect(toast.error).toHaveBeenCalledWith("Error rejecting alias: Unknown error");
   });
 });
