@@ -10,25 +10,11 @@ import { toast } from "react-toastify";
 export default function ModeratePage() {
   const { data: currentUser } = useCurrentUser();
 
-  const { data: aliases } = useBackend(["/api/admin/usersWithProposedAlias"], {
-    method: "GET",
-    url: "/api/admin/usersWithProposedAlias",
-  });
-
-  if (
-    !currentUser.loggedIn ||
-    (!hasRole(currentUser, "ROLE_ADMIN") &&
-      !hasRole(currentUser, "ROLE_MODERATOR"))
-  ) {
-    return <Navigate to="/" />;
-  }
-
   const objectToAxiosParamsApprove = (alias) => ({
     url: "/api/currentUser/updateAliasModeration",
     method: "PUT",
     params: { id: alias.id, approved: true },
   });
-
   const approveMutation = useBackendMutation(
     objectToAxiosParamsApprove,
     ["/api/admin/usersWithProposedAlias"],
@@ -51,7 +37,6 @@ export default function ModeratePage() {
     method: "PUT",
     params: { id: alias.id, approved: false },
   });
-
   const rejectMutation = useBackendMutation(
     objectToAxiosParamsReject,
     ["/api/admin/usersWithProposedAlias"],
@@ -69,10 +54,22 @@ export default function ModeratePage() {
     },
   );
 
+  const { data: aliases } = useBackend(["/api/admin/usersWithProposedAlias"], {
+    method: "GET",
+    url: "/api/admin/usersWithProposedAlias",
+  });
+
+  if (
+    !currentUser.loggedIn ||
+    (!hasRole(currentUser, "ROLE_ADMIN") &&
+      !hasRole(currentUser, "ROLE_MODERATOR"))
+  ) {
+    return <Navigate to="/" />;
+  }
+
   const handleApprove = (alias) => {
     approveMutation.mutate(alias);
   };
-
   const handleReject = (alias) => {
     rejectMutation.mutate(alias);
   };
@@ -81,9 +78,7 @@ export default function ModeratePage() {
     <BasicLayout id="moderatePage" data-testid="moderatePage">
       <div className="pt-2">
         <h1>Moderation Page</h1>
-        <p>
-          This page is accessible only to admins and moderators. (Placeholder)
-        </p>
+        <p>This page is accessible only to admins and moderators.</p>
         <AliasTable
           aliases={aliases || []}
           onApprove={handleApprove}
