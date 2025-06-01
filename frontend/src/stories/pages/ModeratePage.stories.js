@@ -1,15 +1,15 @@
 import React from "react";
 import { http, HttpResponse } from "msw";
-import Moderate from "main/pages/Moderate";
+import ModeratePage from "main/pages/ModeratePage";
 import usersFixtures from "fixtures/usersFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 
 export default {
-  title: "pages/Moderate",
+  title: "pages/ModeratePage",
   component: Moderate,
 };
 
-const Template = () => <Moderate />;
+const Template = () => <ModeratePage />;
 
 export const LoggedOut = Template.bind({});
 LoggedOut.parameters = {
