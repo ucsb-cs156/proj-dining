@@ -5,12 +5,12 @@ import ReviewTable from "main/components/Reviews/ReviewTable";
 import { useBackend } from "main/utils/useBackend";
 
 export default function ReviewsForMenuItemPage() {
-  const { itemid } = useParams();
+  const { id } = useParams();
   const { data, isLoading, error } = useBackend(
     // Stryker disable next-line all: don't test internal caching of React Query
-    ["reviewsForMenuItem", itemid],
+    ["reviewsForMenuItem", id],
     // Stryker disable next-line all: default method is get, so replacing with an empty string will do nothing
-    { method: "GET", url: `/api/diningcommons/menuitem?id=${itemid}` },
+    { method: "GET", url: `/api/diningcommons/menuitem?id=${id}` },
   );
 
   if (isLoading) {
@@ -40,7 +40,7 @@ export default function ReviewsForMenuItemPage() {
 
   return (
     <BasicLayout>
-      <h1>Reviews for Menu Item {itemid}</h1>
+      <h1>Reviews for Menu Item {id}</h1>
       <ReviewTable
         data={filteredReviews}
         userOptions={false}

@@ -13,7 +13,7 @@ function renderWithProviders(route = "/reviews/42") {
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[route]}>
         <Routes>
-          <Route path="/reviews/:itemid" element={<ReviewsForMenuItemPage />} />
+          <Route path="/reviews/:id" element={<ReviewsForMenuItemPage />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -193,10 +193,7 @@ describe("ReviewsForMenuItemPage", () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/42"]}>
           <Routes>
-            <Route
-              path="/reviews/:itemid"
-              element={<ReviewsForMenuItemPage />}
-            />
+            <Route path="/reviews/:id" element={<ReviewsForMenuItemPage />} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
@@ -205,7 +202,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 42"),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-itemId"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("42");
     expect(
       screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
@@ -215,10 +212,7 @@ describe("ReviewsForMenuItemPage", () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/99"]}>
           <Routes>
-            <Route
-              path="/reviews/:itemid"
-              element={<ReviewsForMenuItemPage />}
-            />
+            <Route path="/reviews/:id" element={<ReviewsForMenuItemPage />} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
@@ -227,7 +221,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 99"),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("ReviewTable-cell-row-0-col-itemId"),
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("99");
     expect(
       screen.getByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
@@ -265,10 +259,7 @@ describe("ReviewsForMenuItemPage", () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/101"]}>
           <Routes>
-            <Route
-              path="/reviews/:itemid"
-              element={<ReviewsForMenuItemPage />}
-            />
+            <Route path="/reviews/:id" element={<ReviewsForMenuItemPage />} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
@@ -277,7 +268,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 101"),
     ).toBeInTheDocument();
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("101");
     expect(
       await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
@@ -287,10 +278,7 @@ describe("ReviewsForMenuItemPage", () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/reviews/202"]}>
           <Routes>
-            <Route
-              path="/reviews/:itemid"
-              element={<ReviewsForMenuItemPage />}
-            />
+            <Route path="/reviews/:id" element={<ReviewsForMenuItemPage />} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
@@ -299,7 +287,7 @@ describe("ReviewsForMenuItemPage", () => {
       await screen.findByText("Reviews for Menu Item 202"),
     ).toBeInTheDocument();
     expect(
-      await screen.findByTestId("ReviewTable-cell-row-0-col-itemId"),
+      await screen.findByTestId("ReviewTable-cell-row-0-col-Item ID"),
     ).toHaveTextContent("202");
     expect(
       await screen.findByTestId("ReviewTable-cell-row-0-col-reviewerComments"),
