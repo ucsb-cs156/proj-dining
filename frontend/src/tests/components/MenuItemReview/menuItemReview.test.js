@@ -44,68 +44,45 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
     jest.clearAllMocks();
   });
 
-  it("hides the Menu Item ID input when hideItemId=true", () => {
-    renderWithProviders(
-      <ReviewForm
-        initialContents={{}}
-        submitAction={submitAction}
-        hideItemId={true}
-      />,
-    );
-    expect(screen.queryByLabelText(/Menu Item ID/i)).toBeNull();
-  });
-
   it("renders a disabled id field when initialContents.id is provided", () => {
     renderWithProviders(
       <ReviewForm
         initialContents={{ id: "ABC123" }}
         submitAction={submitAction}
+        itemName="Test Pizza"
       />,
     );
     const idInput = screen.getByDisplayValue("ABC123");
     expect(idInput).toBeDisabled();
   });
 
-  it("shows 'required' errors and prevents submit when fields empty", async () => {
+  it("renders disabled item name field with provided itemName", () => {
     renderWithProviders(
-      <ReviewForm hideItemId={false} submitAction={submitAction} />,
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
+        itemName="Margherita Pizza"
+      />,
     );
-    fireEvent.click(screen.getByRole("button", { name: /create/i }));
-    expect(await screen.findByText(/Menu item ID is required/)).toBeVisible();
-    expect(screen.getByText(/Stars is required/)).toBeVisible();
-    expect(submitAction).not.toHaveBeenCalled();
+    const itemNameInput = screen.getByDisplayValue("Margherita Pizza");
+    expect(itemNameInput).toBeDisabled();
   });
 
-  it("validates itemId: non-integer, zero, negative => positive-integer error", async () => {
+  it("shows 'required' errors and prevents submit when required fields empty", async () => {
     renderWithProviders(
-      <ReviewForm hideItemId={false} submitAction={submitAction} />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
-    const itemInput = screen.getByLabelText(/Menu Item ID/i);
-
-    fireEvent.change(itemInput, { target: { value: "3.14" } });
     fireEvent.click(screen.getByRole("button", { name: /create/i }));
+    expect(await screen.findByText(/Stars is required/)).toBeVisible();
     expect(
-      await screen.findByText(/Item ID must be a positive integer/),
+      await screen.findByText(/Date and time served is required/),
     ).toBeVisible();
-
-    fireEvent.change(itemInput, { target: { value: "0" } });
-    fireEvent.click(screen.getByRole("button", { name: /create/i }));
-    expect(
-      await screen.findByText(/Item ID must be a positive integer/),
-    ).toBeVisible();
-
-    fireEvent.change(itemInput, { target: { value: "-5" } });
-    fireEvent.click(screen.getByRole("button", { name: /create/i }));
-    expect(
-      await screen.findByText(/Item ID must be a positive integer/),
-    ).toBeVisible();
-
     expect(submitAction).not.toHaveBeenCalled();
   });
 
   it("validates stars: below 1, above 5, non-integer", async () => {
     renderWithProviders(
-      <ReviewForm hideItemId={false} submitAction={submitAction} />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
     const starsInput = screen.getByLabelText(/Stars/i);
 
@@ -128,7 +105,7 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("validates comments max length of 255", async () => {
     renderWithProviders(
-      <ReviewForm hideItemId={false} submitAction={submitAction} />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
     const comments = screen.getByLabelText(/Comments/i);
     fireEvent.change(comments, { target: { value: "x".repeat(256) } });
@@ -139,19 +116,36 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
     expect(submitAction).not.toHaveBeenCalled();
   });
 
-  it("submits successfully with valid inputs", async () => {
+  it("validates dateServed is required", async () => {
     renderWithProviders(
-      <ReviewForm hideItemId={false} submitAction={submitAction} />,
+      <ReviewForm submitAction={submitAction} itemName="Test Item" />,
     );
 
-    fireEvent.change(screen.getByLabelText(/Menu Item ID/i), {
-      target: { value: "42" },
+    // Fill only stars to test dateServed validation
+    fireEvent.change(screen.getByLabelText(/Stars/i), {
+      target: { value: "4" },
     });
+
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
+    expect(
+      await screen.findByText(/Date and time served is required/),
+    ).toBeVisible();
+    expect(submitAction).not.toHaveBeenCalled();
+  });
+
+  it("submits successfully with valid inputs", async () => {
+    renderWithProviders(
+      <ReviewForm submitAction={submitAction} itemName="Test Pizza" />,
+    );
+
     fireEvent.change(screen.getByLabelText(/Stars/i), {
       target: { value: "5" },
     });
     fireEvent.change(screen.getByLabelText(/Comments/i), {
       target: { value: "All good!" },
+    });
+    fireEvent.change(screen.getByLabelText(/Date & Time Served/i), {
+      target: { value: "2023-12-25T18:30" },
     });
 
     fireEvent.click(screen.getByRole("button", { name: /create/i }));
@@ -159,9 +153,32 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
     const dataArg = submitAction.mock.calls[0][0];
     expect(dataArg).toEqual({
-      itemId: "42",
       stars: "5",
       comments: "All good!",
+      dateServed: "2023-12-25T18:30",
+    });
+  });
+
+  it("submits successfully with empty comments (optional field)", async () => {
+    renderWithProviders(
+      <ReviewForm submitAction={submitAction} itemName="Test Pizza" />,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Stars/i), {
+      target: { value: "3" },
+    });
+    fireEvent.change(screen.getByLabelText(/Date & Time Served/i), {
+      target: { value: "2023-12-25T18:30" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
+    await waitFor(() => expect(submitAction).toHaveBeenCalled());
+
+    const dataArg = submitAction.mock.calls[0][0];
+    expect(dataArg).toEqual({
+      stars: "3",
+      comments: "",
+      dateServed: "2023-12-25T18:30",
     });
   });
 
@@ -170,7 +187,7 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
       <ReviewForm
         initialContents={{}}
         submitAction={submitAction}
-        hideItemId={false}
+        itemName="Test Item"
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
@@ -179,68 +196,106 @@ describe("ReviewForm: full branch coverage including Cancel", () => {
 
   it("uses default buttonLabel = 'Create' when not provided", () => {
     renderWithProviders(
-      <ReviewForm initialContents={{}} submitAction={submitAction} />,
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
+        itemName="Test Item"
+      />,
     );
 
     const button = screen.getByRole("button", { name: /create/i });
     expect(button).toBeInTheDocument();
   });
 
-  it("shows Menu Item ID input by default when hideItemId not passed", () => {
+  it("uses custom buttonLabel when provided", () => {
     renderWithProviders(
-      <ReviewForm initialContents={{}} submitAction={submitAction} />,
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
+        itemName="Test Item"
+        buttonLabel="Update Review"
+      />,
     );
 
-    expect(screen.getByLabelText(/Menu Item ID/i)).toBeInTheDocument();
+    const button = screen.getByRole("button", { name: /update review/i });
+    expect(button).toBeInTheDocument();
   });
 
   it("pre-fills form fields from initialContents", () => {
     renderWithProviders(
       <ReviewForm
         initialContents={{
-          itemId: "99",
           stars: "3",
           comments: "Pretty decent",
+          dateServed: "2023-12-25T18:30",
         }}
         submitAction={submitAction}
+        itemName="Test Pizza"
       />,
     );
 
-    expect(screen.getByLabelText(/Menu Item ID/i)).toHaveValue(99);
     expect(screen.getByLabelText(/Stars/i)).toHaveValue(3);
     expect(screen.getByLabelText(/Comments/i)).toHaveValue("Pretty decent");
+    expect(screen.getByLabelText(/Date & Time Served/i)).toHaveValue(
+      "2023-12-25T18:30",
+    );
   });
 
-  it("shows error if item ID is 0, negative, or non-integer", async () => {
+  it("renders all required form elements", () => {
     renderWithProviders(
-      <ReviewForm submitAction={jest.fn()} hideItemId={false} />,
+      <ReviewForm
+        initialContents={{}}
+        submitAction={submitAction}
+        itemName="Test Item"
+      />,
     );
-    const input = screen.getByLabelText(/Menu Item ID/i);
 
-    fireEvent.change(input, { target: { value: "0" } });
-    fireEvent.click(screen.getByRole("button", { name: /create/i }));
-    expect(await screen.findByText(/positive integer/)).toBeVisible();
-
-    fireEvent.change(input, { target: { value: "-5" } });
-    fireEvent.click(screen.getByRole("button", { name: /create/i }));
-    expect(await screen.findByText(/positive integer/)).toBeVisible();
-
-    fireEvent.change(input, { target: { value: "4.5" } });
-    fireEvent.click(screen.getByRole("button", { name: /create/i }));
-    expect(await screen.findByText(/positive integer/)).toBeVisible();
+    expect(screen.getByLabelText(/Item Being Reviewed/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Stars/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Comments/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Date & Time Served/i)).toBeInTheDocument();
   });
 
   it("renders the stars input using label", () => {
     renderWithProviders(
-      <ReviewForm initialContents={{}} submitAction={jest.fn()} />,
+      <ReviewForm
+        initialContents={{}}
+        submitAction={jest.fn()}
+        itemName="Test Item"
+      />,
     );
     expect(screen.getByLabelText(/Stars/i)).toBeInTheDocument();
   });
 
   it("renders the comments textarea using label", () => {
     renderWithProviders(
-      <ReviewForm initialContents={{}} submitAction={jest.fn()} />,
+      <ReviewForm
+        initialContents={{}}
+        submitAction={jest.fn()}
+        itemName="Test Item"
+      />,
     );
     expect(screen.getByLabelText(/Comments/i)).toBeInTheDocument();
+  });
+
+  it("renders datetime input using label", () => {
+    renderWithProviders(
+      <ReviewForm
+        initialContents={{}}
+        submitAction={jest.fn()}
+        itemName="Test Item"
+      />,
+    );
+    expect(screen.getByLabelText(/Date & Time Served/i)).toBeInTheDocument();
+  });
+
+  it("handles missing itemName prop gracefully", () => {
+    renderWithProviders(
+      <ReviewForm initialContents={{}} submitAction={jest.fn()} />,
+    );
+
+    const itemField = screen.getByLabelText(/Item Being Reviewed/i);
+    expect(itemField).toHaveValue("");
+    expect(itemField).toBeDisabled();
   });
 });

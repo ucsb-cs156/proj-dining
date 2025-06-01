@@ -8,7 +8,7 @@ function ReviewForm({
   initialContents,
   submitAction,
   buttonLabel = "Create",
-  hideItemId = false,
+  itemName = "", // New prop for the item name
 }) {
   const {
     register,
@@ -17,33 +17,6 @@ function ReviewForm({
   } = useForm({ defaultValues: initialContents || {} });
 
   const navigate = useNavigate();
-
-  const renderItemInput = () => {
-    if (hideItemId) return null;
-
-    return (
-      <Form.Group className="mb-3">
-        <Form.Label htmlFor="itemId">Menu Item ID</Form.Label>
-        <Form.Control
-          id="itemId"
-          type="number"
-          min="1"
-          step="1"
-          isInvalid={Boolean(errors.itemId)}
-          {...register("itemId", {
-            required: "Menu item ID is required.",
-            validate: (value) =>
-              Number.isInteger(Number(value)) && Number(value) > 0
-                ? true
-                : "Item ID must be a positive integer.",
-          })}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.itemId?.message}
-        </Form.Control.Feedback>
-      </Form.Group>
-    );
-  };
 
   return (
     <Form onSubmit={handleSubmit(submitAction)}>
@@ -60,8 +33,19 @@ function ReviewForm({
         </Form.Group>
       )}
 
-      {renderItemInput()}
+      {/* Disabled item name field */}
+      <Form.Group className="mb-3">
+        <Form.Label htmlFor="itemName">Item Being Reviewed</Form.Label>
+        <Form.Control
+          id="itemName"
+          type="text"
+          value={itemName}
+          disabled
+          placeholder="Item name will be displayed here"
+        />
+      </Form.Group>
 
+      {/* Stars rating */}
       <Form.Group className="mb-3">
         <Form.Label htmlFor="stars">Stars</Form.Label>
         <Form.Control
@@ -86,6 +70,7 @@ function ReviewForm({
         </Form.Control.Feedback>
       </Form.Group>
 
+      {/* Comments field */}
       <Form.Group className="mb-3">
         <Form.Label htmlFor="comments">
           Comments <span className="text-muted">(optional)</span>
@@ -105,6 +90,22 @@ function ReviewForm({
         />
         <Form.Control.Feedback type="invalid">
           {errors.comments?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      {/* Date-time picker for when item was served */}
+      <Form.Group className="mb-3">
+        <Form.Label htmlFor="dateServed">Date & Time Served</Form.Label>
+        <Form.Control
+          id="dateServed"
+          type="datetime-local"
+          isInvalid={Boolean(errors.dateServed)}
+          {...register("dateServed", {
+            required: "Date and time served is required.",
+          })}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.dateServed?.message}
         </Form.Control.Feedback>
       </Form.Group>
 
