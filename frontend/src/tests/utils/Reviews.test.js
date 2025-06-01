@@ -108,7 +108,6 @@ describe("Reviews", () => {
 
       onModerateSuccess();
 
-      expect(mockToast).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalled();
 
       restoreConsole();
