@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -14,6 +14,30 @@ export default function CreateReviewPage({ id: idFromProps }) {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/reviews/create";
+
+  const [itemName, setItemName] = useState("");
+  const [isLoadingItem, setIsLoadingItem] = useState(!!id);
+
+  // Fetch item name if we have an ID
+  useEffect(() => {
+    if (id) {
+      const fetchItemName = async () => {
+        try {
+          const response = await axios.get(
+            `/api/diningcommons/menuitem?id=${id}`,
+          );
+          setItemName(response.data.name || `Menu Item #${id}`);
+        } catch (error) {
+          console.error("Error fetching item:", error);
+          setItemName(`Menu Item #${id}`);
+        } finally {
+          setIsLoadingItem(false);
+        }
+      };
+
+      fetchItemName();
+    }
+  }, [id]);
 
   const submitAction = async (formData) => {
     const reviewerEmail =
@@ -34,7 +58,7 @@ export default function CreateReviewPage({ id: idFromProps }) {
         reviewerEmail,
         itemsStars: parseInt(formData.stars, 10),
         reviewerComments: formData.comments,
-        dateItemServed: new Date().toISOString(),
+        dateItemServed: formData.dateServed, // Use the date from the form
         itemId,
       };
 
@@ -45,7 +69,7 @@ export default function CreateReviewPage({ id: idFromProps }) {
       });
 
       const review = response.data;
-      const displayName = review.item?.name || `Menu Item #${itemId}`;
+      const displayName = review.item?.name || itemName;
       const rating = review.itemsStars;
       const comment =
         review.reviewerComments?.trim() || "No comments provided.";
@@ -70,10 +94,21 @@ export default function CreateReviewPage({ id: idFromProps }) {
   };
 
   const initialContents = {
-    itemId: id || "",
     stars: "",
     comments: "",
+    dateServed: "", // Initialize the date field
   };
+
+  if (isLoadingItem) {
+    return (
+      <BasicLayout>
+        <div className="pt-2">
+          <h1>Leave a Review</h1>
+          <p>Loading item information...</p>
+        </div>
+      </BasicLayout>
+    );
+  }
 
   return (
     <BasicLayout>
@@ -83,7 +118,7 @@ export default function CreateReviewPage({ id: idFromProps }) {
           initialContents={initialContents}
           submitAction={submitAction}
           buttonLabel="Submit Review"
-          hideItemId={!!id}
+          itemName={itemName}
         />
       </div>
     </BasicLayout>
