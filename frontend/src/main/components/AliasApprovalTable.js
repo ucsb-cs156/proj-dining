@@ -35,7 +35,7 @@ export default function AliasApprovalTable({ users }) {
   };
 
   const mutation = useBackendMutation(objectToAxiosParams, { onSuccess }, [
-    "alias-approval",
+    ["/api/admin/usersWithProposedAlias"],
   ]);
 
   const columns = [
