@@ -9,7 +9,7 @@ describe("ReviewTable Tests", () => {
     render(
       <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
     );
-    expect(screen.getByTestId("ReviewTable-header-itemId")).toHaveTextContent(
+    expect(screen.getByTestId("ReviewTable-header-Item ID")).toHaveTextContent(
       "Item ID",
     );
     expect(
@@ -144,5 +144,76 @@ describe("ReviewTable Tests", () => {
     expect(
       screen.queryByTestId("ReviewTable-cell-row-0-col-Reject-button"),
     ).not.toBeInTheDocument();
+  });
+
+  test("renders empty Item ID when both itemId and item are missing", () => {
+    const data = [
+      {
+        id: 999,
+        reviewerComments: "No item id",
+        itemsStars: 1,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
+    ).toHaveTextContent(/^\s*$/); // empty or whitespace only
+  });
+
+  test("renders Item ID from item.id when item is an object with id", () => {
+    const data = [
+      {
+        id: 100,
+        item: { id: 42 },
+        reviewerComments: "Has item object with id",
+        itemsStars: 5,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
+    ).toHaveTextContent("42");
+  });
+
+  test("renders Item ID from item when item is a primitive", () => {
+    const data = [
+      {
+        id: 101,
+        item: 99,
+        reviewerComments: "Has item as primitive",
+        itemsStars: 4,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
+    ).toHaveTextContent("99");
+  });
+
+  test("renders Item ID from itemId when item is missing", () => {
+    const data = [
+      {
+        id: 102,
+        itemId: 77,
+        reviewerComments: "Has itemId only",
+        itemsStars: 3,
+        dateItemServed: "2022-01-01T00:00:00",
+      },
+    ];
+    render(
+      <ReviewTable data={data} userOptions={false} moderatorOptions={false} />,
+    );
+    expect(
+      screen.getByTestId("ReviewTable-cell-row-0-col-Item ID"),
+    ).toHaveTextContent("77");
   });
 });
