@@ -1,4 +1,9 @@
-import { onDeleteSuccess, cellToAxiosParamsDelete } from "main/utils/Reviews";
+import {
+  cellToAxiosParamsDelete,
+  onDeleteSuccess,
+  cellToAxiosParamsModerate,
+  onModerateSuccess,
+} from "main/utils/Reviews";
 import mockConsole from "jest-mock-console";
 
 const mockToast = jest.fn();
@@ -31,18 +36,82 @@ describe("Reviews", () => {
   });
   describe("cellToAxiosParamsDelete", () => {
     test("It returns the correct params", () => {
-      // arrange
-      const cell = { row: { values: { "item.id": 1 } } };
+      const cell = {
+        row: {
+          original: {
+            id: 42,
+          },
+        },
+      };
 
-      // act
       const result = cellToAxiosParamsDelete(cell);
 
-      // assert
       expect(result).toEqual({
-        url: "/api/reviews",
+        url: "/api/reviews/reviewer",
         method: "DELETE",
-        params: { itemId: 1 },
+        params: {
+          id: 42,
+        },
       });
+    });
+  });
+
+  describe("cellToAxiosParamsModerate", () => {
+    test("It returns the correct params for APPROVED", () => {
+      const cell = {
+        row: {
+          original: {
+            id: 42,
+          },
+        },
+      };
+
+      const result = cellToAxiosParamsModerate(cell, "APPROVED");
+
+      expect(result).toEqual({
+        url: "/api/reviews/moderate",
+        method: "PUT",
+        params: {
+          id: 42,
+          status: "APPROVED",
+          moderatorComments: "",
+        },
+      });
+    });
+
+    test("It returns the correct params for REJECTED", () => {
+      const cell = {
+        row: {
+          original: {
+            id: 99,
+          },
+        },
+      };
+
+      const result = cellToAxiosParamsModerate(cell, "REJECTED");
+
+      expect(result).toEqual({
+        url: "/api/reviews/moderate",
+        method: "PUT",
+        params: {
+          id: 99,
+          status: "REJECTED",
+          moderatorComments: "",
+        },
+      });
+    });
+  });
+
+  describe("onModerateSuccess", () => {
+    test("It puts the message on console.log and in a toast", () => {
+      const restoreConsole = mockConsole();
+
+      onModerateSuccess();
+
+      expect(console.log).toHaveBeenCalled();
+      const message = console.log.mock.calls[0][0];
+      expect(message).toMatch("Moderation success");
+      restoreConsole();
     });
   });
 });

@@ -1,9 +1,5 @@
 package edu.ucsb.cs156.dining.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -15,9 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 
@@ -26,9 +20,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity(name = "reviews")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 @EntityListeners(AuditingEntityListener.class)
 public class Review {
     @Id
