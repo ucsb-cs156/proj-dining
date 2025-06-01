@@ -7,9 +7,6 @@ import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
@@ -33,7 +30,7 @@ import java.time.LocalDate;
  * These endpoints are only accessible to users with the role "ROLE_ADMIN".
  */
 
-@Tag(name="User information (admin only)")
+@Tag(name="User information (admin or moderator)")
 @RequestMapping("/api")
 @RestController
 public class UsersController extends ApiController {
@@ -49,7 +46,7 @@ public class UsersController extends ApiController {
      * @throws JsonProcessingException if there is an error processing the JSON
      */
     @Operation(summary= "Get a list of all users")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
     @GetMapping("/admin/users")
     public ResponseEntity<String> users()
             throws JsonProcessingException {
@@ -66,7 +63,7 @@ public class UsersController extends ApiController {
      * @throws JsonProcessingException if there is an error processing the JSON
      */
     @Operation(summary = "Get a list of all users with a proposed alias")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
     @GetMapping("/admin/usersWithProposedAlias")
     public ResponseEntity<String> getUsersWithProposedAlias()
             throws JsonProcessingException {
@@ -81,7 +78,7 @@ public class UsersController extends ApiController {
      * @return the updated user
      */
     @Operation(summary = "Update proposed alias of the current user")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
     @PostMapping("/currentUser/updateAlias")
     public ResponseEntity<User> updateProposedAlias(@RequestParam String proposedAlias) {
         CurrentUser currentUser = super.getCurrentUser();
@@ -104,7 +101,7 @@ public class UsersController extends ApiController {
      * @param approved the new moderation status 
      * @return the updated user
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
     @PutMapping("/currentUser/updateAliasModeration")
     public User updateAliasModeration(
             @RequestParam long id, 
