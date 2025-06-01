@@ -18,6 +18,9 @@ LoggedOut.parameters = {
       http.get("/api/currentUser", () => {
         return HttpResponse.json(null, { status: 403 });
       }),
+      http.get("/api/systemInfo", () => {
+        return HttpResponse.json({ springH2ConsoleEnabled: false });
+      }),
     ],
   },
 };
@@ -29,6 +32,9 @@ NoAdminRole.parameters = {
       http.get("/api/currentUser", () => {
         return HttpResponse.json(apiCurrentUserFixtures.userOnly);
       }),
+      http.get("/api/systemInfo", () => {
+        return HttpResponse.json({ springH2ConsoleEnabled: false });
+      }),
     ],
   },
 };
@@ -39,6 +45,9 @@ AdminView.parameters = {
     handlers: [
       http.get("/api/currentUser", () => {
         return HttpResponse.json(apiCurrentUserFixtures.adminUser);
+      }),
+      http.get("/api/systemInfo", () => {
+        return HttpResponse.json({ springH2ConsoleEnabled: false });
       }),
       http.get("/api/admin/usersWithProposedAlias", () => {
         return HttpResponse.json(usersFixtures.threeUsers);
