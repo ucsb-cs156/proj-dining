@@ -36,7 +36,7 @@ function App() {
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <>
             <Route path="/admin/users" element={<AdminUsersPage />} />
-            <Route path="/moderate" element={<Moderate />} />
+            <Route path="/moderate" element={<ModeratePage />} />
             <Route
               path="/placeholder/create"
               element={<PlaceholderCreatePage />}
