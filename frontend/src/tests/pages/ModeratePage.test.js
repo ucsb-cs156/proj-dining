@@ -38,7 +38,7 @@ const renderPage = () => {
   );
 };
 
-describe("ModeratePage Mutation Coverage", () => {
+describe("ModeratePage", () => {
   const mutateMock = jest.fn();
 
   beforeEach(() => {
@@ -110,11 +110,13 @@ describe("ModeratePage Mutation Coverage", () => {
   });
 
   test("approveMutation.mutate receives correct axios params object", async () => {
+    // Render so both useBackendMutation Hooks execute
     renderPage();
 
     const calls = useBackendMutation.mock.calls;
     const objectToAxiosParamsApprove = calls[0][0];
 
+    // Click the Approve button
     const approveCell = await screen.findByTestId("AliasTable-cell-row-0-col-Approve");
     const approveButton = within(approveCell).getByRole("button", { name: /approve/i });
     fireEvent.click(approveButton);
@@ -135,6 +137,7 @@ describe("ModeratePage Mutation Coverage", () => {
     const calls = useBackendMutation.mock.calls;
     const objectToAxiosParamsReject = calls[1][0];
 
+    // Click the Reject button
     const rejectCell = await screen.findByTestId("AliasTable-cell-row-0-col-Reject");
     const rejectButton = within(rejectCell).getByRole("button", { name: /reject/i });
     fireEvent.click(rejectButton);
@@ -150,6 +153,7 @@ describe("ModeratePage Mutation Coverage", () => {
   });
 
   test("displays toast.success on approve success", () => {
+    // Simulate onSuccess trigger
     useBackendMutation.mockImplementation((fn, key, options) => ({
       mutate: () => options.onSuccess({}, usersFixtures.threeUsers[0]),
     }));
@@ -199,5 +203,45 @@ describe("ModeratePage Mutation Coverage", () => {
     fireEvent.click(rejectButton);
 
     expect(toast.error).toHaveBeenCalledWith("Error rejecting alias: Some reject error");
+  });
+
+
+  test("useBackendMutation is called with correct query key (不能是 [] 或 [''] 等突变)", () => {
+    renderPage();
+
+    const calls = useBackendMutation.mock.calls;
+    expect(calls.length).toBe(2);
+
+    const approveQueryKey = calls[0][1];
+    expect(approveQueryKey).toEqual(["/api/admin/usersWithProposedAlias"]);
+
+    const rejectQueryKey = calls[1][1];
+    expect(rejectQueryKey).toEqual(["/api/admin/usersWithProposedAlias"]);
+  });
+
+  test("displays 'Unknown error' when approve error has no message", () => {
+    useBackendMutation.mockImplementation((fn, key, options) => ({
+      mutate: () => options.onError(new Error()),
+    }));
+
+    renderPage();
+    const approveCell = screen.getByTestId("AliasTable-cell-row-0-col-Approve");
+    const approveButton = within(approveCell).getByRole("button", { name: /approve/i });
+    fireEvent.click(approveButton);
+
+    expect(toast.error).toHaveBeenCalledWith("Error approving alias: Unknown error");
+  });
+
+  test("displays 'Unknown error' when reject error has no message", () => {
+    useBackendMutation.mockImplementation((fn, key, options) => ({
+      mutate: () => options.onError(new Error()), 
+    }));
+
+    renderPage();
+    const rejectCell = screen.getByTestId("AliasTable-cell-row-0-col-Reject");
+    const rejectButton = within(rejectCell).getByRole("button", { name: /reject/i });
+    fireEvent.click(rejectButton);
+
+    expect(toast.error).toHaveBeenCalledWith("Error rejecting alias: Unknown error");
   });
 });
