@@ -109,7 +109,8 @@ describe("Reviews", () => {
       onModerateSuccess();
 
       expect(console.log).toHaveBeenCalled();
-
+      const message = console.log.mock.calls[0][0];
+      expect(message).toMatch("Moderation success");
       restoreConsole();
     });
   });
