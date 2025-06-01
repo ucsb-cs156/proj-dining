@@ -38,7 +38,7 @@ export default function PostReviewPage() {
       });
       // Stryker disable next-line all : itemName will be defined
       toast(`Review submitted for ${itemName}`);
-      navigate("/myreviews");
+      navigate(-1);
     } catch (err) {
       toast.error(
         `Error submitting review: ${err.response?.data?.error || err.message}`,
