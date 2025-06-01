@@ -65,15 +65,6 @@ function App() {
             />
           </>
         )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/placeholder/edit/:id"
-              element={<PlaceholderEditPage />}
-            />
-          </>
-        )}
         <>
           <Route
             exact
