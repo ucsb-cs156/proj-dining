@@ -21,19 +21,24 @@ export default function ReviewTable({
 
   if (userOptions) {
     columns.push(
-      ButtonColumn("Edit", "primary", onEdit || (() => {}), "ReviewTable")
+      ButtonColumn("Edit", "primary", onEdit || (() => {}), "ReviewTable"),
     );
     columns.push(
-      ButtonColumn("Delete", "danger", onDelete || (() => {}), "ReviewTable")
+      ButtonColumn("Delete", "danger", onDelete || (() => {}), "ReviewTable"),
     );
   }
 
   if (moderatorOptions) {
     columns.push(
-      ButtonColumn("Approve", "success", onApprove || (() => {}), "ReviewTable")
+      ButtonColumn(
+        "Approve",
+        "success",
+        onApprove || (() => {}),
+        "ReviewTable",
+      ),
     );
     columns.push(
-      ButtonColumn("Reject", "danger", onReject || (() => {}), "ReviewTable")
+      ButtonColumn("Reject", "danger", onReject || (() => {}), "ReviewTable"),
     );
   }
 
