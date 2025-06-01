@@ -110,7 +110,7 @@ describe("ModeratePage", () => {
   });
 
   test("approveMutation.mutate receives correct axios params object", async () => {
-    // Render so both useBackendMutation Hooks execute
+    // Ensure both useBackendMutation hooks run
     renderPage();
 
     const calls = useBackendMutation.mock.calls;
@@ -205,8 +205,7 @@ describe("ModeratePage", () => {
     expect(toast.error).toHaveBeenCalledWith("Error rejecting alias: Some reject error");
   });
 
-
-  test("useBackendMutation is called with correct query key (不能是 [] 或 [''] 等突变)", () => {
+  test("useBackendMutation is called with correct query key (should not be [] or [''])", () => {
     renderPage();
 
     const calls = useBackendMutation.mock.calls;
@@ -234,7 +233,7 @@ describe("ModeratePage", () => {
 
   test("displays 'Unknown error' when reject error has no message", () => {
     useBackendMutation.mockImplementation((fn, key, options) => ({
-      mutate: () => options.onError(new Error()), 
+      mutate: () => options.onError(new Error()),
     }));
 
     renderPage();
