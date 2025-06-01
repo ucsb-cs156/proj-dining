@@ -10,7 +10,7 @@ export default function ReviewTable({
   onReject,
 }) {
   const columns = [
-    { Header: "Item ID", accessor: (row) => row.item?.id ?? row.itemId ?? "" },
+    { Header: "Item ID", accessor: (row) => row.item?.id ?? row.item ?? "" },
     { Header: "Score", accessor: "itemsStars" },
     { Header: "Comments", accessor: "reviewerComments" },
     { Header: "Date Served", accessor: "dateItemServed" },
@@ -18,24 +18,19 @@ export default function ReviewTable({
 
   if (userOptions) {
     columns.push(
-      ButtonColumn("Edit", "primary", onEdit || (() => {}), "ReviewTable"),
+      ButtonColumn("Edit", "primary", onEdit || (() => {}), "ReviewTable")
     );
     columns.push(
-      ButtonColumn("Delete", "danger", onDelete || (() => {}), "ReviewTable"),
+      ButtonColumn("Delete", "danger", onDelete || (() => {}), "ReviewTable")
     );
   }
 
   if (moderatorOptions) {
     columns.push(
-      ButtonColumn(
-        "Approve",
-        "success",
-        onApprove || (() => {}),
-        "ReviewTable",
-      ),
+      ButtonColumn("Approve", "success", onApprove || (() => {}), "ReviewTable")
     );
     columns.push(
-      ButtonColumn("Reject", "danger", onReject || (() => {}), "ReviewTable"),
+      ButtonColumn("Reject", "danger", onReject || (() => {}), "ReviewTable")
     );
   }
 
