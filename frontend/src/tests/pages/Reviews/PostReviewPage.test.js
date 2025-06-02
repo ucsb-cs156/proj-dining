@@ -57,13 +57,6 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
     axiosMock.onGet("/api/systemInfo").reply(200, {});
   });
 
-  // test("renders heading with item name from query params", async () => {
-  //   renderWithDefaultRouter();
-  //   // expect(
-  //   //   await screen.findByRole("heading", { name: /review.*spaghetti/i }),
-  //   // ).toBeInTheDocument();
-  // });
-
   test("renders form fields with expected defaults", async () => {
     renderWithDefaultRouter();
     expect(await screen.findByLabelText(/comments/i)).toHaveValue("");
