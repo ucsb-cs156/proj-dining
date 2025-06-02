@@ -13,7 +13,7 @@ import ReviewsForMenuItemPage from "main/pages/Reviews/ReviewsForMenuItemPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
-import Moderate from "main/pages/Moderate";
+import ModeratePage from "main/pages/ModeratePage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -34,7 +34,7 @@ function App() {
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <>
             <Route path="/admin/users" element={<AdminUsersPage />} />
-            <Route path="/moderate" element={<Moderate />} />
+            <Route path="/moderate" element={<ModeratePage />} />
             <Route
               exact
               path="/myreviews/edit/:id"
@@ -50,7 +50,7 @@ function App() {
 
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
-          <Route exact path="/moderate" element={<Moderate />} />
+          <Route exact path="/moderate" element={<ModeratePage />} />
         )}
 
         {hasRole(currentUser, "ROLE_USER") && (
