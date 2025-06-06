@@ -20,6 +20,7 @@ describe("UserTable tests", () => {
       "Last Name",
       "Email",
       "Admin",
+      "Moderator",
       "Alias",
       "Proposed Alias",
     ];
@@ -29,6 +30,7 @@ describe("UserTable tests", () => {
       "familyName",
       "email",
       "admin",
+      "moderator",
       "alias",
       "proposedAlias",
     ];
@@ -50,11 +52,17 @@ describe("UserTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-admin`),
     ).toHaveTextContent("true");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-moderator`),
+    ).toHaveTextContent("false");
     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent(
       "2",
     );
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-admin`),
+    ).toHaveTextContent("false");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-moderator`),
     ).toHaveTextContent("false");
   });
 

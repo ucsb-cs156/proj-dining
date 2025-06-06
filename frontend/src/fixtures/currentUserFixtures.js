@@ -13,6 +13,7 @@ const apiCurrentUserFixtures = {
       locale: "en",
       hostedDomain: "ucsb.edu",
       admin: true,
+      moderator: false,
     },
     roles: [
       {
@@ -61,6 +62,7 @@ const apiCurrentUserFixtures = {
       locale: "en",
       hostedDomain: null,
       admin: false,
+      moderator: false,
       alias: "NewAlias",
       proposedAlias: "PropAlias",
       status: "Awaiting Moderation",
@@ -107,6 +109,57 @@ const apiCurrentUserFixtures = {
       admin: false,
     },
   },
+  moderatorUser: {
+    user: {
+      id: 3,
+      email: "nathanalexander626@gmail.com",
+      googleSub: "107175401128615622969",
+      pictureUrl:
+        "https://lh3.googleusercontent.com/a/ACg8ocLKdqBolIMKIOGYiRCGLzwu2uUkcCx0FBtmE1CDF8fsfXBlz3sv=s96-c",
+      fullName: "Nathaniel Alexander",
+      givenName: "Nathaniel",
+      familyName: "Alexander",
+      emailVerified: true,
+      locale: "en",
+      hostedDomain: null,
+      admin: false,
+      moderator: true,
+      alias: "Anonymous User",
+      proposedAlias: null,
+      status: null,
+    },
+    roles: [
+      {
+        authority: "ROLE_MEMBER",
+      },
+      {
+        authority: "SCOPE_openid",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+      },
+      {
+        authority: "ROLE_USER",
+        attributes: {
+          sub: "107175401128615622969",
+          name: "Nathaniel Alexander",
+          given_name: "Nathaniel",
+          family_name: "Alexander",
+          picture:
+            "https://lh3.googleusercontent.com/a/ACg8ocLKdqBolIMKIOGYiRCGLzwu2uUkcCx0FBtmE1CDF8fsfXBlz3sv=s96-c",
+          email: "nathanalexander626@gmail.com",
+          email_verified: true,
+          locale: "en",
+        },
+      },
+      {
+        authority: "ROLE_MODERATOR",
+      },
+    ],
+  },
 };
 
 const currentUserFixtures = {
@@ -139,6 +192,20 @@ const currentUserFixtures = {
   notLoggedIn: {
     loggedIn: false,
     root: {},
+  },
+  moderatorUser: {
+    loggedIn: true,
+    root: {
+      ...apiCurrentUserFixtures.moderatorUser,
+      rolesList: [
+        "ROLE_MEMBER",
+        "SCOPE_openid",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+        "ROLE_USER",
+        "ROLE_MODERATOR",
+      ],
+    },
   },
 };
 

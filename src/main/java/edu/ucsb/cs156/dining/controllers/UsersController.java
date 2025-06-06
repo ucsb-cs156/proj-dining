@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a REST controller for getting information about the users.
@@ -37,6 +40,10 @@ import java.time.LocalDate;
 @RequestMapping("/api")
 @RestController
 public class UsersController extends ApiController {
+
+    @Value("${app.admin.emails}")
+    private final List<String> adminEmails = new ArrayList<>();
+
     @Autowired
     UserRepository userRepository;
 
@@ -123,6 +130,48 @@ public class UsersController extends ApiController {
             user.setStatus(ModerationStatus.REJECTED);
             user.setProposedAlias(null);
         }
+        
+        userRepository.save(user);
+
+        return user;
+    }
+
+    /**
+     * This method allows an admin to toggle the admin status of a user.
+     * Will not toggle status of admin in adminEmails.
+     * @param id the id of the user to toggle
+     * @return the updated user
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/admin/toggleAdmin")
+    public User toggleAdminStatus(@RequestParam long id) {
+        
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(User.class, id));
+        
+        if(!adminEmails.contains(user.getEmail())) {
+            user.setAdmin(!user.getAdmin());
+        }
+        
+        userRepository.save(user);
+
+        return user;
+    }
+
+    /**
+     * This method allows an admin to toggle the moderator status of a user.
+     * @param id the id of the user to toggle
+     * @return the updated user
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/admin/toggleModerator")
+    public User toggleModeratorStatus(
+            @RequestParam long id) {
+        
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(User.class, id));
+        
+        user.setModerator(!user.getModerator());
         
         userRepository.save(user);
 

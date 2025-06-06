@@ -1,8 +1,6 @@
 package edu.ucsb.cs156.dining.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,9 +19,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity(name = "users")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class User {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +33,7 @@ public class User {
  private String locale;
  private String hostedDomain;
  private boolean admin;
+ private boolean moderator;
  private String alias;
  private String proposedAlias;
  @Enumerated(EnumType.STRING)
@@ -45,6 +41,7 @@ public class User {
  private LocalDate dateApproved;
 
  @ToString.Exclude
+ @JsonIgnore
  @OneToMany(mappedBy="reviewer")
  @Fetch(FetchMode.JOIN)
  private List<Review> reviews;

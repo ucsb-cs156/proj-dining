@@ -23,6 +23,11 @@ const columns = [
     accessor: (row, _rowIndex) => String(row.admin), // hack needed for boolean values to show up
   },
   {
+    Header: "Moderator",
+    id: "moderator",
+    accessor: (row, _rowIndex) => String(row.moderator),
+  },
+  {
     Header: "Alias",
     accessor: "alias",
   },
