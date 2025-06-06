@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
@@ -7,6 +7,8 @@ import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
 import PlaceholderCreatePage from "main/pages/Placeholder/PlaceholderCreatePage";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 
+import MyReviewsCreatePage from "main/pages/MyReviews/MyReviewsCreatePage";
+import MyReviewsEditPage from "main/pages/MyReviews/MyReviewsEditPage";
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -23,7 +25,11 @@ function App() {
   const { data: currentUser } = useCurrentUser();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
@@ -35,6 +41,14 @@ function App() {
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
           </>
         )}
+
+        {hasRole(currentUser, "ROLE_ADMIN") && (
+          <>
+            <Route exact path="/myreviews" element={<MyReviewsCreatePage />} />
+            <Route exact path="/myreviews" element={<MyReviewsEditPage />} />
+          </>
+        )}
+
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}

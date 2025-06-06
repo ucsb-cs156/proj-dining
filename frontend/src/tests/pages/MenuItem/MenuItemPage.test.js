@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import { menuItemFixtures } from "fixtures/menuItemFixtures";
 
@@ -19,8 +19,8 @@ jest.mock("react-toastify", () => {
   };
 });
 
-jest.mock("react-router-dom", () => {
-  const originalModule = jest.requireActual("react-router-dom");
+jest.mock("react-router", () => {
+  const originalModule = jest.requireActual("react-router");
   return {
     __esModule: true,
     ...originalModule,

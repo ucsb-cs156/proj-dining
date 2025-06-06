@@ -27,6 +27,7 @@ public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
     String locale="";
     String hostedDomain="example.org";
     boolean admin=false;
+    boolean moderator=false;
 
     org.springframework.security.core.userdetails.User user = null;
 
@@ -43,6 +44,7 @@ public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
       locale="";
       hostedDomain="example.org";
       admin= securityContext.getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+      moderator= securityContext.getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MODERATOR"));
     }
 
     User u = User.builder()
@@ -56,6 +58,7 @@ public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
     .locale(locale)
     .hostedDomain(hostedDomain)
     .admin(admin)
+    .moderator(moderator)
     .id(1L)
     .build();
     

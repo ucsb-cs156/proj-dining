@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,6 +43,7 @@ import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
 import jakarta.validation.Valid;
 
+import edu.ucsb.cs156.dining.models.MenuItemReviewAverageRating;
 /**
  * This is a REST controller for Reviews
  */
@@ -102,18 +105,31 @@ public class ReviewController extends ApiController {
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
 
-        // Ensures content of truly empty and sets to null if so
-        if ((!reviewerComments.trim().isEmpty())) {
-            review.setReviewerComments(reviewerComments);
+        boolean isEmpty = false;
+        String commentsToSet;
+        ModerationStatus statusToSet;
+        if ((reviewerComments == null || reviewerComments.trim().isEmpty())) {
+            isEmpty = true;
         }
-
+        if (isEmpty) {
+            commentsToSet = null;
+        } else {
+            commentsToSet = reviewerComments;
+        }
+        if (isEmpty) {
+            statusToSet = ModerationStatus.APPROVED;
+        } else {
+            statusToSet = ModerationStatus.AWAITING_REVIEW;
+        }
+        review.setReviewerComments(commentsToSet);
+        review.setStatus(statusToSet);
         // Ensure user inputs rating 1-5
         if (itemsStars < 1 || itemsStars > 5) {
             throw new IllegalArgumentException("Items stars must be between 1 and 5.");
         }
 
         review.setItemsStars(itemsStars);
-
+        
         MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(
                 () -> new EntityNotFoundException(MenuItem.class, itemId)
         );
@@ -160,13 +176,14 @@ public class ReviewController extends ApiController {
 
         if (incoming.getReviewerComments() != null &&!incoming.getReviewerComments().trim().isEmpty()) {
             oldReview.setReviewerComments(incoming.getReviewerComments());
+            oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
         }else{
             oldReview.setReviewerComments(null);
+            oldReview.setStatus(ModerationStatus.APPROVED);
         }
 
         oldReview.setDateItemServed(incoming.getDateItemServed());
 
-        oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
         oldReview.setModeratorComments(null);
 
         Review review = reviewRepository.save(oldReview);
@@ -192,7 +209,7 @@ public class ReviewController extends ApiController {
     }
 
     @Operation(summary = "Moderate a review")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @PutMapping("/moderate")
     public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
         Review review = reviewRepository.findById(id).orElseThrow(
@@ -207,10 +224,70 @@ public class ReviewController extends ApiController {
     }
 
     @Operation(summary = "See reviews that need moderation")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @GetMapping("/needsmoderation")
     public Iterable<Review> needsmoderation() {
         Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
         return reviewsList;
     }
+
+    @Operation(summary = "Get a specific single review ID")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public Review getReviewByID(@Parameter Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+
+        User current = getCurrentUser().getUser();
+        if(current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+            throw new AccessDeniedException("Only user who made this review or admin can get id");
+        }
+        return review;
+    }
+    
+    @Operation(summary = "Get average rating for each menu item")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/averageRatingPerMenuItem")
+    public Iterable<MenuItemReviewAverageRating> getAverageRatingPerMenuItem() {
+    Iterable<MenuItem> items = menuItemRepository.findAll();
+    List<MenuItemReviewAverageRating> result = new ArrayList<>();
+
+    for (MenuItem item : items) {
+        Iterable<Review> reviews = reviewRepository.findByItemId(item.getId());
+
+        int count = 0;
+        long sum = 0;
+
+        for (Review review : reviews) {
+            if (review.getItemsStars() != null) {
+                sum += review.getItemsStars();
+                count++;
+            }
+        }
+
+        Double avg;
+
+        if (count == 0){
+            avg = null; 
+        }
+        else {
+            avg = (sum / (double) count); 
+
+        }
+        
+        MenuItemReviewAverageRating entry = new MenuItemReviewAverageRating();
+        entry.setId(item.getId());
+        entry.setName(item.getName());
+        entry.setStation(item.getStation());
+        entry.setDiningCommonsCode(item.getDiningCommonsCode());
+        entry.setAverageRating(avg);
+
+        result.add(entry);
+    }
+
+        return result;
+    }
 }
+
+

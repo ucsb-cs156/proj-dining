@@ -2,6 +2,7 @@ package edu.ucsb.cs156.dining.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
@@ -37,12 +38,16 @@ public class User {
  private boolean emailVerified;
  private String locale;
  private String hostedDomain;
- private boolean admin;
  private String alias;
  private String proposedAlias;
  @Enumerated(EnumType.STRING)
  private ModerationStatus status;
  private LocalDate dateApproved;
+ 
+ @Builder.Default
+ private boolean admin=false;
+ @Builder.Default
+ private boolean moderator=false;
 
  @ToString.Exclude
  @OneToMany(mappedBy="reviewer")

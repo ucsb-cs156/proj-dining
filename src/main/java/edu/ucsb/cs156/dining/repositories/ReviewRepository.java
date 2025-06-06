@@ -26,4 +26,6 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
 
     Iterable<Review> findByStatus(ModerationStatus moderationStatus);
 
+    Iterable<Review> findByItemId(Long item_id);
+
 }

@@ -1,0 +1,39 @@
+{ "databaseChangeLog": [
+  {
+    "changeSet": {
+      "id": "Users001-AddMod",
+      "author": "RiyaGupta1234",
+      "preConditions": [
+        {
+          "onFail": "MARK_RAN"
+        },
+        {
+          "not": {
+            "columnExists": {
+              "tableName": "USERS",
+              "columnName": "MODERATOR"
+            }
+          }
+        }
+      ],
+      "changes": [
+        {
+          "addColumn": {
+            "columns": [
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "name": "MODERATOR",
+                  "type": "BOOLEAN"
+                }
+              }
+            ],
+            "tableName": "USERS"
+          }
+        }
+      ]
+    }
+  }
+]}

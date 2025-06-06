@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import PlaceholderEditPage from "main/pages/Placeholder/PlaceholderEditPage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";

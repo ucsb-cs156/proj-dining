@@ -1,6 +1,6 @@
 import React from "react";
 import OurTable from "main/components/OurTable";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export default function DiningCommonsTable({ commons, date }) {
   const testid = "DiningCommonsTable";
@@ -32,14 +32,6 @@ export default function DiningCommonsTable({ commons, date }) {
       Header: "Has Takeout Meal",
       accessor: "hasTakeoutMeal",
       Cell: ({ value }) => (value ? "✅" : "❌"),
-    },
-    {
-      Header: "Latitude",
-      accessor: "latitude",
-    },
-    {
-      Header: "Longitude",
-      accessor: "longitude",
     },
   ];
 

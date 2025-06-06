@@ -93,6 +93,7 @@ public class UsersControllerTests extends ControllerTestCase {
             .locale("")
             .hostedDomain("example.org")
             .admin(true)
+            .moderator(false)
             .alias("Anonymous User") 
             .proposedAlias("Chipotle")
             .status(ModerationStatus.AWAITING_REVIEW)
