@@ -47,6 +47,54 @@ const apiCurrentUserFixtures = {
       },
     ],
   },
+  moderatorUser: {
+    user: {
+      id: 3,
+      email: "fahimzaman@ucsb.edu",
+      googleSub: "116154159694345734170",
+      pictureUrl:
+        "https://lh3.googleusercontent.com/a/ACg8ocKmBJaQpZKv_bFH_IN2jTPTHTtI_HF8UFpCKZDWfMCwnY4aUg=s96-c",
+      fullName: "Fahim Zaman",
+      givenName: "Fahim",
+      familyName: "Zaman",
+      emailVerified: true,
+      locale: null,
+      hostedDomain: "ucsb.edu",
+      moderator: true,
+    },
+    roles: [
+      {
+        authority: "ROLE_MEMBER",
+      },
+      {
+        authority: "SCOPE_openid",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+      },
+      {
+        authority: "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+      },
+      {
+        authority: "ROLE_USER",
+        attributes: {
+          sub: "115856948234298493496",
+          name: "Fahim Zaman",
+          given_name: "Fahim",
+          family_name: "Zaman",
+          picture:
+            "https://lh3.googleusercontent.com/a/ACg8ocKmBJaQpZKv_bFH_IN2jTPTHTtI_HF8UFpCKZDWfMCwnY4aUg=s96-c",
+          email: "phtcon@ucsb.edu",
+          email_verified: true,
+          locale: "en",
+          hd: "ucsb.edu",
+        },
+      },
+      {
+        authority: "ROLE_MODERATOR",
+      },
+    ],
+  },
   userOnly: {
     user: {
       id: 2,
@@ -95,7 +143,7 @@ const apiCurrentUserFixtures = {
     user: {
       id: 2,
       email: "pconrad.cis@gmail.com",
-      googleSub: "102656447703889917227",
+      googleSub: "116154159694345734170",
       pictureUrl:
         "https://lh3.googleusercontent.com/a-/AOh14GhpDBUt8eCEqiRT45hrFbcimsX_h1ONn0dc3HV8Bp8=s96-c",
       fullName: "Phillip Conrad",
@@ -121,6 +169,20 @@ const currentUserFixtures = {
         "SCOPE_https://www.googleapis.com/auth/userinfo.email",
         "ROLE_USER",
         "ROLE_ADMIN",
+      ],
+    },
+  },
+  moderatorUser: {
+    loggedIn: true,
+    root: {
+      ...apiCurrentUserFixtures.moderatorUser,
+      rolesList: [
+        "ROLE_MEMBER",
+        "SCOPE_openid",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.profile",
+        "SCOPE_https://www.googleapis.com/auth/userinfo.email",
+        "ROLE_USER",
+        "ROLE_MODERATOR",
       ],
     },
   },

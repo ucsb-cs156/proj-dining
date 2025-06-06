@@ -6,7 +6,9 @@ import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 /**
  * The ReviewRepository is a repository for Review entities
@@ -25,5 +27,9 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
     Iterable<Review> findByReviewer(User user);
 
     Iterable<Review> findByStatus(ModerationStatus moderationStatus);
+
+    @Query("SELECT AVG(r.itemsStars) FROM reviews r WHERE r.item.id = :itemId")
+    Optional<Double> findAverageScoreByItemId(@Param("itemId") Long itemId);
+
 
 }

@@ -103,7 +103,7 @@ public class ReviewController extends ApiController {
         review.setDateItemServed(dateItemServed);
 
         // Ensures content of truly empty and sets to null if so
-        if ((!reviewerComments.trim().isEmpty())) {
+        if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
             review.setReviewerComments(reviewerComments);
         }
 
@@ -117,6 +117,11 @@ public class ReviewController extends ApiController {
         MenuItem reviewedItem = menuItemRepository.findById(itemId).orElseThrow(
                 () -> new EntityNotFoundException(MenuItem.class, itemId)
         );
+
+        if (review.getReviewerComments() == null) {
+            review.setStatus(ModerationStatus.APPROVED);
+        }
+
         review.setItem(reviewedItem);
         CurrentUser user = getCurrentUser();
         review.setReviewer(user.getUser());
@@ -160,13 +165,14 @@ public class ReviewController extends ApiController {
 
         if (incoming.getReviewerComments() != null &&!incoming.getReviewerComments().trim().isEmpty()) {
             oldReview.setReviewerComments(incoming.getReviewerComments());
+            oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
         }else{
             oldReview.setReviewerComments(null);
+            oldReview.setStatus(ModerationStatus.APPROVED);
         }
 
         oldReview.setDateItemServed(incoming.getDateItemServed());
 
-        oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
         oldReview.setModeratorComments(null);
 
         Review review = reviewRepository.save(oldReview);
@@ -192,7 +198,7 @@ public class ReviewController extends ApiController {
     }
 
     @Operation(summary = "Moderate a review")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @PutMapping("/moderate")
     public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
         Review review = reviewRepository.findById(id).orElseThrow(
@@ -207,10 +213,29 @@ public class ReviewController extends ApiController {
     }
 
     @Operation(summary = "See reviews that need moderation")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @GetMapping("/needsmoderation")
     public Iterable<Review> needsmoderation() {
         Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
         return reviewsList;
+    }
+
+
+    @Operation(summary = "Get a review by id")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public Review getReviewById(@Parameter Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Review.class, id)
+        );
+        User current = getCurrentUser().getUser();
+        // Note: Once moderator is implmented, we can change this, and add another check for if user is a moderator
+        // and if the review is moderated
+        if (current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+            throw new AccessDeniedException("Only the user who made this review or an admin can get id");
+        }
+
+
+        return review;
     }
 }

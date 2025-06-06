@@ -2,12 +2,12 @@ import { waitFor, render, screen } from "@testing-library/react";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
 const mockedNavigate = jest.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
   useNavigate: () => mockedNavigate,
 }));
 
@@ -20,8 +20,6 @@ describe("DiningCommonsTable tests", () => {
     "Has Dining Cam",
     "Has Sack Meal",
     "Has Takeout Meal",
-    "Latitude",
-    "Longitude",
   ];
   const expectedFields = [
     "code",
@@ -29,8 +27,6 @@ describe("DiningCommonsTable tests", () => {
     "hasDiningCam",
     "hasSackMeal",
     "hasTakeoutMeal",
-    "latitude",
-    "longitude",
   ];
   const testId = "DiningCommonsTable";
   const date = new Date("2025-03-11").toISOString().split("T")[0];
@@ -216,8 +212,6 @@ describe("DiningCommonsTable tests", () => {
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
-      "Latitude",
-      "Longitude",
     ];
     const expectedFields = [
       "code",
@@ -225,8 +219,6 @@ describe("DiningCommonsTable tests", () => {
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
-      "latitude",
-      "longitude",
     ];
     const testId = "DiningCommonsTable";
 
@@ -266,8 +258,6 @@ describe("DiningCommonsTable tests", () => {
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
-      "Latitude",
-      "Longitude",
     ];
     const expectedFields = [
       "code",
@@ -275,8 +265,6 @@ describe("DiningCommonsTable tests", () => {
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
-      "latitude",
-      "longitude",
     ];
     const testId = "DiningCommonsTable";
 

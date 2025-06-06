@@ -2,7 +2,7 @@ import { useCurrentUser } from "main/utils/currentUser";
 import { useBackend } from "main/utils/useBackend";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import MenuItemTable from "main/components/MenuItem/MenuItemTable";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 export default function MenuItemPage() {
   const currentUser = useCurrentUser();
