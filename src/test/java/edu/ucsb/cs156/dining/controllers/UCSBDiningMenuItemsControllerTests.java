@@ -4,6 +4,7 @@ import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.controllers.UCSBDiningMenuItemsController;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,5 +103,34 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
     Optional<MenuItem> found = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station);
     assertTrue(found.isPresent());
+  }
+
+  @Test
+  public void get_menu_item_by_id_exists() throws Exception {
+    MenuItem menuItem = new MenuItem();
+    menuItem.setId(1L);
+    menuItem.setDiningCommonsCode("portola");
+    menuItem.setMealCode("lunch");
+    menuItem.setName("Burger");
+    menuItem.setStation("Grill");
+
+    when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
+
+    mockMvc.perform(get("/api/diningcommons/menuitem?id=1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.diningCommonsCode").value("portola"))
+            .andExpect(jsonPath("$.mealCode").value("lunch"))
+            .andExpect(jsonPath("$.name").value("Burger"))
+            .andExpect(jsonPath("$.station").value("Grill"));
+  }
+
+  @Test
+  public void get_menu_item_by_id_not_found() throws Exception {
+    when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
+
+    mockMvc.perform(get("/api/diningcommons/menuitem?id=1"))
+            .andExpect(status().isNotFound())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException));
   }
 }

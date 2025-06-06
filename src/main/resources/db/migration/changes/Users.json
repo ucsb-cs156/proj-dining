@@ -37,6 +37,15 @@
                   "constraints": {
                     "nullable": false
                   },
+                  "name": "MODERATOR",
+                  "type": "BOOLEAN"
+                }
+              },
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
                   "name": "ADMIN",
                   "type": "BOOLEAN"
                 }

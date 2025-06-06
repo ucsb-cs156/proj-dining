@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,10 +104,14 @@ public class ReviewController extends ApiController {
         Review review = new Review();
         review.setDateItemServed(dateItemServed);
 
-        // Ensures content of truly empty and sets to null if so
-        if ((!reviewerComments.trim().isEmpty())) {
+        // Reviewer comments moderation logic
+        if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
             review.setReviewerComments(reviewerComments);
+        } else {
+            review.setStatus(ModerationStatus.APPROVED); // auto-approve
         }
+        
+
 
         // Ensure user inputs rating 1-5
         if (itemsStars < 1 || itemsStars > 5) {
@@ -122,6 +128,26 @@ public class ReviewController extends ApiController {
         review.setReviewer(user.getUser());
         log.info("reviews={}", review);
         review = reviewRepository.save(review);
+        return review;
+    }
+
+    @Operation(summary = "Get a single review by id")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public Review getReview(@Parameter(name = "id") @RequestParam Long id) {
+        log.info("Attempting to get review with id {}", id);
+        
+        Review review = reviewRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+        
+        // Check if user has permission to view this review
+        User currentUser = getCurrentUser().getUser();
+        
+        // User can view their own reviews or if they are an admin
+        if (currentUser.getId() != review.getReviewer().getId() && !currentUser.getAdmin()) {
+            throw new AccessDeniedException("You don't have permission to view this review");
+        }
+        
         return review;
     }
 

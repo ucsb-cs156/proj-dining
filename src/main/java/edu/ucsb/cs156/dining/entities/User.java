@@ -37,6 +37,7 @@ public class User {
  private boolean emailVerified;
  private String locale;
  private String hostedDomain;
+ private boolean moderator;
  private boolean admin;
  private String alias;
  private String proposedAlias;

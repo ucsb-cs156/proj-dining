@@ -7,9 +7,6 @@ import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
@@ -49,7 +46,7 @@ public class UsersController extends ApiController {
      * @throws JsonProcessingException if there is an error processing the JSON
      */
     @Operation(summary= "Get a list of all users")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @GetMapping("/admin/users")
     public ResponseEntity<String> users()
             throws JsonProcessingException {
@@ -66,7 +63,7 @@ public class UsersController extends ApiController {
      * @throws JsonProcessingException if there is an error processing the JSON
      */
     @Operation(summary = "Get a list of all users with a proposed alias")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @GetMapping("/admin/usersWithProposedAlias")
     public ResponseEntity<String> getUsersWithProposedAlias()
             throws JsonProcessingException {
@@ -104,7 +101,7 @@ public class UsersController extends ApiController {
      * @param approved the new moderation status 
      * @return the updated user
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @PutMapping("/currentUser/updateAliasModeration")
     public User updateAliasModeration(
             @RequestParam long id, 

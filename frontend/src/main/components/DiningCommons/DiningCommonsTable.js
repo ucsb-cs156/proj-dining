@@ -33,14 +33,6 @@ export default function DiningCommonsTable({ commons, date }) {
       accessor: "hasTakeoutMeal",
       Cell: ({ value }) => (value ? "✅" : "❌"),
     },
-    {
-      Header: "Latitude",
-      accessor: "latitude",
-    },
-    {
-      Header: "Longitude",
-      accessor: "longitude",
-    },
   ];
 
   const displayedColumns = columns;

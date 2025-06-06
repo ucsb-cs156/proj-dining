@@ -39,6 +39,43 @@ describe("AppNavbar tests", () => {
     await screen.findByText("Welcome, phtcon@ucsb.edu");
     const adminMenu = screen.getByTestId("appnavbar-admin-dropdown");
     expect(adminMenu).toBeInTheDocument();
+    const moderateLink = screen.getByText("Moderate");
+    expect(moderateLink).toBeInTheDocument();
+    expect(moderateLink.getAttribute("href")).toBe("/moderate");
+  });
+
+  test("renders correctly for moderator user", async () => {
+    const currentUser = currentUserFixtures.moderatorUser;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, phtcon@ucsb.edu");
+    const moderateLink = screen.getByText("Moderate");
+    expect(moderateLink).toBeInTheDocument();
+    expect(moderateLink.getAttribute("href")).toBe("/moderate");
+  });
+
+  test("does NOT render Moderate link for regular users", async () => {
+    const currentUser = currentUserFixtures.userOnly;
+    const doLogin = jest.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Welcome, pconrad.cis@gmail.com");
+    expect(screen.queryByText("Moderate")).not.toBeInTheDocument();
   });
 
   test("renders H2Console and Swagger links correctly", async () => {

@@ -7,11 +7,5 @@ describe("Footer tests", () => {
     const expectedText =
       "This is a sample webapp using React with a Spring Boot backend. See the source code on Github.";
     expect(screen.getByTestId("Footer").textContent).toBe(expectedText);
-    // await screen.findByText(
-    //   /This is a sample webapp using React with a Spring Boot backend./,
-    // );
-    // await screen.findByText(/source code on/);
-    // const githubLink = screen.getByText("Github");
-    // expect(githubLink).toBeInTheDocument();
   });
 });

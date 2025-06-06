@@ -42,6 +42,9 @@ dokku config:set --no-restart dining SOURCE_REPO=https://github.com/ucsb-cs156-s
 # Set ADMIN_EMAILS to staff emails and team emails
 dokku config:set --no-restart dining ADMIN_EMAILS=list-of-admin-emails # modify this
 
+# Set MODERATOR_EMAILS to staff emails and team emails
+dokku config:set --no-restart dining MODERATOR_EMAILS=list-of-moderator-emails # modify this
+
 # git sync for first deploy (http)
 dokku git:sync dining https://github.com/ucsb-cs156-s25/proj-dining-s25-xx main  # modify this 
 dokku ps:rebuild dining

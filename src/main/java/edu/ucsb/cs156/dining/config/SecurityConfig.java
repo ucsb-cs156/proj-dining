@@ -62,6 +62,9 @@ public class SecurityConfig {
   @Value("${app.admin.emails}")
   private final List<String> adminEmails = new ArrayList<>();
 
+  @Value("${app.moderator.emails}")
+  private final List<String> moderatorEmails = new ArrayList<>();
+
   @Autowired
   UserRepository userRepository;
 
@@ -118,6 +121,10 @@ public class SecurityConfig {
           if (getAdmin(email)) {
             mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
           }
+          
+          if (getModerator(email)) {
+            mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+          }
 
           if (email.endsWith("@ucsb.edu")) {
             mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
@@ -144,6 +151,14 @@ public class SecurityConfig {
     }
     Optional<User> u = userRepository.findByEmail(email);
     return u.isPresent() && u.get().getAdmin();
+  }
+
+  public boolean getModerator(String email) {
+    if (moderatorEmails.contains(email)) {
+      return true;
+    }
+    Optional<User> u = userRepository.findByEmail(email);
+    return u.isPresent() && u.get().getModerator();
   }
 }
 
