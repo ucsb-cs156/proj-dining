@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.entities</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.entities;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+* This is a JPA entity that represents a user.
+*/
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@Entity(name = &quot;users&quot;)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = &quot;id&quot;)
+public class User {
+ @Id
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ private long id;
+ private String email;
+ private String googleSub;
+ private String pictureUrl;
+ private String fullName;
+ private String givenName;
+ private String familyName;
+ private boolean emailVerified;
+ private String locale;
+ private String hostedDomain;
+ private boolean moderator;
+ private boolean admin;
+ private String alias;
+ private String proposedAlias;
+ @Enumerated(EnumType.STRING)
+ private ModerationStatus status;
+ private LocalDate dateApproved;
+
+ @ToString.Exclude
+ @OneToMany(mappedBy=&quot;reviewer&quot;)
+ @Fetch(FetchMode.JOIN)
+ private List&lt;Review&gt; reviews;
+ 
+ public String getAlias() {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (this.alias == null) {</span>
+<span class="fc" id="L55">            this.alias = &quot;Anonymous User&quot;; </span>
+        }
+<span class="fc" id="L57">        return this.alias;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
