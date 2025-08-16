@@ -4,6 +4,7 @@ edu.ucsb.cs156.dining.config
 edu.ucsb.cs156.dining.controllers
 edu.ucsb.cs156.dining.entities
 edu.ucsb.cs156.dining.errors
+edu.ucsb.cs156.dining.interceptors
 edu.ucsb.cs156.dining.models
 edu.ucsb.cs156.dining.repositories
 edu.ucsb.cs156.dining.services
