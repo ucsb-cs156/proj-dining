@@ -1,61 +1,54 @@
 package edu.ucsb.cs156.dining.controllers;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
-import edu.ucsb.cs156.dining.models.CurrentUser;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.context.TestPropertySource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import java.util.Optional;
-import java.util.Map;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
-import java.time.LocalDate;
-
 
 @WebMvcTest(controllers = UsersController.class)
 @Import(TestConfig.class)
-@TestPropertySource(properties = { "ADMIN_EMAILS=superadmin@example.org" })
+@TestPropertySource(properties = {"ADMIN_EMAILS=superadmin@example.org"})
 public class UsersControllerTests extends ControllerTestCase {
 
-  @MockBean
-  UserRepository userRepository;
+  @MockBean UserRepository userRepository;
 
   @Test
   public void users__logged_out() throws Exception {
-    mockMvc.perform(get("/api/admin/users"))
-        .andExpect(status().is(403));
+    mockMvc.perform(get("/api/admin/users")).andExpect(status().is(403));
   }
 
-  @WithMockUser(roles = { "USER" })
+  @WithMockUser(roles = {"USER"})
   @Test
   public void users__user_logged_in() throws Exception {
-    mockMvc.perform(get("/api/admin/users"))
-        .andExpect(status().is(403));
+    mockMvc.perform(get("/api/admin/users")).andExpect(status().is(403));
   }
 
-  @WithMockUser(roles = { "ADMIN", "USER" })
+  @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
   public void users__admin_logged_in() throws Exception {
     // arrange
@@ -70,8 +63,8 @@ public class UsersControllerTests extends ControllerTestCase {
     String expectedJson = mapper.writeValueAsString(expectedUsers);
 
     // act
-    MvcResult response = mockMvc.perform(get("/api/admin/users"))
-        .andExpect(status().isOk()).andReturn();
+    MvcResult response =
+        mockMvc.perform(get("/api/admin/users")).andExpect(status().isOk()).andReturn();
 
     // assert
     verify(userRepository, times(1)).findAll();
@@ -79,12 +72,13 @@ public class UsersControllerTests extends ControllerTestCase {
     assertEquals(expectedJson, responseString);
   }
 
-  @WithMockUser(roles = { "ADMIN", "USER" })
-    @Test
-    public void a_user_can_post_a_new_alias() throws Exception {
-        // arrange
-        User currentUser1 = User.builder()
-            .id(1L)  
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void a_user_can_post_a_new_alias() throws Exception {
+    // arrange
+    User currentUser1 =
+        User.builder()
+            .id(1L)
             .email("user@example.org")
             .googleSub("fake_user")
             .pictureUrl("https://example.org/user.jpg")
@@ -95,59 +89,63 @@ public class UsersControllerTests extends ControllerTestCase {
             .locale("")
             .hostedDomain("example.org")
             .admin(true)
-            .alias("Anonymous User") 
+            .alias("Anonymous User")
             .proposedAlias("Chipotle")
             .status(ModerationStatus.AWAITING_REVIEW)
             .build();
-        
-  
-        when(userRepository.save(eq(currentUser1))).thenReturn(currentUser1);
 
-        // act
-        MvcResult response = mockMvc.perform(
-            post("/api/currentUser/updateAlias?proposedAlias=Chipotle") 
-                        .with(csrf()))
-            .andExpect(status().isOk()).andReturn();
+    when(userRepository.save(eq(currentUser1))).thenReturn(currentUser1);
 
-        // assert
-        verify(userRepository, times(1)).save(currentUser1);
-        String expectedJson = mapper.writeValueAsString(currentUser1);
-        String responseString = response.getResponse().getContentAsString();
-        assertEquals(expectedJson, responseString);
-    }
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/currentUser/updateAlias?proposedAlias=Chipotle").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
+    // assert
+    verify(userRepository, times(1)).save(currentUser1);
+    String expectedJson = mapper.writeValueAsString(currentUser1);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_can_approve_proposed_alias() throws Exception {
     // arrange
-    User userOrig = User.builder()
-        .id(7L)
-        .email("user@example.org")
-        .alias("Anonymous User")
-        .proposedAlias("Chipotle")
-        .status(ModerationStatus.AWAITING_REVIEW)
-        .build();
+    User userOrig =
+        User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .alias("Anonymous User")
+            .proposedAlias("Chipotle")
+            .status(ModerationStatus.AWAITING_REVIEW)
+            .build();
 
-    User userEdited = User.builder()
-        .id(7L)
-        .email("user@example.org")
-        .alias("Chipotle")  
-        .proposedAlias(null) 
-        .status(ModerationStatus.APPROVED)
-        .dateApproved(LocalDate.now())
-        .build();
+    User userEdited =
+        User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .alias("Chipotle")
+            .proposedAlias(null)
+            .status(ModerationStatus.APPROVED)
+            .dateApproved(LocalDate.now())
+            .build();
 
     String requestBody = mapper.writeValueAsString(userEdited);
     when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
     // act
-    MvcResult response = mockMvc.perform(
-        put("/api/currentUser/updateAliasModeration")
-            .param("id", String.valueOf(7L))
-            .param("approved", String.valueOf(true))
-            .with(csrf()))
-        .andExpect(status().isOk()).andReturn();
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/currentUser/updateAliasModeration")
+                    .param("id", String.valueOf(7L))
+                    .param("approved", String.valueOf(true))
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
     // assert
     verify(userRepository, times(1)).findById(7L);
@@ -157,18 +155,21 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_cannot_approve_nonexistent_user() throws Exception {
     // arrange
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
     // act
-    MvcResult response = mockMvc.perform(
-        put("/api/currentUser/updateAliasModeration")
-            .param("id", String.valueOf(1L))
-            .param("approved", String.valueOf(true))
-            .with(csrf()))
-        .andExpect(status().isNotFound()).andReturn();
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/currentUser/updateAliasModeration")
+                    .param("id", String.valueOf(1L))
+                    .param("approved", String.valueOf(true))
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
     // assert
     verify(userRepository, times(1)).findById(1L);
@@ -177,163 +178,166 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = { "USER" })
+  @WithMockUser(roles = {"USER"})
   public void regular_users_cannot_update_alias_moderation() throws Exception {
-    mockMvc.perform(post("/api/currentUser/updateAliasModeration"))
-        .andExpect(status().is(403));
+    mockMvc.perform(post("/api/currentUser/updateAliasModeration")).andExpect(status().is(403));
   }
 
   @Test
-  @WithMockUser(roles = { "USER" })
+  @WithMockUser(roles = {"USER"})
   public void user_cannot_post_existing_alias() throws Exception {
-      User user = User.builder().alias("Chipotle").build();  
-      when(userRepository.findByAlias("Chipotle")).thenReturn(Optional.of(user));
+    User user = User.builder().alias("Chipotle").build();
+    when(userRepository.findByAlias("Chipotle")).thenReturn(Optional.of(user));
 
-      mockMvc.perform(post("/api/currentUser/updateAlias?proposedAlias=Chipotle")
-        .with(csrf()))
+    mockMvc
+        .perform(post("/api/currentUser/updateAlias?proposedAlias=Chipotle").with(csrf()))
         .andExpect(status().isBadRequest())
-        .andExpect(result -> {
-            // Assert that the exception is of type ResponseStatusException
-            assertTrue(result.getResolvedException() instanceof ResponseStatusException);
+        .andExpect(
+            result -> {
+              // Assert that the exception is of type ResponseStatusException
+              assertTrue(result.getResolvedException() instanceof ResponseStatusException);
 
-            // Verify the exception message
-            ResponseStatusException exception = (ResponseStatusException) result.getResolvedException();
-            assertEquals("Alias already in use.", exception.getReason());
-        });
+              // Verify the exception message
+              ResponseStatusException exception =
+                  (ResponseStatusException) result.getResolvedException();
+              assertEquals("Alias already in use.", exception.getReason());
+            });
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_approves_alias() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .alias("Chip")
-          .proposedAlias("Chop") 
-          .status(ModerationStatus.AWAITING_REVIEW)
-          .build();
+    // arrange
+    User userOrig =
+        User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .alias("Chip")
+            .proposedAlias("Chop")
+            .status(ModerationStatus.AWAITING_REVIEW)
+            .build();
 
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .alias("Chop") 
-          .proposedAlias(null)
-          .status(ModerationStatus.APPROVED)
-          .dateApproved(LocalDate.now())
-          .build();
+    User userUpdated =
+        User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .alias("Chop")
+            .proposedAlias(null)
+            .status(ModerationStatus.APPROVED)
+            .dateApproved(LocalDate.now())
+            .build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/currentUser/updateAliasModeration")
-              .param("id", String.valueOf(7L))
-              .param("approved", "true")
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/currentUser/updateAliasModeration")
+                    .param("id", String.valueOf(7L))
+                    .param("approved", "true")
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUpdated);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUpdated);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_does_not_approve_alias() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .alias("Chipotle")
-          .proposedAlias("Taco Bell")
-          .status(ModerationStatus.AWAITING_REVIEW)
-          .build();
+    // arrange
+    User userOrig =
+        User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .alias("Chipotle")
+            .proposedAlias("Taco Bell")
+            .status(ModerationStatus.AWAITING_REVIEW)
+            .build();
 
-      User userUnchanged = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .alias("Chipotle") 
-          .proposedAlias(null)
-          .status(ModerationStatus.REJECTED)
-          .build();
+    User userUnchanged =
+        User.builder()
+            .id(7L)
+            .email("user@example.org")
+            .alias("Chipotle")
+            .proposedAlias(null)
+            .status(ModerationStatus.REJECTED)
+            .build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/currentUser/updateAliasModeration")
-              .param("id", String.valueOf(7L))
-              .param("approved", "false") 
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/currentUser/updateAliasModeration")
+                    .param("id", String.valueOf(7L))
+                    .param("approved", "false")
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUnchanged);
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUnchanged);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUnchanged);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUnchanged);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_can_get_all_users_with_proposed_alias() throws Exception {
-      // arrange
-      User user1 = User.builder()
-        .id(1L)
-        .proposedAlias("Chipo")
-        .build();
-      User user2 = User.builder()
-        .id(2L)
-        .proposedAlias("Taco")
-        .build();
+    // arrange
+    User user1 = User.builder().id(1L).proposedAlias("Chipo").build();
+    User user2 = User.builder().id(2L).proposedAlias("Taco").build();
 
-      List<User> users = Arrays.asList(user1, user2);
+    List<User> users = Arrays.asList(user1, user2);
 
-      when(userRepository.findByProposedAliasNotNull()).thenReturn(users);
-      String expectedJson = mapper.writeValueAsString(users);
+    when(userRepository.findByProposedAliasNotNull()).thenReturn(users);
+    String expectedJson = mapper.writeValueAsString(users);
 
-      // act
-      MvcResult response = mockMvc.perform(get("/api/admin/usersWithProposedAlias")
-              .with(csrf()))
-              .andExpect(status().isOk())
-              .andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/admin/usersWithProposedAlias").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      String responseString = response.getResponse().getContentAsString();
-      assertEquals(expectedJson, responseString);
-      verify(userRepository, times(1)).findByProposedAliasNotNull();
+    // assert
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+    verify(userRepository, times(1)).findByProposedAliasNotNull();
   }
 
   @Test
-  @WithMockUser(roles = { "USER" })
+  @WithMockUser(roles = {"USER"})
   public void can_get_alias() throws Exception {
     // arrange
-      User user = User.builder()
-          .id(1L)
-          .alias("Chipo")
-          .build();
+    User user = User.builder().id(1L).alias("Chipo").build();
 
-      // assert
-      assertEquals("Chipo", user.getAlias());
+    // assert
+    assertEquals("Chipo", user.getAlias());
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_cannot_toggle_admin_of_nonexistent_user() throws Exception {
     // arrange
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
     // act
-    MvcResult response = mockMvc.perform(
-        put("/api/admin/toggleAdmin")
-            .param("id", String.valueOf(1L))
-            .with(csrf()))
-        .andExpect(status().isNotFound()).andReturn();
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(1L)).with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
     // assert
     verify(userRepository, times(1)).findById(1L);
@@ -342,116 +346,92 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_can_toggle_admin_of_user() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(false)
-          .build();
+    // arrange
+    User userOrig = User.builder().id(7L).email("user@example.org").admin(false).build();
 
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(true)
-          .build();
+    User userUpdated = User.builder().id(7L).email("user@example.org").admin(true).build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleAdmin")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(7L)).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUpdated);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUpdated);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_can_toggle_admin_of_basic_admin() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(true)
-          .build();
+    // arrange
+    User userOrig = User.builder().id(7L).email("user@example.org").admin(true).build();
 
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .admin(false)
-          .build();
+    User userUpdated = User.builder().id(7L).email("user@example.org").admin(false).build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleAdmin")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(7L)).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUpdated);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUpdated);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_cannot_toggle_admin_of_super_admin() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("superadmin@example.org")
-          .admin(true)
-          .build();
+    // arrange
+    User userOrig = User.builder().id(7L).email("superadmin@example.org").admin(true).build();
 
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("superadmin@example.org")
-          .admin(true)
-          .build();
+    User userUpdated = User.builder().id(7L).email("superadmin@example.org").admin(true).build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleAdmin")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(7L)).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUpdated);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUpdated);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_cannot_toggle_moderator_of_nonexistent_user() throws Exception {
     // arrange
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
     // act
-    MvcResult response = mockMvc.perform(
-        put("/api/admin/toggleModerator")
-            .param("id", String.valueOf(1L))
-            .with(csrf()))
-        .andExpect(status().isNotFound()).andReturn();
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleModerator").param("id", String.valueOf(1L)).with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
     // assert
     verify(userRepository, times(1)).findById(1L);
@@ -460,68 +440,52 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_can_toggle_moderator_of_user() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .moderator(false)
-          .build();
+    // arrange
+    User userOrig = User.builder().id(7L).email("user@example.org").moderator(false).build();
 
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .moderator(true)
-          .build();
+    User userUpdated = User.builder().id(7L).email("user@example.org").moderator(true).build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleModerator")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleModerator").param("id", String.valueOf(7L)).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUpdated);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUpdated);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
-  @WithMockUser(roles = { "ADMIN" })
+  @WithMockUser(roles = {"ADMIN"})
   public void admin_can_toggle_moderator_of_moderator() throws Exception {
-      // arrange
-      User userOrig = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .moderator(true)
-          .build();
+    // arrange
+    User userOrig = User.builder().id(7L).email("user@example.org").moderator(true).build();
 
-      User userUpdated = User.builder()
-          .id(7L)
-          .email("user@example.org")
-          .moderator(false)
-          .build();
+    User userUpdated = User.builder().id(7L).email("user@example.org").moderator(false).build();
 
-      when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
 
-      // act
-      MvcResult response = mockMvc.perform(
-          put("/api/admin/toggleModerator")
-              .param("id", String.valueOf(7L))
-              .with(csrf()))
-          .andExpect(status().isOk()).andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(put("/api/admin/toggleModerator").param("id", String.valueOf(7L)).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
-      // assert
-      verify(userRepository, times(1)).findById(7L);
-      verify(userRepository, times(1)).save(userUpdated); 
-      String responseString = response.getResponse().getContentAsString();
-      String expectedJson = mapper.writeValueAsString(userUpdated);
-      assertEquals(expectedJson, responseString);
+    // assert
+    verify(userRepository, times(1)).findById(7L);
+    verify(userRepository, times(1)).save(userUpdated);
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(userUpdated);
+    assertEquals(expectedJson, responseString);
   }
 }

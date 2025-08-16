@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.models.DiningCommons;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,7 @@ public class DiningCommonsService {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
-  public static final String ENDPOINT =
-      "https://api.ucsb.edu/dining/commons/v1/";
+  public static final String ENDPOINT = "https://api.ucsb.edu/dining/commons/v1/";
 
   private final RestTemplate restTemplate;
 

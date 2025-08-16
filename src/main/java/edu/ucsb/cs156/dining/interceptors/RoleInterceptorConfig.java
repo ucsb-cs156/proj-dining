@@ -8,12 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Component
 public class RoleInterceptorConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private RoleInterceptor roleInterceptor;
+  @Autowired private RoleInterceptor roleInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(roleInterceptor);
-    }
-
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(roleInterceptor);
+  }
 }

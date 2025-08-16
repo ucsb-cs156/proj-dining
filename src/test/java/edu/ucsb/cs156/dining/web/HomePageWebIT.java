@@ -1,5 +1,12 @@
 package edu.ucsb.cs156.dining.web;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,46 +17,39 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("integration")
 public class HomePageWebIT {
-    @Value("${app.playwright.headless:true}")
-    private boolean runHeadless;
+  @Value("${app.playwright.headless:true}")
+  private boolean runHeadless;
 
-    @LocalServerPort
-    private int port;
+  @LocalServerPort private int port;
 
-    private Browser browser;
-    private Page page;
+  private Browser browser;
+  private Page page;
 
-    @BeforeEach
-    public void setup() {
-        browser = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(runHeadless));
+  @BeforeEach
+  public void setup() {
+    browser =
+        Playwright.create()
+            .chromium()
+            .launch(new BrowserType.LaunchOptions().setHeadless(runHeadless));
 
-        BrowserContext context = browser.newContext();
-        page = context.newPage();
-    }
+    BrowserContext context = browser.newContext();
+    page = context.newPage();
+  }
 
-    @AfterEach
-    public void teardown() {
-        browser.close();
-    }
+  @AfterEach
+  public void teardown() {
+    browser.close();
+  }
 
-    @Test
-    public void home_page_shows_greeting() throws Exception {
-        String url = String.format("http://localhost:%d/", port);
-        page.navigate(url);
+  @Test
+  public void home_page_shows_greeting() throws Exception {
+    String url = String.format("http://localhost:%d/", port);
+    page.navigate(url);
 
-        assertThat(page.getByText("Dining Commons"))
-                .isVisible();
-    }
-
+    assertThat(page.getByText("Dining Commons")).isVisible();
+  }
 }

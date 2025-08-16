@@ -1,28 +1,23 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.services.CurrentUserService;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Map;
-
-/**
- * This is an abstract class that provides common functionality for all API controllers.
- */
-
+/** This is an abstract class that provides common functionality for all API controllers. */
 @Slf4j
 public abstract class ApiController {
-  @Autowired
-  private CurrentUserService currentUserService;
+  @Autowired private CurrentUserService currentUserService;
 
   /**
    * This method returns the current user.
+   *
    * @return the current user
    */
   protected CurrentUser getCurrentUser() {
@@ -31,6 +26,7 @@ public abstract class ApiController {
 
   /**
    * This method returns a generic message.
+   *
    * @param message the message
    * @return a map with the message
    */
@@ -40,15 +36,15 @@ public abstract class ApiController {
 
   /**
    * This method handles the EntityNotFoundException.
+   *
    * @param e the exception
    * @return a map with the type and message of the exception
    */
-  @ExceptionHandler({ EntityNotFoundException.class })
+  @ExceptionHandler({EntityNotFoundException.class})
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public Object handleGenericException(Throwable e) {
     return Map.of(
-      "type", e.getClass().getSimpleName(),
-      "message", e.getMessage()
-    );
+        "type", e.getClass().getSimpleName(),
+        "message", e.getMessage());
   }
 }

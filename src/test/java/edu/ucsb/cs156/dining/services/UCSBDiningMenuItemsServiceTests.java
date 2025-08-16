@@ -1,24 +1,22 @@
 package edu.ucsb.cs156.dining.services;
 
-import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
-import edu.ucsb.cs156.dining.models.Entree;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
@@ -32,8 +30,7 @@ public class UCSBDiningMenuItemsServiceTests {
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
-  @MockBean
-  private WiremockService wiremockService;
+  @MockBean private WiremockService wiremockService;
 
   @Mock private RestTemplate restTemplate;
 
@@ -64,13 +61,9 @@ public class UCSBDiningMenuItemsServiceTests {
                   }
                 ]
             """,
-            NAME,
-            STATION);
+            NAME, STATION);
 
-    Entree expectedEntree = Entree.builder()
-        .name(NAME)
-        .station(STATION)
-        .build();
+    Entree expectedEntree = Entree.builder().name(NAME).station(STATION).build();
 
     this.mockRestServiceServer
         .expect(requestTo(expectedURL))
@@ -79,7 +72,8 @@ public class UCSBDiningMenuItemsServiceTests {
         .andExpect(header("ucsb-api-key", apiKey))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
-    List<Entree> actualResult = ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode);
+    List<Entree> actualResult =
+        ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode);
     List<Entree> expectedList = new ArrayList<>();
     expectedList.addAll(Arrays.asList(expectedEntree));
     assertEquals(expectedList, actualResult);

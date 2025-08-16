@@ -7,7 +7,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import edu.ucsb.cs156.dining.models.DiningCommons;
 import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -25,8 +25,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 @ContextConfiguration(classes = {})
 class DiningCommonsServiceTests {
 
-  @MockBean
-  private WiremockService wiremockService;
+  @MockBean private WiremockService wiremockService;
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
@@ -65,13 +64,7 @@ class DiningCommonsServiceTests {
             }
             ]
             """,
-            NAME,
-            CODE,
-            HASDININGCAM,
-            HASSACKMEAL,
-            HASTAKEOUTMEAL,
-            LONGITUDE,
-            LATITUDE);
+            NAME, CODE, HASDININGCAM, HASSACKMEAL, HASTAKEOUTMEAL, LONGITUDE, LATITUDE);
 
     DiningCommons expectedCommons =
         DiningCommons.builder()
