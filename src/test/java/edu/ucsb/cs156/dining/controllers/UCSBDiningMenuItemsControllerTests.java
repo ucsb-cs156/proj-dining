@@ -103,4 +103,32 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     Optional<MenuItem> found = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station);
     assertTrue(found.isPresent());
   }
+
+  @Test
+  public void get_menu_item_by_id_success() throws Exception {
+    // arrange
+    MenuItem menuItem = new MenuItem(1L, "portola", "dinner", "Spicy Tuna Roll", "International", null);
+    when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
+
+    // act and assert
+    mockMvc.perform(get("/api/diningcommons/menuitem?id=1")
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id").value(1))
+          .andExpect(jsonPath("$.name").value("Spicy Tuna Roll"))
+          .andExpect(jsonPath("$.station").value("International"))
+          .andExpect(jsonPath("$.diningCommonsCode").value("portola"))
+          .andExpect(jsonPath("$.mealCode").value("dinner"));
+  }
+
+  @Test
+  public void get_menu_item_by_id_not_found() throws Exception {
+    // arrange
+    when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
+
+    // act and assert
+    mockMvc.perform(get("/api/diningcommons/menuitem?id=1")
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isNotFound());
+  }
 }
