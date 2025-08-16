@@ -13,8 +13,8 @@ proj-dining,edu.ucsb.cs156.dining.statuses,ModerationStatus,0,21,0,0,0,2,0,1,0,1
 proj-dining,edu.ucsb.cs156.dining.errors,EntityNotFoundException,0,17,0,0,0,3,0,1,0,1
 proj-dining,edu.ucsb.cs156.dining.models,DiningCommons,0,13,0,0,0,3,0,1,0,1
 proj-dining,edu.ucsb.cs156.dining.services,UCSBDiningMenuItemsService.new TypeReference() {...},0,3,0,0,0,1,0,1,0,1
-proj-dining,edu.ucsb.cs156.dining.services,DiningCommonsService,0,58,0,0,0,15,0,3,0,3
 proj-dining,edu.ucsb.cs156.dining.services,UCSBDiningMenuService,0,118,0,0,0,24,0,3,0,3
+proj-dining,edu.ucsb.cs156.dining.services,DiningCommonsService,0,58,0,0,0,15,0,3,0,3
 proj-dining,edu.ucsb.cs156.dining.services,CurrentUserService,0,10,0,2,0,2,0,3,0,2
 proj-dining,edu.ucsb.cs156.dining.services,SystemInfoServiceImpl,0,52,0,4,0,14,0,6,0,4
 proj-dining,edu.ucsb.cs156.dining.services,UCSBDiningMenuItemsService,0,80,0,0,0,18,0,3,0,3
