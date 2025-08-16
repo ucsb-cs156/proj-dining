@@ -8,13 +8,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Component
 <span class="fc" id="L9">public class RoleInterceptorConfig implements WebMvcConfigurer {</span>
 
-    @Autowired
-    private RoleInterceptor roleInterceptor;
+  @Autowired private RoleInterceptor roleInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-<span class="fc" id="L16">        registry.addInterceptor(roleInterceptor);</span>
-<span class="fc" id="L17">    }</span>
-
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+<span class="fc" id="L15">    registry.addInterceptor(roleInterceptor);</span>
+<span class="fc" id="L16">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

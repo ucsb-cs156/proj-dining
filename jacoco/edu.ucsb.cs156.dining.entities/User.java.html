@@ -3,54 +3,53 @@
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import java.time.LocalDate;
-import java.util.List;
-
-/**
-* This is a JPA entity that represents a user.
-*/
-
+/** This is a JPA entity that represents a user. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity(name = &quot;users&quot;)
 public class User {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- private long id;
- private String email;
- private String googleSub;
- private String pictureUrl;
- private String fullName;
- private String givenName;
- private String familyName;
- private boolean emailVerified;
- private String locale;
- private String hostedDomain;
- private boolean admin;
- private boolean moderator;
- private String alias;
- private String proposedAlias;
- @Enumerated(EnumType.STRING)
- private ModerationStatus status;
- private LocalDate dateApproved;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
- @ToString.Exclude
- @JsonIgnore
- @OneToMany(mappedBy=&quot;reviewer&quot;)
- @Fetch(FetchMode.JOIN)
- private List&lt;Review&gt; reviews;
- 
- public String getAlias() {
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (this.alias == null) {</span>
-<span class="fc" id="L51">            this.alias = &quot;Anonymous User&quot;; </span>
-        }
-<span class="fc" id="L53">        return this.alias;</span>
+  private String email;
+  private String googleSub;
+  private String pictureUrl;
+  private String fullName;
+  private String givenName;
+  private String familyName;
+  private boolean emailVerified;
+  private String locale;
+  private String hostedDomain;
+  private boolean admin;
+  private boolean moderator;
+  private String alias;
+  private String proposedAlias;
+
+  @Enumerated(EnumType.STRING)
+  private ModerationStatus status;
+
+  private LocalDate dateApproved;
+
+  @ToString.Exclude
+  @JsonIgnore
+  @OneToMany(mappedBy = &quot;reviewer&quot;)
+  @Fetch(FetchMode.JOIN)
+  private List&lt;Review&gt; reviews;
+
+  public String getAlias() {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">    if (this.alias == null) {</span>
+<span class="fc" id="L50">      this.alias = &quot;Anonymous User&quot;;</span>
     }
+<span class="fc" id="L52">    return this.alias;</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

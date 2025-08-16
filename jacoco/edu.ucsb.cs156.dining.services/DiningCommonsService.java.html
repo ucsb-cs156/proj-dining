@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.models.DiningCommons;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 // Service for the dining commons page.
 // This service particularly utilizes an endpoint for getting all dining commons from the above api.
 
-<span class="fc" id="L30">@Slf4j</span>
+<span class="fc" id="L29">@Slf4j</span>
 @Service(&quot;DiningCommons&quot;)
 public class DiningCommonsService {
 
@@ -36,31 +35,30 @@ public class DiningCommonsService {
   @Value(&quot;${app.ucsb.api.consumer_key}&quot;)
   private String apiKey;
 
-  public static final String ENDPOINT =
-      &quot;https://api.ucsb.edu/dining/commons/v1/&quot;;
+  public static final String ENDPOINT = &quot;https://api.ucsb.edu/dining/commons/v1/&quot;;
 
   private final RestTemplate restTemplate;
 
-<span class="fc" id="L44">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {</span>
-<span class="fc" id="L45">    restTemplate = restTemplateBuilder.build();</span>
-<span class="fc" id="L46">  }</span>
+<span class="fc" id="L42">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {</span>
+<span class="fc" id="L43">    restTemplate = restTemplateBuilder.build();</span>
+<span class="fc" id="L44">  }</span>
 
   public List&lt;DiningCommons&gt; get() throws JsonProcessingException {
 
-<span class="fc" id="L50">    HttpHeaders headers = new HttpHeaders();</span>
-<span class="fc" id="L51">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
-<span class="fc" id="L52">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
-<span class="fc" id="L53">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L48">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L49">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L50">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L51">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
 
-<span class="fc" id="L55">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
-<span class="fc" id="L56">    ResponseEntity&lt;String&gt; re =</span>
-<span class="fc" id="L57">        restTemplate.exchange(ENDPOINT, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L53">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
+<span class="fc" id="L54">    ResponseEntity&lt;String&gt; re =</span>
+<span class="fc" id="L55">        restTemplate.exchange(ENDPOINT, HttpMethod.GET, entity, String.class);</span>
 
-<span class="fc" id="L59">    String retBody = re.getBody();</span>
-<span class="fc" id="L60">    List&lt;DiningCommons&gt; commons =</span>
-<span class="fc" id="L61">        mapper.readValue(retBody, new TypeReference&lt;List&lt;DiningCommons&gt;&gt;() {});</span>
+<span class="fc" id="L57">    String retBody = re.getBody();</span>
+<span class="fc" id="L58">    List&lt;DiningCommons&gt; commons =</span>
+<span class="fc" id="L59">        mapper.readValue(retBody, new TypeReference&lt;List&lt;DiningCommons&gt;&gt;() {});</span>
 
-<span class="fc" id="L63">    return commons;</span>
+<span class="fc" id="L61">    return commons;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
