@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156/proj-dining
 owner: ucsb-cs156
 repo_name: proj-dining
-pull_requests: [{"author":{"id":"MDQ6VXNlcjExMTkwMTc=","is_bot":false,"login":"pconrad","name":"Phill Conrad"},"headRefName":"pc-backend-format","number":74,"title":"pc - this commit has the changes in install backend code formatting","url":"https://github.com/ucsb-cs156/proj-dining/pull/74"}]
+pull_requests: []
