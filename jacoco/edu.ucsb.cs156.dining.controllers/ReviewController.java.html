@@ -192,7 +192,7 @@ import jakarta.validation.Valid;
     }
 
     @Operation(summary = &quot;Moderate a review&quot;)
-    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')&quot;)
     @PutMapping(&quot;/moderate&quot;)
     public Review moderateReview(@Parameter Long id, @Parameter ModerationStatus status, @Parameter String moderatorComments) {
 <span class="fc" id="L198">        Review review = reviewRepository.findById(id).orElseThrow(</span>
@@ -207,7 +207,7 @@ import jakarta.validation.Valid;
     }
 
     @Operation(summary = &quot;See reviews that need moderation&quot;)
-    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')&quot;)
     @GetMapping(&quot;/needsmoderation&quot;)
     public Iterable&lt;Review&gt; needsmoderation() {
 <span class="fc" id="L213">        Iterable&lt;Review&gt; reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);</span>
