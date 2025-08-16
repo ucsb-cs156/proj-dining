@@ -1,40 +1,33 @@
 package edu.ucsb.cs156.dining.controllers;
 
-import edu.ucsb.cs156.dining.models.Entree;
-import edu.ucsb.cs156.dining.entities.MenuItem;
-import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
-import edu.ucsb.cs156.dining.controllers.UCSBDiningMenuItemsController;
-
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import org.springframework.http.MediaType;
-import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.config.SecurityConfig;
+import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import static org.mockito.Mockito.times;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 @WebMvcTest(value = UCSBDiningMenuItemsController.class)
 @Import(SecurityConfig.class)
@@ -47,14 +40,12 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean
-  MenuItemRepository menuItemRepository;
+  @MockBean MenuItemRepository menuItemRepository;
 
   private static final String NAME = "NAME";
   private static final String STATION = "STATION";
 
-
-  @WithMockUser(roles = { "USER" })
+  @WithMockUser(roles = {"USER"})
   @Test
   public void meal_item_created_and_found() throws Exception {
     String dateTime = "2023-10-11";
@@ -64,61 +55,72 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     String station = "International";
 
     Entree entree = new Entree(name, station);
-        List<Entree> entrees = new ArrayList<>();
-        entrees.add(entree);
+    List<Entree> entrees = new ArrayList<>();
+    entrees.add(entree);
 
-    when(ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode))
-            .thenReturn(entrees);
+    when(ucsbDiningMenuItemsService.get(dateTime, diningCommonCode, mealCode)).thenReturn(entrees);
 
-    when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station))
+    when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(
+            diningCommonCode, mealCode, name, station))
         .thenReturn(Optional.empty());
 
-    when(menuItemRepository.save(any(MenuItem.class))).thenAnswer(invocation -> {
-      MenuItem menuItem = invocation.getArgument(0);
-      menuItem.setId(1L);
-      return menuItem;
-    });
+    when(menuItemRepository.save(any(MenuItem.class)))
+        .thenAnswer(
+            invocation -> {
+              MenuItem menuItem = invocation.getArgument(0);
+              menuItem.setId(1L);
+              return menuItem;
+            });
 
-    MvcResult result = mockMvc.perform(get("/api/diningcommons/2023-10-11/portola/dinner")
-          .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$[0].name").value(name))
-          .andReturn();
+    MvcResult result =
+        mockMvc
+            .perform(
+                get("/api/diningcommons/2023-10-11/portola/dinner")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].name").value(name))
+            .andReturn();
 
     String responseBody = result.getResponse().getContentAsString();
 
-    List<MenuItem> menuItems = objectMapper.readValue(responseBody, new TypeReference<List<MenuItem>>(){});
-  
-    for(MenuItem item : menuItems){
-        menuItemRepository.save(item);
+    List<MenuItem> menuItems =
+        objectMapper.readValue(responseBody, new TypeReference<List<MenuItem>>() {});
 
-      when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station))
-            .thenReturn(Optional.of(new MenuItem(1L, diningCommonCode, mealCode, name, station, null)));
+    for (MenuItem item : menuItems) {
+      menuItemRepository.save(item);
+
+      when(menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(
+              diningCommonCode, mealCode, name, station))
+          .thenReturn(
+              Optional.of(new MenuItem(1L, diningCommonCode, mealCode, name, station, null)));
 
       assertEquals(item.getDiningCommonsCode(), "portola");
       assertEquals(item.getMealCode(), "dinner");
       assertEquals(item.getStation(), "International");
     }
 
-    Optional<MenuItem> found = menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(diningCommonCode, mealCode, name, station);
+    Optional<MenuItem> found =
+        menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(
+            diningCommonCode, mealCode, name, station);
     assertTrue(found.isPresent());
   }
 
   @Test
   public void get_menu_item_by_id_success() throws Exception {
     // arrange
-    MenuItem menuItem = new MenuItem(1L, "portola", "dinner", "Spicy Tuna Roll", "International", null);
+    MenuItem menuItem =
+        new MenuItem(1L, "portola", "dinner", "Spicy Tuna Roll", "International", null);
     when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
 
     // act and assert
-    mockMvc.perform(get("/api/diningcommons/menuitem?id=1")
-          .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$.id").value(1))
-          .andExpect(jsonPath("$.name").value("Spicy Tuna Roll"))
-          .andExpect(jsonPath("$.station").value("International"))
-          .andExpect(jsonPath("$.diningCommonsCode").value("portola"))
-          .andExpect(jsonPath("$.mealCode").value("dinner"));
+    mockMvc
+        .perform(get("/api/diningcommons/menuitem?id=1").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("Spicy Tuna Roll"))
+        .andExpect(jsonPath("$.station").value("International"))
+        .andExpect(jsonPath("$.diningCommonsCode").value("portola"))
+        .andExpect(jsonPath("$.mealCode").value("dinner"));
   }
 
   @Test
@@ -127,8 +129,8 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
 
     // act and assert
-    mockMvc.perform(get("/api/diningcommons/menuitem?id=1")
-          .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound());
+    mockMvc
+        .perform(get("/api/diningcommons/menuitem?id=1").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
   }
 }

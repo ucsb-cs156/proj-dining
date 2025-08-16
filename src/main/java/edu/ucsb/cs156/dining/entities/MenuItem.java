@@ -2,19 +2,16 @@ package edu.ucsb.cs156.dining.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import java.util.List;
-
-
 /**
  * This is a JPA entity that represents a MenuItem
  *
- * A MenuItem represents an actual menu item in a dining commons at UCSB
+ * <p>A MenuItem represents an actual menu item in a dining commons at UCSB
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

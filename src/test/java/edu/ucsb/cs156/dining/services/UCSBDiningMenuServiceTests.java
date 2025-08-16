@@ -1,21 +1,18 @@
 package edu.ucsb.cs156.dining.services;
 
-import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
+import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
@@ -29,8 +26,7 @@ public class UCSBDiningMenuServiceTests {
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
-  @MockBean
-  private WiremockService wiremockService;
+  @MockBean private WiremockService wiremockService;
 
   @Mock private RestTemplate restTemplate;
 

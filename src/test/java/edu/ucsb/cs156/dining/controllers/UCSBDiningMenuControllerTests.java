@@ -8,19 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.config.SecurityConfig;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @WebMvcTest(value = UCSBDiningMenuController.class)
 @Import(SecurityConfig.class)
