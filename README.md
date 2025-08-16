@@ -2,6 +2,11 @@
 
 UCSB Dining Hall Menus and Reviews
 
+| Deployment | URL |
+|-|-|
+| production | <https://dining.dokku-00.cs.ucsb.edu> |
+| qa | <https://dining-qa.dokku-00.cs.ucsb.edu> |
+
 Sprint Planning Doc for S25:
 * <https://docs.google.com/document/d/1VUmwQ6v9CETMAIM0KplYDxt7ZocQmSNv7fZM3tVoHfw/edit?usp=sharing>
 
