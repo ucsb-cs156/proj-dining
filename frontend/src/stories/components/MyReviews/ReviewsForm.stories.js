@@ -3,7 +3,7 @@ import ReviewForm from "main/components/MyReviews/ReviewForm";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 
 export default {
-  title: "components/MyReviews/ReviewsTable",
+  title: "components/MyReviews/ReviewsForm",
   component: ReviewForm,
 };
 
