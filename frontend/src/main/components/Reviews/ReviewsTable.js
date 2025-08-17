@@ -24,7 +24,7 @@ export default function ReviewsTable({
   const deleteMutation = useBackendMutation(
     cellToAxiosParamsDelete,
     { onSuccess: onDeleteSuccess },
-    ["/api/reviews/userReviews"],
+    ["/api/reviews/userReviews", "/api/reviews/needsmoderation"],
   );
   // Stryker restore all
 
@@ -37,13 +37,13 @@ export default function ReviewsTable({
   const approveMutation = useBackendMutation(
     (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
     { onSuccess: onModerateSuccess },
-    ["/api/reviews/all"],
+    ["/api/reviews/needsmoderation"],
   );
 
   const rejectMutation = useBackendMutation(
     (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
     { onSuccess: onModerateSuccess },
-    ["/api/reviews/all"],
+    ["/api/reviews/needsmoderation"],
   );
 
   const approveCallback = async (cell) => {
