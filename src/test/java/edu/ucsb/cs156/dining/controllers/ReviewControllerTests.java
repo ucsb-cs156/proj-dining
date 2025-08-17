@@ -415,7 +415,8 @@ public class ReviewControllerTests extends ControllerTestCase {
   @Test
   public void testItemIdIsInvalid_NotFound() throws Exception {
 
-    // Act: Perform the request and expect the review creation to fail due to non-existing itemId
+    // Act: Perform the request and expect the review creation to fail due to
+    // non-existing itemId
     mockMvc
         .perform(
             post("/api/reviews/post")
@@ -1177,5 +1178,71 @@ public class ReviewControllerTests extends ControllerTestCase {
     String responseJson = response.getResponse().getContentAsString();
     verify(reviewRepository, times(1)).findByStatus(eq(ModerationStatus.AWAITING_REVIEW));
     assertEquals(expectedJson, responseJson);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void allApprovedReviewsForItem_returns_approved_reviews_for_existing_item()
+      throws Exception {
+    // Arrange
+    long itemId = 1L;
+    MenuItem item = MenuItem.builder().id(itemId).build();
+
+    Review review1 =
+        Review.builder()
+            .id(10L)
+            .item(item)
+            .status(ModerationStatus.APPROVED)
+            .reviewerComments("Great!")
+            .build();
+
+    Review review2 =
+        Review.builder()
+            .id(11L)
+            .item(item)
+            .status(ModerationStatus.APPROVED)
+            .reviewerComments("Loved it!")
+            .build();
+
+    ArrayList<Review> approvedReviews = new ArrayList<>(Arrays.asList(review1, review2));
+
+    when(menuItemRepository.findById(eq(itemId))).thenReturn(Optional.of(item));
+    when(reviewRepository.findByItemAndStatus(eq(item), eq(ModerationStatus.APPROVED)))
+        .thenReturn(approvedReviews);
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/reviews/approved/forItem/" + itemId).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // Assert
+    String expectedJson = mapper.writeValueAsString(approvedReviews);
+    String responseJson = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseJson);
+    verify(menuItemRepository, times(1)).findById(eq(itemId));
+    verify(reviewRepository, times(1)).findByItemAndStatus(eq(item), eq(ModerationStatus.APPROVED));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void allApprovedReviewsForItem_returns_not_found_for_nonexistent_item() throws Exception {
+    // Arrange
+    long itemId = 999L;
+    when(menuItemRepository.findById(eq(itemId))).thenReturn(Optional.empty());
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/reviews/approved/forItem/" + itemId).with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // Assert
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("MenuItem with id 999 not found", json.get("message"));
+    verify(menuItemRepository, times(1)).findById(eq(itemId));
+    verify(reviewRepository, times(0)).findByItemAndStatus(any(), any());
   }
 }

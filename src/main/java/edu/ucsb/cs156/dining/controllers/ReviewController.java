@@ -26,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,6 +65,26 @@ public class ReviewController extends ApiController {
     log.info("Attempting to log all reviews");
     Iterable<Review> reviews = reviewRepository.findAll();
     log.info("all reviews found, ", reviews);
+    return reviews;
+  }
+
+  /**
+   * This method returns a list of all Reviews.
+   *
+   * @return a list of all Reviews
+   */
+  @Operation(summary = "List all approved reviews for a specific item")
+  @GetMapping("/approved/forItem/{itemId}")
+  public Iterable<Review> allApprovedReviewsForItem(
+      @Parameter(name = "itemId") @PathVariable("itemId") long itemId) {
+    log.info("Attempting to log all approved reviews for item with id: {}", itemId);
+    MenuItem item =
+        menuItemRepository
+            .findById(itemId)
+            .orElseThrow(() -> new EntityNotFoundException(MenuItem.class, itemId));
+    Iterable<Review> reviews =
+        reviewRepository.findByItemAndStatus(item, ModerationStatus.APPROVED);
+    log.info("all approved reviews for item found, ", reviews);
     return reviews;
   }
 
