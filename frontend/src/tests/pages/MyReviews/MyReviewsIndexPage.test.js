@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";

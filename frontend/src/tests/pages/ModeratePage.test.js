@@ -1,6 +1,6 @@
 import { render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import Moderate from "main/pages/ModeratePage";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";

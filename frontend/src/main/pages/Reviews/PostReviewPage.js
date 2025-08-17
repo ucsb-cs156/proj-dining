@@ -1,5 +1,5 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import React from "react";
 import axios from "axios";
 import { toast } from "react-toastify";

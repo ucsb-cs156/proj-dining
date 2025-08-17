@@ -1,6 +1,6 @@
 import { render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router";
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
