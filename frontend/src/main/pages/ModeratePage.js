@@ -13,8 +13,8 @@ const Moderate = () => {
     status: _status,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/reviews/all"],
-    { method: "GET", url: "/api/reviews/all" },
+    ["/api/reviews/needsmoderation"],
+    { method: "GET", url: "/api/reviews/needsmoderation" },
     // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );
@@ -23,18 +23,11 @@ const Moderate = () => {
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
 
-  // Stryker disable all
-  const filteredReviews =
-    reviews?.filter((review) => review.status === "AWAITING_REVIEW") || [];
-
   return (
     <BasicLayout>
       <div className="pt-2">
         <h1>Moderation Page</h1>
-        <ReviewsTable
-          reviews={filteredReviews}
-          moderatorOptions={moderatorOptions}
-        />
+        <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
       </div>
     </BasicLayout>
   );
