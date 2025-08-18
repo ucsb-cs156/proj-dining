@@ -61,7 +61,9 @@ describe("Moderate Page Tests", () => {
   test("renders reviews with approve/reject buttons for moderator", async () => {
     setupModerator();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -88,7 +90,9 @@ describe("Moderate Page Tests", () => {
   test("renders reviews with approve/reject buttons for admin", async () => {
     setupAdmin();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -115,7 +119,7 @@ describe("Moderate Page Tests", () => {
   test("handles error when backend is unavailable for moderator", async () => {
     setupModerator();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").timeout();
+    axiosMock.onGet("/api/reviews/needsmoderation").timeout();
     const restoreConsole = mockConsole();
 
     render(
@@ -132,7 +136,7 @@ describe("Moderate Page Tests", () => {
 
     const errorMessage = console.error.mock.calls[0][0];
     expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/reviews/all",
+      "Error communicating with backend via GET on /api/reviews/needsmoderation",
     );
     restoreConsole();
 
@@ -144,7 +148,9 @@ describe("Moderate Page Tests", () => {
   test("does NOT render approve/reject buttons for regular user", async () => {
     setupUserOnly();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
 
     render(
       <QueryClientProvider client={queryClient}>

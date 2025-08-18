@@ -1,5 +1,6 @@
 package edu.ucsb.cs156.dining.repositories;
 
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
@@ -19,4 +20,6 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
   Iterable<Review> findByReviewer(User user);
 
   Iterable<Review> findByStatus(ModerationStatus moderationStatus);
+
+  Iterable<Review> findByItemAndStatus(MenuItem item, ModerationStatus approved);
 }

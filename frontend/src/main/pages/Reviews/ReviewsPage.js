@@ -11,20 +11,16 @@ export default function ReviewsPage() {
     status: _status,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/reviews/all"],
-    { method: "GET", url: "/api/reviews/all" },
+    [`/api/reviews/approved/forItem/${itemid}`],
+    { method: "GET", url: `/api/reviews/approved/forItem/${itemid}` },
     [],
   );
-
-  // Stryker disable all
-  const filteredReviews =
-    reviews?.filter((review) => review.item.id === Number(itemid)) || [];
 
   return (
     <BasicLayout>
       <div className="pt-2">
         <h1>Reviews for Menu Item {itemid}</h1>
-        <ReviewsTable reviews={filteredReviews} />
+        <ReviewsTable reviews={reviews} />
       </div>
     </BasicLayout>
   );

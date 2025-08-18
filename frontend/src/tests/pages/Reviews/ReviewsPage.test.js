@@ -20,20 +20,24 @@ jest.mock("react-toastify", () => {
   };
 });
 
+let axiosMock;
 describe("ReviewsPage tests", () => {
-  const axiosMock = new AxiosMockAdapter(axios);
   const testId = "Reviewstable";
 
   const setupUserOnly = () => {
-    axiosMock.reset();
-    axiosMock.resetHistory();
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
+  };
+
+  beforeEach(() => {
+    axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.reset();
+    axiosMock.resetHistory();
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
-  };
+  });
 
   const renderWithRoute = (itemid) => {
     const queryClient = new QueryClient();
@@ -48,38 +52,25 @@ describe("ReviewsPage tests", () => {
     );
   };
 
-  test("renders reviews filtered by itemid", async () => {
-    setupUserOnly();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
-
-    renderWithRoute("7");
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
-      ).toHaveTextContent("7");
-    });
-
-    expect(
-      screen.queryByTestId(`${testId}-cell-row-1-col-item.id`),
-    ).not.toBeInTheDocument();
-  });
-
   test("renders empty table when backend is unavailable", async () => {
+    const itemid = "7";
     setupUserOnly();
-    axiosMock.onGet("/api/reviews/all").timeout();
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemid}`).timeout();
     const restoreConsole = mockConsole();
 
-    renderWithRoute("7");
+    renderWithRoute(itemid);
 
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
     });
 
-    const errorMessage = console.error.mock.calls[0][0];
-    expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/reviews/all",
+    expect(console.error).toHaveBeenCalled();
+
+    expect(console.error.mock.calls.length).toBe(1);
+    expect(console.error.mock.calls[0][0]).toMatch(
+      `Error communicating with backend via GET on /api/reviews/approved/forItem/${itemid}`,
     );
+
     restoreConsole();
 
     expect(
@@ -87,43 +78,19 @@ describe("ReviewsPage tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("renders empty table if no reviews match the itemid", async () => {
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
-
-    renderWithRoute(999);
-
-    await waitFor(() => {
-      expect(screen.getByText("Reviews for Menu Item 999")).toBeInTheDocument();
-    });
-
-    expect(
-      screen.queryByTestId("Reviewstable-cell-row-0-col-item.id"),
-    ).not.toBeInTheDocument();
-  });
-
-  test("handles undefined reviews safely", async () => {
+  test("renders table when backend is available", async () => {
+    const itemid = "7";
     setupUserOnly();
-    axiosMock.onGet("/api/reviews/all").reply(200, null); // Simulates undefined reviews
+    axiosMock
+      .onGet(`/api/reviews/approved/forItem/${itemid}`)
+      .reply(200, ReviewFixtures.threeReviews);
 
-    renderWithRoute("7");
-
-    await waitFor(() => {
-      expect(screen.getByText("Reviews for Menu Item 7")).toBeInTheDocument();
-    });
-
-    expect(
-      screen.queryByTestId("Reviewstable-cell-row-0-col-item.id"),
-    ).not.toBeInTheDocument();
-  });
-
-  test("renders correct filtered review content", async () => {
-    setupUserOnly();
-    axiosMock.onGet("/api/reviews/all").reply(200, ReviewFixtures.threeReviews);
-
-    renderWithRoute("7");
+    renderWithRoute(itemid);
 
     await waitFor(() => {
-      expect(screen.getByText("Reviews for Menu Item 7")).toBeInTheDocument();
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).toBeInTheDocument();
     });
   });
 });
