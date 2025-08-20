@@ -3,13 +3,13 @@ import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
 import { render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 
-jest.mock("react-router-dom", () => {
-  const original = jest.requireActual("react-router-dom");
+jest.mock("react-router", () => {
+  const original = jest.requireActual("react-router");
   return {
     ...original,
     useNavigate: () => jest.fn(),

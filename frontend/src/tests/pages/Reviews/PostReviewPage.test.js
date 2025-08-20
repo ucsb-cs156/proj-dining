@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
@@ -22,8 +22,8 @@ jest.mock("main/layouts/BasicLayout/BasicLayout", () => ({ children }) => (
 
 // Always provide working versions of the router hooks that the page expects
 const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => {
-  const original = jest.requireActual("react-router-dom");
+jest.mock("react-router", () => {
+  const original = jest.requireActual("react-router");
   return {
     ...original,
     useNavigate: () => mockNavigate,
@@ -189,8 +189,8 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
 
   test("gracefully handles missing query params without crashing", async () => {
     // override searchParams to be empty
-    jest.doMock("react-router-dom", () => {
-      const original = jest.requireActual("react-router-dom");
+    jest.doMock("react-router", () => {
+      const original = jest.requireActual("react-router");
       return {
         ...original,
         useNavigate: () => mockNavigate,

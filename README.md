@@ -12,7 +12,7 @@ Sprint Planning Doc for S25:
 
 # Versions
 * Java: 21
-* node: 20.17.0
+* node: 22.18.0
 See [docs/versions.md](docs/versions.md) for more information on upgrading versions.
 
 # Setup before running application

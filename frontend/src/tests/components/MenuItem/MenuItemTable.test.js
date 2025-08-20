@@ -2,7 +2,7 @@ import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import MenuItemTable from "../../../main/components/MenuItem/MenuItemTable";
 import { menuItemFixtures } from "../../../fixtures/menuItemFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import axios from "axios";
 import {
   apiCurrentUserFixtures,
@@ -10,10 +10,10 @@ import {
 } from "../../../fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
 
-// ✅ Mock useNavigate from react-router-dom
+// ✅ Mock useNavigate from react-router
 const mockedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
   useNavigate: () => mockedNavigate,
 }));
 
