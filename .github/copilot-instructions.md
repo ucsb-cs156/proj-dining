@@ -129,7 +129,6 @@ frontend/src/
 
 ## Known Issues
 
-- One frontend test fails due to date formatting (119/120 tests pass)
 - Integration tests require Playwright browser installation which may fail in restricted environments
 - Node.js version warning (requires exactly v20.17.0, but v20.19.4 works)
 - Some frontend dependencies have security vulnerabilities (run `npm audit` for details)
