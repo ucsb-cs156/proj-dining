@@ -70,7 +70,7 @@ describe("UserTable tests", () => {
     render(
       <UsersTable
         users={[
-          { id: 1, status: "Approved", dateApproved: "2024-11-01" },
+          { id: 1, status: "Approved", dateApproved: "2024-10-31" },
           { id: 2, status: "Approved", dateApproved: null },
           { id: 3, status: "Rejected", dateApproved: "2024-11-01" },
           { id: 4, status: "Awaiting Moderation", dateApproved: null },
