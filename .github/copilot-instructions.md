@@ -19,7 +19,7 @@ Always reference these instructions first and fallback to search or bash command
 - Backend mutation testing: `mvn pitest:mutationCoverage` -- takes 2 minutes 34 seconds. NEVER CANCEL. Set timeout to 300+ seconds.
 - Frontend setup: `cd frontend && npm install` -- takes 4 seconds (if dependencies already exist).
 - Frontend build: `cd frontend && npm run build` -- takes 12 seconds. NEVER CANCEL. Set timeout to 30+ seconds.
-- Frontend tests: `cd frontend && npm test -- --watchAll=false` -- takes 8 seconds, runs 120 tests (1 known failing test related to date formatting). NEVER CANCEL. Set timeout to 30+ seconds.
+- Frontend tests: `cd frontend && npm test -- --watchAll=false` -- takes 8 seconds, runs 120 tests. NEVER CANCEL. Set timeout to 30+ seconds.
 - Frontend coverage: `cd frontend && npm run coverage` -- takes 8 seconds. NEVER CANCEL. Set timeout to 30+ seconds.
 
 ### Integration Tests
