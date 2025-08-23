@@ -9,9 +9,9 @@ import { MemoryRouter } from "react-router-dom";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import { menuItemFixtures } from "fixtures/menuItemFixtures";
 
-const mockToast = jest.fn();
-jest.mock("react-toastify", () => {
-  const originalModule = jest.requireActual("react-toastify");
+const mockToast = vi.fn();
+vi.mock("react-toastify", async () => {
+  const originalModule = await vi.importActual("react-toastify");
   return {
     __esModule: true,
     ...originalModule,
@@ -19,8 +19,8 @@ jest.mock("react-toastify", () => {
   };
 });
 
-jest.mock("react-router-dom", () => {
-  const originalModule = jest.requireActual("react-router-dom");
+vi.mock("react-router-dom", async () => {
+  const originalModule = await vi.importActual("react-router-dom");
   return {
     __esModule: true,
     ...originalModule,

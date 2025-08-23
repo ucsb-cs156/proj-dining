@@ -1,4 +1,4 @@
-name: "33-frontend-pr-mutation-testing: Stryker JS Mutation Testing (JavaScript/Jest)"
+name: "33-frontend-pr-mutation-testing: Stryker JS Mutation Testing (JavaScript/Vitest)"
 
 # This workflow pulls incremental mutation testing results
 # if they exist for the given PR, and then 

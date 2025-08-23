@@ -32,8 +32,8 @@ describe("AliasApprovalTable tests", () => {
   });
 
   it("buttons appear and work properly", async () => {
-    const approveCallback = jest.fn();
-    const rejectCallback = jest.fn();
+    const approveCallback = vi.fn();
+    const rejectCallback = vi.fn();
 
     render(
       <QueryClientProvider client={queryClient}>

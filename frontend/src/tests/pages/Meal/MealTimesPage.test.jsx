@@ -6,9 +6,9 @@ import { mealFixtures } from "fixtures/mealFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => {
-  const originalModule = jest.requireActual("react-router-dom");
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const originalModule = await vi.importActual("react-router-dom");
   return {
     __esModule: true,
     ...originalModule,
@@ -28,7 +28,7 @@ const queryClient = new QueryClient();
 describe("MealTimesPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   beforeEach(() => {
-    jest.spyOn(console, "error");
+    vi.spyOn(console, "error");
     console.error.mockImplementation(() => null);
   });
   beforeEach(() => {

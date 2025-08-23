@@ -1,7 +1,7 @@
 # Running this script will run a full mutation coverage report
 # (not incremental) on the main branch.
 
-name: "34-frontend-main-testing: Stryker JS Mutation Testing (JavaScript/Jest)"
+name: "34-frontend-main-testing: Stryker JS Mutation Testing (JavaScript/Vitest)"
 
 on:
   workflow_dispatch:

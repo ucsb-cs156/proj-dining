@@ -1,4 +1,5 @@
 // MUST mock before imports
+import { vi } from "vitest";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
@@ -8,11 +9,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 
-jest.mock("react-router-dom", () => {
-  const original = jest.requireActual("react-router-dom");
+vi.mock("react-router-dom", async () => {
+  const original = await vi.importActual("react-router-dom");
   return {
     ...original,
-    useNavigate: () => jest.fn(),
+    useNavigate: () => vi.fn(),
     useSearchParams: () => [new URLSearchParams("")],
   };
 });

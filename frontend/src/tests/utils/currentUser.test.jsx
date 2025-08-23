@@ -12,8 +12,8 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 
-jest.mock("react-router-dom");
-const { MemoryRouter } = jest.requireActual("react-router-dom");
+vi.mock("react-router-dom");
+const { MemoryRouter } = await vi.importActual("react-router-dom");
 
 describe("utils/currentUser tests", () => {
   describe("useCurrentUser tests", () => {
@@ -146,10 +146,10 @@ describe("utils/currentUser tests", () => {
       const axiosMock = new AxiosMockAdapter(axios);
       axiosMock.onPost("/logout").reply(200);
 
-      const navigateSpy = jest.fn();
+      const navigateSpy = vi.fn();
       useNavigate.mockImplementation(() => navigateSpy);
 
-      const resetQueriesSpy = jest.spyOn(queryClient, "resetQueries");
+      const resetQueriesSpy = vi.spyOn(queryClient, "resetQueries");
 
       const { result } = renderHook(() => useLogout(), { wrapper });
 

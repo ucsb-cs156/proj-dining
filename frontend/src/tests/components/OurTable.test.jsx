@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { render, waitFor, fireEvent, screen } from "@testing-library/react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 
@@ -17,7 +18,7 @@ describe("OurTable tests", () => {
     },
   ];
 
-  const clickMeCallback = jest.fn();
+  const clickMeCallback = vi.fn();
 
   const columns = [
     {

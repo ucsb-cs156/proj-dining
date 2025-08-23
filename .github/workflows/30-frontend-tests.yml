@@ -1,4 +1,4 @@
-name: "30-frontend-tests: JavaScript, Jest Unit tests"
+name: "30-frontend-tests: JavaScript, Vitest Unit tests"
 
 on:
   workflow_dispatch:
@@ -29,6 +29,6 @@ jobs:
 
       - run: npm ci
         working-directory: ./frontend
-      - run: npm test
+      - run: npm test run
         working-directory: ./frontend
     
