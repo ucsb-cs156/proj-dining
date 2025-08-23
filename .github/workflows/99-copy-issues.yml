@@ -38,7 +38,7 @@ jobs:
     needs: [initialize]
 
     env:
-      destination: target/site/apidocs  
+      destination: target/reports/apidocs  
     strategy:
       matrix:
         value: ${{ fromJSON(needs.initialize.outputs.ISSUES)}}
