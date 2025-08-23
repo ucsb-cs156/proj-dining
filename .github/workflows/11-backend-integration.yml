@@ -31,5 +31,5 @@ jobs:
          cache-dependency-path: 'pom.xml' 
   
     - name: Run IT tests with maven
-      run: INTEGRATION=true mvn -B test-compile failsafe:integration-test failsafe:verify
+      run: INTEGRATION=true mvn -ntp -B test-compile failsafe:integration-test failsafe:verify
       

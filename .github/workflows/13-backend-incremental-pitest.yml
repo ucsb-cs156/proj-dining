@@ -44,7 +44,7 @@ jobs:
           echo "branch_name=${BRANCH}" >> "$GITHUB_ENV"    
     - name: Download artifact
       id: download-artifact
-      uses: dawidd6/action-download-artifact@v2.27.0
+      uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         branch: ${{ env.branch_name }}
@@ -59,7 +59,7 @@ jobs:
         [ -f "$historyFile" ] && cp $historyFile target/pit-history/history.bin
 
     - name: Build with Maven
-      run: mvn -B test 
+      run: mvn -ntp -B test 
     - name: Pitest
       run: mvn pitest:mutationCoverage -DmutationThreshold=100 
     - name: Upload Pitest History to Artifacts
