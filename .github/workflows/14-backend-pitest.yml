@@ -43,7 +43,7 @@ jobs:
          cache: 'maven'
          cache-dependency-path: 'pom.xml' 
     - name: Build with Maven
-      run: mvn -B test 
+      run: mvn -ntp -B test 
     
     # Note that we DO NOT download history in this job;
     # this job is intended as a "reset" of the history each time the 
