@@ -4,11 +4,11 @@ import {
   cellToAxiosParamsModerate,
   onModerateSuccess,
 } from "main/utils/Reviews";
-import mockConsole from "jest-mock-console";
+import { vi } from "vitest";
 
-const mockToast = jest.fn();
-jest.mock("react-toastify", () => {
-  const originalModule = jest.requireActual("react-toastify");
+const mockToast = vi.fn();
+vi.mock("react-toastify", () => {
+  const originalModule = vi.importActual("react-toastify");
   return {
     __esModule: true,
     ...originalModule,
@@ -20,18 +20,18 @@ describe("Reviews", () => {
   describe("onDeleteSuccess", () => {
     test("It puts the message on console.log and in a toast", () => {
       // arrange
-      const restoreConsole = mockConsole();
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       // act
       onDeleteSuccess("abc");
 
       // assert
       expect(mockToast).toHaveBeenCalledWith("abc");
-      expect(console.log).toHaveBeenCalled();
-      const message = console.log.mock.calls[0][0];
+      expect(consoleSpy).toHaveBeenCalled();
+      const message = consoleSpy.mock.calls[0][0];
       expect(message).toMatch("abc");
 
-      restoreConsole();
+      consoleSpy.mockRestore();
     });
   });
   describe("cellToAxiosParamsDelete", () => {
@@ -104,14 +104,14 @@ describe("Reviews", () => {
 
   describe("onModerateSuccess", () => {
     test("It puts the message on console.log and in a toast", () => {
-      const restoreConsole = mockConsole();
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       onModerateSuccess();
 
-      expect(console.log).toHaveBeenCalled();
-      const message = console.log.mock.calls[0][0];
+      expect(consoleSpy).toHaveBeenCalled();
+      const message = consoleSpy.mock.calls[0][0];
       expect(message).toMatch("Moderation success");
-      restoreConsole();
+      consoleSpy.mockRestore();
     });
   });
 });
