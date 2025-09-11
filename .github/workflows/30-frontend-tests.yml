@@ -1,4 +1,4 @@
-name: "30-frontend-tests: JavaScript, Jest Unit tests"
+name: "30-frontend-tests: vite/vitest Unit tests"
 
 on:
   workflow_dispatch:

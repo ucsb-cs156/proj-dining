@@ -1,6 +1,6 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { useParams } from "react-router";
-import { useBackend, _useBackendMutation } from "main/utils/useBackend";
+import { useBackend } from "main/utils/useBackend";
 import MealTable from "main/components/Meal/MealTable";
 
 export default function MealTimesPage() {
