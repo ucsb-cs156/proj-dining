@@ -41,7 +41,11 @@ const columns = [
       if (row.status === "Approved" && row.dateApproved) {
         // Parse as local date (YYYY-MM-DD)
         const [year, month, day] = row.dateApproved.split("-");
-        const formattedDate = new Date(year, month - 1, day).toLocaleDateString();
+        const formattedDate = new Date(
+          year,
+          month - 1,
+          day,
+        ).toLocaleDateString();
         return `Approved on ${formattedDate}`;
       }
       return row.status;
