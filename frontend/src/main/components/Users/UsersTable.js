@@ -39,7 +39,9 @@ const columns = [
     Header: "Status",
     accessor: (row) => {
       if (row.status === "Approved" && row.dateApproved) {
-        const formattedDate = new Date(row.dateApproved).toLocaleDateString();
+        // Parse as local date (YYYY-MM-DD)
+        const [year, month, day] = row.dateApproved.split("-");
+        const formattedDate = new Date(year, month - 1, day).toLocaleDateString();
         return `Approved on ${formattedDate}`;
       }
       return row.status;
