@@ -1,5 +1,3 @@
-// MUST mock before imports
-import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { vi } from "vitest";
 

@@ -6,7 +6,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon'
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
-import {MemoryRouter} from "react-router";
+import {withRouter} from "storybook-addon-remix-react-router";
 
 const queryClient = new QueryClient();
 
@@ -30,14 +30,12 @@ initialize(
 // e.g. the ones that rely on currentUser
 
 export const decorators = [
-  (Story) => (
-    <QueryClientProvider client={queryClient}>
-        <ToastContainer />
-        <MemoryRouter>
+    (Story) => (
+        <QueryClientProvider client={queryClient}>
+            <ToastContainer />
             <Story />
-        </MemoryRouter>
-    </QueryClientProvider>
-  )
+        </QueryClientProvider>
+    ), withRouter
 ];
 
 /** @type { import('@storybook/react-webpack5').Preview } */

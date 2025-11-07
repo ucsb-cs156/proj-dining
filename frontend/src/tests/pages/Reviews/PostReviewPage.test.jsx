@@ -16,7 +16,6 @@ afterAll(() => {
   console.error.mockRestore();
 });
 
-
 // Always provide working versions of the router hooks that the page expects
 const mockNavigate = vi.fn();
 vi.mock("react-router", async () => {

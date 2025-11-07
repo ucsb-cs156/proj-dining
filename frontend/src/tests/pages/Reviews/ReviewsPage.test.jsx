@@ -9,7 +9,6 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
-import mockConsole from "tests/testutils/mockConsole";
 
 const mockToast = vi.fn();
 vi.mock("react-toastify", async () => {
@@ -63,17 +62,6 @@ describe("ReviewsPage tests", () => {
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
     });
-
-    screen.debug(null, 100000);
-
-    // expect(console.error).toHaveBeenCalled();
-
-    // expect(console.error.mock.calls.length).toBe(2);
-    // expect(console.error.mock.calls[0][0]).toMatch(
-    //   `Error communicating with backend via GET on /api/reviews/approved/forItem/${itemid}`,
-    // );
-
-    // restoreConsole();
 
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
