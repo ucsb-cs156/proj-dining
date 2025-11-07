@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156/proj-dining
 owner: ucsb-cs156
 repo_name: proj-dining
-pull_requests: [{"author":{"id":"MDQ6VXNlcjI2MzQ3ODk3","is_bot":false,"login":"Division7","name":"Daniel Jensen"},"headRefName":"dj-viteMigration","number":91,"title":"dj viteMigration","url":"https://github.com/ucsb-cs156/proj-dining/pull/91"},{"author":{"is_bot":true,"login":"app/copilot-swe-agent"},"headRefName":"copilot/fix-83-2","number":89,"title":"Migrate from CRA/Jest to Vite/Vitest for frontend build system","url":"https://github.com/ucsb-cs156/proj-dining/pull/89"}]
+pull_requests: [{"author":{"is_bot":true,"login":"app/copilot-swe-agent"},"headRefName":"copilot/fix-83-2","number":89,"title":"Migrate from CRA/Jest to Vite/Vitest for frontend build system","url":"https://github.com/ucsb-cs156/proj-dining/pull/89"}]
