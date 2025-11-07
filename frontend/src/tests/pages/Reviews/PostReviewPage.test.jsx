@@ -16,10 +16,6 @@ afterAll(() => {
   console.error.mockRestore();
 });
 
-// Mock out BasicLayout so we don't pull in hooks that need a full app context
-vi.mock("main/layouts/BasicLayout/BasicLayout", () => ({ children }) => (
-  <>{children}</>
-));
 
 // Always provide working versions of the router hooks that the page expects
 const mockNavigate = vi.fn();
@@ -31,10 +27,9 @@ vi.mock("react-router", async () => {
     useSearchParams: () => [new URLSearchParams("id:42")],
   };
 });
-
+const axiosMock = new AxiosMockAdapter(axios);
 describe("MyReviewsCreatePage - full coverage tests", () => {
   const queryClient = new QueryClient();
-  let axiosMock;
 
   // Helper to render with the standard happy‑path router (has query params)
   const renderWithDefaultRouter = () =>
@@ -49,13 +44,8 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
 
   beforeEach(() => {
     mockNavigate.mockClear();
-    axiosMock = new AxiosMockAdapter(axios);
     axiosMock.reset();
-    // stub currentUser / systemInfo so the page loads
-    axiosMock.onGet("/api/currentUser").reply(200, {
-      root: { user: { email: "test@example.com" }, rolesList: [] },
-    });
-    axiosMock.onGet("/api/systemInfo").reply(200, {});
+    axiosMock.resetHistory();
   });
 
   test("renders form fields with expected defaults", async () => {

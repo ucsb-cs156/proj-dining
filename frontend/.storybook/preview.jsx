@@ -6,7 +6,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon'
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
-import {withRouter} from "storybook-addon-remix-react-router";
+import {MemoryRouter} from "react-router";
 
 const queryClient = new QueryClient();
 
@@ -33,9 +33,11 @@ export const decorators = [
   (Story) => (
     <QueryClientProvider client={queryClient}>
         <ToastContainer />
-        <Story />
+        <MemoryRouter>
+            <Story />
+        </MemoryRouter>
     </QueryClientProvider>
-  ), withRouter
+  )
 ];
 
 /** @type { import('@storybook/react-webpack5').Preview } */

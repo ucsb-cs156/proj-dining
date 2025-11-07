@@ -18,10 +18,6 @@ vi.mock("react-router", async () => {
   };
 });
 
-const axiosMock = new AxiosMockAdapter(axios);
-axiosMock.onGet("/api/currentUser").reply(200, { user: null });
-axiosMock.onGet("/api/systemInfo").reply(200, {});
-
 describe("MyReviewsCreatePage handles missing query params", () => {
   test("renders default view", async () => {
     const queryClient = new QueryClient();
