@@ -6,24 +6,25 @@ import { ToastContainer } from "react-toastify";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
+import { vi } from "vitest";
 
 // silence console.error during tests to keep logs clean
 beforeAll(() => {
-  jest.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 afterAll(() => {
   console.error.mockRestore();
 });
 
 // Mock out BasicLayout so we don't pull in hooks that need a full app context
-jest.mock("main/layouts/BasicLayout/BasicLayout", () => ({ children }) => (
+vi.mock("main/layouts/BasicLayout/BasicLayout", () => ({ children }) => (
   <>{children}</>
 ));
 
 // Always provide working versions of the router hooks that the page expects
-const mockNavigate = jest.fn();
-jest.mock("react-router", () => {
-  const original = jest.requireActual("react-router");
+const mockNavigate = vi.fn();
+vi.mock("react-router", async () => {
+  const original = await vi.importActual("react-router");
   return {
     ...original,
     useNavigate: () => mockNavigate,
@@ -189,8 +190,8 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
 
   test("gracefully handles missing query params without crashing", async () => {
     // override searchParams to be empty
-    jest.doMock("react-router", () => {
-      const original = jest.requireActual("react-router");
+    vi.doMock("react-router", async () => {
+      const original = await vi.importActual("react-router");
       return {
         ...original,
         useNavigate: () => mockNavigate,
