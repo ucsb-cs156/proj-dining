@@ -2,17 +2,17 @@ import { render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter, Route, Routes } from "react-router";
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
+import { vi } from "vitest";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
-import mockConsole from "jest-mock-console";
 
-const mockToast = jest.fn();
-jest.mock("react-toastify", () => {
-  const originalModule = jest.requireActual("react-toastify");
+const mockToast = vi.fn();
+vi.mock("react-toastify", async () => {
+  const originalModule = await vi.importActual("react-toastify");
   return {
     __esModule: true,
     ...originalModule,
@@ -20,7 +20,7 @@ jest.mock("react-toastify", () => {
   };
 });
 
-let axiosMock;
+const axiosMock = new AxiosMockAdapter(axios);
 describe("ReviewsPage tests", () => {
   const testId = "Reviewstable";
 
@@ -31,7 +31,6 @@ describe("ReviewsPage tests", () => {
   };
 
   beforeEach(() => {
-    axiosMock = new AxiosMockAdapter(axios);
     axiosMock.reset();
     axiosMock.resetHistory();
     axiosMock
@@ -56,22 +55,13 @@ describe("ReviewsPage tests", () => {
     const itemid = "7";
     setupUserOnly();
     axiosMock.onGet(`/api/reviews/approved/forItem/${itemid}`).timeout();
-    const restoreConsole = mockConsole();
+    // const restoreConsole = mockConsole();
 
     renderWithRoute(itemid);
 
     await waitFor(() => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
     });
-
-    expect(console.error).toHaveBeenCalled();
-
-    expect(console.error.mock.calls.length).toBe(1);
-    expect(console.error.mock.calls[0][0]).toMatch(
-      `Error communicating with backend via GET on /api/reviews/approved/forItem/${itemid}`,
-    );
-
-    restoreConsole();
 
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),

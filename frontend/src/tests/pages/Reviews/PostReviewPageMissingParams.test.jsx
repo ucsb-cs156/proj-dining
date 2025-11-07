@@ -1,6 +1,5 @@
-// MUST mock before imports
-import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
+import { vi } from "vitest";
 
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router";
@@ -8,18 +7,14 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 
-jest.mock("react-router", () => {
-  const original = jest.requireActual("react-router");
+vi.mock("react-router", async () => {
+  const original = await vi.importActual("react-router");
   return {
     ...original,
-    useNavigate: () => jest.fn(),
+    useNavigate: () => vi.fn(),
     useSearchParams: () => [new URLSearchParams("")],
   };
 });
-
-const axiosMock = new AxiosMockAdapter(axios);
-axiosMock.onGet("/api/currentUser").reply(200, { user: null });
-axiosMock.onGet("/api/systemInfo").reply(200, {});
 
 describe("MyReviewsCreatePage handles missing query params", () => {
   test("renders default view", async () => {

@@ -4,11 +4,12 @@ import {
   cellToAxiosParamsModerate,
   onModerateSuccess,
 } from "main/utils/Reviews";
-import mockConsole from "jest-mock-console";
+import mockConsole from "tests/testutils/mockConsole";
+import { vi } from "vitest";
 
-const mockToast = jest.fn();
-jest.mock("react-toastify", () => {
-  const originalModule = jest.requireActual("react-toastify");
+const mockToast = vi.fn();
+vi.mock("react-toastify", async () => {
+  const originalModule = await vi.importActual("react-toastify");
   return {
     __esModule: true,
     ...originalModule,

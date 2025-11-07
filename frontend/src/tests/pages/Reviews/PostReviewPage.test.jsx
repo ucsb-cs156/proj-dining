@@ -6,34 +6,29 @@ import { ToastContainer } from "react-toastify";
 import PostReviewPage from "main/pages/Reviews/PostReviewPage";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
+import { vi } from "vitest";
 
 // silence console.error during tests to keep logs clean
 beforeAll(() => {
-  jest.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 afterAll(() => {
   console.error.mockRestore();
 });
 
-// Mock out BasicLayout so we don't pull in hooks that need a full app context
-jest.mock("main/layouts/BasicLayout/BasicLayout", () => ({ children }) => (
-  <>{children}</>
-));
-
 // Always provide working versions of the router hooks that the page expects
-const mockNavigate = jest.fn();
-jest.mock("react-router", () => {
-  const original = jest.requireActual("react-router");
+const mockNavigate = vi.fn();
+vi.mock("react-router", async () => {
+  const original = await vi.importActual("react-router");
   return {
     ...original,
     useNavigate: () => mockNavigate,
     useSearchParams: () => [new URLSearchParams("id:42")],
   };
 });
-
+const axiosMock = new AxiosMockAdapter(axios);
 describe("MyReviewsCreatePage - full coverage tests", () => {
   const queryClient = new QueryClient();
-  let axiosMock;
 
   // Helper to render with the standard happy‑path router (has query params)
   const renderWithDefaultRouter = () =>
@@ -48,13 +43,8 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
 
   beforeEach(() => {
     mockNavigate.mockClear();
-    axiosMock = new AxiosMockAdapter(axios);
     axiosMock.reset();
-    // stub currentUser / systemInfo so the page loads
-    axiosMock.onGet("/api/currentUser").reply(200, {
-      root: { user: { email: "test@example.com" }, rolesList: [] },
-    });
-    axiosMock.onGet("/api/systemInfo").reply(200, {});
+    axiosMock.resetHistory();
   });
 
   test("renders form fields with expected defaults", async () => {
@@ -189,8 +179,8 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
 
   test("gracefully handles missing query params without crashing", async () => {
     // override searchParams to be empty
-    jest.doMock("react-router", () => {
-      const original = jest.requireActual("react-router");
+    vi.doMock("react-router", async () => {
+      const original = await vi.importActual("react-router");
       return {
         ...original,
         useNavigate: () => mockNavigate,

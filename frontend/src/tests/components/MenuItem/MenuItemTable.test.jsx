@@ -9,11 +9,12 @@ import {
   currentUserFixtures,
 } from "../../../fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
+import { vi } from "vitest";
 
 // ✅ Mock useNavigate from react-router
-const mockedNavigate = jest.fn();
-jest.mock("react-router", () => ({
-  ...jest.requireActual("react-router"),
+const mockedNavigate = vi.fn();
+vi.mock("react-router", async () => ({
+  ...(await vi.importActual("react-router")),
   useNavigate: () => mockedNavigate,
 }));
 
@@ -728,7 +729,7 @@ describe("MenuItemTable Tests", () => {
   });
 
   test("Buttons work correctly", async () => {
-    const _mockAlert = jest.spyOn(window, "alert").mockImplementation(() => {});
+    const _mockAlert = vi.spyOn(window, "alert").mockImplementation(() => {});
 
     axiosMock
       .onGet("/api/currentUser")

@@ -30,15 +30,15 @@ initialize(
 // e.g. the ones that rely on currentUser
 
 export const decorators = [
-  (Story) => (
-    <QueryClientProvider client={queryClient}>
-        <ToastContainer />
-        <Story />
-    </QueryClientProvider>
-  ), withRouter
+    (Story) => (
+        <QueryClientProvider client={queryClient}>
+            <ToastContainer />
+            <Story />
+        </QueryClientProvider>
+    ), withRouter
 ];
 
-/** @type { import('@storybook/react').Preview } */
+/** @type { import('@storybook/react-webpack5').Preview } */
 const preview = {
   parameters: {
     controls: {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { vi } from "vitest";
 
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
@@ -9,9 +10,9 @@ import { MemoryRouter } from "react-router";
 import MenuItemPage from "main/pages/MenuItem/MenuItemPage";
 import { menuItemFixtures } from "fixtures/menuItemFixtures";
 
-const mockToast = jest.fn();
-jest.mock("react-toastify", () => {
-  const originalModule = jest.requireActual("react-toastify");
+const mockToast = vi.fn();
+vi.mock("react-toastify", async () => {
+  const originalModule = await vi.importActual("react-toastify");
   return {
     __esModule: true,
     ...originalModule,
@@ -19,8 +20,8 @@ jest.mock("react-toastify", () => {
   };
 });
 
-jest.mock("react-router", () => {
-  const originalModule = jest.requireActual("react-router");
+vi.mock("react-router", async () => {
+  const originalModule = await vi.importActual("react-router");
   return {
     __esModule: true,
     ...originalModule,

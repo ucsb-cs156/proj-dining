@@ -2,13 +2,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import HomePage from "main/pages/HomePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
+import { vi } from "vitest";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { diningCommonsFixtures } from "../../fixtures/diningCommonsFixtures";
-import mockConsole from "jest-mock-console";
+import mockConsole from "tests/testutils/mockConsole";
 
 describe("HomePage tests", () => {
   let axiosMock;
@@ -28,13 +29,13 @@ describe("HomePage tests", () => {
       .onGet("/api/dining/all")
       .reply(200, diningCommonsFixtures.fourCommons);
     let date = new Date("2025-03-11");
-    jest.useFakeTimers({ advanceTimers: true });
-    jest.setSystemTime(date);
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(date);
   });
   afterEach(() => {
     axiosMock.reset();
     queryClient.clear();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
   test("Renders table with 4 dining commons", async () => {
     render(
