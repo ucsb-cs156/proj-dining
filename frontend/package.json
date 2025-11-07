@@ -91,14 +91,6 @@
       "text-summary"
     ]
   },
-  "jest": {
-    "moduleNameMapper": {
-      "^axios$": "axios/dist/node/axios.cjs"
-    },
-    "collectCoverageFrom": [
-      "src/main/**/*.{js,jsx,ts,tsx}"
-    ]
-  },
   "msw": {
     "workerDirectory": [
       "public"

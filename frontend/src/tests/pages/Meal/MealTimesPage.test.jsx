@@ -5,10 +5,11 @@ import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import { mealFixtures } from "fixtures/mealFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
+import { vi } from "vitest";
 
-const mockNavigate = jest.fn();
-jest.mock("react-router", () => {
-  const originalModule = jest.requireActual("react-router");
+const mockNavigate = vi.fn();
+vi.mock("react-router", async () => {
+  const originalModule = await vi.importActual("react-router");
   return {
     __esModule: true,
     ...originalModule,
@@ -28,7 +29,7 @@ const queryClient = new QueryClient();
 describe("MealTimesPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
   beforeEach(() => {
-    jest.spyOn(console, "error");
+    vi.spyOn(console, "error");
     console.error.mockImplementation(() => null);
   });
   beforeEach(() => {

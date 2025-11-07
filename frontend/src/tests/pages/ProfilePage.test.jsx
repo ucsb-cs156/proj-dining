@@ -2,6 +2,7 @@ import { fireEvent, waitFor, render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { vi } from "vitest";
 
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
@@ -9,8 +10,8 @@ import ProfilePage from "main/pages/ProfilePage";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { toast } from "react-toastify";
 
-jest.mock("react-toastify", () => ({
-  toast: jest.fn(),
+vi.mock("react-toastify", () => ({
+  toast: vi.fn(),
 }));
 
 describe("ProfilePage tests", () => {

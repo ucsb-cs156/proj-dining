@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { useSystemInfo } from "main/utils/systemInfo";
 import { renderHook } from "@testing-library/react";
 import mockConsole from "tests/testutils/mockConsole";
+import { vi } from "vitest";
 
 import { waitFor } from "@testing-library/react";
 
@@ -9,8 +10,8 @@ import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 
-jest.mock("react-router");
-const { _MemoryRouter } = jest.requireActual("react-router");
+vi.mock("react-router");
+const { _MemoryRouter } = await vi.importActual("react-router");
 
 describe("utils/systemInfo tests", () => {
   describe("useSystemInfo tests", () => {

@@ -3,6 +3,7 @@ import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
 import { QueryClient, QueryClientProvider } from "react-query";
 import usersFixtures from "fixtures/usersFixtures";
+import { vi } from "vitest";
 
 describe("AliasApprovalTable tests", () => {
   const queryClient = new QueryClient();
@@ -32,8 +33,8 @@ describe("AliasApprovalTable tests", () => {
   });
 
   it("buttons appear and work properly", async () => {
-    const approveCallback = jest.fn();
-    const rejectCallback = jest.fn();
+    const approveCallback = vi.fn();
+    const rejectCallback = vi.fn();
 
     render(
       <QueryClientProvider client={queryClient}>
