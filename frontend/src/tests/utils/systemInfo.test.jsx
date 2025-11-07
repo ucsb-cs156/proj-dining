@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useSystemInfo } from "main/utils/systemInfo";
 import { renderHook } from "@testing-library/react";
-import mockConsole from "jest-mock-console";
+import mockConsole from "tests/testutils/mockConsole";
 
 import { waitFor } from "@testing-library/react";
 

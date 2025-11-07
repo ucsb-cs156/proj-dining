@@ -5,7 +5,7 @@ import {
   apiCurrentUserFixtures,
   currentUserFixtures,
 } from "fixtures/currentUserFixtures";
-import mockConsole from "jest-mock-console";
+import mockConsole from "tests/testutils/mockConsole";
 import { useNavigate } from "react-router";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 
