@@ -72,9 +72,9 @@ export default function AppNavbar({
               )}
               {currentUser && currentUser.loggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/placeholder">
+                  {/* <Nav.Link as={Link} to="/placeholder">
                     Placeholder
-                  </Nav.Link>
+                  </Nav.Link> */}
                   <Nav.Link as={Link} to="/myreviews">
                     My Reviews
                   </Nav.Link>
