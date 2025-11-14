@@ -9,7 +9,8 @@ export default function Footer() {
         <p>
           This app is a class project of{space}
           <a href="https://ucsb-cs156.github.io/">CMPSC 156</a> at{space}
-          <a href="https://ucsb.edu/">UCSB</a>. Check out the source code on{space}
+          <a href="https://ucsb.edu/">UCSB</a>. Check out the source code on
+          {space}
           <a href="https://github.com/ucsb-cs156/proj-dining">GitHub</a>! This
           is not an official source of UCSB dining commons information. An
           official source can be found{space}
