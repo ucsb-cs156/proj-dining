@@ -3,8 +3,7 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { http, HttpResponse } from "msw";
 
 import HomePage from "main/pages/HomePage";
-import { diningCommonsFixtures } from "../../fixtures/diningCommonsFixtures";
-
+import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 export default {
   title: "pages/HomePage",
   component: HomePage,
