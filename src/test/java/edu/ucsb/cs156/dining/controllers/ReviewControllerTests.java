@@ -1283,4 +1283,41 @@ public class ReviewControllerTests extends ControllerTestCase {
 
     mockMvc.perform(get("/api/reviews/7")).andExpect(status().isForbidden());
   }
+
+  @WithMockUser(roles = {"MODERATOR"})
+  @Test
+  public void getReviewById_moderator_can_access_non_owned_review() throws Exception {
+    User other = User.builder().id(999L).email("other@ucsb.edu").admin(false).build();
+
+    Review review =
+        Review.builder()
+            .id(7L)
+            .itemsStars(4L)
+            .reviewerComments("Needs more salt")
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+            .reviewer(other)
+            .status(ModerationStatus.AWAITING_REVIEW)
+            .build();
+    when(reviewRepository.findById(7L)).thenReturn(Optional.of(review));
+    mockMvc.perform(get("/api/reviews/7")).andExpect(status().isOk());
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_not_found_returns_404() throws Exception {
+    when(reviewRepository.findById(7L)).thenReturn(Optional.empty());
+    mockMvc.perform(get("/api/reviews/7")).andExpect(status().isNotFound());
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void getReviewById_admin_can_access_non_owned_review() throws Exception {
+    User admin = currentUserService.getUser();
+    admin.setAdmin(true);
+    User other = User.builder().id(999L).email("other@ucsb.edu").admin(false).build();
+
+    Review review = Review.builder().id(7L).itemsStars(4L).reviewer(other).build();
+    when(reviewRepository.findById(7L)).thenReturn(Optional.of(review));
+    mockMvc.perform(get("/api/reviews/7")).andExpect(status().isOk());
+  }
 }
