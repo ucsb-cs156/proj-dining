@@ -1245,4 +1245,42 @@ public class ReviewControllerTests extends ControllerTestCase {
     verify(menuItemRepository, times(1)).findById(eq(itemId));
     verify(reviewRepository, times(0)).findByItemAndStatus(any(), any());
   }
+
+  // JZ: Task 6 tests for GET /api/reviews/{id}
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_owner_can_access() throws Exception {
+    User owner = currentUserService.getUser();
+
+    Review review =
+        Review.builder()
+            .id(7L)
+            .itemsStars(5L)
+            .reviewerComments("Great")
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+            .reviewer(owner)
+            .status(ModerationStatus.APPROVED)
+            .build();
+
+    when(reviewRepository.findById(7L)).thenReturn(Optional.of(review));
+
+    MvcResult response =
+        mockMvc.perform(get("/api/reviews/7")).andExpect(status().isOk()).andReturn();
+    String expectedJson = mapper.writeValueAsString(review);
+    String actualJson = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, actualJson);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_non_owner_forbidden() throws Exception {
+    User current = currentUserService.getUser();
+    User other = User.builder().id(999L).email("other@ucsb.edu").admin(false).build();
+
+    Review review = Review.builder().id(7L).itemsStars(4L).reviewer(other).build();
+
+    when(reviewRepository.findById(7L)).thenReturn(Optional.of(review));
+
+    mockMvc.perform(get("/api/reviews/7")).andExpect(status().isForbidden());
+  }
 }

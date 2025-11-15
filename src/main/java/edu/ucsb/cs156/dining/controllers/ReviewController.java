@@ -162,6 +162,25 @@ public class ReviewController extends ApiController {
     return reviews;
   }
 
+  // JZ-Task 6 for GET /api/reviews/{id}
+  @Operation(summary = "Get a single review by id (for editing)")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MODERATOR')")
+  @GetMapping("/{id}")
+  public Review getReviewById(@Parameter @PathVariable Long id) {
+    Review review =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+    User current = getCurrentUser().getUser();
+    boolean isOwner = current.getId() == review.getReviewer().getId();
+    boolean isAdmin = current.getAdmin();
+    boolean isModerator = current.getModerator();
+    if (!isOwner && !isAdmin && !isModerator) {
+      throw new AccessDeniedException("No permission to view review");
+    }
+    return review;
+  }
+
   @Operation(summary = "Edit a review")
   @PreAuthorize("hasRole('ROLE_USER')")
   @PutMapping("/reviewer")
