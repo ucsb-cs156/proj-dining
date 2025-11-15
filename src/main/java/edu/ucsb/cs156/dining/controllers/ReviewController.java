@@ -242,4 +242,31 @@ public class ReviewController extends ApiController {
     Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
     return reviewsList;
   }
+
+  @Operation(summary = "Get a single review by id (restricted)")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  @GetMapping("/{id}")
+  public Review getReviewById(@PathVariable Long id) {
+
+    Review review =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+
+    User current = getCurrentUser().getUser();
+
+    boolean isOwner = current.getId() == review.getReviewer().getId();
+
+    boolean isAdmin =
+        getCurrentUser().getRoles().stream().anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
+
+    boolean isModerator =
+        getCurrentUser().getRoles().stream()
+            .anyMatch(r -> r.getAuthority().equals("ROLE_MODERATOR"));
+
+    if (!(isOwner || isAdmin || isModerator)) {
+      throw new AccessDeniedException("No permission to view this review");
+    }
+    return review;
+  }
 }
