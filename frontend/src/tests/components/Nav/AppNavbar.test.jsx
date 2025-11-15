@@ -185,7 +185,6 @@ describe("AppNavbar tests", () => {
     // expect(link.getAttribute("href")).toBe("/placeholder");
   });
 
-  
   test("Placeholder link does NOT show when not logged in", async () => {
     const currentUser = null;
     const systemInfo = systemInfoFixtures.showingBoth;
