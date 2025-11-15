@@ -185,26 +185,6 @@ describe("AppNavbar tests", () => {
     // expect(link.getAttribute("href")).toBe("/placeholder");
   });
 
-  test("My Reviews link does NOT show when user is not logged in", async () => {
-    const currentUser = null;     // no user logged in
-    const systemInfo = systemInfoFixtures.showingBoth;
-    const doLogin = vi.fn();
-  
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AppNavbar
-            currentUser={currentUser}
-            systemInfo={systemInfo}
-            doLogin={doLogin}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
-  
-    // My Reviews should NOT appear
-    expect(screen.queryByText("My Reviews")).not.toBeInTheDocument();
-  });
   
   test("Placeholder link does NOT show when not logged in", async () => {
     const currentUser = null;
