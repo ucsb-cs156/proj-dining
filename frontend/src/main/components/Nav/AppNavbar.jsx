@@ -70,14 +70,10 @@ export default function AppNavbar({
                   </Nav.Link>
                 </>
               )}
-              {currentUser && currentUser.loggedIn ? (
-                <>
-                  <Nav.Link as={Link} to="/myreviews">
-                    My Reviews
-                  </Nav.Link>
-                </>
-              ) : (
-                <></>
+              {currentUser?.loggedIn && (
+                <Nav.Link as={Link} to="/myreviews">
+                  My Reviews
+                </Nav.Link>
               )}
             </Nav>
 
