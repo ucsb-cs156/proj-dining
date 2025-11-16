@@ -6,9 +6,32 @@ import { vi } from "vitest";
 
 import AppNavbar from "main/components/Nav/AppNavbar";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import indexHtml from "/index.html?raw";
 
 describe("AppNavbar tests", () => {
   const queryClient = new QueryClient();
+
+  test("index.html title is UCSB Dining", async () => {
+    const match = indexHtml.match(/<title>(.*?)<\/title>/);
+    const title = match ? match[1] : null;
+
+    expect(title).toBe("UCSB Dining");
+  });
+
+  test("Navbar brand is UCSB Dining", async () => {
+    const currentUser = currentUserFixtures.userOnly;
+    const doLogin = vi.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByText("UCSB Dining")).toBeInTheDocument();
+  });
 
   test("renders correctly for regular logged in user", async () => {
     const currentUser = currentUserFixtures.userOnly;
