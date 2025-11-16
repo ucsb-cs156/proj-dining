@@ -28,7 +28,7 @@ describe("Footer tests", () => {
     const cmpsc156Link = screen.getByRole("link", { name: "CMPSC 156" });
     expect(cmpsc156Link).toHaveAttribute(
       "href",
-      "https://ucsb-cs156.github.io/",
+      "https://ucsb-cs156.github.io",
     );
 
     const ucsbLink = screen.getByRole("link", { name: "UCSB" });
