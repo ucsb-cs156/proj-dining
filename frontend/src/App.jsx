@@ -53,15 +53,7 @@ function App() {
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            {/* <Route
-              exact
-              path="/placeholder"
-              element={<PlaceholderIndexPage />}
-            /> */}
-          </>
-        )}
+        {hasRole(currentUser, "ROLE_USER") && <></>}
         <>
           <Route
             exact
