@@ -53,21 +53,21 @@ describe("HomePage tests", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
 
     for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`)
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
       ).toHaveTextContent(diningCommonsFixtures.fourCommons[i].code);
 
       expect(
-        screen.getByText(diningCommonsFixtures.fourCommons[i].code)
+        screen.getByText(diningCommonsFixtures.fourCommons[i].code),
       ).toHaveAttribute(
         "href",
-        `/diningcommons/2025-03-11/${diningCommonsFixtures.fourCommons[i].code}`
+        `/diningcommons/2025-03-11/${diningCommonsFixtures.fourCommons[i].code}`,
       );
     }
   });
@@ -103,7 +103,7 @@ describe("HomePage renders properly with no backend", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
@@ -112,13 +112,13 @@ describe("HomePage renders properly with no backend", () => {
 
     const errorMessage = console.error.mock.calls[0][0];
     expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/dining/all"
+      "Error communicating with backend via GET on /api/dining/all",
     );
 
     restoreConsole();
 
     expect(
-      screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code")
+      screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
     ).not.toBeInTheDocument();
   });
 });
@@ -160,7 +160,7 @@ describe("HomePage date selector tests", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     const dateInput = await screen.findByLabelText(/select date/i);
@@ -174,7 +174,7 @@ describe("HomePage date selector tests", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
@@ -191,7 +191,7 @@ describe("HomePage date selector tests", () => {
 
       expect(screen.getByText(code)).toHaveAttribute(
         "href",
-        `/diningcommons/2025-04-01/${code}`
+        `/diningcommons/2025-04-01/${code}`,
       );
     }
   });
@@ -202,7 +202,7 @@ describe("HomePage date selector tests", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
@@ -220,7 +220,7 @@ describe("HomePage date selector tests", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
