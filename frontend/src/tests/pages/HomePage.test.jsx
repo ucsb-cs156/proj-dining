@@ -11,6 +11,8 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import mockConsole from "tests/testutils/mockConsole";
 
+import userEvent from "@testing-library/user-event";
+
 describe("HomePage tests", () => {
   let axiosMock;
   let queryClient;
@@ -98,5 +100,81 @@ describe("HomePage renders properly with no backend", () => {
     expect(
       screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
     ).not.toBeInTheDocument();
+  });
+
+  describe("HomePage date selector tests", () => {
+    let axiosMock;
+    let queryClient;
+
+    beforeEach(() => {
+      axiosMock = new AxiosMockAdapter(axios);
+      queryClient = new QueryClient();
+
+      axiosMock
+        .onGet("/api/currentUser")
+        .reply(200, apiCurrentUserFixtures.userOnly);
+      axiosMock
+        .onGet("/api/systemInfo")
+        .reply(200, systemInfoFixtures.showingNeither);
+      axiosMock
+        .onGet("/api/dining/all")
+        .reply(200, diningCommonsFixtures.fourCommons);
+
+      // Freeze system date so default value is consistent
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      vi.setSystemTime(new Date("2025-03-11"));
+    });
+
+    afterEach(() => {
+      axiosMock.reset();
+      queryClient.clear();
+      vi.useRealTimers();
+    });
+
+    test("Date input renders and defaults to today's mocked date", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      const dateInput = await screen.findByLabelText(/select date/i);
+      expect(dateInput).toBeInTheDocument();
+      expect(dateInput.value).toBe("2025-03-11");
+    });
+
+    test("Changing date updates links in DiningCommonsTable", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      // Ensure the dining table rows load
+      await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+      const dateInput = screen.getByLabelText(/select date/i);
+
+      // Change to another date
+      await userEvent.clear(dateInput);
+      await userEvent.type(dateInput, "2025-04-01");
+
+      // After typing, value should update
+      expect(dateInput.value).toBe("2025-04-01");
+
+      // Verify all dining commons links updated to use the new date
+      for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
+        const code = diningCommonsFixtures.fourCommons[i].code;
+
+        expect(screen.getByText(code)).toHaveAttribute(
+          "href",
+          `/diningcommons/2025-04-01/${code}`,
+        );
+      }
+    });
   });
 });
