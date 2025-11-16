@@ -71,7 +71,7 @@ jobs:
           attempt_delay: 5000
           with: |
             branch: gh-pages # The branch the action should deploy to.
-            folder: frontend/coverage # The folder where the javadoc files are located
+            folder: frontend/build # The folder where the javadoc files are located
             clean: true # Automatically remove deleted files from the deploy branch
             target-folder: ${{env.prefix}}coverage # The folder that we serve our javadoc files from
 
