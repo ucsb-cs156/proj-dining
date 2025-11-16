@@ -1,8 +1,9 @@
 import { Container } from "react-bootstrap";
 
 export default function Footer({ systemInfo }) {
-  const sourceRepo = systemInfo?.sourceRepo || "https://github.com/ucsb-cs156/proj-dining";
-  
+  const sourceRepo =
+    systemInfo?.sourceRepo || "https://github.com/ucsb-cs156/proj-dining";
+
   return (
     <footer className="bg-light pt-3 pt-md-4 pb-4 pb-md-5" data-testid="Footer">
       <Container>
