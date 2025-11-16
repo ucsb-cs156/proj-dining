@@ -8,6 +8,7 @@ import { vi } from "vitest";
 
 vi.mock("react-router");
 
+const axiosMock = new AxiosMockAdapter(axios);
 const mockToast = vi.fn();
 vi.mock("react-toastify", async (importOriginal) => {
   return {
@@ -20,6 +21,9 @@ describe("utils/useBackend tests", () => {
   beforeEach(() => {
     vi.spyOn(console, "error");
     console.error.mockImplementation(() => null);
+    axiosMock.reset();
+    axiosMock.resetHistory();
+    mockToast.mockReset();
   });
 
   afterEach(() => {
@@ -233,5 +237,43 @@ describe("utils/useBackend tests", () => {
       const errorMessage2 = console.error.mock.calls[2][0];
       expect(errorMessage2).toMatch(/onError from mutation.mutate called!/);
     });
+  });
+
+  test("useBackend handles error correctly with suppressed toast", async () => {
+    // See: https://react-query.tanstack.com/guides/testing#turn-off-retries
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // ✅ turns retries off
+          retry: false,
+        },
+      },
+    });
+    const wrapper = ({ children }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    axiosMock.onGet("/api/dining/all").reply(500, {});
+
+    const { result } = renderHook(
+      () =>
+        useBackend(
+          ["/api/dining/all"],
+          { method: "GET", url: "/api/dining/all" },
+          ["initialData"],
+          true,
+        ),
+      { wrapper },
+    );
+
+    await waitFor(() => result.current.isError);
+
+    expect(result.current.data).toEqual(["initialData"]);
+    await waitFor(() => expect(console.error).toHaveBeenCalled());
+    const errorMessage = console.error.mock.calls[0][0];
+    expect(errorMessage).toMatch(
+      "Error communicating with backend via GET on /api/dining/all",
+    );
+    expect(mockToast).not.toHaveBeenCalled();
   });
 });

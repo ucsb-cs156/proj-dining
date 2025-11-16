@@ -18,6 +18,7 @@ export default function MealTimesPage() {
     { url: `/api/diningcommons/${dateTime}/${diningCommonsCode}` },
     // Stryker disable next-line all : don't test default value of empty list
     [],
+    true,
   );
 
   return (
@@ -27,7 +28,10 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {meals && (
+        {/* length=0 technically means its loading but it only loads for that long when there's an error anyways */}
+        {meals.length === 0 && <p>No meals offered today.</p>}
+        {/* the error takes a few seconds to come through. before that, the status is success, but we still don't want to show the meals table. so the table should only be shown if meals is actually populated */}
+        {meals.length > 0 && (
           <MealTable
             meals={meals}
             dateTime={dateTime}
