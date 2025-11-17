@@ -180,4 +180,69 @@ describe("ReviewsTable tests", () => {
     );
     expect(dateCell).toHaveTextContent(formattedDate);
   });
+  //JZ - add test for task 9
+  test("does NOT show Moderator Status column by default", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+
+    const header = screen.queryByText("Moderator Status");
+    expect(header).not.toBeInTheDocument();
+
+    const statusCell = screen.queryByTestId(
+      "Reviewstable-cell-row-0-col-status",
+    );
+    expect(statusCell).not.toBeInTheDocument();
+  });
+  test("shows Moderator Status column and value when showModerationStatus is true", () => {
+    const firstStatus = ReviewFixtures.threeReviews[0].status;
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+          showModerationStatus={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    const header = screen.getByText("Moderator Status");
+    expect(header).toBeInTheDocument();
+
+    const statusCell = screen.getByTestId(
+      "Reviewstable-cell-row-0-col-status",
+    );
+    expect(statusCell).toBeInTheDocument();
+    expect(statusCell).toHaveTextContent(firstStatus);
+  });
+  test("shows N/A in Moderator Status column when status is missing", () => {
+    const reviewWithoutStatus = { ...ReviewFixtures.threeReviews[0] };
+    delete reviewWithoutStatus.status;
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={[reviewWithoutStatus]}
+          userOptions={false}
+          moderatorOptions={false}
+          showModerationStatus={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    const statusCell = screen.getByTestId(
+      "Reviewstable-cell-row-0-col-status",
+    );
+    expect(statusCell).toBeInTheDocument();
+    expect(statusCell).toHaveTextContent("N/A");
+  });
+
 });
