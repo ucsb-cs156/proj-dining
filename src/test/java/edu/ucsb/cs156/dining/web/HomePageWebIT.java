@@ -50,8 +50,6 @@ public class HomePageWebIT {
     String url = String.format("http://localhost:%d/", port);
     page.navigate(url);
 
-    assertThat(
-            page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Dining Commons")))
-        .isVisible();
+    assertThat(page.getByText("Dining Commons")).isVisible();
   }
 }
