@@ -23,12 +23,10 @@ const Moderate = () => {
   //
   // Fetch aliases awaiting approval
   //
-  const {
-    data: aliases,
-  } = useBackend(
+  const { data: aliases } = useBackend(
     ["/api/aliases/needsmoderation"],
     { method: "GET", url: "/api/aliases/needsmoderation" },
-    []
+    [],
   );
 
   const moderatorOptions =
@@ -51,7 +49,11 @@ const Moderate = () => {
       <div className="pt-2">
         <h1>Moderation Page</h1>
         <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
-        <AliasApprovalTable aliases={aliases} approveCallback={approveCallback} rejectCallback={rejectCallback} />
+        <AliasApprovalTable
+          aliases={aliases}
+          approveCallback={approveCallback}
+          rejectCallback={rejectCallback}
+        />
       </div>
     </BasicLayout>
   );
