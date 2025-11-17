@@ -73,11 +73,11 @@ describe("HomePage tests", () => {
     );
 
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
-    
+
     const dateInput = screen.getByLabelText(/select date/i);
     expect(dateInput).toHaveValue("2025-03-11");
 
-    fireEvent.change(dateInput, {target: {value: "2025-03-15"}});
+    fireEvent.change(dateInput, { target: { value: "2025-03-15" } });
 
     for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
       expect(

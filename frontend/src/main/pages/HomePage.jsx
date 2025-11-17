@@ -17,16 +17,16 @@ export default function HomePage() {
   return (
     <BasicLayout>
       <h1>Dining Commons</h1>
-      
+
       <div className="mb-3">
         <label htmlFor="date" className="form-label">
           Select date:
         </label>
-        <input 
-          id = "date"
-          type = "date"
-          className = "form-control"
-          value = {selectedDate}
+        <input
+          id="date"
+          type="date"
+          className="form-control"
+          value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
         />
       </div>
