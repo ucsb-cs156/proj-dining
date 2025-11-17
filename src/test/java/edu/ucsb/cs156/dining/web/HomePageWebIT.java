@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.dining.web;
 
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -51,9 +50,6 @@ public class HomePageWebIT {
     String url = String.format("http://localhost:%d/", port);
     page.navigate(url);
 
-    page.waitForLoadState();
-    String content = page.content().toLowerCase();
-    ;
-    assertTrue(content.contains("dining commons"));
+    assertThat(page.getByText("Dining Commons")).isVisible();
   }
 }
