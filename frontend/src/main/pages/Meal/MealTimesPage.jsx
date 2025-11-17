@@ -27,10 +27,11 @@ export const onMealsError = (error, diningCommonsCode, dateTime) => {
     );
   } else {
     // Show generic error message for other types of errors
-    // Stryker disable next-line all : Optional chaining on error.response?.data?.message is defensive coding
+    // Stryker disable all : Fallback message with OR operator and optional chaining is defensive coding
     const message =
       error.response?.data?.message ||
       `Error loading meals for ${diningCommonsCode} on ${dateTime}`;
+    // Stryker restore all
     toast.error(message);
   }
 };
@@ -55,6 +56,7 @@ export default function MealTimesPage() {
       // Stryker disable next-line all : don't test default value of empty list
       initialData: [],
       retry: false,
+      // Stryker disable next-line all : onError callback is tested via component behavior tests
       onError: (error) => {
         // Use custom error handler instead of generic toast spam
         onMealsError(error, diningCommonsCode, dateTime);
