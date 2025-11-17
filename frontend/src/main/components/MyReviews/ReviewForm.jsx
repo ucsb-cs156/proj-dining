@@ -5,7 +5,18 @@ export default function ReviewForm({ initialItemName, submitAction }) {
   const [comments, setComments] = React.useState("");
   const [stars, setStars] = React.useState(5);
   const [dateServed, setDateServed] = React.useState(() => {
-    return new Date().toISOString().slice(0, 16); // Default to now, in YYYY-MM-DDTHH:mm format
+    // Stryker disable ObjectLiteral : We are testing in CA so our timezone defaults to "America/Los_Angeles," but users may be elsewhere
+    return new Date()
+      .toLocaleString("lt-LT", {
+        timeZone: "America/Los_Angeles",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      .replace(" ", "T"); // Default to now, without seconds (specifying locale prompts autofill)
+    // Stryker enable ObjectLiteral
   });
 
   const handleSubmit = (e) => {

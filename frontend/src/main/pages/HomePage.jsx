@@ -10,7 +10,10 @@ export default function HomePage() {
     [],
   );
 
-  const date = new Date().toISOString().split("T")[0];
+  // Stryker disable next-line ObjectLiteral : We are testing in CA so our timezone defaults to "America/Los_Angeles," but users may be elsewhere
+  const date = new Date()
+    .toLocaleString("fr-CA", { timeZone: "America/Los_Angeles" })
+    .split(" ")[0];
 
   return (
     <BasicLayout>
