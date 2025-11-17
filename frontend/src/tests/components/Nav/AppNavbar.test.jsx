@@ -85,7 +85,7 @@ describe("AppNavbar tests", () => {
     expect(swaggerMenu).toBeInTheDocument();
   });
 
-  test("renders My Reviews link when user is logged in", async () => {
+  test("renders My Reviews link when user is currently logged in", async () => {
     const currentUser = currentUserFixtures.userOnly;
     const systemInfo = systemInfoFixtures.showingBoth;
     const doLogin = vi.fn();
