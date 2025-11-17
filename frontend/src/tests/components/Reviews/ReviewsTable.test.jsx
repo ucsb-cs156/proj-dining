@@ -75,6 +75,20 @@ describe("ReviewsTable tests", () => {
     expect(rejectButton).not.toBeInTheDocument();
   });
 
+  test("Does not show status column by default", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Status")).not.toBeInTheDocument();
+  });
+
   test("Regular user buttons appear and work properly", async () => {
     render(
       <QueryClientProvider client={queryClient}>
