@@ -101,9 +101,7 @@ describe("ReviewsPage tests", () => {
   test("calls useBackend with GET method and correct URL", async () => {
     const itemid = "7";
     setupUserOnly();
-    axiosMock
-      .onGet(`/api/reviews/approved/forItem/${itemid}`)
-      .reply(200, []);
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemid}`).reply(200, []);
 
     renderWithRoute(itemid);
 
