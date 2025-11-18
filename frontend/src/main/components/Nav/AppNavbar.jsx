@@ -71,6 +71,9 @@ export default function AppNavbar({
                     data-testid="appnavbar-moderate-dropdown"
                   >
                     <NavDropdown.Item href="/moderate">
+                      Moderator Menu
+                    </NavDropdown.Item>
+                    <NavDropdown.Item href="/moderate/reviews">
                       Moderator Reviews
                     </NavDropdown.Item>
                   </NavDropdown>

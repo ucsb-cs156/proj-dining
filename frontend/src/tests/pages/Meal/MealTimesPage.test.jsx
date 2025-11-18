@@ -82,9 +82,9 @@ describe("MealTimesPage tests", () => {
     ).toBeInTheDocument();
 
     // Check that each meal time is displayed correctly
-    expect(screen.getByText("Breakfast")).toBeInTheDocument();
-    expect(screen.getByText("Lunch")).toBeInTheDocument();
-    expect(screen.getByText("Dinner")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Breakfast" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Lunch" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Dinner" })).toBeInTheDocument();
   });
 
   test("displays error message when dining commons is closed (404)", async () => {
