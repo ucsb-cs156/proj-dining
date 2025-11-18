@@ -22,4 +22,3 @@ ModeratorUser.parameters = {
     }),
   ],
 };
-
