@@ -17,7 +17,7 @@ export default function MealTimesPage() {
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
     { url: `/api/diningcommons/${dateTime}/${diningCommonsCode}` },
     // Stryker disable next-line all : don't test default value of empty list
-    [],
+    undefined
   );
 
   return (
