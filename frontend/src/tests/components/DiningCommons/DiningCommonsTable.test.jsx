@@ -106,18 +106,29 @@ describe("DiningCommonsTable tests", () => {
     expect(cell).toHaveTextContent("...");
   });
 
-  test("Meals cell shows 'no meals offered' when backend returns empty meals array", async () => {
+  test("Meals cell shows 'no meals offered' when backend returns empty meals array and calls useBackend with correct url/config", async () => {
     mockedUseBackend.mockReturnValue({
       data: { meals: [] },
       status: "success",
     });
 
-    renderTable([fourCommons[0]]);
+    const commons = [fourCommons[0]];
+    renderTable(commons);
 
     const cell = await screen.findByTestId(
       "DiningCommonsTable-cell-row-0-col-meals",
     );
     expect(cell).toHaveTextContent("no meals offered");
+
+    // Assert the exact arguments to kill the url/config/method mutants
+    const code = commons[0].code;
+    const url = `/api/diningcommons/${date}/${code}`;
+    expect(mockedUseBackend).toHaveBeenCalledTimes(1);
+    expect(mockedUseBackend).toHaveBeenCalledWith(
+      [url],
+      { method: "GET", url },
+      [],
+    );
   });
 
   test("Meals cell shows links when backend returns data as array of objects with name", async () => {
@@ -140,6 +151,10 @@ describe("DiningCommonsTable tests", () => {
       "href",
       `/diningcommons/2025-03-11/${commons[0].code}/Dinner`,
     );
+
+    // Kill mutant that changes marginRight in the style
+    expect(lunch).toHaveStyle("margin-right: 0.75rem");
+    expect(dinner).toHaveStyle("margin-right: 0.75rem");
   });
 
   test("Meals cell shows links when backend returns data.meals as array of objects with name", async () => {

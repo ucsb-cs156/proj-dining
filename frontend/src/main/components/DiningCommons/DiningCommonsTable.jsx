@@ -49,7 +49,6 @@ export default function DiningCommonsTable({ commons, date }) {
     );
   }
 
-
   const columns = [
     {
       Header: "Code",
