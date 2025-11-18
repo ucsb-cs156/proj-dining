@@ -3,6 +3,7 @@ import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import { mealFixtures } from "fixtures/mealFixtures";
 import { http, HttpResponse } from "msw";
 import { reactRouterParameters } from "storybook-addon-remix-react-router";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 export default {
   title: "pages/Meal/MealTimesPage",
@@ -35,4 +36,29 @@ const Template = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   suppressMemoryRouter: true,
+};
+
+// 204 No Content - no meals offered
+export const NoMealsOffered = Template.bind({});
+NoMealsOffered.args = {
+  suppressMemoryRouter: true,
+};
+NoMealsOffered.parameters = {
+  msw: [
+    http.get("/api/diningcommons/2024-11-25/portola", () => {
+      return new HttpResponse(null, { status: 204 });
+    }),
+  ],
+};
+
+export const ServerError = Template.bind({});
+ServerError.args = {
+  suppressMemoryRouter: true,
+};
+ServerError.parameters = {
+  msw: [
+    http.get("/api/diningcommons/2024-11-25/portola", () => {
+      return HttpResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }),
+  ],
 };

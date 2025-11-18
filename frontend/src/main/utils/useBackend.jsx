@@ -25,7 +25,7 @@ import { toast } from "react-toastify";
 //     []
 // );
 
-export function useBackend(queryKey, axiosParameters, initialData, retry = true, toast = true) {
+export function useBackend(queryKey, axiosParameters, initialData) {
   
   return useQuery(
     queryKey,
@@ -35,14 +35,13 @@ export function useBackend(queryKey, axiosParameters, initialData, retry = true,
         return response.data;
       } catch (e) {
         const errorMessage = `Error communicating with backend via ${axiosParameters.method} on ${axiosParameters.url}`;
-        if (toast) toast(errorMessage);
+        toast(errorMessage);
         console.error(errorMessage, e);
         throw e;
       }
     },
     {
-      initialData,
-      retry 
+      initialData
     },
   );
 }

@@ -48,9 +48,8 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
   }
 
   @Test
-  public void returns_404_when_no_meals_offered() throws Exception {
+  public void returns_204_when_no_meals_offered() throws Exception {
     String url = "/api/diningcommons/2025-11-27/carrillo";
-    String expectedError = "{\"error\": \"No meals offered on this date\"}";
 
     // Throw the specific NotFound subclass
     when(ucsbDiningMenuService.getJSON(any(String.class), any(String.class)))
@@ -58,13 +57,6 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
             HttpClientErrorException.NotFound.create(
                 HttpStatus.NOT_FOUND, "Not Found", null, null, null));
 
-    MvcResult response =
-        mockMvc
-            .perform(get(url).contentType("application/json"))
-            .andExpect(status().isNotFound())
-            .andReturn();
-
-    String responseString = response.getResponse().getContentAsString();
-    assertEquals(expectedError, responseString);
+    mockMvc.perform(get(url).contentType("application/json")).andExpect(status().isNoContent());
   }
 }

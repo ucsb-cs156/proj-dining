@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +35,10 @@ public class UCSBDiningMenuController extends ApiController {
     try {
       String body = ucsbDiningMenuService.getJSON(datetime, diningcommoncode);
       return ResponseEntity.ok().body(body);
-    } catch (HttpClientErrorException.NotFound e) { // Handle 404 (Happens when no meal is found)
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body("{\"error\": \"No meals offered on this date\"}");
+    } catch (
+        HttpClientErrorException.NotFound
+            e) { // Handle 404 (Happens when no meal is found) by returning 204
+      return ResponseEntity.noContent().build();
     }
   }
 }

@@ -17,9 +17,7 @@ export default function MealTimesPage() {
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
     { url: `/api/diningcommons/${dateTime}/${diningCommonsCode}` },
     // Stryker disable next-line all : don't test default value of empty list
-    undefined,
-    false,
-    false
+    [],
   );
 
   return (
@@ -29,18 +27,23 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {status === "error" && (
-          error?.response?.status === 404 ? (
-            <div>
-              No meals offered today
-            </div>
-          ) : (
-            <div>
-              Unable to load page
-            </div>
-          )
+
+        {/* Unexpected error*/}        
+        {error && (
+          <div>
+            Unable to load page
+          </div>
         )}
-        {status === "success" && (
+        
+        {/* Check for 204 */}
+        {status === "success" && (!meals || meals.length === 0) && (
+          <div>
+            No meals offered today
+          </div>
+        )}
+        
+        {/* If there is body then show meals */}
+        {meals && meals.length > 0 && (
           <MealTable
             meals={meals}
             dateTime={dateTime}

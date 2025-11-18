@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -24,22 +24,24 @@ vi.mock("react-router", async () => {
   };
 });
 
-const queryClient = new QueryClient();
-
 describe("MealTimesPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
+
   beforeEach(() => {
     vi.spyOn(console, "error");
     console.error.mockImplementation(() => null);
   });
-  beforeEach(() => {
+
+  afterEach(() => {
     axiosMock.reset();
-    axiosMock
-      .onGet("/api/diningcommons/2024-11-25/portola")
-      .reply(200, mealFixtures.threeMeals);
   });
 
   test("renders without crashing", () => {
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(200, mealFixtures.threeMeals);
+
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
@@ -50,6 +52,11 @@ describe("MealTimesPage tests", () => {
   });
 
   test("displays correct information in the table", async () => {
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(200, mealFixtures.threeMeals);
+
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
@@ -58,17 +65,120 @@ describe("MealTimesPage tests", () => {
       </QueryClientProvider>,
     );
 
-    // Wait for the meal information to be loaded
     await screen.findByText("Meals at portola for 2024-11-25");
 
-    // Ensure that the header is correct
     expect(
       screen.getByText("Meals at portola for 2024-11-25"),
     ).toBeInTheDocument();
 
-    // Check that each meal time is displayed correctly
     expect(screen.getByText("Breakfast")).toBeInTheDocument();
     expect(screen.getByText("Lunch")).toBeInTheDocument();
     expect(screen.getByText("Dinner")).toBeInTheDocument();
+    
+    expect(screen.queryByText("No meals offered today")).not.toBeInTheDocument();
+    expect(screen.queryByText("Unable to load page")).not.toBeInTheDocument();
+  });
+
+  test("displays message when no meals are offered (204 No Content)", async () => {
+    const queryClient = new QueryClient();
+    
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(204);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("No meals offered today")).toBeInTheDocument();
+    });
+    
+    expect(screen.queryByText("Meal")).not.toBeInTheDocument();
+    expect(screen.queryByText("Unable to load page")).not.toBeInTheDocument();
+  });
+
+  test("displays generic error message for server errors", async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+    
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(500);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Unable to load page")).toBeInTheDocument();
+    });
+    
+    expect(screen.queryByText("No meals offered today")).not.toBeInTheDocument();
+    expect(screen.queryByText("Meal")).not.toBeInTheDocument();
+  });
+
+  test("displays error message w/ body", async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+    
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(500, mealFixtures.threeMeals);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Unable to load page")).toBeInTheDocument();
+    });
+    
+    expect(screen.queryByText("No meals offered today")).not.toBeInTheDocument();
+    expect(screen.queryByText("Meal")).not.toBeInTheDocument();
+  });
+
+  test("displays message when meals array is empty (200 with empty array)", async () => {
+    const queryClient = new QueryClient();
+  
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(200, []);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("No meals offered today")).toBeInTheDocument();
+    });
+  
+    expect(screen.queryByText("Meal")).not.toBeInTheDocument();
   });
 });
