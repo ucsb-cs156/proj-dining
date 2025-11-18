@@ -31,16 +31,15 @@ export default function MealTimesPage() {
         {status === "pending" && <p>Loading...</p>}
       
         {status === "error" && (
-          if (error == 500) {
-          <div className="alert alert-danger">
-            No meals offered today
-          </div>
-          }
-          else {
-          <div className="alert alert-danger">
-            Unable to load page
-          </div>
-          }
+          error?.response?.status === 500 ? (
+            <div className="alert alert-danger">
+              No meals offered today
+            </div>
+          ) : (
+            <div className="alert alert-danger">
+              Unable to load page
+            </div>
+          )
           
         )}
       
