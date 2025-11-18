@@ -42,8 +42,9 @@ describe("ModerateMenuPage tests", () => {
     });
     expect(reviewsLink).toHaveAttribute("href", "/moderate/reviews");
 
-    const comingSoonButton = screen.getByRole("button", { name: "Coming Soon" });
+    const comingSoonButton = screen.getByRole("button", {
+      name: "Coming Soon",
+    });
     expect(comingSoonButton).toBeDisabled();
   });
 });
-

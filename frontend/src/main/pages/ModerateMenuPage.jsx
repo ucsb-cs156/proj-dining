@@ -36,4 +36,3 @@ const ModerateMenuPage = () => {
 };
 
 export default ModerateMenuPage;
-
