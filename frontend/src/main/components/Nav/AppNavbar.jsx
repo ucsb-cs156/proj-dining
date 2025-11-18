@@ -65,9 +65,18 @@ export default function AppNavbar({
               {(hasRole(currentUser, "ROLE_ADMIN") ||
                 hasRole(currentUser, "ROLE_MODERATOR")) && (
                 <>
-                  <Nav.Link as={Link} to="/moderate">
+                  {/* <Nav.Link as={Link} to="/moderate">
                     Moderate
-                  </Nav.Link>
+                  </Nav.Link> */}
+                  <NavDropdown
+                    title="Moderate"
+                    id="appnavbar-moderate-dropdown"
+                    data-testid="appnavbar-moderate-dropdown"
+                  >
+                    <NavDropdown.Item href="/moderate">
+                      Moderator Reviews
+                    </NavDropdown.Item>
+                  </NavDropdown>
                 </>
               )}
               {currentUser && currentUser.loggedIn ? (
