@@ -15,7 +15,7 @@ import EditReviewPage from "main/pages/Reviews/EditReviewPage";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
 import ModerateMenuPage from "main/pages/ModerateMenuPage";
-import Moderate from "main/pages/ModeratePage";
+import ModerateReviewsPage from "main/pages/ModerateReviewsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
