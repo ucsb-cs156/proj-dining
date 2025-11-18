@@ -25,7 +25,11 @@ export default function MyReviewsIndexPage() {
     <BasicLayout>
       <div className="pt-2">
         <h1>My Reviews</h1>
-        <ReviewsTable reviews={reviews} userOptions={userOptions} showModerationStatus={true}/>
+        <ReviewsTable
+          reviews={reviews}
+          userOptions={userOptions}
+          showModerationStatus={true}
+        />
       </div>
     </BasicLayout>
   );

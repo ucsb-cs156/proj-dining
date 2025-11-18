@@ -217,9 +217,7 @@ describe("ReviewsTable tests", () => {
     const header = screen.getByText("Moderator Status");
     expect(header).toBeInTheDocument();
 
-    const statusCell = screen.getByTestId(
-      "Reviewstable-cell-row-0-col-status",
-    );
+    const statusCell = screen.getByTestId("Reviewstable-cell-row-0-col-status");
     expect(statusCell).toBeInTheDocument();
     expect(statusCell).toHaveTextContent(firstStatus);
   });
@@ -238,11 +236,8 @@ describe("ReviewsTable tests", () => {
       </QueryClientProvider>,
     );
 
-    const statusCell = screen.getByTestId(
-      "Reviewstable-cell-row-0-col-status",
-    );
+    const statusCell = screen.getByTestId("Reviewstable-cell-row-0-col-status");
     expect(statusCell).toBeInTheDocument();
     expect(statusCell).toHaveTextContent("N/A");
   });
-
 });
