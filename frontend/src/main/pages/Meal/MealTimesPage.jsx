@@ -10,8 +10,8 @@ export default function MealTimesPage() {
 
   const {
     data: meals,
-    error: _error,
-    status: _status,
+    error: error,
+    status: status,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
@@ -27,7 +27,24 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {meals && (
+        // Depending on status return appropiate html
+        {status === "pending" && <p>Loading...</p>}
+      
+        {status === "error" && (
+          if (error == 500) {
+          <div className="alert alert-danger">
+            No meals offered today
+          </div>
+          }
+          else {
+          <div className="alert alert-danger">
+            Unable to load page
+          </div>
+          }
+          
+        )}
+      
+        {status === "success" && (
           <MealTable
             meals={meals}
             dateTime={dateTime}
