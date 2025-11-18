@@ -27,22 +27,17 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        // Depending on status return appropiate html
-        {status === "pending" && <p>Loading...</p>}
-      
         {status === "error" && (
-          error?.response?.status === 500 ? (
-            <div className="alert alert-danger">
+          error?.response?.status === 404 ? (
+            <div>
               No meals offered today
             </div>
           ) : (
-            <div className="alert alert-danger">
+            <div>
               Unable to load page
             </div>
           )
-          
         )}
-      
         {status === "success" && (
           <MealTable
             meals={meals}

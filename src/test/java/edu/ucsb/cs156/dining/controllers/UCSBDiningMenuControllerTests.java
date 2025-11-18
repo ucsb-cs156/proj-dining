@@ -15,8 +15,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.client.HttpClientErrorException;
 
 @WebMvcTest(value = UCSBDiningMenuController.class)
 @Import(SecurityConfig.class)
@@ -29,7 +31,6 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
 
   @Test
   public void users_can_see_meal_times() throws Exception {
-
     String expectedResult = "{expectedJSONResult}";
     String url = "/api/diningcommons/2023-10-10/ortega";
 
@@ -41,8 +42,29 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
             .perform(get(url).contentType("application/json"))
             .andExpect(status().isOk())
             .andReturn();
-    String responseString = response.getResponse().getContentAsString();
 
+    String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedResult, responseString);
+  }
+
+  @Test
+  public void returns_404_when_no_meals_offered() throws Exception {
+    String url = "/api/diningcommons/2025-11-27/carrillo";
+    String expectedError = "{\"error\": \"No meals offered on this date\"}";
+
+    // Throw the specific NotFound subclass
+    when(ucsbDiningMenuService.getJSON(any(String.class), any(String.class)))
+        .thenThrow(
+            HttpClientErrorException.NotFound.create(
+                HttpStatus.NOT_FOUND, "Not Found", null, null, null));
+
+    MvcResult response =
+        mockMvc
+            .perform(get(url).contentType("application/json"))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedError, responseString);
   }
 }
