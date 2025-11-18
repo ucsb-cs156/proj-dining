@@ -22,6 +22,11 @@ public class UCSBDiningMenuController extends ApiController {
   @Autowired UCSBDiningMenuService ucsbDiningMenuService;
 
   @Operation(summary = "Get list of meals serving in given dining common on given date")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "204", description = "No meals offered on this date")
+      })
   @GetMapping(value = "/{date-time}/{dining-commons-code}", produces = "application/json")
   public ResponseEntity<String> menutimes(
       @Parameter(
