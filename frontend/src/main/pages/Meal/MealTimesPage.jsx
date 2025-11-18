@@ -35,13 +35,6 @@ export default function MealTimesPage() {
           </div>
         )}
         
-        {/* Check for 204 */}
-        {status === "success" && (!meals || meals.length === 0) && (
-          <div>
-            No meals offered today
-          </div>
-        )}
-        
         {/* If there is body then show meals */}
         {meals && meals.length > 0 && (
           <MealTable
@@ -50,6 +43,14 @@ export default function MealTimesPage() {
             diningCommonsCode={diningCommonsCode}
           />
         )}
+
+        {/* Check for 204 */}
+        {status === "success" && (!meals || meals.length === 0) && (
+          <div>
+            No meals offered today
+          </div>
+        )}
+        
       </div>
     </BasicLayout>
   );
