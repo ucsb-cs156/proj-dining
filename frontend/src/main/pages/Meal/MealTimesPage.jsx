@@ -10,14 +10,15 @@ export default function MealTimesPage() {
 
   const {
     data: meals,
-    error: error,
-    status: status,
+    error,
+    status: _status,
+    isFetched
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
     { url: `/api/diningcommons/${dateTime}/${diningCommonsCode}` },
     // Stryker disable next-line all : don't test default value of empty list
-    undefined
+    []
   );
 
   return (
@@ -45,7 +46,7 @@ export default function MealTimesPage() {
         )}
 
         {/* Check for 204 */}
-        {status === "success" && (!meals || meals.length === 0) && (
+        {!error && isFetched && (!meals || meals.length === 0) && (
           <div>
             No meals offered today
           </div>
