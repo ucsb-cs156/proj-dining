@@ -3,7 +3,6 @@ import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import { mealFixtures } from "fixtures/mealFixtures";
 import { http, HttpResponse } from "msw";
 import { reactRouterParameters } from "storybook-addon-remix-react-router";
-import { QueryClient, QueryClientProvider } from "react-query";
 
 export default {
   title: "pages/Meal/MealTimesPage",
