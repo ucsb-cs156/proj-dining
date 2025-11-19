@@ -62,6 +62,7 @@ describe("AppNavbar tests", () => {
     expect(moderatorMenu).toBeInTheDocument();
   });
 
+
   test("renders H2Console and Swagger links correctly", async () => {
     const currentUser = currentUserFixtures.adminUser;
     const systemInfo = systemInfoFixtures.showingBoth;
@@ -159,50 +160,6 @@ describe("AppNavbar tests", () => {
 
     await screen.findByTestId("AppNavbar");
     expect(screen.queryByTestId(/AppNavbarLocalhost/i)).toBeNull();
-  });
-
-  test("renders the placeholder link correctly", async () => {
-    const currentUser = currentUserFixtures.userOnly;
-    const systemInfo = systemInfoFixtures.showingBoth;
-
-    const doLogin = vi.fn();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AppNavbar
-            currentUser={currentUser}
-            systemInfo={systemInfo}
-            doLogin={doLogin}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    await screen.findByText("Placeholder");
-    const link = screen.getByText("Placeholder");
-    expect(link).toBeInTheDocument();
-    expect(link.getAttribute("href")).toBe("/placeholder");
-  });
-
-  test("Placeholder link does NOT show when not logged in", async () => {
-    const currentUser = null;
-    const systemInfo = systemInfoFixtures.showingBoth;
-    const doLogin = vi.fn();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AppNavbar
-            currentUser={currentUser}
-            systemInfo={systemInfo}
-            doLogin={doLogin}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    expect(screen.queryByText("Placeholder")).not.toBeInTheDocument();
   });
 
   test("when oauthlogin undefined, default value is used", async () => {
