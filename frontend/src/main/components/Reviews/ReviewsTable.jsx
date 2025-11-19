@@ -87,7 +87,7 @@ export default function ReviewsTable({
       accessor: "item.diningCommonsCode",
     },
   ];
- 
+
   if (showModerationStatus) {
     columns.push({
       Header: "Moderator Status",
