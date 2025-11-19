@@ -30,4 +30,5 @@ ModView.args = {
   reviews: ReviewFixtures.threeReviews,
   userOptions: false,
   moderatorOptions: true,
+  showModerationStatus: true,
 };
