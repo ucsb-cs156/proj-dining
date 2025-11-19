@@ -43,7 +43,7 @@ export default function MealTimesPage() {
           />
         )}
 
-        {/* Check for 204 */}
+        {/* Check for 204, isFetched is to prevent this from defaulting before useQuery returns a body */}
         {!error && isFetched && (!meals || meals.length === 0) && (
           <div>No meals offered today</div>
         )}
