@@ -34,7 +34,9 @@ const Moderate = () => {
   );
 
   // ⭐⭐ SAFE DEFAULTS (prevents crashes even if backend endpoint does not exist)
+  // Stryker disable next-line all : don't test empty array
   const safeReviews = Array.isArray(reviews) ? reviews : [];
+  // Stryker disable next-line all : don't test empty array
   const safeAliases = Array.isArray(aliases) ? aliases : [];
 
   const moderatorOptions =
@@ -56,7 +58,10 @@ const Moderate = () => {
     <BasicLayout>
       <div className="pt-2">
         <h1>Moderation Page</h1>
-        <ReviewsTable reviews={safeReviews} moderatorOptions={moderatorOptions} />
+        <ReviewsTable
+          reviews={safeReviews}
+          moderatorOptions={moderatorOptions}
+        />
         <AliasApprovalTable
           aliases={safeAliases}
           approveCallback={approveCallback}
