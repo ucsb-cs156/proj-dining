@@ -138,7 +138,7 @@ describe("Moderate Page Tests", () => {
     const errorMessage = console.error.mock.calls[0][0];
     expect(
       errorMessage.includes("/api/reviews/needsmoderation") ||
-        errorMessage.includes("api/aliases/needsmoderation"),
+        errorMessage.includes("api/admin/users/needsmoderation"),
     ).toBe(true);
     expect(errorMessage).toContain("Error communicating");
     restoreConsole();
@@ -177,7 +177,7 @@ describe("Moderate Page Tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("approveCallback sends POST request to /api/aliases/undefined/approve", async () => {
+  test("approveCallback sends POST request to /api/admin/users/undefined/approve", async () => {
     setupModerator();
     const queryClient = new QueryClient();
 
@@ -186,7 +186,7 @@ describe("Moderate Page Tests", () => {
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
-    axiosMock.onGet("/api/aliases/needsmoderation").reply(200, [
+    axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
       {
         id: 42,
         proposedAlias: "alias1",
@@ -221,7 +221,7 @@ describe("Moderate Page Tests", () => {
     // Since ButtonColumn passes cell, approveCallback receives cell object → id undefined
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
-        "/api/aliases/undefined/approve",
+        "/api/admin/users/undefined/approve",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -229,7 +229,7 @@ describe("Moderate Page Tests", () => {
     fetchMock.mockRestore();
   });
 
-  test("rejectCallback sends POST request to /api/aliases/undefined/reject", async () => {
+  test("rejectCallback sends POST request to /api/admin/users/undefined/reject", async () => {
     setupModerator();
     const queryClient = new QueryClient();
 
@@ -237,7 +237,7 @@ describe("Moderate Page Tests", () => {
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
-    axiosMock.onGet("/api/aliases/needsmoderation").reply(200, [
+    axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
       {
         id: 55,
         proposedAlias: "alias2",
@@ -272,7 +272,7 @@ describe("Moderate Page Tests", () => {
     // Since ButtonColumn passes cell, rejectCallback receives cell object → id undefined
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
-        "/api/aliases/undefined/reject",
+        "/api/admin/users/undefined/reject",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -284,7 +284,7 @@ describe("Moderate Page Tests", () => {
     setupModerator();
 
     // Returning any valid data is fine. This test only checks method.
-    axiosMock.onGet("/api/aliases/needsmoderation").reply(200, []);
+    axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, []);
 
     const adapterSpy = vi.spyOn(axios.defaults, "adapter");
 
