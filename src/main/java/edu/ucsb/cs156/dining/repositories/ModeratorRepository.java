@@ -15,7 +15,6 @@ public interface ModeratorRepository extends CrudRepository<Moderator, String> {
    * @return Optional of Moderator (empty if not found)
    */
   Optional<Moderator> findByEmail(String email);
-  
+
   boolean existsByEmail(String email);
 }
-

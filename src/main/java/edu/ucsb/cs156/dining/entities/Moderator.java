@@ -12,4 +12,3 @@ import lombok.*;
 public class Moderator {
   @Id private String email;
 }
-

@@ -11,4 +11,3 @@ import lombok.*;
 public class Admin {
   @Id private String email;
 }
-
