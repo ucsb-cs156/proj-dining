@@ -72,7 +72,6 @@ describe("ReviewsPage tests", () => {
         screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
       ).not.toBeInTheDocument();
     });
-
   });
 
   test("renders table when backend is available", async () => {
