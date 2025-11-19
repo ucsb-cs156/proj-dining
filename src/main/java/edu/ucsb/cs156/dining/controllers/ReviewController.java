@@ -162,7 +162,6 @@ public class ReviewController extends ApiController {
     return reviews;
   }
 
-  // JZ-Task 6 for GET /api/reviews/{id}
   @Operation(summary = "Get a single review by id (for editing)")
   @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MODERATOR')")
   @GetMapping("/{id}")
