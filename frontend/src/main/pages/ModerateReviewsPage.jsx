@@ -4,7 +4,7 @@ import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import ReviewsTable from "main/components/Reviews/ReviewsTable";
 
-const Moderate = () => {
+const ModerateReviewsPage = () => {
   const currentUser = useCurrentUser();
 
   const {
@@ -33,4 +33,4 @@ const Moderate = () => {
   );
 };
 
-export default Moderate;
+export default ModerateReviewsPage;

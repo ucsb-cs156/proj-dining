@@ -1,7 +1,7 @@
 import { render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
-import Moderate from "main/pages/ModeratePage";
+import ModerateReviewsPage from "main/pages/ModerateReviewsPage";
 import { vi } from "vitest";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
@@ -69,7 +69,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviewsPage />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -98,7 +98,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviewsPage />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -126,7 +126,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviewsPage />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -156,7 +156,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviewsPage />
         </MemoryRouter>
       </QueryClientProvider>,
     );
