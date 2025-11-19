@@ -30,54 +30,40 @@ function App() {
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
+
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <Route exact path="/admin/users" element={<AdminUsersPage />} />
         )}
+
         {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
-            <Route
-              exact
-              path="/reviews/post/:id"
-              element={<PostReviewPage />}
-            />
-
-            <Route
-              exact
-              path="/reviews/edit/:id"
-              element={<EditReviewPage />}
-            />
-
+            <Route exact path="/reviews/post/:id" element={<PostReviewPage />} />
+            <Route exact path="/reviews/edit/:id" element={<EditReviewPage />} />
             <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
           </>
         )}
+
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
+        
         {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/placeholder"
-              element={<PlaceholderIndexPage />}
-            />
-          </>
+          <Route exact path="/placeholder" element={<PlaceholderIndexPage />} />
         )}
-        <>
-          <Route
-            exact
-            path="/diningcommons/:date-time/:dining-commons-code"
-            element={<MealTimesPage />}
-          />
-        </>
-        <>
-          <Route
-            exact
-            path="/diningcommons/:date-time/:dining-commons-code/:meal"
-            element={<MenuItemPage />}
-          />
-        </>
+
+        <Route
+          exact
+          path="/diningcommons/:date-time/:dining-commons-code"
+          element={<MealTimesPage />}
+        />
+
+        <Route
+          exact
+          path="/diningcommons/:date-time/:dining-commons-code/:meal"
+          element={<MenuItemPage />}
+        />
       </Routes>
     </BrowserRouter>
   );
