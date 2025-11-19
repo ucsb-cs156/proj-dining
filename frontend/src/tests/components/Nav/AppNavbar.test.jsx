@@ -85,6 +85,7 @@ describe("AppNavbar tests", () => {
     expect(moderatorMenu).toBeInTheDocument();
   });
 
+
   test("renders H2Console and Swagger links correctly", async () => {
     const currentUser = currentUserFixtures.adminUser;
     const systemInfo = systemInfoFixtures.showingBoth;
