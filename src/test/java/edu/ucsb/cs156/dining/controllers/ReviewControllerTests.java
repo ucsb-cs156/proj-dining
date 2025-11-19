@@ -1246,7 +1246,6 @@ public class ReviewControllerTests extends ControllerTestCase {
     verify(reviewRepository, times(0)).findByItemAndStatus(any(), any());
   }
 
-  // JZ: Task 6 tests for GET /api/reviews/{id}
   @WithMockUser(roles = {"USER"})
   @Test
   public void getReviewById_owner_can_access() throws Exception {
