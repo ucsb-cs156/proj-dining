@@ -133,11 +133,18 @@ describe("MealTimesPage tests", () => {
   });
 
   test("indicate when loading when loading API", async () => {
-    queryClient.clear();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // ✅ turns retries off
+          retry: false,
+        },
+      },
+    });
 
     axiosMock.reset();
-    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(200, []);
-    // Above: We get an empty meal list back, instead of the fixtures
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(() => new Promise(() => {}));
+    // Above: loading forever
 
     render(
       <QueryClientProvider client={queryClient}>
