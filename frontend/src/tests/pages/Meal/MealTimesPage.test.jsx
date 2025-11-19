@@ -65,12 +65,15 @@ describe("MealTimesPage tests", () => {
       </QueryClientProvider>,
     );
 
+    // Wait for the meal information to be loaded
     await screen.findByText("Meals at portola for 2024-11-25");
 
+    // Ensure that the header is correct
     expect(
       screen.getByText("Meals at portola for 2024-11-25"),
     ).toBeInTheDocument();
 
+    // Check that each meal time is displayed correctly
     expect(screen.getByText("Breakfast")).toBeInTheDocument();
     expect(screen.getByText("Lunch")).toBeInTheDocument();
     expect(screen.getByText("Dinner")).toBeInTheDocument();
