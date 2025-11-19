@@ -38,8 +38,16 @@ function App() {
         {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
-            <Route exact path="/reviews/post/:id" element={<PostReviewPage />} />
-            <Route exact path="/reviews/edit/:id" element={<EditReviewPage />} />
+            <Route
+              exact
+              path="/reviews/post/:id"
+              element={<PostReviewPage />}
+            />
+            <Route
+              exact
+              path="/reviews/edit/:id"
+              element={<EditReviewPage />}
+            />
             <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
           </>
         )}
@@ -48,7 +56,7 @@ function App() {
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
-        
+
         {hasRole(currentUser, "ROLE_USER") && (
           <Route exact path="/placeholder" element={<PlaceholderIndexPage />} />
         )}
