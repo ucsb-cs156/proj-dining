@@ -13,7 +13,7 @@ export default function ReviewsTable({
   reviews,
   userOptions,
   moderatorOptions,
-  //JZ - modified here for task 9
+
   showModerationStatus = false,
 }) {
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ export default function ReviewsTable({
       accessor: "item.diningCommonsCode",
     },
   ];
-
+ 
   if (showModerationStatus) {
     columns.push({
       Header: "Moderator Status",
