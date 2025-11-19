@@ -24,7 +24,7 @@ UserView.args = {
   userOptions: true,
   moderatorOptions: false,
 };
-// JZ- add showModerationStatus: true for Task 9
+
 export const ModView = Template.bind({});
 ModView.args = {
   reviews: ReviewFixtures.threeReviews,
