@@ -20,7 +20,7 @@ export default function MyReviewsIndexPage() {
   );
 
   const userOptions = hasRole(currentUser, "ROLE_USER");
-  // JZ - add a showModerationStatus={true}
+
   return (
     <BasicLayout>
       <div className="pt-2">

@@ -180,7 +180,7 @@ describe("ReviewsTable tests", () => {
     );
     expect(dateCell).toHaveTextContent(formattedDate);
   });
-  //JZ - add test for task 9
+
   test("does NOT show Moderator Status column by default", () => {
     render(
       <QueryClientProvider client={queryClient}>
