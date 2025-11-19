@@ -41,11 +41,11 @@ const Moderate = () => {
   // Approve + Reject callbacks
   //
   const approveCallback = async (alias) => {
-    await fetch(`/api/aliases/${alias.id}/approve`, { method: "POST" });
+    await fetch(`/api/admin/users/${alias.id}/approve`, { method: "POST" });
   };
 
   const rejectCallback = async (alias) => {
-    await fetch(`/api/aliases/${alias.id}/reject`, { method: "POST" });
+    await fetch(`/api/admin/users/${alias.id}/reject`, { method: "POST" });
   };
 
   return (
