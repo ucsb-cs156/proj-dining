@@ -1,7 +1,6 @@
 import { Badge } from "react-bootstrap";
 
 export default function RoleBadge({ role, currentUser }) {
-  // Stryker disable next-line all :
   const roles = currentUser.root.roles.map((o) => o.authority);
 
   const lcrole = role.replace("ROLE_", "").toLowerCase();
