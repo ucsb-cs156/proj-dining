@@ -15,6 +15,7 @@ const Moderate = () => {
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/reviews/needsmoderation"],
+    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/reviews/needsmoderation" },
     // Stryker disable next-line all : don't test internal caching of React Query
     [],
@@ -24,8 +25,11 @@ const Moderate = () => {
   // Fetch aliases awaiting approval
   //
   const { data: aliases } = useBackend(
+    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/aliases/needsmoderation"],
+    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/aliases/needsmoderation" },
+    // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );
 

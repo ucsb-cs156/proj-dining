@@ -82,7 +82,7 @@ describe("ReviewsPage tests", () => {
     await waitFor(() => {
       // Table should remain empty
       expect(
-        screen.queryByTestId(`${testId}-cell-row-0-col-item.id`)
+        screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
       ).not.toBeInTheDocument();
     });
 
@@ -114,7 +114,7 @@ describe("ReviewsPage tests", () => {
     await waitFor(() => {
       // Table should show data
       expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-item.id`)
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toBeInTheDocument();
     });
   });

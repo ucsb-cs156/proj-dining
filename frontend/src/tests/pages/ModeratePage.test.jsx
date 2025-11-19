@@ -135,14 +135,10 @@ describe("Moderate Page Tests", () => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
     });
 
-    // const errorMessage = console.error.mock.calls[0][0];
-    // expect(errorMessage).toMatch(
-    //   "Error communicating with backend via GET on /api/reviews/needsmoderation",
-    // );
     const errorMessage = console.error.mock.calls[0][0];
     expect(
       errorMessage.includes("/api/reviews/needsmoderation") ||
-      errorMessage.includes("api/aliases/needsmoderation")
+        errorMessage.includes("api/aliases/needsmoderation"),
     ).toBe(true);
     expect(errorMessage).toContain("Error communicating");
     restoreConsole();
@@ -190,18 +186,14 @@ describe("Moderate Page Tests", () => {
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
-    // Mock aliases (id is irrelevant because ButtonColumn does not pass it)
-    axiosMock
-      .onGet("/api/aliases/needsmoderation")
-      .reply(200, [
-        {
-          id: 42,
-          proposedAlias: "alias1",
-          status: "AWAITING_REVIEW",
-        },
-      ]);
+    axiosMock.onGet("/api/aliases/needsmoderation").reply(200, [
+      {
+        id: 42,
+        proposedAlias: "alias1",
+        status: "AWAITING_REVIEW",
+      },
+    ]);
 
-    // Mock global fetch used by approveCallback
     const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({}),
@@ -212,19 +204,17 @@ describe("Moderate Page Tests", () => {
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
-    // Wait for table to render at least one alias row
     await waitFor(() => {
       expect(
-        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias")
+        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
       ).toBeInTheDocument();
     });
 
-    // Click Approve button
     const approveButton = screen.getByTestId(
-      "Aliasapprovaltable-cell-row-0-col-Approve-button"
+      "Aliasapprovaltable-cell-row-0-col-Approve-button",
     );
     approveButton.click();
 
@@ -232,7 +222,7 @@ describe("Moderate Page Tests", () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
         "/api/aliases/undefined/approve",
-        expect.objectContaining({ method: "POST" })
+        expect.objectContaining({ method: "POST" }),
       );
     });
 
@@ -247,15 +237,13 @@ describe("Moderate Page Tests", () => {
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
-    axiosMock
-      .onGet("/api/aliases/needsmoderation")
-      .reply(200, [
-        {
-          id: 55,
-          proposedAlias: "alias2",
-          status: "AWAITING_REVIEW",
-        },
-      ]);
+    axiosMock.onGet("/api/aliases/needsmoderation").reply(200, [
+      {
+        id: 55,
+        proposedAlias: "alias2",
+        status: "AWAITING_REVIEW",
+      },
+    ]);
 
     const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue({
       ok: true,
@@ -267,17 +255,17 @@ describe("Moderate Page Tests", () => {
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias")
+        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
       ).toBeInTheDocument();
     });
 
     const rejectButton = screen.getByTestId(
-      "Aliasapprovaltable-cell-row-0-col-Reject-button"
+      "Aliasapprovaltable-cell-row-0-col-Reject-button",
     );
     rejectButton.click();
 
@@ -285,7 +273,7 @@ describe("Moderate Page Tests", () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
         "/api/aliases/undefined/reject",
-        expect.objectContaining({ method: "POST" })
+        expect.objectContaining({ method: "POST" }),
       );
     });
 
@@ -296,9 +284,7 @@ describe("Moderate Page Tests", () => {
     setupModerator();
 
     // Returning any valid data is fine. This test only checks method.
-    axiosMock
-      .onGet("/api/aliases/needsmoderation")
-      .reply(200, []);
+    axiosMock.onGet("/api/aliases/needsmoderation").reply(200, []);
 
     const adapterSpy = vi.spyOn(axios.defaults, "adapter");
 
@@ -308,15 +294,14 @@ describe("Moderate Page Tests", () => {
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
       expect(adapterSpy).toHaveBeenCalled();
-      expect(adapterSpy.mock.calls[0][0].method).toBe("get");   // <── KILLS MUTANT
+      expect(adapterSpy.mock.calls[0][0].method).toBe("get");
     });
 
     adapterSpy.mockRestore();
   });
-
 });
