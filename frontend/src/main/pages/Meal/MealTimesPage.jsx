@@ -29,9 +29,7 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {status === "loading" && (
-          <p>Loading...</p>
-        )}
+        {status === "loading" && <p>Loading...</p>}
         {error?.response?.status === 500 && <p>No meals offered today.</p>}
         {meals.length > 0 && (
           <MealTable

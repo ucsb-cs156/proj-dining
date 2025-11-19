@@ -143,7 +143,9 @@ describe("MealTimesPage tests", () => {
     });
 
     axiosMock.reset();
-    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(() => new Promise(() => {}));
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(() => new Promise(() => {}));
     // Above: loading forever
 
     render(
