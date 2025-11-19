@@ -58,7 +58,10 @@ ServerError.args = {
 ServerError.parameters = {
   msw: [
     http.get("/api/diningcommons/2024-11-25/portola", () => {
-      return HttpResponse.json({ error: "Internal Server Error" }, { status: 500 });
+      return HttpResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
     }),
   ],
 };

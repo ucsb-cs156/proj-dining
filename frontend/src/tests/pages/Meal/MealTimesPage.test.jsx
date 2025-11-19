@@ -74,17 +74,17 @@ describe("MealTimesPage tests", () => {
     expect(screen.getByText("Breakfast")).toBeInTheDocument();
     expect(screen.getByText("Lunch")).toBeInTheDocument();
     expect(screen.getByText("Dinner")).toBeInTheDocument();
-    
-    expect(screen.queryByText("No meals offered today")).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText("No meals offered today"),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText("Unable to load page")).not.toBeInTheDocument();
   });
 
   test("displays message when no meals are offered (204 No Content)", async () => {
     const queryClient = new QueryClient();
-    
-    axiosMock
-      .onGet("/api/diningcommons/2024-11-25/portola")
-      .reply(204);
+
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(204);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -97,7 +97,7 @@ describe("MealTimesPage tests", () => {
     await waitFor(() => {
       expect(screen.getByText("No meals offered today")).toBeInTheDocument();
     });
-    
+
     expect(screen.queryByText("Meal")).not.toBeInTheDocument();
     expect(screen.queryByText("Unable to load page")).not.toBeInTheDocument();
   });
@@ -110,10 +110,8 @@ describe("MealTimesPage tests", () => {
         },
       },
     });
-    
-    axiosMock
-      .onGet("/api/diningcommons/2024-11-25/portola")
-      .reply(500);
+
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(500);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -126,8 +124,10 @@ describe("MealTimesPage tests", () => {
     await waitFor(() => {
       expect(screen.getByText("Unable to load page")).toBeInTheDocument();
     });
-    
-    expect(screen.queryByText("No meals offered today")).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText("No meals offered today"),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText("Meal")).not.toBeInTheDocument();
   });
 
@@ -139,7 +139,7 @@ describe("MealTimesPage tests", () => {
         },
       },
     });
-    
+
     axiosMock
       .onGet("/api/diningcommons/2024-11-25/portola")
       .reply(500, mealFixtures.threeMeals);
@@ -155,17 +155,17 @@ describe("MealTimesPage tests", () => {
     await waitFor(() => {
       expect(screen.getByText("Unable to load page")).toBeInTheDocument();
     });
-    
-    expect(screen.queryByText("No meals offered today")).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText("No meals offered today"),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText("Meal")).not.toBeInTheDocument();
   });
 
   test("displays message when meals array is empty (200 with empty array)", async () => {
     const queryClient = new QueryClient();
-  
-    axiosMock
-      .onGet("/api/diningcommons/2024-11-25/portola")
-      .reply(200, []);
+
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(200, []);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -178,7 +178,7 @@ describe("MealTimesPage tests", () => {
     await waitFor(() => {
       expect(screen.getByText("No meals offered today")).toBeInTheDocument();
     });
-  
+
     expect(screen.queryByText("Meal")).not.toBeInTheDocument();
   });
 });

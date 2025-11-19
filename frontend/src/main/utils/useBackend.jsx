@@ -25,8 +25,12 @@ import { toast } from "react-toastify";
 //     []
 // );
 
-export function useBackend(queryKey, axiosParameters, initialData, options = {}) {
-  
+export function useBackend(
+  queryKey,
+  axiosParameters,
+  initialData,
+  options = {},
+) {
   return useQuery(
     queryKey,
     async () => {
@@ -42,7 +46,7 @@ export function useBackend(queryKey, axiosParameters, initialData, options = {})
     },
     {
       initialData,
-      ...options
+      ...options,
     },
   );
 }
