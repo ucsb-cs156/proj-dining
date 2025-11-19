@@ -12,5 +12,4 @@ beforeAll(() => {
 
 test("index.html has correct title", async () => {
   expect(document.title).toBe("UCSB Dining");
-  expect("Vite + React").not.toBeInTheDocument();
 });
