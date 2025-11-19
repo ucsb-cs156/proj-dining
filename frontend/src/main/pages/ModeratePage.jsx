@@ -33,6 +33,10 @@ const Moderate = () => {
     [],
   );
 
+  // ⭐⭐ SAFE DEFAULTS (prevents crashes even if backend endpoint does not exist)
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const safeAliases = Array.isArray(aliases) ? aliases : [];
+
   const moderatorOptions =
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
@@ -52,9 +56,9 @@ const Moderate = () => {
     <BasicLayout>
       <div className="pt-2">
         <h1>Moderation Page</h1>
-        <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
+        <ReviewsTable reviews={safeReviews} moderatorOptions={moderatorOptions} />
         <AliasApprovalTable
-          aliases={aliases}
+          aliases={safeAliases}
           approveCallback={approveCallback}
           rejectCallback={rejectCallback}
         />
