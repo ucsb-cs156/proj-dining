@@ -24,6 +24,14 @@ vi.mock("react-router", async () => {
   };
 });
 
+const mockToast = vi.fn();
+vi.mock("react-toastify", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    toast: (x) => mockToast(x),
+  };
+});
+
 const queryClient = new QueryClient();
 
 describe("MealTimesPage tests", () => {
@@ -37,6 +45,10 @@ describe("MealTimesPage tests", () => {
     axiosMock
       .onGet("/api/diningcommons/2024-11-25/portola")
       .reply(200, mealFixtures.threeMeals);
+  });
+
+  afterEach(() => {
+    mockToast.mockClear();
   });
 
   test("renders without crashing", () => {
@@ -70,5 +82,78 @@ describe("MealTimesPage tests", () => {
     expect(screen.getByText("Breakfast")).toBeInTheDocument();
     expect(screen.getByText("Lunch")).toBeInTheDocument();
     expect(screen.getByText("Dinner")).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/No meals offered today/i),
+    ).not.toBeInTheDocument();
+  });
+
+  test("displays 'No meals offered today.' when backend returns 500", async () => {
+    queryClient.clear();
+
+    axiosMock.reset();
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(500, {});
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // Wait for the meal information to be loaded
+    await screen.findByText("Meals at portola for 2024-11-25");
+
+    // Ensure that the header is correct
+    expect(
+      screen.getByText("Meals at portola for 2024-11-25"),
+    ).toBeInTheDocument();
+
+    // Should display this
+    expect(
+      await screen.findByText(/No meals offered today/i),
+    ).toBeInTheDocument();
+
+    // An empty table should not show up
+    expect(
+      screen.queryByTestId("MealTable-header-group-0"),
+    ).not.toBeInTheDocument();
+
+    expect(mockToast).not.toHaveBeenCalled();
+  });
+
+  test("when loading (empty meal list), have the same behavior as error 500", async () => {
+    queryClient.clear();
+
+    axiosMock.reset();
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(200, []);
+    // Above: We get an empty meal list back, instead of the fixtures
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // Wait for the meal information to be loaded
+    await screen.findByText("Meals at portola for 2024-11-25");
+
+    // Ensure that the header is correct
+    expect(
+      screen.getByText("Meals at portola for 2024-11-25"),
+    ).toBeInTheDocument();
+
+    // Should display this
+    expect(
+      await screen.findByText(/No meals offered today/i),
+    ).toBeInTheDocument();
+
+    // An empty table should not show up
+    expect(
+      screen.queryByTestId("MealTable-header-group-0"),
+    ).not.toBeInTheDocument();
   });
 });
