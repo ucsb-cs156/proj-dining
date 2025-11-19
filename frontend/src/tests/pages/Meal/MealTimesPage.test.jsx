@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -94,9 +94,7 @@ describe("MealTimesPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("No meals offered today")).toBeInTheDocument();
-    });
+    await screen.findByText("No meals offered today");
 
     expect(screen.queryByText("Meal")).not.toBeInTheDocument();
     expect(screen.queryByText("Unable to load page")).not.toBeInTheDocument();
@@ -121,9 +119,7 @@ describe("MealTimesPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("Unable to load page")).toBeInTheDocument();
-    });
+    await screen.findByText("Unable to load page");
 
     expect(
       screen.queryByText("No meals offered today"),
@@ -152,9 +148,7 @@ describe("MealTimesPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("Unable to load page")).toBeInTheDocument();
-    });
+    await screen.findByText("Unable to load page");
 
     expect(
       screen.queryByText("No meals offered today"),
@@ -175,9 +169,7 @@ describe("MealTimesPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("No meals offered today")).toBeInTheDocument();
-    });
+    await screen.findByText("No meals offered today");
 
     expect(screen.queryByText("Meal")).not.toBeInTheDocument();
   });
