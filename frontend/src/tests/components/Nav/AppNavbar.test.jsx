@@ -37,7 +37,7 @@ describe("AppNavbar tests", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    
+
     await screen.findByText("Welcome, phtcon@ucsb.edu");
     const adminMenu = screen.getByTestId("appnavbar-admin-dropdown");
     expect(adminMenu).toBeInTheDocument();
