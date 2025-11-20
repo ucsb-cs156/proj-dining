@@ -104,7 +104,44 @@ describe("utils/useBackend tests", () => {
         expect.anything(),
       );
     });
+
+    test("does NOT show dining commons toast when stratus is NOT 500", async () => {
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+      const wrapper = ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      var axiosMock = new AxiosMockAdapter(axios);
+
+      const url = "/api/diningcommons/2025-08-16/carrillo";
+
+      axiosMock.onGet(url).reply(404);
+
+      const { result } = renderHook(
+        () => useBackend([url], { method: "GET", url }, []),
+        { wrapper },
+      );
+
+      await waitFor(() => result.current.isError);
+
+      expect(mockToast).toHaveBeenCalledWith(
+        "Error communicating with backend via GET on /api/diningcommons/2025-08-16/carrillo",
+      );
+
+      expect(mockToast).not.toHaveBeenCalledWith(
+        expect.stringContaining("is closed on"),
+      );
+    });
   });
+
   describe("utils/useBackend useBackendMutation tests", () => {
     test("useBackendMutation handles success correctly", async () => {
       // See: https://react-query.tanstack.com/guides/testing#turn-off-retries
