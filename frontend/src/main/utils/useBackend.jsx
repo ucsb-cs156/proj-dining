@@ -2,29 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// example
-//  queryKey ["/api/users/all"] for "api/users/all"
-//  queryKey ["/api/users","4"]  for "/api/users?id=4"
-
-// For axiosParameters
-//
-// {
-//     method: 'post',
-//     url: '/user/12345',
-//     data: {
-//       firstName: 'Fred',
-//       lastName: 'Flintstone'
-//     }
-//  }
-//
-
-// GET Example:
-// useBackend(
-//     ["/api/admin/users"],
-//     { method: "GET", url: "/api/admin/users" },
-//     []
-// );
-
 export function useBackend(queryKey, axiosParameters, initialData) {
   return useQuery(
     queryKey,
@@ -33,9 +10,23 @@ export function useBackend(queryKey, axiosParameters, initialData) {
         const response = await axios(axiosParameters);
         return response.data;
       } catch (e) {
+        const status = e.response?.status;
+        const url = axiosParameters.url;
+
+        if (url.includes("/api/diningcommons") && status == 500) {
+          const parts = url.split("/");
+          const date = parts[3];
+          const diningCommon = parts[4];
+
+          const errorMessage = `${diningCommon} is closed on ${date}. Please select another date or dining common.`;
+          toast(errorMessage);
+          console.error("Dining Commons API Error:", e);
+          throw e;
+        }
+
         const errorMessage = `Error communicating with backend via ${axiosParameters.method} on ${axiosParameters.url}`;
-        toast(errorMessage);
         console.error(errorMessage, e);
+        toast(errorMessage);
         throw e;
       }
     },
@@ -45,8 +36,6 @@ export function useBackend(queryKey, axiosParameters, initialData) {
   );
 }
 
-// const wrappedParams = async (params) =>
-//   await ( await axios(params)).data;
 
 const reportAxiosError = (error) => {
   console.error("Axios Error:", error);

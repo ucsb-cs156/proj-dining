@@ -67,6 +67,43 @@ describe("utils/useBackend tests", () => {
         "Error communicating with backend via GET on /api/admin/users",
       );
     });
+
+    test("show toast and logs when dining common is CLOSED", async () => {
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+      const wrapper = ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      var axiosMock = new AxiosMockAdapter(axios);
+
+      const url = "/api/diningcommons/2025-08-16/carrillo";
+
+      axiosMock.onGet(url).reply(500);
+
+      const { result } = renderHook(
+        () => useBackend([url], { method: "GET", url }, []),
+        { wrapper },
+      );
+
+      await waitFor(() => result.current.isError);
+
+      expect(mockToast).toHaveBeenCalledWith(
+        "carrillo is closed on 2025-08-16. Please select another date or dining common.",
+      );
+
+      expect(console.error).toHaveBeenCalledWith(
+        "Dining Commons API Error:",
+        expect.anything(),
+      );
+    });
   });
   describe("utils/useBackend useBackendMutation tests", () => {
     test("useBackendMutation handles success correctly", async () => {
