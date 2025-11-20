@@ -85,6 +85,51 @@ describe("AppNavbar tests", () => {
     expect(swaggerMenu).toBeInTheDocument();
   });
 
+  test("renders My Reviews link when user is currently logged in", async () => {
+    const currentUser = currentUserFixtures.userOnly;
+    const systemInfo = systemInfoFixtures.showingBoth;
+    const doLogin = vi.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar
+            currentUser={currentUser}
+            systemInfo={systemInfo}
+            doLogin={doLogin}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // wait for the link to appear
+    await screen.findByText("My Reviews");
+    const link = screen.getByText("My Reviews");
+    expect(link).toBeInTheDocument();
+    expect(link.getAttribute("href")).toBe("/myreviews");
+  });
+
+  test("My Reviews link does NOT show when not logged in", async () => {
+    const currentUser = null;
+    const systemInfo = systemInfoFixtures.showingBoth;
+    const doLogin = vi.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar
+            currentUser={currentUser}
+            systemInfo={systemInfo}
+            doLogin={doLogin}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // If Stryker had removed the conditional block, this would incorrectly be present.
+    expect(screen.queryByText("My Reviews")).not.toBeInTheDocument();
+  });
+
   test("renders the AppNavbarLocalhost when on http://localhost:3000", async () => {
     const currentUser = currentUserFixtures.userOnly;
     const systemInfo = systemInfoFixtures.showingBoth;
@@ -159,50 +204,6 @@ describe("AppNavbar tests", () => {
 
     await screen.findByTestId("AppNavbar");
     expect(screen.queryByTestId(/AppNavbarLocalhost/i)).toBeNull();
-  });
-
-  test("renders the placeholder link correctly", async () => {
-    const currentUser = currentUserFixtures.userOnly;
-    const systemInfo = systemInfoFixtures.showingBoth;
-
-    const doLogin = vi.fn();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AppNavbar
-            currentUser={currentUser}
-            systemInfo={systemInfo}
-            doLogin={doLogin}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    await screen.findByText("Placeholder");
-    const link = screen.getByText("Placeholder");
-    expect(link).toBeInTheDocument();
-    expect(link.getAttribute("href")).toBe("/placeholder");
-  });
-
-  test("Placeholder link does NOT show when not logged in", async () => {
-    const currentUser = null;
-    const systemInfo = systemInfoFixtures.showingBoth;
-    const doLogin = vi.fn();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <AppNavbar
-            currentUser={currentUser}
-            systemInfo={systemInfo}
-            doLogin={doLogin}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    expect(screen.queryByText("Placeholder")).not.toBeInTheDocument();
   });
 
   test("when oauthlogin undefined, default value is used", async () => {
