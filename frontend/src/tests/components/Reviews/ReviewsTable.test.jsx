@@ -57,9 +57,7 @@ describe("ReviewsTable tests", () => {
       screen.getByTestId(`Reviewstable-cell-row-0-col-item.diningCommonsCode`),
     ).toBeInTheDocument();
 
-    const statusCell = screen.getByTestId(
-      "Reviewstable-cell-row-0-col-status",
-    );
+    const statusCell = screen.getByTestId("Reviewstable-cell-row-0-col-status");
     const expectedStatus = ReviewFixtures.threeReviews[0].status;
     expect(statusCell).toHaveTextContent(expectedStatus);
 
