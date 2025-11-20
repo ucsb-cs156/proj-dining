@@ -27,7 +27,7 @@ describe("ReviewsTable tests", () => {
         ,
       </QueryClientProvider>,
     );
-
+    expect(screen.getByText("Moderation Status")).toBeInTheDocument();
     expect(screen.getByText("Item Id")).toBeInTheDocument();
     expect(screen.getByText("Item Name")).toBeInTheDocument();
     expect(screen.getByText("Score")).toBeInTheDocument();
@@ -35,6 +35,9 @@ describe("ReviewsTable tests", () => {
     expect(screen.getByText("Date Served")).toBeInTheDocument();
     expect(screen.getByText("Dining Commons Code")).toBeInTheDocument();
 
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
+    ).toBeInTheDocument();
     expect(
       screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
     ).toBeInTheDocument();

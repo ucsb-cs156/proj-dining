@@ -59,7 +59,7 @@ export default function ReviewsTable({
     {
       Header: "Moderation Status",
       accessor: "status",
-      Cell: ({ value }) => value
+      Cell: ({ value }) => value,
     },
     {
       Header: "Item Id",
