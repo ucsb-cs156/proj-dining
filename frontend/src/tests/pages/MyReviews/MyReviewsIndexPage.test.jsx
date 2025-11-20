@@ -142,4 +142,32 @@ describe("MyReviewsIndexPage tests", () => {
       expect(mockToast).toBeCalledWith("Review deleted");
     });
   });
+
+  test("shows moderation status column on My Reviews page", async () => {
+    // arrange
+    setupUserOnly();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/reviews/userReviews")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    // act
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MyReviewsIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // wait until table has loaded at least one row
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).toBeInTheDocument();
+    });
+
+    // assert: moderation status column is visible
+    expect(screen.getByText("Status")).toBeInTheDocument();
+  });
 });
