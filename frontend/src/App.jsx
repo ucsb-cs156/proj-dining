@@ -3,8 +3,6 @@ import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
 
-import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
-
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
@@ -60,15 +58,6 @@ function App() {
               exact
               path="/moderate/reviews"
               element={<ModerateReviewsPage />}
-            />
-          </>
-        )}
-        {hasRole(currentUser, "ROLE_USER") && (
-          <>
-            <Route
-              exact
-              path="/placeholder"
-              element={<PlaceholderIndexPage />}
             />
           </>
         )}
