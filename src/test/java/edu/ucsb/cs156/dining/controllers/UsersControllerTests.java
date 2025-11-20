@@ -488,4 +488,76 @@ public class UsersControllerTests extends ControllerTestCase {
     String expectedJson = mapper.writeValueAsString(userUpdated);
     assertEquals(expectedJson, responseString);
   }
+
+  // @Test
+  // @WithMockUser(roles = { "ADMIN" })
+  // public void admin_can_get_aliases_needing_moderation() throws Exception {
+
+  //     // arrange
+  //     User u1 = User.builder()
+  //             .id(1L)
+  //             .email("user1@example.org")
+  //             .proposedAlias("NewAlias1")
+  //             .status(ModerationStatus.AWAITING_REVIEW)
+  //             .build();
+
+  //     User u2 = User.builder()
+  //             .id(2L)
+  //             .email("user2@example.org")
+  //             .proposedAlias("NewAlias2")
+  //             .status(ModerationStatus.AWAITING_REVIEW)
+  //             .build();
+
+  //     List<User> expectedUsers = Arrays.asList(u1, u2);
+
+  //     when(userRepository.findByStatusAndProposedAliasNotNull(
+  //             ModerationStatus.AWAITING_REVIEW
+  //     )).thenReturn(expectedUsers);
+
+  //     String expectedJson = mapper.writeValueAsString(expectedUsers);
+
+  //     // act
+  //     MvcResult response = mockMvc.perform(
+  //             get("/api/aliases/needsmoderation")
+  //     )
+  //     .andExpect(status().isOk())
+  //     .andReturn();
+
+  //     // assert
+  //     verify(userRepository, times(1))
+  //         .findByStatusAndProposedAliasNotNull(ModerationStatus.AWAITING_REVIEW);
+
+  //     String responseString = response.getResponse().getContentAsString();
+  //     assertEquals(expectedJson, responseString);
+  // }
+
+  // @Test
+  // @WithMockUser(roles = { "USER" })
+  // public void non_admin_cannot_get_aliases_needing_moderation() throws Exception {
+  //     mockMvc.perform(get("/api/aliases/needsmoderation"))
+  //             .andExpect(status().isForbidden());
+  // }
+
+  // @Test
+  // @WithMockUser(roles = { "ADMIN" })
+  // public void admin_gets_empty_list_if_no_aliases_need_moderation() throws Exception {
+
+  //     when(userRepository.findByStatusAndProposedAliasNotNull(
+  //             ModerationStatus.AWAITING_REVIEW
+  //     )).thenReturn(List.of());
+
+  //     String expectedJson = mapper.writeValueAsString(List.of());
+
+  //     MvcResult response = mockMvc.perform(
+  //             get("/api/aliases/needsmoderation")
+  //     )
+  //     .andExpect(status().isOk())
+  //     .andReturn();
+
+  //     verify(userRepository, times(1))
+  //         .findByStatusAndProposedAliasNotNull(ModerationStatus.AWAITING_REVIEW);
+
+  //     assertEquals(expectedJson, response.getResponse().getContentAsString());
+  // }
+
 }

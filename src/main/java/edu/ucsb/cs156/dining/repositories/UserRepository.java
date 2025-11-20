@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.dining.repositories;
 
 import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
@@ -27,4 +28,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
   /** This method returns a list of users with proposed alias that is not null. */
   List<User> findByProposedAliasNotNull();
+
+  List<User> findByStatusAndProposedAliasNotNull(ModerationStatus status);
 }
