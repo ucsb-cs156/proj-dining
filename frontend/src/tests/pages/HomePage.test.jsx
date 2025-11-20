@@ -66,22 +66,20 @@ describe("HomePage tests", () => {
         <MemoryRouter>
           <HomePage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
-  
+
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
     const dateInput = screen.getByTestId("HomePage-selectedDate");
     fireEvent.change(dateInput, { target: { value: "2025-08-16" } });
     diningCommonsFixtures.fourCommons.forEach((dc, i) => {
       expect(
-        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`)
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
       ).toHaveTextContent(dc.code);
-  
-      expect(
-        screen.getByText(dc.code)
-      ).toHaveAttribute(
+
+      expect(screen.getByText(dc.code)).toHaveAttribute(
         "href",
-        `/diningcommons/2025-08-16/${dc.code}`
+        `/diningcommons/2025-08-16/${dc.code}`,
       );
     });
   });
