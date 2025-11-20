@@ -51,4 +51,12 @@ public class User {
     }
     return this.alias;
   }
+
+  public boolean isAdmin() {
+    return admin;
+  }
+
+  public boolean isModerator() {
+    return moderator;
+  }
 }

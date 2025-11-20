@@ -57,6 +57,11 @@ export default function ReviewsTable({
 
   const columns = [
     {
+      Header: "Moderation Status",
+      accessor: "status",
+      Cell: ({ value }) => value
+    },
+    {
       Header: "Item Id",
       accessor: "item.id",
     },
