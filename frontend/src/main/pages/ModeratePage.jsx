@@ -26,7 +26,7 @@ const Moderate = () => {
   return (
     <BasicLayout>
       <div className="pt-2">
-        <h1>Moderation Reviews</h1>
+        <h1>Moderate Reviews</h1>
         <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
       </div>
     </BasicLayout>
