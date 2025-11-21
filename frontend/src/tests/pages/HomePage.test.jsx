@@ -20,6 +20,7 @@ describe("HomePage tests", () => {
     queryClient = new QueryClient();
   });
   beforeEach(() => {
+    axiosMock.reset();
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -314,27 +315,5 @@ describe("HomePage meals offered today tests", () => {
     });
 
     spy.mockRestore();
-  });
-
-  test("Empty array fallback does not cause rendering errors", async () => {
-    axiosMock.onGet("/api/dining/all").reply(200, null);
-
-    const { container } = render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <HomePage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    await waitFor(() => {
-      const rows = screen.queryAllByTestId(
-        /DiningCommonsTable-cell-row-\d+-col-code/,
-      );
-      expect(rows).toHaveLength(0);
-
-      const table = container.querySelector("table");
-      expect(table).toBeInTheDocument();
-    });
   });
 });

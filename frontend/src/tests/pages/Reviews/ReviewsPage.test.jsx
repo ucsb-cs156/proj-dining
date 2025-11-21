@@ -37,6 +37,10 @@ describe("ReviewsPage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
   });
+  afterEach(() => {
+    axiosMock.reset();
+    axiosMock.resetHistory();
+  });
 
   const renderWithRoute = (itemid) => {
     const queryClient = new QueryClient();
@@ -81,6 +85,24 @@ describe("ReviewsPage tests", () => {
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toBeInTheDocument();
+    });
+  });
+
+  test("Error message includes GET method when request fails", async () => {
+    const itemId = "7";
+    setupUserOnly();
+    
+    axiosMock
+      .onGet(`/api/reviews/approved/forItem/${itemId}`)
+      .networkError();
+
+    renderWithRoute(itemId);
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalled();
+      const toastMessage = mockToast.mock.calls[0][0];
+      expect(toastMessage).toContain("GET");
+      expect(toastMessage).toContain(`/api/reviews/approved/forItem/${itemId}`);
     });
   });
 });
