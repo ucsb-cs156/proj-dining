@@ -47,4 +47,16 @@ public abstract class ApiController {
         "type", e.getClass().getSimpleName(),
         "message", e.getMessage());
   }
+
+  /**
+   * This method handles the UnsupportedOperationException for forbidden operations.
+   *
+   * @param e the exception
+   * @return a map with the message of the exception
+   */
+  @ExceptionHandler({UnsupportedOperationException.class})
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public Object handleUnsupportedOperationException(Throwable e) {
+    return Map.of("message", e.getMessage());
+  }
 }
