@@ -80,8 +80,10 @@ describe("AppNavbar tests", () => {
       </QueryClientProvider>,
     );
 
-    await screen.findByText("H2Console");
+    await screen.findByText("UCSB Dining");
+    const h2console = screen.getByText("H2Console");
     const swaggerMenu = screen.getByText("Swagger");
+    expect(h2console).toBeInTheDocument();
     expect(swaggerMenu).toBeInTheDocument();
   });
 
