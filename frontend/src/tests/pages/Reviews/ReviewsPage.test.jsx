@@ -88,9 +88,7 @@ describe("ReviewsPage tests", () => {
     const itemId = "7";
     setupUserOnly();
 
-    axiosMock
-      .onGet(`/api/reviews/approved/forItem/${itemId}`)
-      .networkError();
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemId}`).networkError();
 
     renderWithRoute(itemId);
 
