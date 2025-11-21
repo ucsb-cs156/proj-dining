@@ -62,8 +62,7 @@ export default function AppNavbar({
                   </NavDropdown>
                 </>
               )}
-              {(hasRole(currentUser, "ROLE_ADMIN") ||
-                hasRole(currentUser, "ROLE_MODERATOR")) && (
+              {hasRole(currentUser, "ROLE_MODERATOR") && (
                 <>
                   <Nav.Link as={Link} to="/moderate">
                     Moderate
