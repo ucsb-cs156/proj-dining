@@ -51,7 +51,8 @@ function App() {
             <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
           </>
         )}
-        {hasRole(currentUser, "ROLE_MODERATOR") && (
+        {(hasRole(currentUser, "ROLE_ADMIN") ||
+          hasRole(currentUser, "ROLE_MODERATOR")) && (
           <Route exact path="/moderate" element={<Moderate />} />
         )}
         {hasRole(currentUser, "ROLE_USER") && (

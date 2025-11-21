@@ -490,7 +490,7 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = {"MODERATOR"})
+  @WithMockUser(roles = {"ADMIN", "MODERATOR"})
   public void admin_can_get_aliases_needing_moderation() throws Exception {
 
     // arrange
@@ -539,7 +539,7 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = {"MODERATOR"})
+  @WithMockUser(roles = {"ADMIN", "MODERATOR"})
   public void admin_gets_empty_list_if_no_aliases_need_moderation() throws Exception {
 
     when(userRepository.findByStatusAndProposedAliasNotNull(ModerationStatus.AWAITING_REVIEW))
