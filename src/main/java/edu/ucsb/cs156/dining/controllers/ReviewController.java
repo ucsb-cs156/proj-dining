@@ -173,16 +173,12 @@ public class ReviewController extends ApiController {
           "Get a a single review a user has sent: only callable by the user, moderator, admin")
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("/{id}")
-  public Review get_single_review_by_user_id(@Parameter(name = "id") @RequestParam Long id) {
+  public Review get_single_review_by_user_id(@PathVariable Long id) {
     User user = getCurrentUser().getUser();
     Review review =
         reviewRepository
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
-
-    // boolean is_author = review.getReviewer().getId().equals(user.getUser().getId());
-    // boolean is_admin_or_mod = user.getRoles().contains("ROLE_ADMIN") ||
-    //                             user.getRoles().contains("ROLE_MODERATOR");
 
     if (review.getReviewer().getId() != user.getId() && !user.getAdmin() && !user.getModerator()) {
       throw new AccessDeniedException("No permission to get review");
