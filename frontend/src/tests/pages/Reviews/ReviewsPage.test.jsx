@@ -91,10 +91,8 @@ describe("ReviewsPage tests", () => {
   test("Error message includes GET method when request fails", async () => {
     const itemId = "7";
     setupUserOnly();
-    
-    axiosMock
-      .onGet(`/api/reviews/approved/forItem/${itemId}`)
-      .networkError();
+
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemId}`).networkError();
 
     renderWithRoute(itemId);
 

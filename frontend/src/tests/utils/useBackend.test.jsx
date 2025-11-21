@@ -216,11 +216,13 @@ describe("utils/useBackend tests", () => {
 
       await waitFor(() => expect(mockToast).toHaveBeenCalled());
 
-// Collect all toast messages
-const toastCalls = mockToast.mock.calls.map(c => c[0]);
+      // Collect all toast messages
+      const toastCalls = mockToast.mock.calls.map((c) => c[0]);
 
       // Verify at least one contains "Axios Error"
-      const axiosErrorToast = toastCalls.find(msg => msg.includes("Axios Error"));
+      const axiosErrorToast = toastCalls.find((msg) =>
+        msg.includes("Axios Error"),
+      );
       expect(axiosErrorToast).toBeDefined();
 
       // Verify the message includes the actual status code
@@ -229,12 +231,13 @@ const toastCalls = mockToast.mock.calls.map(c => c[0]);
       // Verify the message is not empty
       expect(axiosErrorToast).not.toBe("");
 
-      
       // NEW: Verify the second toast call contains the error data and is not empty
       const secondToastCall = mockToast.mock.calls[1][0];
-      expect(secondToastCall).toContain("Error: Request failed with status code 404");
+      expect(secondToastCall).toContain(
+        "Error: Request failed with status code 404",
+      );
       expect(secondToastCall).not.toBe(""); // Must not be empty string
-      
+
       expect(mockToast).toHaveBeenCalledWith(
         "Error: Request failed with status code 404",
       );

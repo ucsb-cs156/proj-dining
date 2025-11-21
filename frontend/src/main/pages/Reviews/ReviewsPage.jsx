@@ -15,7 +15,7 @@ export default function ReviewsPage() {
     { method: "GET", url: `/api/reviews/approved/forItem/${itemid}` },
     [],
   );
-  
+
   return (
     <BasicLayout>
       <div className="pt-2">
