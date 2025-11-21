@@ -173,7 +173,7 @@ public class ReviewController extends ApiController {
           "Get a a single review a user has sent: only callable by the user, moderator, admin")
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("/{id}")
-  public Review get_single_review_by_user_id(@PathVariable Long id) {
+  public Review get_single_review_by_id(@Parameter(name = "id") @PathVariable Long id) {
     User user = getCurrentUser().getUser();
     Review review =
         reviewRepository

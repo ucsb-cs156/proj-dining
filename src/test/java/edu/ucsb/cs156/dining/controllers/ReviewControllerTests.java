@@ -545,7 +545,7 @@ public class ReviewControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc.perform(get("/api/reviews/7")).andExpect(status().isForbidden()).andReturn();
 
-    // assert - FIX
+    // assert
     verify(reviewRepository, times(1)).findById(eq(7L));
     assertEquals("", response.getResponse().getContentAsString());
   }
