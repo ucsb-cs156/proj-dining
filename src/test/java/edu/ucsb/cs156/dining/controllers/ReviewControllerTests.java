@@ -1184,7 +1184,6 @@ public class ReviewControllerTests extends ControllerTestCase {
   @Test
   public void allApprovedReviewsForItem_returns_approved_reviews_for_existing_item()
       throws Exception {
-    // Arrange
     long itemId = 1L;
     MenuItem item = MenuItem.builder().id(itemId).build();
 
@@ -1210,14 +1209,12 @@ public class ReviewControllerTests extends ControllerTestCase {
     when(reviewRepository.findByItemAndStatus(eq(item), eq(ModerationStatus.APPROVED)))
         .thenReturn(approvedReviews);
 
-    // Act
     MvcResult response =
         mockMvc
             .perform(get("/api/reviews/approved/forItem/" + itemId).with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
-    // Assert
     String expectedJson = mapper.writeValueAsString(approvedReviews);
     String responseJson = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseJson);
@@ -1228,21 +1225,109 @@ public class ReviewControllerTests extends ControllerTestCase {
   @WithMockUser(roles = {"USER"})
   @Test
   public void allApprovedReviewsForItem_returns_not_found_for_nonexistent_item() throws Exception {
-    // Arrange
+
     long itemId = 999L;
     when(menuItemRepository.findById(eq(itemId))).thenReturn(Optional.empty());
 
-    // Act
     MvcResult response =
         mockMvc
             .perform(get("/api/reviews/approved/forItem/" + itemId).with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
-    // Assert
     Map<String, Object> json = responseToJson(response);
     assertEquals("MenuItem with id 999 not found", json.get("message"));
     verify(menuItemRepository, times(1)).findById(eq(itemId));
     verify(reviewRepository, times(0)).findByItemAndStatus(any(), any());
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_owner_can_view() throws Exception {
+    User owner = currentUserService.getUser();
+    MenuItem item = MenuItem.builder().id(1L).build();
+
+    Review review = Review.builder().id(5L).reviewer(owner).item(item).build();
+
+    when(reviewRepository.findById(5L)).thenReturn(Optional.of(review));
+
+    MvcResult response =
+        mockMvc.perform(get("/api/reviews/5").with(csrf())).andExpect(status().isOk()).andReturn();
+
+    verify(reviewRepository, times(1)).findById(5L);
+
+    String expectedJson = mapper.writeValueAsString(review);
+    assertEquals(expectedJson, response.getResponse().getContentAsString());
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void getReviewById_admin_can_view() throws Exception {
+    MenuItem item = MenuItem.builder().id(1L).build();
+
+    Review review =
+        Review.builder()
+            .id(5L)
+            .reviewer(User.builder().id(123L).build()) // different user
+            .item(item)
+            .build();
+
+    when(reviewRepository.findById(5L)).thenReturn(Optional.of(review));
+
+    mockMvc.perform(get("/api/reviews/5").with(csrf())).andExpect(status().isOk());
+
+    verify(reviewRepository, times(1)).findById(5L);
+  }
+
+  @WithMockUser(roles = {"MODERATOR", "USER"})
+  @Test
+  public void getReviewById_moderator_can_view() throws Exception {
+    MenuItem item = MenuItem.builder().id(1L).build();
+
+    Review review =
+        Review.builder().id(5L).reviewer(User.builder().id(777L).build()).item(item).build();
+
+    when(reviewRepository.findById(5L)).thenReturn(Optional.of(review));
+
+    mockMvc.perform(get("/api/reviews/5").with(csrf())).andExpect(status().isOk());
+
+    verify(reviewRepository, times(1)).findById(5L);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_non_owner_user_forbidden() throws Exception {
+    User someoneElse = User.builder().id(999L).build();
+    MenuItem item = MenuItem.builder().id(1L).build();
+
+    Review review =
+        Review.builder()
+            .id(5L)
+            .reviewer(someoneElse) // different from current user
+            .item(item)
+            .build();
+
+    when(reviewRepository.findById(5L)).thenReturn(Optional.of(review));
+
+    mockMvc.perform(get("/api/reviews/5").with(csrf())).andExpect(status().isForbidden());
+
+    verify(reviewRepository, times(1)).findById(5L);
+  }
+
+  @Test
+  public void getReviewById_logged_out_forbidden() throws Exception {
+    mockMvc.perform(get("/api/reviews/5")).andExpect(status().isForbidden()); // PreAuthorize
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_not_found_returns_404() throws Exception {
+    when(reviewRepository.findById(5L)).thenReturn(Optional.empty());
+
+    MvcResult response =
+        mockMvc.perform(get("/api/reviews/5")).andExpect(status().isNotFound()).andReturn();
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Review with id 5 not found", json.get("message"));
   }
 }
