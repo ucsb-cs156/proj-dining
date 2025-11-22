@@ -12,7 +12,7 @@ export default function ReviewsPage() {
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/reviews/approved/forItem/${itemid}`],
-    { method: "GET", url: `/api/reviews/approved/forItem/${itemid}` },
+    { url: `/api/reviews/approved/forItem/${itemid}` },
     [],
   );
 

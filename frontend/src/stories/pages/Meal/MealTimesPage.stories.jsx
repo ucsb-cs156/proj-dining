@@ -36,3 +36,31 @@ export const Default = Template.bind({});
 Default.args = {
   suppressMemoryRouter: true,
 };
+
+// 204 No Content - no meals offered
+export const NoMealsOffered = Template.bind({});
+NoMealsOffered.args = {
+  suppressMemoryRouter: true,
+};
+NoMealsOffered.parameters = {
+  msw: [
+    http.get("/api/diningcommons/2024-11-25/portola", () => {
+      return new HttpResponse(null, { status: 204 });
+    }),
+  ],
+};
+
+export const ServerError = Template.bind({});
+ServerError.args = {
+  suppressMemoryRouter: true,
+};
+ServerError.parameters = {
+  msw: [
+    http.get("/api/diningcommons/2024-11-25/portola", () => {
+      return HttpResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }),
+  ],
+};
