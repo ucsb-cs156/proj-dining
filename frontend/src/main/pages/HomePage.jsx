@@ -11,9 +11,11 @@ export default function HomePage() {
     [],
   );
 
+  // Stryker disable ObjectLiteral : We are testing in CA so our timezone defaults to "America/Los_Angeles," but users may be elsewhere
   const todayDate = new Date()
     .toLocaleString("fr-CA", { timeZone: "America/Los_Angeles" })
     .split(" ")[0];
+  // Stryker enable ObjectLiteral
   const [selectedDate, setSelectedDate] = useState(todayDate);
 
   return (

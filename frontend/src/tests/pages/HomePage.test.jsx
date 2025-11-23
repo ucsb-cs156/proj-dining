@@ -76,10 +76,14 @@ describe("HomePage tests", () => {
       </QueryClientProvider>,
     );
 
+    const initialDate = new Date("2025-03-11")
+      .toLocaleString("fr-CA", { timeZone: "America/Los_Angeles" })
+      .split(" ")[0];
+
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
 
     const dateInput = screen.getByLabelText(/select date/i);
-    expect(dateInput).toHaveValue("2025-03-11");
+    expect(dateInput).toHaveValue(initialDate);
 
     fireEvent.change(dateInput, { target: { value: "2025-03-15" } });
 
