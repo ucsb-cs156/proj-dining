@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import MealTable from "main/components/Meal/MealTable";
 
 export default function MealTimesPage() {
-    // Stryker disable next-line all : Can't test state because hook is internal
+  // Stryker disable next-line all : Can't test state because hook is internal
   let { "date-time": dateTime, "dining-commons-code": diningCommonsCode } =
     useParams();
 
