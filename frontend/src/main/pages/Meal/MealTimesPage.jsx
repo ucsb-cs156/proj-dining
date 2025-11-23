@@ -1,33 +1,41 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { useParams } from "react-router";
 import { useBackend } from "main/utils/useBackend";
+import { toast } from "react-toastify";
 import MealTable from "main/components/Meal/MealTable";
 
 export default function MealTimesPage() {
-  // Stryker disable next-line all : Can't test state because hook is internal
   let { "date-time": dateTime, "dining-commons-code": diningCommonsCode } =
     useParams();
 
-  const {
-    data: meals,
-    error: _error,
-    status: _status,
-  } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
+  const { data: meals, status } = useBackend(
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
-    { url: `/api/diningcommons/${dateTime}/${diningCommonsCode}` },
-    // Stryker disable next-line all : don't test default value of empty list
-    [],
+    {
+      method: "GET",
+      url: `/api/diningcommons/${dateTime}/${diningCommonsCode}`,
+    },
   );
+
+  if (status === 204) {
+    const message = `${diningCommonsCode} is closed on ${dateTime}. Please select another date or dining common.`;
+    toast(message, { toastId: "closed-dining-commons" });
+    return (
+      <BasicLayout>
+        <h1>
+          Meals at {diningCommonsCode} for {dateTime}
+        </h1>
+        <div>{message}</div>
+      </BasicLayout>
+    );
+  }
 
   return (
     <BasicLayout>
       <div className="pt-2">
-        {/* You can display all meal times of the dining common on a certain date */}
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {meals && (
+        {meals && meals.length > 0 && (
           <MealTable
             meals={meals}
             dateTime={dateTime}
