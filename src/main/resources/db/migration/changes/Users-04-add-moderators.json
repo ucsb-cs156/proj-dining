@@ -1,0 +1,29 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "add-moderators-table",
+        "author": "sicheng",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "moderators",
+              "columns": [
+                {
+                  "column": {
+                    "name": "email",
+                    "type": "VARCHAR(255)",
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
