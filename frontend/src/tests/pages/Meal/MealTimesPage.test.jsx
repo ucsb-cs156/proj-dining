@@ -84,7 +84,7 @@ describe("MealTimesPage tests", () => {
     expect(screen.getByText("Dinner")).toBeInTheDocument();
   });
 
-  test("when backend returns 204, displays closed message and triggers toast", async () => {
+  test("when backend returns 204, displays toast message", async () => {
     axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(204);
 
     render(
@@ -99,17 +99,9 @@ describe("MealTimesPage tests", () => {
       "portola is closed on 2024-11-25. Please select another date or dining common.";
 
     await waitFor(() => {
-      expect(screen.getByText(closedMessage)).toBeInTheDocument();
-    });
-
-    expect(toast).toHaveBeenCalledWith(closedMessage, {
-      toastId: "closed-dining-commons",
-    });
-
-    expect(screen.queryByText("Breakfast")).not.toBeInTheDocument();
-
-    expect(toast).toHaveBeenCalledWith(closedMessage, {
-      toastId: "closed-dining-commons",
+      expect(toast).toHaveBeenCalledWith(closedMessage, {
+        toastId: "closed-dining-commons",
+      });
     });
 
     expect(screen.queryByText("Breakfast")).not.toBeInTheDocument();

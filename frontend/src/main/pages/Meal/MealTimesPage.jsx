@@ -25,7 +25,6 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        <div>{message}</div>
       </BasicLayout>
     );
   }
