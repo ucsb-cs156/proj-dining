@@ -9,7 +9,7 @@ import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
-import { diningCommonsFixtures } from "../../fixtures/diningCommonsFixtures";
+import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import mockConsole from "tests/testutils/mockConsole";
 
 describe("HomePage tests", () => {
