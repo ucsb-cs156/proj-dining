@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import HomePage from "main/pages/HomePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
@@ -51,6 +51,10 @@ describe("HomePage tests", () => {
       .split(" ")[0];
 
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    const dateInput = screen.getByLabelText(/select date/i);
+    expect(dateInput).toHaveValue(date);
+
     for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
       expect(
         screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
@@ -60,6 +64,31 @@ describe("HomePage tests", () => {
       ).toHaveAttribute(
         "href",
         `/diningcommons/${date}/${diningCommonsFixtures.fourCommons[i].code}`,
+      );
+    }
+  });
+  test("Changing the date updates links for all dining commons", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    const dateInput = screen.getByLabelText(/select date/i);
+    expect(dateInput).toHaveValue("2025-03-11");
+
+    fireEvent.change(dateInput, { target: { value: "2025-03-15" } });
+
+    for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
+      expect(
+        screen.getByText(diningCommonsFixtures.fourCommons[i].code),
+      ).toHaveAttribute(
+        "href",
+        `/diningcommons/2025-03-15/${diningCommonsFixtures.fourCommons[i].code}`,
       );
     }
   });
