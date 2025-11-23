@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import HomePage from "main/pages/HomePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
@@ -58,6 +58,30 @@ describe("HomePage tests", () => {
         `/diningcommons/2025-03-11/${diningCommonsFixtures.fourCommons[i].code}`,
       );
     }
+  });
+
+  test("Date selector updates dining commons links when changed", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+    const dateInput = screen.getByTestId("HomePage-selectedDate");
+    fireEvent.change(dateInput, { target: { value: "2025-08-16" } });
+    diningCommonsFixtures.fourCommons.forEach((dc, i) => {
+      expect(
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
+      ).toHaveTextContent(dc.code);
+
+      expect(screen.getByText(dc.code)).toHaveAttribute(
+        "href",
+        `/diningcommons/2025-08-16/${dc.code}`,
+      );
+    });
   });
 });
 
