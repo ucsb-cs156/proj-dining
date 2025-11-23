@@ -10,14 +10,17 @@ export default function MealTimesPage() {
 
   const {
     data: meals,
-    error: _error,
+    error,
     status: _status,
+    isFetched,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
     { url: `/api/diningcommons/${dateTime}/${diningCommonsCode}` },
     // Stryker disable next-line all : don't test default value of empty list
     [],
+    // Stryker disable next-line all : this is cosmetic purposes only, o.w. error msg will take 3 retries to load
+    { retry: false },
   );
 
   return (
@@ -27,12 +30,22 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {meals && (
+
+        {/* Unexpected error*/}
+        {error && <div>Unable to load page</div>}
+
+        {/* If there is body then show meals */}
+        {meals && meals.length > 0 && (
           <MealTable
             meals={meals}
             dateTime={dateTime}
             diningCommonsCode={diningCommonsCode}
           />
+        )}
+
+        {/* Check for 204, isFetched is to prevent this from defaulting before useQuery returns a body */}
+        {!error && isFetched && (!meals || meals.length === 0) && (
+          <div>No meals offered today</div>
         )}
       </div>
     </BasicLayout>
