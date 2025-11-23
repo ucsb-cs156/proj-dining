@@ -1245,4 +1245,116 @@ public class ReviewControllerTests extends ControllerTestCase {
     verify(menuItemRepository, times(1)).findById(eq(itemId));
     verify(reviewRepository, times(0)).findByItemAndStatus(any(), any());
   }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_returns_review_for_existing_id() throws Exception {
+    // Arrange
+    long reviewId = 1L;
+    User user = User.builder().id(2L).build();
+    MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+    Review review =
+        Review.builder()
+            .id(reviewId)
+            .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+            .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+            .reviewer(user)
+            .status(ModerationStatus.APPROVED)
+            .reviewerComments("Great food!")
+            .itemsStars(5L)
+            .item(menuItem)
+            .build();
+
+    when(reviewRepository.findById(eq(reviewId))).thenReturn(Optional.of(review));
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/reviews/" + reviewId).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // Assert
+    String expectedJson = mapper.writeValueAsString(review);
+    String responseJson = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseJson);
+    verify(reviewRepository, times(1)).findById(eq(reviewId));
+  }
+
+  @Test
+  public void getReviewById_returns_review_for_logged_out_user() throws Exception {
+    // Arrange
+    long reviewId = 1L;
+    User user = User.builder().id(2L).build();
+    MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+    Review review =
+        Review.builder()
+            .id(reviewId)
+            .dateCreated(LocalDateTime.of(2024, 7, 1, 2, 47))
+            .dateEdited(LocalDateTime.of(2024, 7, 2, 12, 47))
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 1, 3))
+            .reviewer(user)
+            .status(ModerationStatus.APPROVED)
+            .reviewerComments("Great food!")
+            .itemsStars(5L)
+            .item(menuItem)
+            .build();
+
+    when(reviewRepository.findById(eq(reviewId))).thenReturn(Optional.of(review));
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/reviews/" + reviewId).with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // Assert
+    String expectedJson = mapper.writeValueAsString(review);
+    String responseJson = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseJson);
+    verify(reviewRepository, times(1)).findById(eq(reviewId));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_returns_not_found_for_nonexistent_id() throws Exception {
+    // Arrange
+    long reviewId = 999L;
+    when(reviewRepository.findById(eq(reviewId))).thenReturn(Optional.empty());
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/reviews/" + reviewId).with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // Assert
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Review with id 999 not found", json.get("message"));
+    verify(reviewRepository, times(1)).findById(eq(reviewId));
+  }
+
+  @Test
+  public void getReviewById_returns_not_found_for_nonexistent_id_logged_out() throws Exception {
+    // Arrange
+    long reviewId = 999L;
+    when(reviewRepository.findById(eq(reviewId))).thenReturn(Optional.empty());
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/reviews/" + reviewId).with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // Assert
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Review with id 999 not found", json.get("message"));
+    verify(reviewRepository, times(1)).findById(eq(reviewId));
+  }
 }
