@@ -36,7 +36,7 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
-        {meals && meals.length > 0 && (
+        {meals && (
           <MealTable
             meals={meals}
             dateTime={dateTime}

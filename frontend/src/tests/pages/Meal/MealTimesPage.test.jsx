@@ -31,8 +31,8 @@ vi.mock("react-router", async () => {
 
 describe("MealTimesPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
-
   let queryClient;
+
   beforeEach(() => {
     queryClient = new QueryClient({
       defaultOptions: {
