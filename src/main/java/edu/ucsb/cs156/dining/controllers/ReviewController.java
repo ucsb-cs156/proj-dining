@@ -69,6 +69,25 @@ public class ReviewController extends ApiController {
   }
 
   /**
+   * This method gets a single review by id.
+   *
+   * @param id the id of the review
+   * @return a single Review
+   */
+  @Operation(summary = "Get a review by id")
+  @GetMapping("/{id}")
+  public Review getReviewById(
+      @Parameter(name = "id", description = "id of the review") @PathVariable("id") Long id) {
+
+    Review review =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+
+    return review;
+  }
+
+  /**
    * This method returns a list of all Reviews.
    *
    * @return a list of all Reviews
