@@ -1,6 +1,6 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useBackend } from "../utils/useBackend";
-import DiningCommonsTable from "../components/DiningCommons/DiningCommonsTable";
+import { useBackend } from "main/utils/useBackend";
+import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 
 export default function HomePage() {
   const { data } = useBackend(
