@@ -54,7 +54,11 @@ function App() {
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <>
             <Route exact path="/moderate" element={<ModerateMenuPage />} />
-            <Route exact path="/moderate/reviews" element={<ModerateReviewsPage />} />
+            <Route
+              exact
+              path="/moderate/reviews"
+              element={<ModerateReviewsPage />}
+            />
           </>
         )}
         <>
