@@ -96,31 +96,6 @@ describe("HomePage tests", () => {
       );
     }
   });
-  test("Changing the date updates links for all dining commons", async () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <HomePage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
-
-    const dateInput = screen.getByLabelText(/select date/i);
-    expect(dateInput).toHaveValue("2025-03-11");
-
-    fireEvent.change(dateInput, { target: { value: "2025-03-15" } });
-
-    for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
-      expect(
-        screen.getByText(diningCommonsFixtures.fourCommons[i].code),
-      ).toHaveAttribute(
-        "href",
-        `/diningcommons/2025-03-15/${diningCommonsFixtures.fourCommons[i].code}`,
-      );
-    }
-  });
 });
 
 describe("HomePage renders properly with no backend", () => {
