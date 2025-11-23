@@ -25,7 +25,7 @@ export default function AppNavbar({
       >
         <Container>
           <Navbar.Brand as={Link} to="/">
-            Example
+            UCSB Dining
           </Navbar.Brand>
 
           <Navbar.Toggle />
@@ -72,9 +72,6 @@ export default function AppNavbar({
               )}
               {currentUser && currentUser.loggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/placeholder">
-                    Placeholder
-                  </Nav.Link>
                   <Nav.Link as={Link} to="/myreviews">
                     My Reviews
                   </Nav.Link>
