@@ -11,7 +11,6 @@ export default function MealTimesPage() {
   const { data: meals, status } = useBackend(
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
     {
-      method: "GET",
       url: `/api/diningcommons/${dateTime}/${diningCommonsCode}`,
     },
   );
