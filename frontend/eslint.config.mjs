@@ -2,11 +2,12 @@ import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import reactPlugin from "eslint-plugin-react";    
 import { defineConfig, globalIgnores } from "eslint/config";
 
 // Import the vitest plugin
 import vitest from "@vitest/eslint-plugin";
-import plugin from "eslint-plugin-testing-library";
+import testingLibrary from "eslint-plugin-testing-library";
 
 export default defineConfig([
     globalIgnores([
@@ -25,6 +26,7 @@ export default defineConfig([
             js.configs.recommended,
             reactHooks.configs["recommended-latest"],
             reactRefresh.configs.vite,
+            reactPlugin.configs.flat.recommended,   
         ],
         languageOptions: {
             ecmaVersion: 2020,
@@ -40,17 +42,18 @@ export default defineConfig([
                 "error",
                 { varsIgnorePattern: "^[A-Z_].*", argsIgnorePattern: "^_" },
             ],
+            "react/prop-types": "off",               
+            "react/react-in-jsx-scope": "off",
         },
     },
     {
-        ...plugin.configs["flat/react"],
-        // Apply this configuration only to test files
+        ...testingLibrary.configs["flat/react"],  
         files: ["**/*.test.{js,jsx}", "**/*.spec.{js,jsx}"],
         plugins: {
             vitest,
         },
         languageOptions: {
-            globals: vitest.environments.env.globals, // Use vitest's globals
+            globals: vitest.environments.env.globals,
         },
         rules: {
             // Vitest recommended rules
