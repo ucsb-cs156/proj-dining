@@ -56,6 +56,9 @@ LoggedInAdminUserShowingSwaggerAndH2Console.parameters = {
       http.get("/api/systemInfo", () => {
         return HttpResponse.json(systemInfoFixtures.showingBoth);
       }),
+      http.get("/api/dining/all", () => {
+        return HttpResponse.json(diningCommonsFixtures.fourCommons);
+      }),
     ],
   },
 };
