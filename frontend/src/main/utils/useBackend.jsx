@@ -26,27 +26,33 @@ import { toast } from "react-toastify";
 // );
 
 export function useBackend(queryKey, axiosParameters, initialData) {
-  return useQuery(
+  const query = useQuery(
     queryKey,
     async () => {
       try {
         const response = await axios(axiosParameters);
-        return response.data;
+        return { data: response.data, status: response.status };
       } catch (e) {
         const errorMessage = `Error communicating with backend via ${axiosParameters.method} on ${axiosParameters.url}`;
-        toast(errorMessage);
         console.error(errorMessage, e);
+        toast(errorMessage);
         throw e;
       }
     },
     {
-      initialData,
+      initialData:
+        initialData !== undefined
+          ? { data: initialData, status: 200 }
+          : undefined,
     },
   );
-}
 
-// const wrappedParams = async (params) =>
-//   await ( await axios(params)).data;
+  return {
+    ...query,
+    data: query.data?.data,
+    status: query.data?.status,
+  };
+}
 
 const reportAxiosError = (error) => {
   console.error("Axios Error:", error);

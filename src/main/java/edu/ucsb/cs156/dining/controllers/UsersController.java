@@ -139,7 +139,7 @@ public class UsersController extends ApiController {
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
     if (!adminEmails.contains(user.getEmail())) {
-      user.setAdmin(!user.getAdmin());
+      user.setAdmin(!user.isAdmin());
     }
 
     userRepository.save(user);
@@ -160,7 +160,7 @@ public class UsersController extends ApiController {
     User user =
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
-    user.setModerator(!user.getModerator());
+    user.setModerator(!user.isModerator());
 
     userRepository.save(user);
 
