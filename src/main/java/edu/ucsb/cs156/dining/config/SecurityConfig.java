@@ -141,7 +141,7 @@ public class SecurityConfig {
       return true;
     }
     Optional<User> u = userRepository.findByEmail(email);
-    return u.isPresent() && u.get().getAdmin();
+    return u.isPresent() && u.get().isAdmin();
   }
 
   /**
@@ -153,7 +153,7 @@ public class SecurityConfig {
    */
   public boolean getModerator(String email) {
     Optional<User> u = userRepository.findByEmail(email);
-    return u.isPresent() && u.get().getModerator();
+    return u.isPresent() && u.get().isModerator();
   }
 }
 

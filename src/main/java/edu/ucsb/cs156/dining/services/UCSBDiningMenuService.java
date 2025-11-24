@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /** Service object that wraps the UCSB Dining Menu API */
@@ -50,14 +52,20 @@ public class UCSBDiningMenuService {
     MediaType contentType = null;
     HttpStatus statusCode = null;
 
-    ResponseEntity<String> re =
-        restTemplate.exchange(
-            url, HttpMethod.GET, entity, String.class, dateTime, diningCommonCode);
-    contentType = re.getHeaders().getContentType();
-    statusCode = (HttpStatus) re.getStatusCode();
-    retVal = re.getBody();
+    try {
+      ResponseEntity<String> re =
+          restTemplate.exchange(
+              url, HttpMethod.GET, entity, String.class, dateTime, diningCommonCode);
+      contentType = re.getHeaders().getContentType();
+      statusCode = (HttpStatus) re.getStatusCode();
+      retVal = re.getBody();
 
-    log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
+      log.info("json: {} contentType: {} statusCode: {}", retVal, contentType, statusCode);
+    } catch (HttpClientErrorException | HttpServerErrorException e) {
+      log.info("Dining commons {} closed on {}: {}", diningCommonCode, dateTime, e.getMessage());
+      return null;
+    }
+
     return retVal;
   }
 }

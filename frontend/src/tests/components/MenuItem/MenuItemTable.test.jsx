@@ -1,14 +1,14 @@
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
-import MenuItemTable from "../../../main/components/MenuItem/MenuItemTable";
-import { menuItemFixtures } from "../../../fixtures/menuItemFixtures";
+import MenuItemTable from "main/components/MenuItem/MenuItemTable";
+import { menuItemFixtures } from "fixtures/menuItemFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { MemoryRouter } from "react-router";
 import axios from "axios";
 import {
   apiCurrentUserFixtures,
   currentUserFixtures,
-} from "../../../fixtures/currentUserFixtures";
-import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
+} from "fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { vi } from "vitest";
 
 // ✅ Mock useNavigate from react-router
