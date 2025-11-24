@@ -16,6 +16,7 @@ RegView.args = {
   reviews: ReviewFixtures.threeReviews,
   userOptions: false,
   moderatorOptions: false,
+  showModerationStatus: false,
 };
 
 export const UserView = Template.bind({});
@@ -23,6 +24,7 @@ UserView.args = {
   reviews: ReviewFixtures.threeReviews,
   userOptions: true,
   moderatorOptions: false,
+  showModerationStatus: true,
 };
 
 export const ModView = Template.bind({});
@@ -30,4 +32,5 @@ ModView.args = {
   reviews: ReviewFixtures.threeReviews,
   userOptions: false,
   moderatorOptions: true,
+  showModerationStatus: false,
 };
