@@ -23,6 +23,7 @@ UserView.args = {
   reviews: ReviewFixtures.threeReviews,
   userOptions: true,
   moderatorOptions: false,
+  showModerationStatus: true,
 };
 
 export const ModView = Template.bind({});
