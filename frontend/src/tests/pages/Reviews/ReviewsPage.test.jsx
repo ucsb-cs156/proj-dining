@@ -37,6 +37,10 @@ describe("ReviewsPage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
   });
+  afterEach(() => {
+    axiosMock.reset();
+    axiosMock.resetHistory();
+  });
 
   const renderWithRoute = (itemid) => {
     const queryClient = new QueryClient();

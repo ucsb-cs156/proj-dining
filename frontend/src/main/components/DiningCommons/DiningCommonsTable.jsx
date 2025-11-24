@@ -17,6 +17,27 @@ export default function DiningCommonsTable({ commons, date }) {
       accessor: "name",
     },
     {
+      Header: "Meals Offered Today",
+      accessor: "mealsOfferedToday",
+      Cell: ({ value, row }) => {
+        return (
+          <div>
+            {!value || value.length === 0
+              ? "No meals offered today"
+              : value.map((meal) => (
+                  <Link
+                    to={`/diningcommons/${date}/${row.original.code}/${meal.code}`}
+                    className="p-2"
+                    data-testid={`DiningCommonsTable-cell-row-${row.index}-col-meal-${meal.code}`}
+                  >
+                    {meal.name}
+                  </Link>
+                ))}
+          </div>
+        );
+      },
+    },
+    {
       Header: "Has Dining Cam",
       accessor: "hasDiningCam",
       // Credits to Jayden for the code here!
