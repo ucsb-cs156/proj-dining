@@ -18,4 +18,9 @@ public class DummyController extends ApiController {
     }
     throw new EntityNotFoundException(String.class, id);
   }
+
+  @GetMapping("unsupported")
+  public Object getUnsupported() {
+    throw new UnsupportedOperationException("Forbidden operation");
+  }
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * accessible to instructors with the role "ROLE_ADMIN".
  */
 @Tag(name = "Moderators")
-@RequestMapping("/api/admin/moderator")
+@RequestMapping("/api/admin/moderators")
 @RestController
 @Slf4j
 public class ModeratorController extends ApiController {

@@ -7,6 +7,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -46,5 +47,17 @@ public abstract class ApiController {
     return Map.of(
         "type", e.getClass().getSimpleName(),
         "message", e.getMessage());
+  }
+
+  /**
+   * This method handles the UnsupportedOperationException. This maps to a 403/Forbidden.
+   *
+   * @param e the exception
+   * @return a map with the type and message of the exception
+   */
+  @ExceptionHandler(UnsupportedOperationException.class)
+  public ResponseEntity<Map<String, String>> handleUnsupportedOperation(
+      UnsupportedOperationException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", ex.getMessage()));
   }
 }
