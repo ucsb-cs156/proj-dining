@@ -2,7 +2,7 @@ import React from "react";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
 import usersFixtures from "fixtures/usersFixtures";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { action } from "@storybook/addon-actions";
+import { MemoryRouter } from "react-router";
 
 export default {
   title: "components/AliasApproval/AliasApprovalTable",
@@ -12,7 +12,9 @@ export default {
       const queryClient = new QueryClient();
       return (
         <QueryClientProvider client={queryClient}>
-          <Story />
+          <MemoryRouter>
+            <Story />
+          </MemoryRouter>
         </QueryClientProvider>
       );
     },
@@ -24,13 +26,13 @@ const Template = (args) => <AliasApprovalTable {...args} />;
 export const EmptyTable = Template.bind({});
 EmptyTable.args = {
   aliases: [],
-  onApprove: action("onApprove"),
-  onReject: action("onReject"),
+  onApprove: () => {},
+  onReject: () => {},
 };
 
 export const ThreeUsers = Template.bind({});
 ThreeUsers.args = {
   aliases: usersFixtures.threeUsers,
-  onApprove: action("onApprove"),
-  onReject: action("onReject"),
+  onApprove: () => {},
+  onReject: () => {},
 };
