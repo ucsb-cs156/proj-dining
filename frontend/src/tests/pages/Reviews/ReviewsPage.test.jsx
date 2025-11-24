@@ -95,4 +95,20 @@ describe("ReviewsPage tests", () => {
       ).toBeInTheDocument();
     });
   });
+
+  test("Error message includes GET method when request fails", async () => {
+    const itemId = "7";
+    setupUserOnly();
+
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemId}`).networkError();
+
+    renderWithRoute(itemId);
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalled();
+      const toastMessage = mockToast.mock.calls[0][0];
+      expect(toastMessage).toContain("GET");
+      expect(toastMessage).toContain(`/api/reviews/approved/forItem/${itemId}`);
+    });
+  });
 });

@@ -1,5 +1,5 @@
-import OurTable, { ButtonColumn } from "../OurTable";
-import { hasRole } from "../../utils/currentUser";
+import OurTable, { ButtonColumn } from "main/components/OurTable";
+import { hasRole } from "main/utils/currentUser";
 import { useNavigate } from "react-router";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
