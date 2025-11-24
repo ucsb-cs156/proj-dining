@@ -4,14 +4,14 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 import { http, HttpResponse } from "msw";
 
-import Moderate from "main/pages/ModeratePage";
+import ModerateReviewsPage from "main/pages/Moderate/ModerateReviewsPage";
 
 export default {
-  title: "pages/Moderate",
-  component: Moderate,
+  title: "pages/ModerateReviewsPage",
+  component: ModerateReviewsPage,
 };
 
-const Template = () => <Moderate storybook={true} />;
+const Template = () => <ModerateReviewsPage storybook={true} />;
 
 export const ThreeItemsAdminUser = Template.bind({});
 
@@ -23,7 +23,7 @@ ThreeItemsAdminUser.parameters = {
     http.get("/api/systemInfo", () => {
       return HttpResponse.json(systemInfoFixtures.showingNeither);
     }),
-    http.get("/api/reviews/all", () => {
+    http.get("/api/reviews/needsmoderation", () => {
       return HttpResponse.json(ReviewFixtures.threeReviews);
     }),
     http.delete("/api/reviews", () => {
