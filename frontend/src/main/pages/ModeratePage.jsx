@@ -55,7 +55,6 @@ const Moderate = () => {
   const rejectCallback = async (alias) => {
     const user = alias.row.original;
 
-
     await axios.put("/api/currentUser/updateAliasModeration", null, {
       params: {
         id: user.id,

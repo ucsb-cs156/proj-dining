@@ -138,7 +138,7 @@ describe("Moderate Page Tests", () => {
     const errorMessage = console.error.mock.calls[0][0];
     expect(
       errorMessage.includes("/api/reviews/needsmoderation") ||
-      errorMessage.includes("api/admin/users/needsmoderation"),
+        errorMessage.includes("api/admin/users/needsmoderation"),
     ).toBe(true);
     expect(errorMessage).toContain("Error communicating");
     restoreConsole();
@@ -288,9 +288,11 @@ describe("Moderate Page Tests", () => {
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
-    axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
-      { id: 42, proposedAlias: "alias1", status: "AWAITING_REVIEW" },
-    ]);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, [
+        { id: 42, proposedAlias: "alias1", status: "AWAITING_REVIEW" },
+      ]);
 
     const axiosPutSpy = vi.spyOn(axios, "put").mockResolvedValue({ data: {} });
 
@@ -299,17 +301,17 @@ describe("Moderate Page Tests", () => {
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias")
+        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
       ).toBeInTheDocument();
     });
 
     const approveButton = screen.getByTestId(
-      "Aliasapprovaltable-cell-row-0-col-Approve-button"
+      "Aliasapprovaltable-cell-row-0-col-Approve-button",
     );
     approveButton.click();
 
@@ -319,7 +321,7 @@ describe("Moderate Page Tests", () => {
         null,
         {
           params: { id: 42, approved: true },
-        }
+        },
       );
     });
 
@@ -334,9 +336,11 @@ describe("Moderate Page Tests", () => {
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
-    axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
-      { id: 55, proposedAlias: "alias2", status: "AWAITING_REVIEW" },
-    ]);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, [
+        { id: 55, proposedAlias: "alias2", status: "AWAITING_REVIEW" },
+      ]);
 
     const axiosPutSpy = vi.spyOn(axios, "put").mockResolvedValue({ data: {} });
 
@@ -345,17 +349,17 @@ describe("Moderate Page Tests", () => {
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias")
+        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
       ).toBeInTheDocument();
     });
 
     const rejectButton = screen.getByTestId(
-      "Aliasapprovaltable-cell-row-0-col-Reject-button"
+      "Aliasapprovaltable-cell-row-0-col-Reject-button",
     );
     rejectButton.click();
 
@@ -365,13 +369,12 @@ describe("Moderate Page Tests", () => {
         null,
         {
           params: { id: 55, approved: false },
-        }
+        },
       );
     });
 
     axiosPutSpy.mockRestore();
   });
-
 
   test("uses GET for fetching aliases needing moderation", async () => {
     setupModerator();
