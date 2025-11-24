@@ -1,0 +1,50 @@
+{
+    "databaseChangeLog": [
+      {
+        "changeSet": {
+          "id": "admin-1",
+          "author": "EmilyL",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "not": [
+                {
+                  "tableExists": {
+                    "tableName": "admins"
+                  }
+                }
+              ]
+            }
+          ],
+          "changes": [
+            {
+              "createTable": {
+                "columns": [
+                  {
+                    "column": {
+                      "autoIncrement": true,
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "ADMINS_PK"
+                      },
+                      "name": "ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "EMAIL",
+                      "type": "VARCHAR(255)"
+                    }
+                  }
+                ],
+                "tableName": "admins"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
