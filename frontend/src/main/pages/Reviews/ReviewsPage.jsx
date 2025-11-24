@@ -12,6 +12,7 @@ export default function ReviewsPage() {
   } = useBackend(
     /* Stryker disable all : don't test internal caching of React Query */
     [`/api/reviews/approved/forItem/${itemid}`],
+    // Stryker disable next-line all : the default method is get, so replacing with an empty string will do nothing
     { method: "GET", url: `/api/reviews/approved/forItem/${itemid}` },
     [],
     /* Stryker enable all */

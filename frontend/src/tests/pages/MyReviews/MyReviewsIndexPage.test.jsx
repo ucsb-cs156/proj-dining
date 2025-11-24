@@ -68,6 +68,37 @@ describe("MyReviewsIndexPage tests", () => {
     ).toHaveTextContent("9");
   });
 
+  test("renders status column correctly for regular user", async () => {
+    // arrange
+    setupUserOnly();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/reviews/userReviews")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    // act
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MyReviewsIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // assert
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-status`),
+      ).toHaveTextContent("AWAITING_REVIEW");
+    });
+    expect(
+      screen.getByTestId(`${testId}-cell-row-1-col-status`),
+    ).toHaveTextContent("REJECTED");
+    expect(
+      screen.getByTestId(`${testId}-cell-row-2-col-status`),
+    ).toHaveTextContent("AWAITING_REVIEW");
+  });
+
   test("renders empty table when backend unavailable, user only", async () => {
     // arrange
     setupUserOnly();
