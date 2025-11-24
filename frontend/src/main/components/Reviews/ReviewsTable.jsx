@@ -13,6 +13,7 @@ export default function ReviewsTable({
   reviews,
   userOptions,
   moderatorOptions,
+  showModerationStatus,
 }) {
   const navigate = useNavigate();
 
@@ -102,5 +103,12 @@ export default function ReviewsTable({
     );
   }
 
+  if (showModerationStatus) {
+    const statusColumn = {
+      Header: "Status",
+      accessor: "status",
+    };
+    columns.push(statusColumn);
+  }
   return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
 }

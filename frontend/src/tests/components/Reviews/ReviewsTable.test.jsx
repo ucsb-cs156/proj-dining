@@ -180,4 +180,44 @@ describe("ReviewsTable tests", () => {
     );
     expect(dateCell).toHaveTextContent(formattedDate);
   });
+
+  test("Status column shows properly when showModerationStatus prop is true", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+          showModerationStatus={true}
+        />
+        ,
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByText("Status")).toBeInTheDocument();
+
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
+    ).toBeInTheDocument();
+  });
+
+  test("Status column is omitted properly when showModerationStatus prop is false", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+          showModerationStatus={false}
+        />
+        ,
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Status")).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(`Reviewstable-cell-row-0-col-status`),
+    ).not.toBeInTheDocument();
+  });
 });
