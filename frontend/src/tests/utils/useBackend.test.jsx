@@ -68,6 +68,7 @@ describe("utils/useBackend tests", () => {
       );
     });
   });
+
   describe("utils/useBackend useBackendMutation tests", () => {
     test("useBackendMutation handles success correctly", async () => {
       // See: https://react-query.tanstack.com/guides/testing#turn-off-retries
