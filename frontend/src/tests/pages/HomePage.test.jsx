@@ -3,6 +3,7 @@ import HomePage from "main/pages/HomePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import { vi } from "vitest";
+import * as ReactQuery from "react-query";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
@@ -19,6 +20,7 @@ describe("HomePage tests", () => {
     queryClient = new QueryClient();
   });
   beforeEach(() => {
+    axiosMock.reset();
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
@@ -98,5 +100,220 @@ describe("HomePage renders properly with no backend", () => {
     expect(
       screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("HomePage meals offered today tests", () => {
+  let axiosMock;
+  let queryClient;
+
+  const mealsOffered = {
+    carrillo: [
+      { name: "Breakfast", code: "breakfast" },
+      { name: "Lunch", code: "lunch" },
+      { name: "Dinner", code: "dinner" },
+    ],
+    "de-la-guerra": [
+      { name: "Breakfast", code: "breakfast" },
+      { name: "Lunch", code: "lunch" },
+      { name: "Dinner", code: "dinner" },
+    ],
+    ortega: [],
+    portola: [
+      { name: "Lunch", code: "lunch" },
+      { name: "Dinner", code: "dinner" },
+    ],
+  };
+
+  beforeAll(() => {
+    axiosMock = new AxiosMockAdapter(axios);
+    queryClient = new QueryClient();
+  });
+  beforeEach(() => {
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock.onGet("/api/dining/all").reply(200, []);
+    axiosMock
+      .onGet("/api/dining/all")
+      .reply(200, diningCommonsFixtures.fourCommons);
+
+    const date = "2025-03-11";
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date(date));
+
+    diningCommonsFixtures.fourCommons.forEach((d) => {
+      axiosMock
+        .onGet(`/api/diningcommons/${date}/${d.code}`)
+        .reply(200, mealsOffered[d.code]);
+    });
+  });
+  afterEach(() => {
+    axiosMock.reset();
+    queryClient.clear();
+    vi.useRealTimers();
+  });
+
+  test("Handles empty data array", async () => {
+    axiosMock.onGet("/api/dining/all").reply(200, []);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("Handles null data array", async () => {
+    axiosMock.onGet("/api/dining/all").reply(200, null);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("Handles undefined mealsOfferedToday", async () => {
+    axiosMock
+      .onGet("/api/dining/all")
+      .reply(200, diningCommonsFixtures.fourCommons);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      diningCommonsFixtures.fourCommons.forEach((d, i) => {
+        const row = screen.getByTestId(
+          `DiningCommonsTable-cell-row-${i}-col-mealsOfferedToday`,
+        );
+        expect(row).toHaveTextContent("No meals offered today");
+      });
+    });
+  });
+
+  test("Query key must be 'meals'", async () => {
+    axiosMock
+      .onGet("/api/dining/all")
+      .reply(200, diningCommonsFixtures.fourCommons);
+
+    const date = "2025-03-11";
+    diningCommonsFixtures.fourCommons.forEach((d) => {
+      axiosMock.onGet(`/api/diningcommons/${date}/${d.code}`).reply(200, []);
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    const cache = queryClient.getQueryCache();
+    const queries = cache.getAll();
+
+    const mealQueries = queries.filter((q) => q.queryKey[0] === "meals");
+
+    expect(mealQueries.length).toBeGreaterThan(0);
+
+    const emptyKeyQueries = queries.filter(
+      (q) => Array.isArray(q.queryKey) && q.queryKey[0] === "",
+    );
+    expect(emptyKeyQueries.length).toBe(0);
+  });
+
+  test("Renders correctly with mealsOfferedToday", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    await waitFor(() => {
+      for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
+        const row = screen.getByTestId(
+          `DiningCommonsTable-cell-row-${i}-col-mealsOfferedToday`,
+        );
+        const expectedMeals =
+          mealsOffered[diningCommonsFixtures.fourCommons[i].code];
+        if (expectedMeals.length > 0) {
+          expectedMeals.forEach((meal) => {
+            expect(row).toHaveTextContent(meal.name);
+          });
+        } else {
+          expect(row).toHaveTextContent("No meals offered today");
+        }
+      }
+    });
+  });
+
+  test("Optional chaining handles sparse arrays where element is missing", async () => {
+    axiosMock
+      .onGet("/api/dining/all")
+      .reply(200, diningCommonsFixtures.fourCommons);
+
+    const date = "2025-03-11";
+    diningCommonsFixtures.fourCommons.forEach((d) => {
+      axiosMock.onGet(`/api/diningcommons/${date}/${d.code}`).reply(200, []);
+    });
+
+    const originalUseQueries = ReactQuery.useQueries;
+    const spy = vi
+      .spyOn(ReactQuery, "useQueries")
+      .mockImplementation((queries) => {
+        const results = originalUseQueries(queries);
+        const sparseResults = [...results];
+        sparseResults[1] = undefined;
+        return sparseResults;
+      });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    await waitFor(() => {
+      const row = screen.getByTestId(
+        "DiningCommonsTable-cell-row-1-col-mealsOfferedToday",
+      );
+      expect(row).toHaveTextContent("No meals offered today");
+    });
+
+    spy.mockRestore();
   });
 });
