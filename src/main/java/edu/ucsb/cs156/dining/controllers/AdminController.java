@@ -40,7 +40,7 @@ public class AdminController extends ApiController {
   /**
    * Create a new admin
    *
-   * @param adminEmail the email in typical email format
+   * @param email the email in typical email format
    * @return the saved admin
    */
   @Operation(summary = "Create a new admin")
