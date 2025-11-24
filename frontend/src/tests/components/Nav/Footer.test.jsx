@@ -2,16 +2,24 @@ import { render, screen } from "@testing-library/react";
 import Footer from "main/components/Nav/Footer";
 
 describe("Footer tests", () => {
-  test("renders correctly", async () => {
+  test("Links are correct", async () => {
     render(<Footer />);
-    const expectedText =
-      "This is a sample webapp using React with a Spring Boot backend. See the source code on Github.";
-    expect(screen.getByTestId("Footer").textContent).toBe(expectedText);
-    // await screen.findByText(
-    //   /This is a sample webapp using React with a Spring Boot backend./,
-    // );
-    // await screen.findByText(/source code on/);
-    // const githubLink = screen.getByText("Github");
-    // expect(githubLink).toBeInTheDocument();
+    expect(screen.getByTestId("footer-class-website-link")).toHaveAttribute(
+      "href",
+      "https://ucsb-cs156.github.io",
+    );
+    expect(screen.getByTestId("footer-ucsb-link")).toHaveAttribute(
+      "href",
+      "https://ucsb.edu",
+    );
+    expect(screen.getByTestId("footer-source-code-link")).toHaveAttribute(
+      "href",
+      "https://github.com/ucsb-cs156/proj-dining",
+    );
+
+    expect(screen.getByTestId("footer-dining-search-link")).toHaveAttribute(
+      "href",
+      "https://apps.dining.ucsb.edu/menu/day",
+    );
   });
 });

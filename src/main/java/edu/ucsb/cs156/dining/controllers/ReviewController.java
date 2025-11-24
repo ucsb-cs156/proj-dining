@@ -210,7 +210,7 @@ public class ReviewController extends ApiController {
             .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
 
     User current = getCurrentUser().getUser();
-    if (current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+    if (current.getId() != review.getReviewer().getId() && !current.isAdmin()) {
       throw new AccessDeniedException("No permission to delete review");
     }
 
@@ -241,5 +241,35 @@ public class ReviewController extends ApiController {
   public Iterable<Review> needsmoderation() {
     Iterable<Review> reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);
     return reviewsList;
+  }
+
+  @PreAuthorize("hasRole('ROLE_USER')")
+  @GetMapping("/{id}")
+  public Review getReviewById(@PathVariable Long id) {
+
+    // 1. Look up the review or 404
+    Review review =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+
+    // 2. Get current requester
+    User requester = getCurrentUser().getUser();
+
+    // 3. Evaluate permissions
+    boolean isOwner = (review.getReviewer().getId() == requester.getId());
+    boolean isAdmin =
+        getCurrentUser().getRoles().stream().anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
+    boolean isModerator =
+        getCurrentUser().getRoles().stream()
+            .anyMatch(r -> r.getAuthority().equals("ROLE_MODERATOR"));
+
+    // 4. Enforce access rules
+    if (!(isOwner || isAdmin || isModerator)) {
+      throw new AccessDeniedException("No permission to view this review");
+    }
+
+    // 5. Return the review
+    return review;
   }
 }
