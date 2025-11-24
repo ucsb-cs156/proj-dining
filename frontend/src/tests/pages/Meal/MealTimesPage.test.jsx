@@ -86,13 +86,21 @@ describe("MealTimesPage tests", () => {
     expect(
       screen.queryByText(/No meals offered today/i),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
   });
 
   test("displays 'No meals offered today.' when backend returns 500", async () => {
-    queryClient.clear();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // ✅ turns retries off
+          retry: false,
+        },
+      },
+    });
 
     axiosMock.reset();
-    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(500, {});
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(500, []);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -119,16 +127,26 @@ describe("MealTimesPage tests", () => {
     expect(
       screen.queryByTestId("MealTable-header-group-0"),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
 
     expect(mockToast).not.toHaveBeenCalled();
   });
 
-  test("when loading (empty meal list), have the same behavior as error 500", async () => {
-    queryClient.clear();
+  test("indicate when loading when loading API", async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // ✅ turns retries off
+          retry: false,
+        },
+      },
+    });
 
     axiosMock.reset();
-    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(200, []);
-    // Above: We get an empty meal list back, instead of the fixtures
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(() => new Promise(() => {}));
+    // Above: loading forever
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -147,13 +165,14 @@ describe("MealTimesPage tests", () => {
     ).toBeInTheDocument();
 
     // Should display this
-    expect(
-      await screen.findByText(/No meals offered today/i),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Loading/i)).toBeInTheDocument();
 
     // An empty table should not show up
     expect(
       screen.queryByTestId("MealTable-header-group-0"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/No meals offered today/i),
     ).not.toBeInTheDocument();
   });
 });
