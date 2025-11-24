@@ -210,7 +210,7 @@ public class ReviewController extends ApiController {
             .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
 
     User current = getCurrentUser().getUser();
-    if (current.getId() != review.getReviewer().getId() && !current.getAdmin()) {
+    if (current.getId() != review.getReviewer().getId() && !current.isAdmin()) {
       throw new AccessDeniedException("No permission to delete review");
     }
 

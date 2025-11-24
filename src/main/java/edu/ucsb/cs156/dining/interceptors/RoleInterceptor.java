@@ -44,10 +44,10 @@ public class RoleInterceptor implements HandlerInterceptor {
                         !grantedAuth.getAuthority().equals("ROLE_ADMIN")
                             && !grantedAuth.getAuthority().equals("ROLE_MODERATOR"))
                 .collect(Collectors.toSet());
-        if (user.getAdmin()) {
+        if (user.isAdmin()) {
           revisedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
-        if (user.getModerator()) {
+        if (user.isModerator()) {
           revisedAuthorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
         }
         Authentication newAuth =
