@@ -11,7 +11,7 @@ export default function MenuItemPage() {
     "dining-commons-code": diningCommons,
     meal,
   } = useParams();
-  const { data: menuItems } = useBackend(
+  const { data: menuItems, isLoading } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${date}/${diningCommons}/${meal}`],
     {
@@ -19,14 +19,21 @@ export default function MenuItemPage() {
       method: "GET",
       url: `/api/diningcommons/${date}/${diningCommons}/${meal}`,
     },
-    // Stryker disable next-line all : Don't test empty initial data
-    [],
   );
 
   return (
     <BasicLayout>
       <h2>{meal.at(0).toUpperCase() + meal.substring(1)}</h2>
-      <MenuItemTable currentUser={currentUser} menuItems={menuItems} />
+      {isLoading ? (
+        <div className="text-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2">Loading menu items...</p>
+        </div>
+      ) : (
+        <MenuItemTable currentUser={currentUser} menuItems={menuItems} />
+      )}
     </BasicLayout>
   );
 }

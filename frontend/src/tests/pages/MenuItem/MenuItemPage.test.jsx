@@ -75,6 +75,47 @@ describe("MenuItemPage", () => {
       screen.queryByText("MenuItemTable-cell-header-col-name"),
     ).not.toBeInTheDocument();
   });
+
+  test("displays loading screen while fetching menu items", async () => {
+    axiosMock
+      .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
+      .reply(() => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([200, menuItemFixtures.fiveMenuItems]);
+          }, 100);
+        });
+      });
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <MenuItemPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // Check that loading screen is displayed
+    expect(screen.getByText("Loading menu items...")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+
+    // Wait for the menu items to load
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading menu items..."),
+      ).not.toBeInTheDocument();
+    });
+
+    // Verify menu items are displayed
+    await screen.findByTestId("MenuItemTable-cell-row-0-col-name");
+  });
 });
 
 describe("MenuItemPage renders table correctly", () => {
