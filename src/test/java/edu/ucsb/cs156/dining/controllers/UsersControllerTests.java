@@ -205,7 +205,7 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = {"ADMIN"})
+  @WithMockUser(roles = {"ADMIN", "MODERATOR"})
   public void admin_approves_alias() throws Exception {
     // arrange
     User userOrig =
@@ -249,7 +249,7 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
-  @WithMockUser(roles = {"ADMIN"})
+  @WithMockUser(roles = {"ADMIN", "MODERATOR"})
   public void admin_does_not_approve_alias() throws Exception {
     // arrange
     User userOrig =

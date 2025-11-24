@@ -4,6 +4,8 @@ import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import ReviewsTable from "main/components/Reviews/ReviewsTable";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Moderate = () => {
   const currentUser = useCurrentUser();
@@ -37,15 +39,63 @@ const Moderate = () => {
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
 
-  //
-  // Approve + Reject callbacks
-  //
+  // const approveCallback = async (alias) => {
+  //   const user = alias.row.original;
+  //   console.log(user);
+  //   await fetch(
+  //     `/api/admin/users/updateAliasModeration?id=${user.id}&approved=true`,
+  //     {
+  //       method: "PUT",
+  //     }
+  //   );
+  // };
+
+  // const rejectCallback = async (alias) => {
+  //   const user = alias.row.original;
+  //   await fetch(
+  //     `/api/admin/users/updateAliasModeration?id=${user.id}&approved=false`,
+  //     {
+  //       method: "PUT",
+  //     }
+  //   );
+  // };
+  // Get doBackend for authenticated requests
   const approveCallback = async (alias) => {
-    await fetch(`/api/admin/users/${alias.id}/approve`, { method: "POST" });
+    const user = alias.row.original;
+
+    try {
+      await axios.put("/api/currentUser/updateAliasModeration", null, {
+        params: {
+          id: user.id,
+          approved: true,
+        },
+      });
+
+      toast(`Approved alias for ${user.email}`);
+    } catch (err) {
+      toast.error(
+        `Error approving alias: ${err.response?.data?.error || err.message}`,
+      );
+    }
   };
 
   const rejectCallback = async (alias) => {
-    await fetch(`/api/admin/users/${alias.id}/reject`, { method: "POST" });
+    const user = alias.row.original;
+
+    try {
+      await axios.put("/api/currentUser/updateAliasModeration", null, {
+        params: {
+          id: user.id,
+          approved: false,
+        },
+      });
+
+      toast(`Rejected alias for ${user.email}`);
+    } catch (err) {
+      toast.error(
+        `Error rejecting alias: ${err.response?.data?.error || err.message}`,
+      );
+    }
   };
 
   return (

@@ -116,7 +116,7 @@ public class UsersController extends ApiController {
    * @param approved the new moderation status
    * @return the updated user
    */
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
   @PutMapping("/currentUser/updateAliasModeration")
   public User updateAliasModeration(@RequestParam long id, @RequestParam Boolean approved) {
 
