@@ -75,6 +75,20 @@ describe("ReviewsTable tests", () => {
     expect(rejectButton).not.toBeInTheDocument();
   });
 
+  test("Does not show status column by default", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Status")).not.toBeInTheDocument();
+  });
+
   test("Regular user buttons appear and work properly", async () => {
     render(
       <QueryClientProvider client={queryClient}>
@@ -179,5 +193,47 @@ describe("ReviewsTable tests", () => {
       `Reviewstable-cell-row-0-col-dateItemServed`,
     );
     expect(dateCell).toHaveTextContent(formattedDate);
+  });
+
+  test("Shows moderation status column when requested", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+          showModerationStatus={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByText("Status")).toBeInTheDocument();
+
+    // first fixture has status AWAITING_REVIEW -> rendered as 'AWAITING REVIEW'
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
+    ).toHaveTextContent("AWAITING REVIEW");
+  });
+
+  test("Shows empty status when status is missing", () => {
+    const reviewsMissingStatus = ReviewFixtures.threeReviews.map((r, i) =>
+      i === 0 ? { ...r, status: null } : r,
+    );
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={reviewsMissingStatus}
+          userOptions={false}
+          moderatorOptions={false}
+          showModerationStatus={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByText("Status")).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
+    ).toHaveTextContent("");
   });
 });
