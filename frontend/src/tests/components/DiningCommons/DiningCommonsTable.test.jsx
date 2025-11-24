@@ -1,7 +1,10 @@
 import { waitFor, render, screen } from "@testing-library/react";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
+import { mealFixtures } from "fixtures/mealFixtures";
 import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 import { QueryClient, QueryClientProvider } from "react-query";
+import AxiosMockAdapter from "axios-mock-adapter";
+import axios from "axios";
 import { MemoryRouter } from "react-router";
 import { vi } from "vitest";
 
@@ -12,12 +15,22 @@ vi.mock("react-router", async () => ({
   useNavigate: () => mockedNavigate,
 }));
 
+const mockToast = vi.fn();
+vi.mock("react-toastify", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    toast: (x) => mockToast(x),
+  };
+});
+
 describe("DiningCommonsTable tests", () => {
   const queryClient = new QueryClient();
+  const axiosMock = new AxiosMockAdapter(axios);
   const fourCommons = diningCommonsFixtures.fourCommons;
   const expectedHeaders = [
     "Code",
     "Name",
+    "Meals Offered Today",
     "Has Dining Cam",
     "Has Sack Meal",
     "Has Takeout Meal",
@@ -25,12 +38,17 @@ describe("DiningCommonsTable tests", () => {
   const expectedFields = [
     "code",
     "name",
+    "mealsOfferedToday",
     "hasDiningCam",
     "hasSackMeal",
     "hasTakeoutMeal",
   ];
   const testId = "DiningCommonsTable";
   const date = new Date("2025-03-11").toISOString().split("T")[0];
+
+  afterEach(() => {
+    mockToast.mockClear();
+  });
 
   test("Checkmark / X for Boolean columns shows up as expected, url shows up correctly", async () => {
     // act - render the component
@@ -48,6 +66,7 @@ describe("DiningCommonsTable tests", () => {
 
     // assert - check that the expected content is rendered
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
     for (let i = 0; i < fourCommons.length; i++) {
       expect(
         screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-code`),
@@ -210,6 +229,7 @@ describe("DiningCommonsTable tests", () => {
     const expectedHeaders = [
       "Code",
       "Name",
+      "Meals Offered Today",
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
@@ -217,6 +237,7 @@ describe("DiningCommonsTable tests", () => {
     const expectedFields = [
       "code",
       "name",
+      "mealsOfferedToday",
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
@@ -256,6 +277,7 @@ describe("DiningCommonsTable tests", () => {
     const expectedHeaders = [
       "Code",
       "Name",
+      "Meals Offered Today",
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
@@ -263,6 +285,7 @@ describe("DiningCommonsTable tests", () => {
     const expectedFields = [
       "code",
       "name",
+      "mealsOfferedToday",
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
@@ -285,5 +308,103 @@ describe("DiningCommonsTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-code`),
     ).toHaveTextContent("de-la-guerra");
+  });
+
+  test("Meals Offered Today shows 'no meals offered' for 500 error", async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false, // otherwise the client keeps retrying after an error, so the error=500 isn't constant
+        },
+      },
+    });
+
+    axiosMock.reset();
+    axiosMock.onGet(`/api/diningcommons/${date}/portola`).reply(500, []);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const cell = await screen.findByTestId(
+      "DiningCommonsTable-cell-row-3-col-mealsOfferedToday",
+    );
+
+    await waitFor(() => {
+      expect(cell).toHaveTextContent("no meals offered");
+    });
+
+    expect(mockToast).not.toHaveBeenCalled();
+  });
+
+  test("Meals Offered Today shows links for success", async () => {
+    queryClient.clear();
+
+    axiosMock.reset();
+    axiosMock
+      .onGet(`/api/diningcommons/${date}/portola`)
+      .reply(200, mealFixtures.threeMeals);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const cell = await screen.findByTestId(
+      "DiningCommonsTable-cell-row-3-col-mealsOfferedToday",
+    );
+
+    // toHaveTextContent ignores spaces, this does not
+    expect(cell.textContent).toBe("Breakfast Lunch Dinner");
+
+    for (let i = 0; i < mealFixtures.threeMeals.length; i++) {
+      expect(screen.getByText(mealFixtures.threeMeals[i].name)).toHaveAttribute(
+        "href",
+        `/diningcommons/${date}/portola/${mealFixtures.threeMeals[i].code}`,
+      );
+    }
+
+    expect(cell).not.toHaveTextContent("no meals offered");
+  });
+
+  test("when loading (empty meal list), have the same behavior as error 500", async () => {
+    queryClient.clear();
+
+    axiosMock.reset();
+    axiosMock.onGet(`/api/diningcommons/${date}/portola`).reply(200, []);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable
+            commons={diningCommonsFixtures.fourCommons}
+            date={date}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const cell = await screen.findByTestId(
+      "DiningCommonsTable-cell-row-3-col-mealsOfferedToday",
+    );
+
+    await waitFor(() => {
+      expect(cell).toHaveTextContent("no meals offered");
+    });
+
+    expect(mockToast).not.toHaveBeenCalled();
   });
 });
