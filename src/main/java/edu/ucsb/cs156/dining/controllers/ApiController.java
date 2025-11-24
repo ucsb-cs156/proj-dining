@@ -57,7 +57,7 @@ public abstract class ApiController {
    */
   @ExceptionHandler(UnsupportedOperationException.class)
   public ResponseEntity<Map<String, String>> handleUnsupportedOperation(
-      UnsupportedOperationException ex) {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", ex.getMessage()));
+      UnsupportedOperationException e) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", e.getMessage()));
   }
 }
