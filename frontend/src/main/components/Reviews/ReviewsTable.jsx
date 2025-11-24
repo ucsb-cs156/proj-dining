@@ -106,9 +106,9 @@ export default function ReviewsTable({
   if (showModerationStatus) {
     const statusColumn = {
       Header: "Status",
-      accessor: "status"
-    }
-    columns.push(statusColumn)
+      accessor: "status",
+    };
+    columns.push(statusColumn);
   }
   return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
 }
