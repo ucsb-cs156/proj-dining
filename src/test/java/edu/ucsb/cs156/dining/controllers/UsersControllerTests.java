@@ -266,7 +266,7 @@ public class UsersControllerTests extends ControllerTestCase {
             .id(7L)
             .email("user@example.org")
             .alias("Chipotle")
-            .proposedAlias(null)
+            .proposedAlias("Taco Bell")
             .status(ModerationStatus.REJECTED)
             .build();
 

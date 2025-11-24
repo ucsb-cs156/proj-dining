@@ -1,37 +1,30 @@
 import React from "react";
-import { useBackend } from "main/utils/useBackend";
+import { useBackend, useBackendMutation } from "main/utils/useBackend";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import ReviewsTable from "main/components/Reviews/ReviewsTable";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
-import axios from "axios";
-import { toast } from "react-toastify";
+import { useQueryClient } from "react-query";
 
 const Moderate = () => {
   const currentUser = useCurrentUser();
+  const queryClient = useQueryClient();
 
-  const {
-    data: reviews,
-    error: _error,
-    status: _status,
-  } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
+  //
+  // Reviews needing moderation
+  //
+  const { data: reviews } = useBackend(
     ["/api/reviews/needsmoderation"],
-    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/reviews/needsmoderation" },
-    // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );
 
   //
-  // Fetch aliases awaiting approval
+  // Aliases needing moderation
   //
   const { data: aliases } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/admin/users/needsmoderation"],
-    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/admin/users/needsmoderation" },
-    // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );
 
@@ -39,37 +32,71 @@ const Moderate = () => {
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
 
-  const approveCallback = async (alias) => {
-    const user = alias.row.original;
-
-    await axios.put("/api/currentUser/updateAliasModeration", null, {
+  //
+  // ---- APPROVE MUTATION ----
+  //
+  const approveMutation = useBackendMutation(
+    (user) => ({
+      method: "PUT",
+      url: "/api/currentUser/updateAliasModeration",
       params: {
         id: user.id,
         approved: true,
+        proposedAlias: user.proposedAlias,
       },
-    });
-    // Stryker disable next-line all
-    toast(`Approved alias for ${user.email}`);
-  };
+    }),
+    // On success: invalidate both relevant query keys
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["/api/admin/users/needsmoderation"]);
+        queryClient.invalidateQueries(["/api/reviews/needsmoderation"]);
+      },
+    },
+    [],
+  );
 
-  const rejectCallback = async (alias) => {
-    const user = alias.row.original;
-
-    await axios.put("/api/currentUser/updateAliasModeration", null, {
+  //
+  // ---- REJECT MUTATION ----
+  //
+  const rejectMutation = useBackendMutation(
+    (user) => ({
+      method: "PUT",
+      url: "/api/currentUser/updateAliasModeration",
       params: {
         id: user.id,
         approved: false,
+
+        // maintain rejected alias in the user's "Proposed Alias" field
+        proposedAlias: user.proposedAlias,
       },
-    });
-    // Stryker disable next-line all
-    toast(`Approved alias for ${user.email}`);
+    }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["/api/admin/users/needsmoderation"]);
+        queryClient.invalidateQueries(["/api/reviews/needsmoderation"]);
+      },
+    },
+    [],
+  );
+
+  //
+  // Callbacks (just trigger the mutations)
+  //
+  const approveCallback = (alias) => {
+    approveMutation.mutate(alias.row.original);
+  };
+
+  const rejectCallback = (alias) => {
+    rejectMutation.mutate(alias.row.original);
   };
 
   return (
     <BasicLayout>
       <div className="pt-2">
         <h1>Moderate Reviews</h1>
+
         <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
+
         <AliasApprovalTable
           aliases={aliases}
           approveCallback={approveCallback}
@@ -81,3 +108,104 @@ const Moderate = () => {
 };
 
 export default Moderate;
+
+// import React from "react";
+// import { useBackend } from "main/utils/useBackend";
+// import { useCurrentUser, hasRole } from "main/utils/currentUser";
+// import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+// import ReviewsTable from "main/components/Reviews/ReviewsTable";
+// import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
+// import axios from "axios";
+// import { toast } from "react-toastify";
+// import { useQueryClient } from "react-query";
+
+// const Moderate = () => {
+//   const currentUser = useCurrentUser();
+//   const queryClient = useQueryClient();
+
+//   //
+//   // Reviews needing moderation
+//   //
+//   const {
+//     data: reviews,
+//     error: _error,
+//     status: _status,
+//   } = useBackend(
+//     ["/api/reviews/needsmoderation"],
+//     { method: "GET", url: "/api/reviews/needsmoderation" },
+//     []
+//   );
+
+//   //
+//   // Aliases awaiting approval
+//   //
+//   const { data: aliases } = useBackend(
+//     ["/api/admin/users/needsmoderation"],
+//     { method: "GET", url: "/api/admin/users/needsmoderation" },
+//     []
+//   );
+
+//   const moderatorOptions =
+//     hasRole(currentUser, "ROLE_ADMIN") ||
+//     hasRole(currentUser, "ROLE_MODERATOR");
+
+//   //
+//   // APPROVE alias
+//   //
+//   const approveCallback = async (alias) => {
+//     const user = alias.row.original;
+
+//     await axios.put("/api/currentUser/updateAliasModeration", null, {
+//       params: {
+//         id: user.id,
+//         approved: true,
+//         // Keep proposedAlias unchanged on approval
+//         proposedAlias: user.proposedAlias,
+//       },
+//     });
+
+//     // Invalidate cache → alias disappears from moderation table
+//     queryClient.invalidateQueries(["/api/admin/users/needsmoderation"]);
+
+//     toast(`Approved alias for ${user.email}`);
+//   };
+
+//   //
+//   // REJECT alias
+//   //
+//   const rejectCallback = async (alias) => {
+//     const user = alias.row.original;
+
+//     // On REJECT:
+//     // approved=false AND keep proposedAlias as the rejected alias
+//     // so the user sees what was rejected until a new alias is submitted
+//     await axios.put("/api/currentUser/updateAliasModeration", null, {
+//       params: {
+//         id: user.id,
+//         approved: false,
+//         proposedAlias: user.proposedAlias,
+//       },
+//     });
+
+//     // Invalidate cache → alias disappears from moderation table
+//     queryClient.invalidateQueries(["/api/admin/users/needsmoderation"]);
+
+//     toast(`Rejected alias for ${user.email}`);
+//   };
+
+//   return (
+//     <BasicLayout>
+//       <div className="pt-2">
+//         <h1>Moderate Reviews</h1>
+//         <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
+//         <AliasApprovalTable
+//           aliases={aliases}
+//           approveCallback={approveCallback}
+//           rejectCallback={rejectCallback}
+//         />
+//       </div>
+//     </BasicLayout>
+//   );
+// };
+
+// export default Moderate;

@@ -130,7 +130,6 @@ public class UsersController extends ApiController {
       user.setProposedAlias(null);
     } else {
       user.setStatus(ModerationStatus.REJECTED);
-      user.setProposedAlias(null);
     }
 
     userRepository.save(user);
