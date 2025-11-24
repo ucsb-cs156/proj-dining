@@ -162,6 +162,31 @@ public class ReviewController extends ApiController {
     return reviews;
   }
 
+  /**
+   * This method allows a user to get a single review that they have previously made. Only user
+   * (author), moderator, admin can get a review
+   *
+   * @return a single review sent by a given user
+   */
+  @Operation(
+      summary =
+          "Get a a single review a user has sent: only callable by the user, moderator, admin")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  @GetMapping("/{id}")
+  public Review get_single_review_by_id(@Parameter(name = "id") @PathVariable Long id) {
+    User user = getCurrentUser().getUser();
+    Review review =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
+
+    if (review.getReviewer().getId() != user.getId() && !user.getAdmin() && !user.getModerator()) {
+      throw new AccessDeniedException("No permission to get review");
+    }
+
+    return review;
+  }
+
   @Operation(summary = "Edit a review")
   @PreAuthorize("hasRole('ROLE_USER')")
   @PutMapping("/reviewer")

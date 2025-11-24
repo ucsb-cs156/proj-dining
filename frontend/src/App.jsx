@@ -3,8 +3,6 @@ import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
 
-import PlaceholderIndexPage from "main/pages/Placeholder/PlaceholderIndexPage";
-
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
 
 import MyReviewsIndexPage from "main/pages/MyReviews/MyReviewsIndexPage";
@@ -14,7 +12,8 @@ import EditReviewPage from "main/pages/Reviews/EditReviewPage";
 
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
-import Moderate from "main/pages/ModeratePage";
+import ModerateMenuPage from "main/pages/Moderate/ModerateMenuPage";
+import ModerateReviewsPage from "main/pages/Moderate/ModerateReviewsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -53,14 +52,12 @@ function App() {
         )}
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
-          <Route exact path="/moderate" element={<Moderate />} />
-        )}
-        {hasRole(currentUser, "ROLE_USER") && (
           <>
+            <Route exact path="/moderate" element={<ModerateMenuPage />} />
             <Route
               exact
-              path="/placeholder"
-              element={<PlaceholderIndexPage />}
+              path="/moderate/reviews"
+              element={<ModerateReviewsPage />}
             />
           </>
         )}

@@ -1,6 +1,41 @@
 import React from "react";
 import OurTable from "main/components/OurTable";
 import { Link } from "react-router";
+import { useBackend } from "main/utils/useBackend";
+
+function MealsOfferedCell({ date, diningHall }) {
+  const {
+    data: meals,
+    error: _error,
+    status: _status,
+  } = useBackend(
+    // Stryker disable next-line all : don't test internal caching of React Query
+    [`/api/diningcommons/${date}/${diningHall}`],
+    {
+      url: `/api/diningcommons/${date}/${diningHall}`,
+    },
+    // Stryker disable next-line all : don't test default value of empty list
+    [],
+    true,
+  );
+
+  if (meals.length === 0) return <span>no meals offered</span>;
+  // logic: the api call returns error 500 when there are no meals, and meals remains empty (due to the initialData empty list)
+  // disabled all
+
+  return (
+    <>
+      {meals.map((meal, index) => (
+        <React.Fragment key={meal.code}>
+          {index > 0 && " "}
+          <Link to={`/diningcommons/${date}/${diningHall}/${meal.code}`}>
+            {meal.name}
+          </Link>
+        </React.Fragment> // we have two siblings (" " and link) so a fragment is needed to wrap them together
+      ))}
+    </> // this is also a fragment wrapper, but with no key since we're not inside of a list
+  ); // https://react.dev/reference/react/Fragment#rendering-a-list-of-fragments
+}
 
 export default function DiningCommonsTable({ commons, date }) {
   const testid = "DiningCommonsTable";
@@ -15,6 +50,12 @@ export default function DiningCommonsTable({ commons, date }) {
     {
       Header: "Name",
       accessor: "name",
+    },
+    {
+      Header: "Meals Offered Today",
+      accessor: "code",
+      id: "mealsOfferedToday", // by default the id is the accessor, but since our first column has the same accessor we need a different id here
+      Cell: ({ value }) => <MealsOfferedCell date={date} diningHall={value} />,
     },
     {
       Header: "Has Dining Cam",
