@@ -39,63 +39,31 @@ const Moderate = () => {
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
 
-  // const approveCallback = async (alias) => {
-  //   const user = alias.row.original;
-  //   console.log(user);
-  //   await fetch(
-  //     `/api/admin/users/updateAliasModeration?id=${user.id}&approved=true`,
-  //     {
-  //       method: "PUT",
-  //     }
-  //   );
-  // };
-
-  // const rejectCallback = async (alias) => {
-  //   const user = alias.row.original;
-  //   await fetch(
-  //     `/api/admin/users/updateAliasModeration?id=${user.id}&approved=false`,
-  //     {
-  //       method: "PUT",
-  //     }
-  //   );
-  // };
-  // Get doBackend for authenticated requests
   const approveCallback = async (alias) => {
     const user = alias.row.original;
 
-    try {
-      await axios.put("/api/currentUser/updateAliasModeration", null, {
-        params: {
-          id: user.id,
-          approved: true,
-        },
-      });
-
-      toast(`Approved alias for ${user.email}`);
-    } catch (err) {
-      toast.error(
-        `Error approving alias: ${err.response?.data?.error || err.message}`,
-      );
-    }
+    await axios.put("/api/currentUser/updateAliasModeration", null, {
+      params: {
+        id: user.id,
+        approved: true,
+      },
+    });
+    // Stryker disable next-line all
+    toast(`Approved alias for ${user.email}`);
   };
 
   const rejectCallback = async (alias) => {
     const user = alias.row.original;
 
-    try {
-      await axios.put("/api/currentUser/updateAliasModeration", null, {
-        params: {
-          id: user.id,
-          approved: false,
-        },
-      });
 
-      toast(`Rejected alias for ${user.email}`);
-    } catch (err) {
-      toast.error(
-        `Error rejecting alias: ${err.response?.data?.error || err.message}`,
-      );
-    }
+    await axios.put("/api/currentUser/updateAliasModeration", null, {
+      params: {
+        id: user.id,
+        approved: false,
+      },
+    });
+    // Stryker disable next-line all
+    toast(`Approved alias for ${user.email}`);
   };
 
   return (

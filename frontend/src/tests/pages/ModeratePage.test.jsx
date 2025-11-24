@@ -138,7 +138,7 @@ describe("Moderate Page Tests", () => {
     const errorMessage = console.error.mock.calls[0][0];
     expect(
       errorMessage.includes("/api/reviews/needsmoderation") ||
-        errorMessage.includes("api/admin/users/needsmoderation"),
+      errorMessage.includes("api/admin/users/needsmoderation"),
     ).toBe(true);
     expect(errorMessage).toContain("Error communicating");
     restoreConsole();
@@ -177,59 +177,156 @@ describe("Moderate Page Tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("approveCallback sends POST request to /api/admin/users/undefined/approve", async () => {
+  // test("approveCallback sends POST request to /api/admin/users/undefined/approve", async () => {
+  //   setupModerator();
+  //   const queryClient = new QueryClient();
+
+  //   // Mock reviews
+  //   axiosMock
+  //     .onGet("/api/reviews/needsmoderation")
+  //     .reply(200, ReviewFixtures.threeReviews);
+
+  //   axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
+  //     {
+  //       id: 42,
+  //       proposedAlias: "alias1",
+  //       status: "AWAITING_REVIEW",
+  //     },
+  //   ]);
+
+  //   const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue({
+  //     ok: true,
+  //     json: async () => ({}),
+  //   });
+
+  //   render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <MemoryRouter>
+  //         <Moderate />
+  //       </MemoryRouter>
+  //     </QueryClientProvider>,
+  //   );
+
+  //   await waitFor(() => {
+  //     expect(
+  //       screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
+  //     ).toBeInTheDocument();
+  //   });
+
+  //   const approveButton = screen.getByTestId(
+  //     "Aliasapprovaltable-cell-row-0-col-Approve-button",
+  //   );
+  //   approveButton.click();
+
+  //   // Since ButtonColumn passes cell, approveCallback receives cell object → id undefined
+  //   await waitFor(() => {
+  //     expect(fetchMock).toHaveBeenCalledWith(
+  //       "/api/admin/users/undefined/approve",
+  //       expect.objectContaining({ method: "POST" }),
+  //     );
+  //   });
+
+  //   fetchMock.mockRestore();
+  // });
+
+  // test("rejectCallback sends POST request to /api/admin/users/undefined/reject", async () => {
+  //   setupModerator();
+  //   const queryClient = new QueryClient();
+
+  //   axiosMock
+  //     .onGet("/api/reviews/needsmoderation")
+  //     .reply(200, ReviewFixtures.threeReviews);
+
+  //   axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
+  //     {
+  //       id: 55,
+  //       proposedAlias: "alias2",
+  //       status: "AWAITING_REVIEW",
+  //     },
+  //   ]);
+
+  //   const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue({
+  //     ok: true,
+  //     json: async () => ({}),
+  //   });
+
+  //   render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <MemoryRouter>
+  //         <Moderate />
+  //       </MemoryRouter>
+  //     </QueryClientProvider>,
+  //   );
+
+  //   await waitFor(() => {
+  //     expect(
+  //       screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
+  //     ).toBeInTheDocument();
+  //   });
+
+  //   const rejectButton = screen.getByTestId(
+  //     "Aliasapprovaltable-cell-row-0-col-Reject-button",
+  //   );
+  //   rejectButton.click();
+
+  //   // Since ButtonColumn passes cell, rejectCallback receives cell object → id undefined
+  //   await waitFor(() => {
+  //     expect(fetchMock).toHaveBeenCalledWith(
+  //       "/api/admin/users/undefined/reject",
+  //       expect.objectContaining({ method: "POST" }),
+  //     );
+  //   });
+
+  //   fetchMock.mockRestore();
+  // });
+
+  test("approveCallback sends PUT request with correct params", async () => {
     setupModerator();
     const queryClient = new QueryClient();
 
-    // Mock reviews
     axiosMock
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
 
     axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
-      {
-        id: 42,
-        proposedAlias: "alias1",
-        status: "AWAITING_REVIEW",
-      },
+      { id: 42, proposedAlias: "alias1", status: "AWAITING_REVIEW" },
     ]);
 
-    const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    });
+    const axiosPutSpy = vi.spyOn(axios, "put").mockResolvedValue({ data: {} });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
+        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias")
       ).toBeInTheDocument();
     });
 
     const approveButton = screen.getByTestId(
-      "Aliasapprovaltable-cell-row-0-col-Approve-button",
+      "Aliasapprovaltable-cell-row-0-col-Approve-button"
     );
     approveButton.click();
 
-    // Since ButtonColumn passes cell, approveCallback receives cell object → id undefined
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/api/admin/users/undefined/approve",
-        expect.objectContaining({ method: "POST" }),
+      expect(axiosPutSpy).toHaveBeenCalledWith(
+        "/api/currentUser/updateAliasModeration",
+        null,
+        {
+          params: { id: 42, approved: true },
+        }
       );
     });
 
-    fetchMock.mockRestore();
+    axiosPutSpy.mockRestore();
   });
 
-  test("rejectCallback sends POST request to /api/admin/users/undefined/reject", async () => {
+  test("rejectCallback sends PUT request with correct params", async () => {
     setupModerator();
     const queryClient = new QueryClient();
 
@@ -238,47 +335,43 @@ describe("Moderate Page Tests", () => {
       .reply(200, ReviewFixtures.threeReviews);
 
     axiosMock.onGet("/api/admin/users/needsmoderation").reply(200, [
-      {
-        id: 55,
-        proposedAlias: "alias2",
-        status: "AWAITING_REVIEW",
-      },
+      { id: 55, proposedAlias: "alias2", status: "AWAITING_REVIEW" },
     ]);
 
-    const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    });
+    const axiosPutSpy = vi.spyOn(axios, "put").mockResolvedValue({ data: {} });
 
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <Moderate />
         </MemoryRouter>
-      </QueryClientProvider>,
+      </QueryClientProvider>
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias"),
+        screen.getByTestId("Aliasapprovaltable-cell-row-0-col-proposedAlias")
       ).toBeInTheDocument();
     });
 
     const rejectButton = screen.getByTestId(
-      "Aliasapprovaltable-cell-row-0-col-Reject-button",
+      "Aliasapprovaltable-cell-row-0-col-Reject-button"
     );
     rejectButton.click();
 
-    // Since ButtonColumn passes cell, rejectCallback receives cell object → id undefined
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/api/admin/users/undefined/reject",
-        expect.objectContaining({ method: "POST" }),
+      expect(axiosPutSpy).toHaveBeenCalledWith(
+        "/api/currentUser/updateAliasModeration",
+        null,
+        {
+          params: { id: 55, approved: false },
+        }
       );
     });
 
-    fetchMock.mockRestore();
+    axiosPutSpy.mockRestore();
   });
+
 
   test("uses GET for fetching aliases needing moderation", async () => {
     setupModerator();
