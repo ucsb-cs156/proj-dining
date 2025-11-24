@@ -74,7 +74,7 @@ export default function AppNavbar({
                       Moderator Menu
                     </NavDropdown.Item>
                     <NavDropdown.Item href="/moderate/reviews">
-                      Moderator Reviews
+                      Moderate Reviews
                     </NavDropdown.Item>
                   </NavDropdown>
                 </>
