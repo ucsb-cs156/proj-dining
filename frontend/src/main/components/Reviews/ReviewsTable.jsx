@@ -13,6 +13,7 @@ export default function ReviewsTable({
   reviews,
   userOptions,
   moderatorOptions,
+  showModerationStatus = false,
 }) {
   const navigate = useNavigate();
 
@@ -73,6 +74,18 @@ export default function ReviewsTable({
       Header: "Comments",
       accessor: "reviewerComments",
     },
+    ...(showModerationStatus
+      ? [
+          {
+            Header: "Status",
+            accessor: "status",
+            Cell: ({ value }) => {
+              if (!value) return "";
+              return <span>{String(value).replace(/_/g, " ")}</span>;
+            },
+          },
+        ]
+      : []),
     {
       Header: "Date Served",
       accessor: "dateItemServed",
