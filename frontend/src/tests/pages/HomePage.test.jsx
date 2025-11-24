@@ -46,10 +46,14 @@ describe("HomePage tests", () => {
       </QueryClientProvider>,
     );
 
+    const date = new Date("2025-03-11")
+      .toLocaleString("fr-CA", { timeZone: "America/Los_Angeles" })
+      .split(" ")[0];
+
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
 
     const dateInput = screen.getByLabelText(/select date/i);
-    expect(dateInput).toHaveValue("2025-03-11");
+    expect(dateInput).toHaveValue(date);
 
     for (let i = 0; i < diningCommonsFixtures.fourCommons.length; i++) {
       expect(
@@ -59,7 +63,7 @@ describe("HomePage tests", () => {
         screen.getByText(diningCommonsFixtures.fourCommons[i].code),
       ).toHaveAttribute(
         "href",
-        `/diningcommons/2025-03-11/${diningCommonsFixtures.fourCommons[i].code}`,
+        `/diningcommons/${date}/${diningCommonsFixtures.fourCommons[i].code}`,
       );
     }
   });
@@ -72,10 +76,14 @@ describe("HomePage tests", () => {
       </QueryClientProvider>,
     );
 
+    const initialDate = new Date("2025-03-11")
+      .toLocaleString("fr-CA", { timeZone: "America/Los_Angeles" })
+      .split(" ")[0];
+
     await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
 
     const dateInput = screen.getByLabelText(/select date/i);
-    expect(dateInput).toHaveValue("2025-03-11");
+    expect(dateInput).toHaveValue(initialDate);
 
     fireEvent.change(dateInput, { target: { value: "2025-03-15" } });
 
