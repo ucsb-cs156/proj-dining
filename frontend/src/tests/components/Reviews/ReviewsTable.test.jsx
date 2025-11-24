@@ -195,7 +195,7 @@ describe("ReviewsTable tests", () => {
     );
 
     expect(screen.getByText("Status")).toBeInTheDocument();
-  
+
     expect(
       screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
     ).toBeInTheDocument();
@@ -215,7 +215,7 @@ describe("ReviewsTable tests", () => {
     );
 
     expect(screen.queryByText("Status")).not.toBeInTheDocument();
-  
+
     expect(
       screen.queryByText(`Reviewstable-cell-row-0-col-status`),
     ).not.toBeInTheDocument();
