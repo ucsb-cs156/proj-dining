@@ -18,6 +18,8 @@ The lines in the instructions where you need to modify something are marked with
 
 The other line you can copy/paste as is, except for changing `dining` to whatever your app name will be (e.g. `dining-qa`, `dining-dev-cgaucho`, `dining-pr235`).
 
+### Create `dining`
+
 ```
 # Create app
 dokku apps:create dining
@@ -37,16 +39,51 @@ dokku config:set --no-restart dining UCSB_API_KEY=get-from-developer.ucsb.edu  #
 
 # Set SOURCE_REPO to your repo (modify the url)
 # This is for the link in the footer, and for the link to currently deployed branch in /api/systemInfo
-dokku config:set --no-restart dining SOURCE_REPO=https://github.com/ucsb-cs156-s25/proj-dining-s25-xx 
+dokku config:set --no-restart dining SOURCE_REPO=https://github.com/ucsb-cs156-f25/proj-dining-f25-xx 
 
 # Set ADMIN_EMAILS to staff emails and team emails
 dokku config:set --no-restart dining ADMIN_EMAILS=list-of-admin-emails # modify this
 
 # git sync for first deploy (http)
-dokku git:sync dining https://github.com/ucsb-cs156-s25/proj-dining-s25-xx main  # modify this 
+dokku git:sync dining https://github.com/ucsb-cs156-f25/proj-dining-f25-xx main  # modify this 
 dokku ps:rebuild dining
 
 # Enable https
 dokku letsencrypt:set dining email yourEmail@ucsb.edu # modify email
 dokku letsencrypt:enable dining
+```
+
+### Create `dining-qa`
+
+```
+# Create app
+dokku apps:create dining-qa
+
+# Create and link postgres database
+dokku postgres:create dining-qa-db
+dokku postgres:link dining-qa-db dining-qa --no-restart
+
+# Modify dokku settings
+dokku git:set dining-qa keep-git-dir true
+
+# Set config vars
+dokku config:set --no-restart dining-qa PRODUCTION=true
+dokku config:set --no-restart dining-qa GOOGLE_CLIENT_ID=get-value-from-google-developer-console # modify this
+dokku config:set --no-restart dining-qa GOOGLE_CLIENT_SECRET=get-value-from-google-developer-console # modify this
+dokku config:set --no-restart dining-qa UCSB_API_KEY=get-from-developer.ucsb.edu  # modify this
+
+# Set SOURCE_REPO to your repo (modify the url)
+# This is for the link in the footer, and for the link to currently deployed branch in /api/systemInfo
+dokku config:set --no-restart dining-qa SOURCE_REPO=https://github.com/ucsb-cs156-f25/proj-dining-f25-xx 
+
+# Set ADMIN_EMAILS to staff emails and team emails
+dokku config:set --no-restart dining-qa ADMIN_EMAILS=list-of-admin-emails # modify this
+
+# git sync for first deploy (http)
+dokku git:sync dining-qa https://github.com/ucsb-cs156-f25/proj-dining-f25-xx main  # modify this 
+dokku ps:rebuild dining-qa
+
+# Enable https
+dokku letsencrypt:set dining-qa email yourEmail@ucsb.edu # modify email
+dokku letsencrypt:enable dining-qa
 ```
