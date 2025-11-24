@@ -2,6 +2,7 @@ package edu.ucsb.cs156.dining.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,5 +45,32 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
     String responseString = response.getResponse().getContentAsString();
 
     assertEquals(expectedResult, responseString);
+  }
+
+  @Test
+  public void returns_204_when_dining_commons_closed_null() throws Exception {
+    String url = "/api/diningcommons/2024-08-16/carrillo";
+
+    when(ucsbDiningMenuService.getJSON(eq("2024-08-16"), eq("carrillo"))).thenReturn(null);
+
+    mockMvc.perform(get(url).contentType("application/json")).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void returns_204_when_dining_commons_closed_empty_string() throws Exception {
+    String url = "/api/diningcommons/2024-08-16/carrillo";
+
+    when(ucsbDiningMenuService.getJSON(eq("2024-08-16"), eq("carrillo"))).thenReturn("");
+
+    mockMvc.perform(get(url).contentType("application/json")).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void returns_204_when_dining_commons_closed_empty_array() throws Exception {
+    String url = "/api/diningcommons/2024-08-16/carrillo";
+
+    when(ucsbDiningMenuService.getJSON(eq("2024-08-16"), eq("carrillo"))).thenReturn("[]");
+
+    mockMvc.perform(get(url).contentType("application/json")).andExpect(status().isNoContent());
   }
 }
