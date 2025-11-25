@@ -177,16 +177,9 @@ describe("Moderate Page Tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  test.only("approveCallback sends PUT to backend with correct params", async () => {
+  test("approveCallback sends PUT to backend with correct params", async () => {
     setupModerator();
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-          staleTime: Infinity,
-        },
-      },
-    });
+    const queryClient = new QueryClient();
 
     axiosMock
       .onGet("/api/reviews/needsmoderation")
@@ -253,14 +246,7 @@ describe("Moderate Page Tests", () => {
 
   test("rejectCallback sends PUT to backend with correct params", async () => {
     setupModerator();
-    const queryClient = new QueryClient({
-      // defaultOptions: {
-      //   queries: {
-      //     retry: false,
-      //     staleTime: Infinity,
-      //   },
-      // },
-    });
+    const queryClient = new QueryClient();
 
     axiosMock
       .onGet("/api/reviews/needsmoderation")
