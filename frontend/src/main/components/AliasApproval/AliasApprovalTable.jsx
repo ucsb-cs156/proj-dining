@@ -1,28 +1,34 @@
 import React from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 
-export default function AliasApprovalTable({
-  aliases,
-  approveCallback,
-  rejectCallback,
-}) {
-  const testid = "Aliasapprovaltable";
+export default function AliasApprovalTable({ aliases, onApprove, onReject }) {
+  const testid = "AliasApprovalTable";
 
   const columns = [
     {
       Header: "Proposed Alias",
       accessor: "proposedAlias",
+      Cell: ({ value }) => value || "(No proposed alias)",
     },
+    ButtonColumn(
+      "Approve",
+      "primary",
+      (cell) => onApprove(cell.row.original),
+      testid,
+    ),
+    ButtonColumn(
+      "Reject",
+      "danger",
+      (cell) => onReject(cell.row.original),
+      testid,
+    ),
   ];
 
-  columns.push(ButtonColumn("Approve", "primary", approveCallback, testid));
-  columns.push(ButtonColumn("Reject", "danger", rejectCallback, testid));
+  if (!aliases || aliases.length === 0) {
+    return (
+      <div data-testid={`${testid}-empty`}>No aliases awaiting approval</div>
+    );
+  }
 
-  return (
-    <OurTable
-      data={aliases.filter((user) => user.status === "AWAITING_REVIEW")}
-      columns={columns}
-      testid={testid}
-    />
-  );
+  return <OurTable data={aliases} columns={columns} testid={testid} />;
 }

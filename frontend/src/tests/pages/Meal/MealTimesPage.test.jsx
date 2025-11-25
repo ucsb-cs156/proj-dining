@@ -60,6 +60,39 @@ describe("MealTimesPage tests", () => {
     );
   });
 
+  test("displays loading screen while fetching meals", async () => {
+    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([200, mealFixtures.threeMeals]);
+        }, 100);
+      });
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // Check that loading screen is displayed
+    expect(screen.getByText("Loading meal times...")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+
+    // Wait for the meals to load
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading meal times..."),
+      ).not.toBeInTheDocument();
+    });
+
+    // Verify meals are displayed
+    expect(screen.getByRole("link", { name: "Breakfast" })).toBeInTheDocument();
+  });
+
   test("displays correct information in the table", async () => {
     axiosMock
       .onGet("/api/diningcommons/2024-11-25/portola")

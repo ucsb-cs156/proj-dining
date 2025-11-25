@@ -42,9 +42,9 @@ describe("ModerateMenuPage tests", () => {
     });
     expect(reviewsLink).toHaveAttribute("href", "/moderate/reviews");
 
-    const comingSoonButton = screen.getByRole("button", {
-      name: "Coming Soon",
+    const aliasesLink = screen.getByRole("button", {
+      name: "Go to Moderate Aliases",
     });
-    expect(comingSoonButton).toBeDisabled();
+    expect(aliasesLink).toHaveAttribute("href", "/moderate/aliases");
   });
 });
