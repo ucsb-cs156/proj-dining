@@ -8,7 +8,7 @@ import { useQueryClient } from "react-query";
 
 const Moderate = () => {
   const currentUser = useCurrentUser();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   //
   // Reviews needing moderation
@@ -52,13 +52,8 @@ const Moderate = () => {
       },
     }),
     // On success: invalidate both relevant query keys
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["/api/admin/users/needsmoderation"]);
-        queryClient.invalidateQueries(["/api/reviews/needsmoderation"]);
-      },
-    },
-    [],
+    {},
+    ["/api/admin/users/needsmoderation"],
   );
 
   //
@@ -76,13 +71,8 @@ const Moderate = () => {
         proposedAlias: user.proposedAlias,
       },
     }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["/api/admin/users/needsmoderation"]);
-        queryClient.invalidateQueries(["/api/reviews/needsmoderation"]);
-      },
-    },
-    [],
+    {},
+    ["/api/admin/users/needsmoderation"],
   );
 
   //

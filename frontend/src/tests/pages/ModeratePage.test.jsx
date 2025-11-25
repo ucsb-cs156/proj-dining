@@ -177,9 +177,16 @@ describe("Moderate Page Tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("approveCallback sends PUT to backend with correct params", async () => {
+  test.only("approveCallback sends PUT to backend with correct params", async () => {
     setupModerator();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          staleTime: Infinity,
+        },
+      },
+    });
 
     axiosMock
       .onGet("/api/reviews/needsmoderation")
@@ -208,6 +215,16 @@ describe("Moderate Page Tests", () => {
       ).toBeInTheDocument(),
     );
 
+    const aliasesUpdateCount = queryClient.getQueryState([
+      "/api/admin/users/needsmoderation",
+    ]).dataUpdateCount;
+
+    console.log(queryClient.getQueryCache());
+
+    const currentUserUpdateCount = queryClient.getQueryState([
+      "current user",
+    ]).dataUpdateCount;
+
     // Click approve
     const approveButton = screen.getByTestId(
       "Aliasapprovaltable-cell-row-0-col-Approve-button",
@@ -219,6 +236,13 @@ describe("Moderate Page Tests", () => {
       expect(axiosMock.history.put.length).toBe(1);
     });
 
+    expect(
+      queryClient.getQueryState(["current user"]).dataUpdateCount,
+    ).toBe(currentUserUpdateCount);
+    expect(
+      queryClient.getQueryState(["/api/admin/users/needsmoderation"]).dataUpdateCount,
+    ).toBe(aliasesUpdateCount + 1);
+
     // Check expected params
     expect(axiosMock.history.put[0].params).toEqual({
       id: 42,
@@ -229,7 +253,14 @@ describe("Moderate Page Tests", () => {
 
   test("rejectCallback sends PUT to backend with correct params", async () => {
     setupModerator();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      // defaultOptions: {
+      //   queries: {
+      //     retry: false,
+      //     staleTime: Infinity,
+      //   },
+      // },
+    });
 
     axiosMock
       .onGet("/api/reviews/needsmoderation")
