@@ -24,10 +24,10 @@ export default function HomePage() {
   if (Array.isArray(data)) {
     for (const d of data) {
       queries.push({
-        queryKey: ["meals", d.code, date],
+        queryKey: ["meals", d.code, selectedDate],
         queryFn: () =>
           axios
-            .get(`/api/diningcommons/${date}/${d.code}`)
+            .get(`/api/diningcommons/${selectedDate}/${d.code}`)
             .then((res) => res.data),
       });
     }
