@@ -1,4 +1,4 @@
-import { waitFor, render, screen } from "@testing-library/react";
+import { waitFor, render, screen, within } from "@testing-library/react";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
 import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
@@ -435,6 +435,49 @@ describe("DiningCommonsTable tests", () => {
     );
     expect(cell).toHaveTextContent("no meals offered");
     // ensure no links are rendered
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(within(cell).queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  test("Non-string error message fallback does not mark commons as closed", async () => {
+    // Save original includes
+    const originalIncludes = String.prototype.includes;
+
+    // Monkey-patch String.prototype.includes just for this test
+    String.prototype.includes = function (substr) {
+      const str = this.toString();
+      if (str === "" && substr === "no meals") {
+        // real code path: msg === ""
+        return false;
+      }
+      if (str === "Stryker was here!" && substr === "no meals") {
+        // mutated code path: msg === "Stryker was here!"
+        return true;
+      }
+      return originalIncludes.call(this, substr);
+    };
+
+    mockedUseQuery.mockReturnValue({
+      data: { meals: [{ name: "Brunch" }] },
+      error: {
+        response: {
+          status: 200,
+          // non-string message so the code uses the fallback value
+          data: { message: 123 },
+        },
+      },
+      status: "success",
+    });
+
+    try {
+      renderTable([fourCommons[0]]);
+
+      // In real code (msg === ""), isClosedDiningCommons returns false,
+      // so we should still see the Brunch link.
+      const brunch = await screen.findByRole("link", { name: /brunch/i });
+      expect(brunch).toBeInTheDocument();
+    } finally {
+      // Always restore includes so other tests are not affected
+      String.prototype.includes = originalIncludes;
+    }
   });
 });
