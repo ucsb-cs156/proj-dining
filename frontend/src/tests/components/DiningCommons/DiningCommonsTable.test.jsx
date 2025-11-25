@@ -320,7 +320,7 @@ describe("DiningCommonsTable tests", () => {
     });
 
     axiosMock.reset();
-    axiosMock.onGet(`/api/diningcommons/${date}/portola`).reply(500, []);
+    axiosMock.onGet(`/api/diningcommons/${date}/portola`).reply(500, undefined);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -367,7 +367,6 @@ describe("DiningCommonsTable tests", () => {
       "DiningCommonsTable-cell-row-3-col-mealsOfferedToday",
     );
 
-    // toHaveTextContent ignores spaces, this does not
     expect(cell.textContent).toBe("Breakfast Lunch Dinner");
 
     for (let i = 0; i < mealFixtures.threeMeals.length; i++) {
@@ -380,11 +379,21 @@ describe("DiningCommonsTable tests", () => {
     expect(cell).not.toHaveTextContent("no meals offered");
   });
 
-  test("when loading (empty meal list), have the same behavior as error 500", async () => {
-    queryClient.clear();
+  test("indicate when loading when loading API", async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // ✅ turns retries off
+          retry: false,
+        },
+      },
+    });
 
     axiosMock.reset();
-    axiosMock.onGet(`/api/diningcommons/${date}/portola`).reply(200, []);
+    axiosMock
+      .onGet(`/api/diningcommons/${date}/portola`)
+      .reply(() => new Promise(() => {}));
+    // Above: loading forever
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -402,7 +411,7 @@ describe("DiningCommonsTable tests", () => {
     );
 
     await waitFor(() => {
-      expect(cell).toHaveTextContent("no meals offered");
+      expect(cell).toHaveTextContent("Loading...");
     });
 
     expect(mockToast).not.toHaveBeenCalled();

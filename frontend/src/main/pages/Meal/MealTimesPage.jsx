@@ -9,7 +9,7 @@ export default function MealTimesPage() {
     useParams();
 
   const {
-    data: meals = [],
+    data: meals,
     error,
     status,
   } = useBackend(
@@ -31,7 +31,7 @@ export default function MealTimesPage() {
         </h1>
         {status === "loading" && <p>Loading...</p>}
         {error?.response?.status === 500 && <p>No meals offered today.</p>}
-        {meals.length > 0 && (
+        {status === "success" && (
           <MealTable
             meals={meals}
             dateTime={dateTime}

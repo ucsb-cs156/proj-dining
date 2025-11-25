@@ -100,7 +100,9 @@ describe("MealTimesPage tests", () => {
     });
 
     axiosMock.reset();
-    axiosMock.onGet("/api/diningcommons/2024-11-25/portola").reply(500, []);
+    axiosMock
+      .onGet("/api/diningcommons/2024-11-25/portola")
+      .reply(500, undefined);
 
     render(
       <QueryClientProvider client={queryClient}>
