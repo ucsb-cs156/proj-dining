@@ -1,3 +1,4 @@
+import { useState } from "react";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { useQueries } from "react-query";
 import axios from "axios";
@@ -13,7 +14,12 @@ export default function HomePage() {
   );
 
   const date = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(date);
 
+  const onChangeDate = (e) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+  };
   const queries = [];
   if (Array.isArray(data)) {
     for (const d of data) {
@@ -38,7 +44,18 @@ export default function HomePage() {
   return (
     <BasicLayout>
       <h1>Dining Commons</h1>
-      <DiningCommonsTable commons={combined} date={date} />
+      <p>
+        <label htmlFor="dateSelector">Select Date:</label>
+        <br></br>
+        <input
+          type="date"
+          id="dateSelector"
+          name="dateSelector"
+          value={selectedDate}
+          onChange={onChangeDate}
+        />
+      </p>
+      <DiningCommonsTable commons={combined} date={selectedDate} />
     </BasicLayout>
   );
 }
