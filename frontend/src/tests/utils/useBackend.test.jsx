@@ -70,6 +70,8 @@ describe("utils/useBackend tests", () => {
       expect(errorMessage).toMatch(
         "Error communicating with backend via GET on /api/admin/users",
       );
+
+      expect(mockToast).toHaveBeenCalled();
     });
   });
   describe("utils/useBackend useBackendMutation tests", () => {

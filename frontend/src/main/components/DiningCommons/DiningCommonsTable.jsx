@@ -6,8 +6,8 @@ import { useBackend } from "main/utils/useBackend";
 function MealsOfferedCell({ date, diningHall }) {
   const {
     data: meals,
-    error: _error,
-    status: _status,
+    error,
+    status,
   } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${date}/${diningHall}`],
@@ -15,26 +15,30 @@ function MealsOfferedCell({ date, diningHall }) {
       url: `/api/diningcommons/${date}/${diningHall}`,
     },
     // Stryker disable next-line all : don't test default value of empty list
-    [],
+    undefined,
     true,
   );
 
-  if (meals.length === 0) return <span>no meals offered</span>;
-  // logic: the api call returns error 500 when there are no meals, and meals remains empty (due to the initialData empty list)
-  // disabled all
+  // Stryker disable OptionalChaining
+  if (error?.response?.status === 500) return <span>no meals offered</span>;
+  if (status === "loading") return <span>Loading...</span>;
 
-  return (
-    <>
-      {meals.map((meal, index) => (
-        <React.Fragment key={meal.code}>
-          {index > 0 && " "}
-          <Link to={`/diningcommons/${date}/${diningHall}/${meal.code}`}>
-            {meal.name}
-          </Link>
-        </React.Fragment> // we have two siblings (" " and link) so a fragment is needed to wrap them together
-      ))}
-    </> // this is also a fragment wrapper, but with no key since we're not inside of a list
-  ); // https://react.dev/reference/react/Fragment#rendering-a-list-of-fragments
+  if (meals) {
+    return (
+      <>
+        {meals.map((meal, index) => (
+          <React.Fragment key={meal.code}>
+            {index > 0 && " "}
+            <Link to={`/diningcommons/${date}/${diningHall}/${meal.code}`}>
+              {meal.name}
+            </Link>
+          </React.Fragment> // we have two siblings (" " and link) so a fragment is needed to wrap them together
+        ))}
+      </> // this is also a fragment wrapper, but with no key since we're not inside of a list
+    ); // https://react.dev/reference/react/Fragment#rendering-a-list-of-fragments
+  }
+
+  return <span>An error has occured.</span>;
 }
 
 export default function DiningCommonsTable({ commons, date }) {
