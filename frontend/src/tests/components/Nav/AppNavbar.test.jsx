@@ -10,6 +10,23 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 describe("AppNavbar tests", () => {
   const queryClient = new QueryClient();
 
+  test("renders correctly for not logged in user", async () => {
+    const currentUser = currentUserFixtures.notLoggedIn;
+    const doLogin = vi.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Log In")).toBeInTheDocument();
+    expect(screen.queryByText("Welcome")).not.toBeInTheDocument();
+    expect(screen.queryByText("My Reviews")).not.toBeInTheDocument();
+  });
+
   test("renders correctly for regular logged in user", async () => {
     const currentUser = currentUserFixtures.userOnly;
     const doLogin = vi.fn();
@@ -178,5 +195,26 @@ describe("AppNavbar tests", () => {
       "href",
       "/oauth2/authorization/google",
     );
+  });
+
+  test("renders brand correctly", async () => {
+    const currentUser = null;
+    const systemInfo = systemInfoFixtures.showingBoth;
+    const doLogin = vi.fn();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar
+            currentUser={currentUser}
+            systemInfo={systemInfo}
+            doLogin={doLogin}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("UCSB Dining");
+    expect(screen.queryByText("Example")).not.toBeInTheDocument();
   });
 });
