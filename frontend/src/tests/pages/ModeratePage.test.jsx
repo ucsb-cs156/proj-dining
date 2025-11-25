@@ -242,6 +242,8 @@ describe("Moderate Page Tests", () => {
       approved: true,
       proposedAlias: "alias1",
     });
+
+    expect(queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"])).not.toBeUndefined();
   });
 
   test("rejectCallback sends PUT to backend with correct params", async () => {
@@ -292,5 +294,7 @@ describe("Moderate Page Tests", () => {
       approved: false,
       proposedAlias: "alias2",
     });
+
+    expect(queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"])).not.toBeUndefined();
   });
 });
