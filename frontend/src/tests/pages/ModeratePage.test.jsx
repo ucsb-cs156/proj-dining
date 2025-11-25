@@ -138,7 +138,7 @@ describe("Moderate Page Tests", () => {
     const errorMessage = console.error.mock.calls[0][0];
     expect(
       errorMessage.includes("/api/reviews/needsmoderation") ||
-      errorMessage.includes("api/admin/users/needsmoderation"),
+        errorMessage.includes("api/admin/users/needsmoderation"),
     ).toBe(true);
     expect(errorMessage).toContain("Error communicating");
     restoreConsole();
@@ -229,11 +229,12 @@ describe("Moderate Page Tests", () => {
       expect(axiosMock.history.put.length).toBe(1);
     });
 
+    expect(queryClient.getQueryState(["current user"]).dataUpdateCount).toBe(
+      currentUserUpdateCount,
+    );
     expect(
-      queryClient.getQueryState(["current user"]).dataUpdateCount,
-    ).toBe(currentUserUpdateCount);
-    expect(
-      queryClient.getQueryState(["/api/admin/users/needsmoderation"]).dataUpdateCount,
+      queryClient.getQueryState(["/api/admin/users/needsmoderation"])
+        .dataUpdateCount,
     ).toBe(aliasesUpdateCount + 1);
 
     // Check expected params
@@ -243,10 +244,12 @@ describe("Moderate Page Tests", () => {
       proposedAlias: "alias1",
     });
 
-    expect(queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"])).not.toBeUndefined();
+    expect(
+      queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"]),
+    ).not.toBeUndefined();
 
     expect(axiosMock.history.put[0].url).toBe(
-      "/api/currentUser/updateAliasModeration"
+      "/api/currentUser/updateAliasModeration",
     );
   });
 
@@ -299,10 +302,12 @@ describe("Moderate Page Tests", () => {
       proposedAlias: "alias2",
     });
 
-    expect(queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"])).not.toBeUndefined();
+    expect(
+      queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"]),
+    ).not.toBeUndefined();
 
     expect(axiosMock.history.put[0].url).toBe(
-      "/api/currentUser/updateAliasModeration"
+      "/api/currentUser/updateAliasModeration",
     );
   });
 });
