@@ -71,6 +71,20 @@ public class UsersController extends ApiController {
     return ResponseEntity.ok().body(body);
   }
 
+  /** Get all users whose proposed alias is awaiting moderation. */
+  @Operation(summary = "Get all aliases needing moderation")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
+  @GetMapping("/admin/users/needsmoderation")
+  public ResponseEntity<String> getAliasesNeedingModeration() throws JsonProcessingException {
+
+    Iterable<User> users =
+        userRepository.findByStatusAndProposedAliasNotNull(ModerationStatus.AWAITING_REVIEW);
+
+    String body = mapper.writeValueAsString(users);
+
+    return ResponseEntity.ok().body(body);
+  }
+
   /**
    * This method allows the user to update their alias.
    *
@@ -102,7 +116,7 @@ public class UsersController extends ApiController {
    * @param approved the new moderation status
    * @return the updated user
    */
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
   @PutMapping("/currentUser/updateAliasModeration")
   public User updateAliasModeration(@RequestParam long id, @RequestParam Boolean approved) {
 
@@ -116,7 +130,6 @@ public class UsersController extends ApiController {
       user.setProposedAlias(null);
     } else {
       user.setStatus(ModerationStatus.REJECTED);
-      user.setProposedAlias(null);
     }
 
     userRepository.save(user);
