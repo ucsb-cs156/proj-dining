@@ -43,7 +43,11 @@ export default function MealTimesPage() {
   let { "date-time": dateTime, "dining-commons-code": diningCommonsCode } =
     useParams();
 
-  const { data: meals, error } = useQuery(
+  const {
+    data: meals,
+    error,
+    isLoading,
+  } = useQuery(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${dateTime}/${diningCommonsCode}`],
     async () => {
@@ -53,8 +57,6 @@ export default function MealTimesPage() {
       return response.data;
     },
     {
-      // Stryker disable next-line all : don't test default value of empty list
-      initialData: [],
       retry: false,
       // Stryker disable next-line all : onError callback is tested via component behavior tests
       onError: (error) => {
@@ -63,6 +65,25 @@ export default function MealTimesPage() {
       },
     },
   );
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <BasicLayout>
+        <div className="pt-2">
+          <h1>
+            Meals at {diningCommonsCode} for {dateTime}
+          </h1>
+          <div className="text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-2">Loading meal times...</p>
+          </div>
+        </div>
+      </BasicLayout>
+    );
+  }
 
   // Handle error state (dining commons closed, network issues, etc.)
   if (error) {
