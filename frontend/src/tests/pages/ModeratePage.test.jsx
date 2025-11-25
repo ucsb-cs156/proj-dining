@@ -138,7 +138,7 @@ describe("Moderate Page Tests", () => {
     const errorMessage = console.error.mock.calls[0][0];
     expect(
       errorMessage.includes("/api/reviews/needsmoderation") ||
-        errorMessage.includes("api/admin/users/needsmoderation"),
+      errorMessage.includes("api/admin/users/needsmoderation"),
     ).toBe(true);
     expect(errorMessage).toContain("Error communicating");
     restoreConsole();
