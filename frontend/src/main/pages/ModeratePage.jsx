@@ -53,6 +53,7 @@ const Moderate = () => {
     }),
     // On success: invalidate both relevant query keys
     {},
+    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/admin/users/needsmoderation"],
   );
 
@@ -72,6 +73,7 @@ const Moderate = () => {
       },
     }),
     {},
+    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/admin/users/needsmoderation"],
   );
 

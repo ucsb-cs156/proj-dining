@@ -244,6 +244,10 @@ describe("Moderate Page Tests", () => {
     });
 
     expect(queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"])).not.toBeUndefined();
+
+    expect(axiosMock.history.put[0].url).toBe(
+      "/api/currentUser/updateAliasModeration"
+    );
   });
 
   test("rejectCallback sends PUT to backend with correct params", async () => {
@@ -296,5 +300,9 @@ describe("Moderate Page Tests", () => {
     });
 
     expect(queryClient.getQueryCache().find(["/api/admin/users/needsmoderation"])).not.toBeUndefined();
+
+    expect(axiosMock.history.put[0].url).toBe(
+      "/api/currentUser/updateAliasModeration"
+    );
   });
 });
