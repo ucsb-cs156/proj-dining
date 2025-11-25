@@ -50,7 +50,7 @@ export default defineConfig([
             vitest,
         },
         languageOptions: {
-            globals: vitest.environments.env.globals, // Use vitest's globals
+            globals: { ...vitest.environments.env.globals, ...globals.node }, // Use vitest's globals
         },
         rules: {
             // Vitest recommended rules
