@@ -1,7 +1,20 @@
 import React from "react";
 import OurTable from "main/components/OurTable";
 import { Link } from "react-router";
-import { useBackend } from "main/utils/useBackend";
+import { useQuery } from "react-query";
+import axios from "axios";
+
+// helper for “closed/no meals”
+export const isClosedDiningCommons = (error) => {
+  if (!error) return false;
+  const status = error.response?.status;
+  const msg = error.response?.data?.message?.toLowerCase();
+  return (
+    status === 404 ||
+    status === 500 ||
+    msg.includes("no meals")
+  );
+};
 
 export default function DiningCommonsTable({ commons, date }) {
   const testid = "DiningCommonsTable";
@@ -10,28 +23,30 @@ export default function DiningCommonsTable({ commons, date }) {
     const code = row.original.code;
     const url = `/api/diningcommons/${date}/${code}`;
 
-    const { data, status } = useBackend([url], { method: "GET", url }, []);
+    const { data, error, status } = useQuery(
+      [url],
+      async () => (await axios.get(url)).data,
+      {
+        initialData: [],
+        retry: false,
+        onError: (err) =>
+          console.error(`Error loading meals for ${code} on ${date}`, err),
+      }
+    );
 
-    if (status !== "success") {
-      return <span>...</span>;
-    }
+    if (status === "loading") return <span>...</span>;
 
-    // Normalize meals into strings
-    let meals = [];
-
-    if (Array.isArray(data)) {
-      meals = data.map((m) => {
-        return m.name;
-      });
-    } else if (data && Array.isArray(data.meals)) {
-      meals = data.meals.map((m) => {
-        return m.name;
-      });
-    }
-
-    if (meals.length === 0) {
+    // if closed or error -> just say no meals offered
+    if (status === "error" || isClosedDiningCommons(error)) {
       return <span>no meals offered</span>;
     }
+
+    // normalize meals
+    let meals = Array.isArray(data)
+      ? data.map((m) => m.name)
+      : data?.meals?.map((m) => m.name) || [];
+
+    if (meals.length === 0) return <span>no meals offered</span>;
 
     return (
       <>
@@ -57,14 +72,11 @@ export default function DiningCommonsTable({ commons, date }) {
         <Link to={`/diningcommons/${date}/${value}`}>{value}</Link>
       ),
     },
-    {
-      Header: "Name",
-      accessor: "name",
-    },
+    { Header: "Name", accessor: "name" },
     {
       Header: "Meals Offered Today",
-      accessor: "meals", // value not used; we rely on row.original.code
-      Cell: (cellProps) => <MealsCell {...cellProps} />,
+      accessor: "meals",
+      Cell: (props) => <MealsCell {...props} />,
     },
     {
       Header: "Has Dining Cam",
