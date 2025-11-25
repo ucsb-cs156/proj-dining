@@ -14,6 +14,7 @@ import MealTimesPage from "main/pages/Meal/MealTimesPage";
 
 import ModerateMenuPage from "main/pages/ModerateMenuPage";
 import ModerateReviewsPage from "main/pages/ModerateReviewsPage";
+import ModerateAliasesPage from "main/pages/ModerateAliasesPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -58,6 +59,11 @@ function App() {
               exact
               path="/moderate/reviews"
               element={<ModerateReviewsPage />}
+            />
+            <Route
+              exact
+              path="/moderate/aliases"
+              element={<ModerateAliasesPage />}
             />
           </>
         )}

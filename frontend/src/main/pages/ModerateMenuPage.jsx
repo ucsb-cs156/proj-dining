@@ -23,10 +23,10 @@ const ModerateMenuPage = () => {
           <Card.Body>
             <Card.Title>Moderate Aliases</Card.Title>
             <Card.Text>
-              Coming soon: manage user alias requests from this page.
+              Review and approve or reject pending user alias requests.
             </Card.Text>
-            <Button variant="secondary" disabled>
-              Coming Soon
+            <Button as={Link} to="/moderate/aliases" variant="primary">
+              Go to Moderate Aliases
             </Button>
           </Card.Body>
         </Card>
