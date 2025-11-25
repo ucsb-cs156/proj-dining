@@ -420,4 +420,21 @@ describe("DiningCommonsTable tests", () => {
     const dinner = await screen.findByRole("link", { name: /dinner/i });
     expect(dinner).toBeInTheDocument();
   });
+
+  test("Treats data.meals = undefined as no meals offered", async () => {
+    mockedUseQuery.mockReturnValue({
+      data: { meals: undefined },
+      error: null,
+      status: "success",
+    });
+
+    renderTable([fourCommons[0]]);
+
+    const cell = await screen.findByTestId(
+      "DiningCommonsTable-cell-row-0-col-meals",
+    );
+    expect(cell).toHaveTextContent("no meals offered");
+    // ensure no links are rendered
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
 });
