@@ -76,6 +76,9 @@ export default function AppNavbar({
                     <NavDropdown.Item href="/moderate/reviews">
                       Moderate Reviews
                     </NavDropdown.Item>
+                    <NavDropdown.Item href="/moderate/aliases">
+                      Moderate Aliases
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </>
               )}
