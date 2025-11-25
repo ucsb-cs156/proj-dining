@@ -1,8 +1,6 @@
 import { waitFor, render, screen } from "@testing-library/react";
 import { diningCommonsFixtures } from "fixtures/diningCommonsFixtures";
-import DiningCommonsTable, {
-  isClosedDiningCommons,
-} from "main/components/DiningCommons/DiningCommonsTable";
+import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { MemoryRouter } from "react-router";
 import { vi } from "vitest";
@@ -116,9 +114,7 @@ describe("DiningCommonsTable tests", () => {
         ),
       ).toHaveTextContent(fourCommons[i].hasTakeoutMeal ? "✅" : "❌");
       expect(
-        screen.getByTestId(
-          `DiningCommonsTable-cell-row-${i}-col-hasDiningCam`,
-        ),
+        screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasDiningCam`),
       ).toHaveTextContent(fourCommons[i].hasDiningCam ? "✅" : "❌");
     }
   });
@@ -179,7 +175,6 @@ describe("DiningCommonsTable tests", () => {
     const code = commons[0].code;
     const url = `/api/diningcommons/${date}/${code}`;
 
-    // spy on console.error so we can assert on onError side‐effects
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => {});
@@ -191,7 +186,6 @@ describe("DiningCommonsTable tests", () => {
     );
     expect(cell).toHaveTextContent("no meals offered");
 
-    // Assert the exact args to kill URL/config/method mutants
     expect(mockedUseQuery).toHaveBeenCalledTimes(1);
     const [calledKey, calledFn, calledOptions] = mockedUseQuery.mock.calls[0];
 
@@ -205,7 +199,6 @@ describe("DiningCommonsTable tests", () => {
       }),
     );
 
-    // 🔥 Call onError and make sure it logs as expected.
     const fakeError = { message: "boom" };
     calledOptions.onError(fakeError);
 
@@ -216,7 +209,6 @@ describe("DiningCommonsTable tests", () => {
 
     consoleErrorSpy.mockRestore();
   });
-
 
   test("Meals cell shows links when data is an array of objects with name", async () => {
     mockedUseQuery.mockReturnValue({
@@ -240,7 +232,6 @@ describe("DiningCommonsTable tests", () => {
       `/diningcommons/2025-03-11/${commons[0].code}/Dinner`,
     );
 
-    // Kill mutant that changes marginRight in the style
     expect(lunch).toHaveStyle("margin-right: 0.75rem");
     expect(dinner).toHaveStyle("margin-right: 0.75rem");
   });
@@ -262,7 +253,6 @@ describe("DiningCommonsTable tests", () => {
       "href",
       `/diningcommons/2025-03-11/${commons[0].code}/Brunch`,
     );
-    // label is capitalized, rest lowercased: "Late night"
     expect(lateNight).toHaveAttribute(
       "href",
       `/diningcommons/2025-03-11/${commons[0].code}/Late Night`,
@@ -296,24 +286,26 @@ describe("DiningCommonsTable tests", () => {
     const cell = await screen.findByTestId(
       "DiningCommonsTable-cell-row-0-col-meals",
     );
-    // real code: short-circuits on status === "error"
     expect(cell).toHaveTextContent("no meals offered");
-
-    // mutant (&& or status === "") would fall through and render a Lunch link
-    expect(screen.queryByRole("link", { name: /lunch/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /lunch/i }),
+    ).not.toBeInTheDocument();
   });
 
+  //
+  // Closed commons tests
+  //
 
-  test("Meals cell shows 'no meals offered' when isClosedDiningCommons is true via status code", async () => {
+  test("Uses closed-commons logic when status is 404 (no meals link even if data has meals)", async () => {
     mockedUseQuery.mockReturnValue({
-      data: null,
+      data: { meals: [{ name: "Lunch" }] },
       error: {
         response: {
           status: 404,
           data: { message: "Not Found" },
         },
       },
-      status: "success", // force isClosedDiningCommons to be evaluated
+      status: "success",
     });
 
     renderTable([fourCommons[0]]);
@@ -322,11 +314,37 @@ describe("DiningCommonsTable tests", () => {
       "DiningCommonsTable-cell-row-0-col-meals",
     );
     expect(cell).toHaveTextContent("no meals offered");
+    expect(
+      screen.queryByRole("link", { name: /lunch/i }),
+    ).not.toBeInTheDocument();
   });
 
-  test("Meals cell shows 'no meals offered' when isClosedDiningCommons is true via message text", async () => {
+  test("Uses closed-commons logic when status is 500 (no meals link even if data has meals)", async () => {
     mockedUseQuery.mockReturnValue({
-      data: null,
+      data: { meals: [{ name: "Lunch" }] },
+      error: {
+        response: {
+          status: 500,
+          data: { message: "Internal Server Error" },
+        },
+      },
+      status: "success",
+    });
+
+    renderTable([fourCommons[0]]);
+
+    const cell = await screen.findByTestId(
+      "DiningCommonsTable-cell-row-0-col-meals",
+    );
+    expect(cell).toHaveTextContent("no meals offered");
+    expect(
+      screen.queryByRole("link", { name: /lunch/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  test("Uses closed-commons logic when message includes 'no meals' even if status is 200", async () => {
+    mockedUseQuery.mockReturnValue({
+      data: { meals: [{ name: "Lunch" }] },
       error: {
         response: {
           status: 200,
@@ -342,56 +360,64 @@ describe("DiningCommonsTable tests", () => {
       "DiningCommonsTable-cell-row-0-col-meals",
     );
     expect(cell).toHaveTextContent("no meals offered");
+    expect(
+      screen.queryByRole("link", { name: /lunch/i }),
+    ).not.toBeInTheDocument();
   });
 
   //
-  // Direct unit tests for isClosedDiningCommons to kill mutants
+  // Kill optional-chaining mutants: error without nested fields
   //
 
-  describe("isClosedDiningCommons unit tests", () => {
-    test("returns false when error is null or undefined", () => {
-      expect(isClosedDiningCommons(null)).toBe(false);
-      expect(isClosedDiningCommons(undefined)).toBe(false);
+  test("Handles error without nested fields and still renders meals", async () => {
+    mockedUseQuery.mockReturnValue({
+      data: { meals: [{ name: "Lunch" }] },
+      error: {
+        // no response / data / message
+        foo: "bar",
+      },
+      status: "success",
     });
 
-    test("returns true when status is 404 and message does not mention no meals", () => {
-      const error = {
-        response: {
-          status: 404,
-          data: { message: "Not Found" },
-        },
-      };
-      expect(isClosedDiningCommons(error)).toBe(true);
-    });
+    renderTable([fourCommons[0]]);
 
-    test("returns true when status is 500 and message does not mention no meals", () => {
-      const error = {
-        response: {
-          status: 500,
-          data: { message: "Internal Server Error" },
-        },
-      };
-      expect(isClosedDiningCommons(error)).toBe(true);
-    });
+    const lunch = await screen.findByRole("link", { name: /lunch/i });
+    expect(lunch).toBeInTheDocument();
+  });
 
-    test("returns true when message includes 'no meals' and status is neither 404 nor 500", () => {
-      const error = {
+  test("Treats missing error.response.data as not closed and still shows meals", async () => {
+    mockedUseQuery.mockReturnValue({
+      data: { meals: [{ name: "Brunch" }] },
+      error: {
         response: {
           status: 200,
-          data: { message: "There are no meals available today" },
+          // no data field at all
         },
-      };
-      expect(isClosedDiningCommons(error)).toBe(true);
+      },
+      status: "success",
     });
 
-    test("returns false when status is not 404/500 and message does not mention 'no meals'", () => {
-      const error = {
+    renderTable([fourCommons[0]]);
+
+    const brunch = await screen.findByRole("link", { name: /brunch/i });
+    expect(brunch).toBeInTheDocument();
+  });
+
+  test("Does not treat unrelated error message as closed", async () => {
+    mockedUseQuery.mockReturnValue({
+      data: { meals: [{ name: "Dinner" }] },
+      error: {
         response: {
           status: 200,
-          data: { message: "Some other message" },
+          data: { message: "Some random backend message" },
         },
-      };
-      expect(isClosedDiningCommons(error)).toBe(false);
+      },
+      status: "success",
     });
+
+    renderTable([fourCommons[0]]);
+
+    const dinner = await screen.findByRole("link", { name: /dinner/i });
+    expect(dinner).toBeInTheDocument();
   });
 });

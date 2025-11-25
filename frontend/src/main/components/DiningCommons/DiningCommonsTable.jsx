@@ -5,15 +5,12 @@ import { useQuery } from "react-query";
 import axios from "axios";
 
 // helper for “closed/no meals”
-export const isClosedDiningCommons = (error) => {
+const isClosedDiningCommons = (error) => {
   if (!error) return false;
   const status = error.response?.status;
-  const msg = error.response?.data?.message?.toLowerCase();
-  return (
-    status === 404 ||
-    status === 500 ||
-    msg.includes("no meals")
-  );
+  const rawMessage = error.response?.data?.message;
+  const msg = typeof rawMessage === "string" ? rawMessage.toLowerCase() : "";
+  return status === 404 || status === 500 || msg.includes("no meals");
 };
 
 export default function DiningCommonsTable({ commons, date }) {
@@ -31,7 +28,7 @@ export default function DiningCommonsTable({ commons, date }) {
         retry: false,
         onError: (err) =>
           console.error(`Error loading meals for ${code} on ${date}`, err),
-      }
+      },
     );
 
     if (status === "loading") return <span>...</span>;
