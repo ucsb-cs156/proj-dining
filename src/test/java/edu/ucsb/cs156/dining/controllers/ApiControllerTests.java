@@ -53,4 +53,18 @@ public class ApiControllerTests extends ControllerTestCase {
     assertEquals("EntityNotFoundException", json.get("type"));
     assertEquals("String with id 7 not found", json.get("message"));
   }
+
+  @Test
+  public void test_dummy_controller_returns_unsupported_operation() throws Exception {
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/dummycontroller/unsupported"))
+            .andExpect(status().isForbidden())
+            .andReturn();
+
+    // assert
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Forbidden operation", json.get("message"));
+  }
 }
