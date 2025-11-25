@@ -1,0 +1,1942 @@
+[32m16:14:46 (20682) INFO ConfigReader[39m No config file specified. Running with command line arguments.
+[32m16:14:46 (20682) INFO ConfigReader[39m Use `stryker init` command to generate your config file.
+[36m16:14:46 (20682) DEBUG ConfigReader[39m Loaded config: {
+  "logLevel": "trace",
+  "allowConsoleColors": true,
+  "checkers": [],
+  "checkerNodeArgs": [],
+  "commandRunner": {
+    "command": "npm test"
+  },
+  "coverageAnalysis": "perTest",
+  "clearTextReporter": {
+    "allowColor": true,
+    "allowEmojis": false,
+    "logTests": true,
+    "maxTestsToLog": 3
+  },
+  "dashboard": {
+    "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+    "reportType": "full"
+  },
+  "dryRunOnly": false,
+  "eventReporter": {
+    "baseDir": "reports/mutation/events"
+  },
+  "ignorePatterns": [],
+  "ignoreStatic": false,
+  "incremental": false,
+  "incrementalFile": "reports/stryker-incremental.json",
+  "force": false,
+  "fileLogLevel": "off",
+  "inPlace": false,
+  "maxConcurrentTestRunners": 9007199254740991,
+  "maxTestRunnerReuse": 0,
+  "mutate": [
+    "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+    "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)"
+  ],
+  "mutator": {
+    "plugins": null,
+    "excludedMutations": []
+  },
+  "plugins": [
+    "@stryker-mutator/*"
+  ],
+  "appendPlugins": [],
+  "reporters": [
+    "clear-text",
+    "progress",
+    "html"
+  ],
+  "htmlReporter": {
+    "fileName": "reports/mutation/mutation.html"
+  },
+  "jsonReporter": {
+    "fileName": "reports/mutation/mutation.json"
+  },
+  "disableTypeChecks": true,
+  "symlinkNodeModules": true,
+  "tempDirName": ".stryker-tmp",
+  "cleanTempDir": true,
+  "testRunner": "command",
+  "testRunnerNodeArgs": [],
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": null
+  },
+  "timeoutFactor": 1.5,
+  "timeoutMS": 5000,
+  "dryRunTimeoutMinutes": 5,
+  "tsconfigFile": "tsconfig.json",
+  "warnings": true,
+  "disableBail": false,
+  "allowEmpty": false
+}
+[36m16:14:46 (20682) DEBUG PluginLoader[39m Loading @stryker-mutator/* from /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/@stryker-mutator
+[36m16:14:47 (20682) DEBUG PluginLoader[39m Loading plugin file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/@stryker-mutator/core/dist/src/reporters/index.js
+[36m16:14:47 (20682) DEBUG MetaSchemaBuilder[39m Contributing 0 schemas from plugins to options validation.
+[32m16:14:47 (20682) INFO ProjectReader[39m Found 55 of 118 file(s) to be mutated.
+[36m16:14:47 (20682) DEBUG ProjectReader[39m All input files: [
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.gitignore",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.storybook/main.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.storybook/preview.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/README.md",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/assets/index-CIfVvUo9.css",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/assets/index-DfRT1kTi.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/assets/vendor-BweOiyHM.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/assets/vendor-ng5krzmZ.css",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/favicon.ico",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/index.html",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/logo192.png",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/logo512.png",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/manifest.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/mockServiceWorker.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/build/robots.txt",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/chromatic.config.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/docs-index/_branches/.keep",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/docs-index/_config.yml",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/docs-index/_layouts/default.html",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/docs-index/index.md",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/eslint.config.mjs",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/index.html",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/jsconfig.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/out.txt",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/package-lock.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/package.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/public/favicon.ico",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/public/logo192.png",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/public/logo512.png",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/public/manifest.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/public/mockServiceWorker.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/public/robots.txt",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/App.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/currentUserFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/diningCommonsFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/mealFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/menuItemFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/restaurantFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/reviewFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/studentFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/systemInfoFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/temp.json",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/ucsbDatesFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/usersFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/index.css",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/AliasApproval/AliasApprovalTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/DiningCommons/DiningCommonsTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Meal/MealTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/MenuItem/MenuItemTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/MyReviews/ReviewForm.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Nav/AppNavbar.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Nav/AppNavbarLocalhost.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Nav/Footer.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/OurTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Profile/RoleBadge.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Reviews/ReviewsTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Users/UsersTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/layouts/BasicLayout/BasicLayout.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/AdminUsersPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/HomePage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Meal/MealTimesPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/MenuItem/MenuItemPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/ModeratePage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/MyReviews/MyReviewsIndexPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/ProfilePage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Reviews/EditReviewPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Reviews/PostReviewPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Reviews/ReviewsPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/Reviews.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/currentUser.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/systemInfo.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/useBackend.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/AliasApprovalTable/AliasApprovalTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/DiningCommons/DiningCommons.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/Meal/MealTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/MenuItem/MenuItemTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/MyReviews/ReviewsForm.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/Nav/AppNavbar.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/OurTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/Reviews/ReviewsTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/AdminUsersPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/HomePage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/Meal/MealTimesPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/MenuItem/MenuItemPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/ModeratePage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/MyReviews/MyReviewsIndexPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/ProfilePage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/AliasApprovalTable/AliasApprovalTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/DiningCommons/DiningCommonsTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Meal/MealTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/MenuItem/MenuItemTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Nav/AppNavbar.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Nav/AppNavbarLocalhost.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Nav/Footer.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/OurTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Profile/RoleBadge.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Reviews/ReviewsTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/components/Users/UsersTable.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/AdminUsersPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/HomePage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/Meal/MealTimesPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/MenuItem/MenuItemPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/ModeratePage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/MyReviews/MyReviewsIndexPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/ProfilePage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/Reviews/EditReviewPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/Reviews/PostReviewPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/pages/Reviews/ReviewsPage.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/testutils/mockConsole.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/utils/Reviews.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/utils/currentUser.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/utils/systemInfo.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/utils/useBackend.test.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/stryker.config.mjs",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/vite.config.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/vitest.setup.js"
+]
+[36m16:14:47 (20682) DEBUG ProjectReader[39m Files to mutate: [
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/App.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/currentUserFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/diningCommonsFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/mealFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/menuItemFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/restaurantFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/reviewFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/studentFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/systemInfoFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/ucsbDatesFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/fixtures/usersFixtures.js",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/AliasApproval/AliasApprovalTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/DiningCommons/DiningCommonsTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Meal/MealTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/MenuItem/MenuItemTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/MyReviews/ReviewForm.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Nav/AppNavbar.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Nav/AppNavbarLocalhost.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Nav/Footer.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/OurTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Profile/RoleBadge.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Reviews/ReviewsTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/components/Users/UsersTable.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/layouts/BasicLayout/BasicLayout.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/AdminUsersPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/HomePage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Meal/MealTimesPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/MenuItem/MenuItemPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/ModeratePage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/MyReviews/MyReviewsIndexPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/ProfilePage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Reviews/EditReviewPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Reviews/PostReviewPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/pages/Reviews/ReviewsPage.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/Reviews.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/currentUser.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/systemInfo.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main/utils/useBackend.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/main.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/AliasApprovalTable/AliasApprovalTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/DiningCommons/DiningCommons.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/Meal/MealTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/MenuItem/MenuItemTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/MyReviews/ReviewsForm.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/Nav/AppNavbar.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/OurTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/components/Reviews/ReviewsTable.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/AdminUsersPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/HomePage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/Meal/MealTimesPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/MenuItem/MenuItemPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/ModeratePage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/MyReviews/MyReviewsIndexPage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/stories/pages/ProfilePage.stories.jsx",
+  "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/src/tests/testutils/mockConsole.js"
+]
+[36m16:14:47 (20682) DEBUG TemporaryDirectory[39m Using temp directory "/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp"
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumenting 55 source files with mutants
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/App.jsx (16 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/currentUserFixtures.js (147 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/diningCommonsFixtures.js (44 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/mealFixtures.js (15 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/menuItemFixtures.js (34 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/restaurantFixtures.js (15 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/reviewFixtures.js (100 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/studentFixtures.js (10 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/systemInfoFixtures.js (12 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/ucsbDatesFixtures.js (18 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/fixtures/usersFixtures.js (44 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/AliasApproval/AliasApprovalTable.jsx (16 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/DiningCommons/DiningCommonsTable.jsx (43 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Meal/MealTable.jsx (8 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/MenuItem/MenuItemTable.jsx (57 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/MyReviews/ReviewForm.jsx (11 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Nav/AppNavbar.jsx (40 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Nav/AppNavbarLocalhost.jsx (3 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Nav/Footer.jsx (7 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/OurTable.jsx (24 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Profile/RoleBadge.jsx (7 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Reviews/ReviewsTable.jsx (66 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/components/Users/UsersTable.jsx (42 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/layouts/BasicLayout/BasicLayout.jsx (1 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/AdminUsersPage.jsx (7 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/HomePage.jsx (25 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/Meal/MealTimesPage.jsx (15 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/MenuItem/MenuItemPage.jsx (10 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/ModeratePage.jsx (46 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/MyReviews/MyReviewsIndexPage.jsx (8 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/ProfilePage.jsx (26 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/Reviews/EditReviewPage.jsx (1 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/Reviews/PostReviewPage.jsx (21 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/pages/Reviews/ReviewsPage.jsx (7 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/utils/Reviews.jsx (14 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/utils/currentUser.jsx (39 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/utils/systemInfo.jsx (12 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main/utils/useBackend.jsx (30 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/main.jsx (1 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/AliasApprovalTable/AliasApprovalTable.stories.jsx (4 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/DiningCommons/DiningCommons.stories.jsx (9 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/Meal/MealTable.stories.jsx (8 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/MenuItem/MenuItemTable.stories.jsx (7 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/MyReviews/ReviewsForm.stories.jsx (4 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/Nav/AppNavbar.stories.jsx (15 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/OurTable.stories.jsx (21 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/components/Reviews/ReviewsTable.stories.jsx (12 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/AdminUsersPage.stories.jsx (18 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/HomePage.stories.jsx (29 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/Meal/MealTimesPage.stories.jsx (17 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/MenuItem/MenuItemPage.stories.jsx (28 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/ModeratePage.stories.jsx (15 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/MyReviews/MyReviewsIndexPage.stories.jsx (23 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/stories/pages/ProfilePage.stories.jsx (17 mutant(s))
+[36m16:14:47 (20682) DEBUG Instrumenter[39m Instrumented src/tests/testutils/mockConsole.js (5 mutant(s))
+[32m16:14:47 (20682) INFO Instrumenter[39m Instrumented 55 source file(s) with 1274 mutant(s)
+[32m16:14:47 (20682) INFO ConcurrencyTokenProvider[39m Creating 7 test runner process(es).
+[36m16:14:47 (20682) DEBUG ChildProcessProxy[39m Started CheckerWorker in worker process 0 with pid 20691 
+[36m16:14:47 (20682) DEBUG Sandbox[39m Creating a sandbox for files in /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788
+[36m16:14:47 (20691) DEBUG PluginLoader[39m Loading plugin file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/@stryker-mutator/core/dist/src/reporters/index.js
+[36m16:14:47 (20682) DEBUG Sandbox[39m Start symlink node_modules
+[36m16:14:47 (20682) DEBUG Sandbox[39m Create symlink from /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules to /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/node_modules
+[32m16:14:47 (20682) INFO BroadcastReporter[39m Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter
+[36m16:14:47 (20682) DEBUG BroadcastReporter[39m Broadcasting to reporters ["clear-text","progress-append-only","html"]
+[32m16:14:47 (20682) INFO DryRunExecutor[39m Starting initial test run (command test runner with "perTest" coverage analysis). This may take a while.
+[36m16:14:47 (20682) DEBUG DryRunExecutor[39m Using timeout of 300000 ms.
+[36m16:14:47 (20682) DEBUG TimeoutDecorator[39m Starting timeout timer (300000 ms) for a test run
+[91m16:14:56 (20682) ERROR DryRunExecutor[39m One or more tests failed in the initial test run:
+	All tests
+		
+> frontend@0.1.0 test
+> vitest run
+
+
+
+
+[1m[46m RUN [49m[22m [36mv4.0.7 [39m[90m/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+
+[90mstderr[2m | src/tests/components/MenuItem/MenuItemTable.test.jsx[2m > [22m[2mMenuItemTable Tests[2m > [22m[2mHeaders appear and empty table renders correctly without buttons
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at MenuItemTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/MenuItem/MenuItemTable.jsx:57:26)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+
+
+[90mstderr[2m | src/tests/pages/ModeratePage.test.jsx[2m > [22m[2mModerate Page Tests[2m > [22m[2mrenders reviews with approve/reject buttons for moderator
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at div
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at Moderate (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/ModeratePage.jsx:70:69)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/pages/ModeratePage.test.jsx[2m > [22m[2mModerate Page Tests[2m > [22m[2mrenders reviews with approve/reject buttons for moderator
+[22m[39mError communicating with backend via GET on /api/admin/users/needsmoderation AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/admin/users/needsmoderation'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/admin/users/needsmoderation'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/admin/users/needsmoderation'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+  [90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+}
+
+[90mstderr[2m | src/tests/pages/HomePage.test.jsx[2m > [22m[2mHomePage tests[2m > [22m[2mRenders table with 4 dining commons
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at DiningCommonsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/DiningCommons/DiningCommonsTable.jsx:57:31)
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at HomePage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/HomePage.jsx:66:62)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/pages/ProfilePage.test.jsx[2m > [22m[2mProfilePage tests[2m > [22m[2mrenders correctly for regular logged in user
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at UsersTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Users/UsersTable.jsx:113:23)
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Col.js:64:8
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Row.js:14:3
+    at form
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Form.js:40:3
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Col.js:64:8
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Row.js:14:3
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at ProfilePage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/ProfilePage.jsx:72:79)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/components/Reviews/ReviewsTable.test.jsx[2m > [22m[2mReviewsTable tests[2m > [22m[2mHas the base column headers and content
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/pages/ModeratePage.test.jsx[2m > [22m[2mModerate Page Tests[2m > [22m[2mrenders reviews with approve/reject buttons for admin
+[22m[39mError communicating with backend via GET on /api/admin/users/needsmoderation AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/admin/users/needsmoderation'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/admin/users/needsmoderation'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/admin/users/needsmoderation'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+
+
+[90mstdout[2m | src/tests/components/Reviews/ReviewsTable.test.jsx[2m > [22m[2mReviewsTable tests[2m > [22m[2mRegular user buttons appear and work properly
+[22m[39m{ message: [32m'Review deleted'[39m }
+
+
+[90mstderr[2m | src/tests/pages/ProfilePage.test.jsx[2m > [22m[2mProfilePage tests[2m > [22m[2mhandles alias submission successfully and sends correct params
+[22m[39mError invoking axios.get:  AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/systemInfo.jsx:65:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/systemInfo'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/systemInfo'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/systemInfo'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+
+
+[90mstderr[2m | src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx
+[22m[39mError invoking axios.get:  AxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/systemInfo.jsx:65:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/systemInfo'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+[90mstderr[2m | src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx
+[22m[39mError invoking axios.get:  AxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/currentUser.jsx:67:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/currentUser'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+[90mstderr[2m | src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx
+[22m[39mAxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/currentUser.jsx:67:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/currentUser'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+[90mstderr[2m | src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx
+[22m[39mError communicating with backend via GET on /api/diningcommons/menuitem?id=undefined AxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/diningcommons/menuitem?id=undefined'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+[90mstderr[2m | src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx
+[22m[39mAxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/diningcommons/menuitem?id=undefined'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+
+ [32m✓[39m src/tests/components/MenuItem/MenuItemTable.test.jsx [2m([22m[2m24 tests[22m[2m)[22m[33m 474[2mms[22m[39m
+
+[90mstderr[2m | src/tests/components/Reviews/ReviewsTable.test.jsx[2m > [22m[2mReviewsTable tests[2m > [22m[2mModerator buttons appear and work properly
+[22m[39mWarning: An update to ReviewsTable inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+Warning: An update to ReviewsTable inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+Warning: An update to OurTable inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/pages/ModeratePage.test.jsx[2m > [22m[2mModerate Page Tests[2m > [22m[2mdoes NOT render approve/reject buttons for regular user
+[22m[39mError communicating with backend via GET on /api/admin/users/needsmoderation AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processTimers (node:internal/timers:520:9)[39m
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processTimers (node:internal/timers:520:9)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/admin/users/needsmoderation'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/admin/users/needsmoderation'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/admin/users/needsmoderation'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+  [90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+  [90m    at processTimers (node:internal/timers:520:9)[39m
+}
+
+
+[90mstderr[2m | src/tests/components/Reviews/ReviewsTable.test.jsx[2m > [22m[2mReviewsTable tests[2m > [22m[2mModerator buttons appear and work properly
+[22m[39mAxios Error: AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at wrappedParams [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:141:23[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [32m'application/x-www-form-urlencoded'[39m
+    },
+    url: [32m'/api/reviews/moderate'[39m,
+    method: [32m'put'[39m,
+    params: { id: [33m1[39m, status: [32m'APPROVED'[39m, moderatorComments: [32m''[39m },
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      url: [32m'/api/reviews/moderate'[39m,
+      method: [32m'put'[39m,
+      params: [36m[Object][39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/reviews/moderate'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+Axios Error: AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at wrappedParams [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:141:23[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [32m'application/x-www-form-urlencoded'[39m
+    },
+    url: [32m'/api/reviews/moderate'[39m,
+    method: [32m'put'[39m,
+    params: { id: [33m1[39m, status: [32m'REJECTED'[39m, moderatorComments: [32m''[39m },
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      url: [32m'/api/reviews/moderate'[39m,
+      method: [32m'put'[39m,
+      params: [36m[Object][39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/reviews/moderate'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+
+[90mstderr[2m | src/tests/components/Reviews/ReviewsTable.test.jsx[2m > [22m[2mReviewsTable tests
+[22m[39mAxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at wrappedParams [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:141:23[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [32m'application/x-www-form-urlencoded'[39m
+    },
+    url: [32m'/api/reviews/moderate'[39m,
+    method: [32m'put'[39m,
+    params: { id: [33m1[39m, status: [32m'APPROVED'[39m, moderatorComments: [32m''[39m },
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      url: [32m'/api/reviews/moderate'[39m,
+      method: [32m'put'[39m,
+      params: [36m[Object][39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/reviews/moderate'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at wrappedParams [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:141:23[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [32m'application/x-www-form-urlencoded'[39m
+    },
+    url: [32m'/api/reviews/moderate'[39m,
+    method: [32m'put'[39m,
+    params: { id: [33m1[39m, status: [32m'REJECTED'[39m, moderatorComments: [32m''[39m },
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      url: [32m'/api/reviews/moderate'[39m,
+      method: [32m'put'[39m,
+      params: [36m[Object][39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/reviews/moderate'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+
+
+ [32m✓[39m src/tests/pages/Reviews/PostReviewPageMissingParams.test.jsx [2m([22m[2m1 test[22m[2m)[22m[33m 704[2mms[22m[39m
+     [33m[2m✓[22m[39m renders default view [33m 635[2mms[22m[39m
+
+ [32m✓[39m src/tests/components/Reviews/ReviewsTable.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[33m 865[2mms[22m[39m
+     [33m[2m✓[22m[39m Has the base column headers and content [33m 524[2mms[22m[39m
+
+[90mstderr[2m | src/tests/pages/ProfilePage.test.jsx[2m > [22m[2mProfilePage tests[2m > [22m[2mdisplays initial alias correctly
+[22m[39mError invoking axios.get:  AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/systemInfo.jsx:65:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/systemInfo'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/systemInfo'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/systemInfo'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+
+
+[90mstderr[2m | src/tests/pages/ProfilePage.test.jsx[2m > [22m[2mProfilePage tests[2m > [22m[2mdisplays validation error when alias is empty
+[22m[39mError invoking axios.get:  AxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/systemInfo.jsx:65:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/systemInfo'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/systemInfo'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/systemInfo'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+}
+
+
+[90mstderr[2m | src/tests/pages/HomePage.test.jsx[2m > [22m[2mHomePage meals offered today tests[2m > [22m[2mRenders correctly with mealsOfferedToday
+[22m[39mWarning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `Cell`. See https://reactjs.org/link/warning-keys for more information.
+    at LinkWithRef (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:962:5)
+    at Cell (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/DiningCommons/DiningCommonsTable.jsx:84:26)
+    at td
+    at tr
+    at tbody
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at DiningCommonsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/DiningCommons/DiningCommonsTable.jsx:57:31)
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at HomePage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/HomePage.jsx:66:62)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+ [32m✓[39m src/tests/pages/ProfilePage.test.jsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1116[2mms[22m[39m
+     [33m[2m✓[22m[39m handles alias submission successfully and sends correct params [33m 332[2mms[22m[39m
+
+ [32m✓[39m src/tests/pages/ModeratePage.test.jsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1210[2mms[22m[39m
+     [33m[2m✓[22m[39m renders reviews with approve/reject buttons for moderator [33m 326[2mms[22m[39m
+
+     [33m[2m✓[22m[39m approveCallback sends PUT to backend with correct params [33m 493[2mms[22m[39m
+
+[90mstderr[2m | Object.onError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/core/query.js:369:36)
+[22m[39mAxiosError: Request failed with status code 404
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/admin/users/needsmoderation'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  response: {
+    status: [33m404[39m,
+    data: [90mundefined[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m0[39m,
+      xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+      xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      method: [32m'get'[39m,
+      url: [32m'/api/admin/users/needsmoderation'[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: { responseURL: [32m'/api/admin/users/needsmoderation'[39m }
+  },
+  status: [33m404[39m,
+  cause: Error: Request failed with status code 404
+      at createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:150:11)
+  [90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+}
+
+
+ [32m✓[39m src/tests/pages/HomePage.test.jsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1177[2mms[22m[39m
+
+ [32m✓[39m src/tests/pages/Reviews/PostReviewPage.test.jsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1849[2mms[22m[39m
+     [33m[2m✓[22m[39m renders form fields with expected defaults [33m 438[2mms[22m[39m
+     [33m[2m✓[22m[39m submit button is enabled by default [33m 631[2mms[22m[39m
+
+[90mstderr[2m | src/tests/components/Users/UsersTable.test.jsx[2m > [22m[2mUserTable tests[2m > [22m[2mrenders without crashing for empty table
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at UsersTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Users/UsersTable.jsx:113:23)
+
+
+ [32m✓[39m src/tests/components/Users/UsersTable.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[32m 202[2mms[22m[39m
+
+[90mstderr[2m | src/tests/pages/MyReviews/MyReviewsIndexPage.test.jsx[2m > [22m[2mMyReviewsIndexPage tests[2m > [22m[2mrenders three reviews correctly for regular user
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at div
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at MyReviewsIndexPage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/MyReviews/MyReviewsIndexPage.jsx:66:69)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+ [32m✓[39m src/tests/pages/Meal/MealTimesPage.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 156[2mms[22m[39m
+
+ [32m✓[39m src/tests/utils/useBackend.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 182[2mms[22m[39m
+
+[90mstdout[2m | src/tests/pages/MyReviews/MyReviewsIndexPage.test.jsx[2m > [22m[2mMyReviewsIndexPage tests[2m > [22m[2mwhat happens when you click delete, user
+[22m[39mReview deleted
+
+
+ [32m✓[39m src/tests/pages/MyReviews/MyReviewsIndexPage.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[33m 403[2mms[22m[39m
+
+[90mstderr[2m | src/tests/pages/Reviews/ReviewsPage.test.jsx[2m > [22m[2mReviewsPage tests[2m > [22m[2mrenders empty table when backend is unavailable
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at ReviewsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Reviews/ReviewsTable.jsx:61:25)
+    at div
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at ReviewsPage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/Reviews/ReviewsPage.jsx:64:63)
+    at RenderedRoute (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-TGXCWGPT.js:6485:26)
+    at Routes (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:471:3)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/pages/Reviews/ReviewsPage.test.jsx[2m > [22m[2mReviewsPage tests[2m > [22m[2mrenders empty table when backend is unavailable
+[22m[39mError communicating with backend via GET on /api/reviews/approved/forItem/7 AxiosError: timeout of 0ms exceeded
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at Object.createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:214:23
+[90m    ... 6 lines matching cause stack trace ...[39m
+    at Axios._request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:187:33)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  code: [32m'ECONNABORTED'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/reviews/approved/forItem/7'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  cause: Error: timeout of 0ms exceeded
+      at Object.createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:214:23
+      at makeResponse (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:123:52)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:142:24)
+      at handleRequest (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/handle_request.js:61:20)
+      at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:54:24
+      at Mock (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mvitest[24m/node_modules/[4m@vitest[24m/spy/dist/index.js:274:34)
+      at Axios.dispatchRequest (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/dispatchRequest.js:51:10)
+      at Axios._request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:187:33)
+      at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:40:25)
+}
+
+
+ [32m✓[39m src/tests/components/Nav/AppNavbar.test.jsx [2m([22m[2m8 tests[22m[2m)[22m[32m 177[2mms[22m[39m
+
+[90mstderr[2m | src/tests/pages/Reviews/ReviewsPage.test.jsx[2m > [22m[2mReviewsPage tests[2m > [22m[2mError message includes GET method when request fails
+[22m[39mError communicating with backend via GET on /api/reviews/approved/forItem/7 AxiosError: Network Error
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at Object.createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:202:23
+[90m    ... 6 lines matching cause stack trace ...[39m
+    at Axios._request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:187:33)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/reviews/approved/forItem/7'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  cause: Error: Network Error
+      at Object.createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:202:23
+      at makeResponse (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:123:52)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:142:24)
+      at handleRequest (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/handle_request.js:61:20)
+      at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:54:24
+      at Mock (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mvitest[24m/node_modules/[4m@vitest[24m/spy/dist/index.js:274:34)
+      at Axios.dispatchRequest (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/dispatchRequest.js:51:10)
+      at Axios._request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:187:33)
+      at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:40:25)
+}
+
+
+ [32m✓[39m src/tests/pages/Reviews/ReviewsPage.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 174[2mms[22m[39m
+
+[90mstderr[2m | src/tests/pages/MenuItem/MenuItemPage.test.jsx[2m > [22m[2mMenuItemPage[2m > [22m[2mMenuItemPage works with no backend
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at MenuItemTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/MenuItem/MenuItemTable.jsx:57:26)
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at MenuItemPage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/MenuItem/MenuItemPage.jsx:66:69)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+[90mstderr[2m | src/tests/pages/MenuItem/MenuItemPage.test.jsx[2m > [22m[2mMenuItemPage[2m > [22m[2mMenuItemPage works with no backend
+[22m[39mError communicating with backend via GET on /api/diningcommons/2025-03-11/carrillo/breakfast AxiosError: timeout of 0ms exceeded
+    at Function.AxiosError.from (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/dist/node/axios.cjs:899:14)
+    at Object.createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:29)
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:214:23
+[90m    ... 6 lines matching cause stack trace ...[39m
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:40:25)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/useBackend.jsx:90:30[90m)[39m {
+  code: [32m'ECONNABORTED'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/diningcommons/2025-03-11/carrillo/breakfast'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  cause: Error: timeout of 0ms exceeded
+      at Object.createAxiosError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:161:34)
+      at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:214:23
+      at makeResponse (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:123:52)
+      at Object.settle (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/utils.js:142:24)
+      at handleRequest (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/handle_request.js:61:20)
+      at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios-mock-adapter[24m/src/index.js:54:24
+      at Axios.dispatchRequest (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/dispatchRequest.js:51:10)
+      at Axios._request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:187:33)
+      at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:40:25)
+      at wrap (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/helpers/bind.js:5:15)
+}
+
+
+ [32m✓[39m src/tests/pages/MenuItem/MenuItemPage.test.jsx [2m([22m[2m2 tests[22m[2m)[22m[32m 158[2mms[22m[39m
+
+[90mstderr[2m | src/tests/components/OurTable.test.jsx[2m > [22m[2mOurTable tests[2m > [22m[2mrenders an empty table without crashing
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+
+
+[90mstderr[2m | src/tests/components/DiningCommons/DiningCommonsTable.test.jsx[2m > [22m[2mDiningCommonsTable tests[2m > [22m[2mCheckmark / X for Boolean columns shows up as expected, url shows up correctly
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at DiningCommonsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/DiningCommons/DiningCommonsTable.jsx:57:31)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+ [32m✓[39m src/tests/components/OurTable.test.jsx [2m([22m[2m5 tests[22m[2m)[22m[32m 116[2mms[22m[39m
+
+[90mstderr[2m | src/tests/components/DiningCommons/DiningCommonsTable.test.jsx[2m > [22m[2mDiningCommonsTable tests[2m > [22m[2mMeals Offered Today renders meal links correctly when there are meals offered
+[22m[39mWarning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `Cell`. See https://reactjs.org/link/warning-keys for more information.
+    at LinkWithRef (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:962:5)
+    at Cell (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/DiningCommons/DiningCommonsTable.jsx:84:26)
+    at td
+    at tr
+    at tbody
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at DiningCommonsTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/DiningCommons/DiningCommonsTable.jsx:57:31)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+ [32m✓[39m src/tests/utils/currentUser.test.jsx [2m([22m[2m10 tests[22m[2m)[22m[32m 166[2mms[22m[39m
+
+ [32m✓[39m src/tests/components/DiningCommons/DiningCommonsTable.test.jsx [2m([22m[2m9 tests[22m[2m)[22m[32m 226[2mms[22m[39m
+
+[90mstderr[2m | src/tests/components/AliasApprovalTable/AliasApprovalTable.test.jsx[2m > [22m[2mAliasApprovalTable tests[2m > [22m[2mrenders the header even with no data
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at AliasApprovalTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/AliasApproval/AliasApprovalTable.jsx:55:31)
+
+
+[90mstderr[2m | src/tests/pages/AdminUsersPage.test.jsx[2m > [22m[2mAdminUsersPage tests[2m > [22m[2mrenders without crashing on three users
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at UsersTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Users/UsersTable.jsx:113:23)
+    at div
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Container.js:14:3
+    at div
+    at BasicLayout (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/layouts/BasicLayout/BasicLayout.jsx:61:24)
+    at AdminUsersPage (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/pages/AdminUsersPage.jsx:62:101)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+ [32m✓[39m src/tests/components/AliasApprovalTable/AliasApprovalTable.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+
+ [32m✓[39m src/tests/pages/AdminUsersPage.test.jsx [2m([22m[2m2 tests[22m[2m)[22m[32m 158[2mms[22m[39m
+
+ [32m✓[39m src/tests/components/Nav/AppNavbarLocalhost.test.jsx [2m([22m[2m1 test[22m[2m)[22m[32m 52[2mms[22m[39m
+
+ [32m✓[39m src/tests/pages/Reviews/EditReviewPage.test.jsx [2m([22m[2m1 test[22m[2m)[22m[32m 94[2mms[22m[39m
+
+[90mstderr[2m | Object.queryFn (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/utils/currentUser.jsx:97:21)
+[22m[39mError invoking axios.get:  AxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/currentUser.jsx:67:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/currentUser'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+[90mstderr[2m | Object.onError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/core/query.js:369:36)
+[22m[39mAxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/currentUser.jsx:67:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/currentUser'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+[90mstderr[2m | Object.queryFn (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/utils/systemInfo.jsx:73:21)
+[22m[39mError invoking axios.get:  AxiosError: Network Error
+    at XMLHttpRequest.handleError (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/adapters/xhr.js:110:14)
+    at XMLHttpRequest.invokeTheCallbackFunction (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/generated/EventHandlerNonNull.js:14:28)
+    at XMLHttpRequest.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/create-event-accessor.js:36:32)
+    at innerInvokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:360:16)
+    at invokeEventListeners (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:296:3)
+    at XMLHttpRequestImpl._dispatch (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/events/EventTarget-impl.js:243:9)
+    at fireAnEvent (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/helpers/events.js:18:36)
+    at requestErrorSteps (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:123:3)
+    at Object.dispatchError (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/xhr-utils.js:59:3)
+    at Request.<anonymous> (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4mjsdom[24m/lib/jsdom/living/xhr/XMLHttpRequest-impl.js:655:18)
+    at Axios.request (file:///Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/[4maxios[24m/lib/core/Axios.js:45:41)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at Object.queryFn [90m(/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/[39msrc/main/utils/systemInfo.jsx:65:30[90m)[39m {
+  code: [32m'ERR_NETWORK'[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m'xhr'[39m, [32m'http'[39m, [32m'fetch'[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m0[39m,
+    xsrfCookieName: [32m'XSRF-TOKEN'[39m,
+    xsrfHeaderName: [32m'X-XSRF-TOKEN'[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m'application/json, text/plain, */*'[39m,
+      [32m'Content-Type'[39m: [90mundefined[39m
+    },
+    method: [32m'get'[39m,
+    url: [32m'/api/systemInfo'[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {}
+}
+
+
+ [32m✓[39m src/tests/utils/systemInfo.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+
+ [32m✓[39m src/tests/utils/Reviews.test.jsx [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+
+[90mstderr[2m | src/tests/components/Meal/MealTable.test.jsx[2m > [22m[2mMealTable tests[2m > [22m[2mrenders empty table correctly
+[22m[39mWarning: Each child in a list should have a unique "key" prop. See https://reactjs.org/link/warning-keys for more information.
+    at th
+    at tr
+    at thead
+    at table
+    at /Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-bootstrap/cjs/Table.js:14:3
+    at OurTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/OurTable.jsx:58:21)
+    at MealTable (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/.stryker-tmp/sandbox3805788/src/main/components/Meal/MealTable.jsx:57:22)
+    at Router (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:414:13)
+    at MemoryRouter (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-router/dist/development/chunk-IIA3TUI2.js:336:3)
+    at QueryClientProvider (/Users/daliasebat/school/cs156/proj-dining-f25-08/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+
+
+ [32m✓[39m src/tests/components/Meal/MealTable.test.jsx [2m([22m[2m2 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+
+ [32m✓[39m src/tests/components/Profile/RoleBadge.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+
+ [32m✓[39m src/tests/components/Nav/Footer.test.jsx [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
+
+
+
+[2m Test Files [22m [1m[32m26 passed[39m[22m[90m (26)[39m
+
+[2m      Tests [22m [1m[32m126 passed[39m[22m[90m (126)[39m
+[2m   Start at [22m 16:14:48
+
+[2m   Duration [22m 8.30s[2m (transform 2.76s, setup 3.16s, collect 18.57s, tests 9.83s, environment 16.98s, prepare 1.33s)[22m
+
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+
+
+=============================== Coverage summary ===============================
+
+Statements   : 84.76% ( 974/1149 )
+
+Branches     : 53.47% ( 992/1855 )
+Functions    : 87.97% ( 256/291 )
+
+Lines        : 86.27% ( 930/1078 )
+================================================================================
+
+ERROR: Coverage for lines (86.27%) does not meet global threshold (100%)
+
+ERROR: Coverage for functions (87.97%) does not meet global threshold (100%)
+ERROR: Coverage for statements (84.76%) does not meet global threshold (100%)
+ERROR: Coverage for branches (53.47%) does not meet global threshold (100%)
+
+[36m16:14:56 (20682) DEBUG Stryker[39m Not removing the temp dir because an error occurred
+[91m16:14:56 (20682) ERROR Stryker[39m There were failed tests in the initial test run.
+[36m16:14:56 (20682) DEBUG ChildProcessProxy[39m Disposing of worker process 20691
+[36m16:14:56 (20682) DEBUG ChildProcessProxy[39m Kill 20691
