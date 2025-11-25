@@ -4,11 +4,9 @@ import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import ReviewsTable from "main/components/Reviews/ReviewsTable";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
-import { useQueryClient } from "react-query";
 
 const Moderate = () => {
   const currentUser = useCurrentUser();
-  // const queryClient = useQueryClient();
 
   //
   // Reviews needing moderation
