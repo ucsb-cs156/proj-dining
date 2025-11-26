@@ -319,4 +319,71 @@ describe("HomePage meals offered today tests", () => {
 
     spy.mockRestore();
   });
+
+  test("fetches dining commons from correct endpoint", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    // Verify the API was called with the correct URL
+    const apiCalls = axiosMock.history.get.filter(
+      (call) => call.url === "/api/dining/all",
+    );
+    expect(apiCalls.length).toBeGreaterThanOrEqual(1);
+  });
+
+  test("fetches meals for each dining commons when data is an array", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("DiningCommonsTable-cell-row-0-col-code");
+
+    await waitFor(() => {
+      // Verify meal endpoints were called for each dining commons
+      const mealCalls = axiosMock.history.get.filter((call) =>
+        call.url.includes("/api/diningcommons/2025-03-11/"),
+      );
+      expect(mealCalls.length).toBe(diningCommonsFixtures.fourCommons.length);
+    });
+  });
+
+  test("does not fetch meals when data is not an array", async () => {
+    axiosMock.reset();
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock.onGet("/api/dining/all").reply(200, null);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
+    });
+
+    // Verify NO meal endpoints were called
+    const mealCalls = axiosMock.history.get.filter((call) =>
+      call.url.includes("/api/diningcommons/"),
+    );
+    expect(mealCalls.length).toBe(0);
+  });
 });

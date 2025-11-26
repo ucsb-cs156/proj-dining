@@ -343,4 +343,35 @@ describe("DiningCommonsTable tests", () => {
       screen.getByTestId(`${testId}-cell-row-1-col-code`),
     ).toHaveTextContent("de-la-guerra");
   });
+
+  test("meal links have correct testids", async () => {
+    const combinedMeals = {
+      ...diningCommonsFixtures.oneCommonsDiningCamFalse,
+      mealsOfferedToday: [
+        {
+          name: "Breakfast",
+          code: "breakfast",
+        },
+        {
+          name: "Lunch",
+          code: "lunch",
+        },
+      ],
+    };
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={[combinedMeals]} date={date} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(
+      screen.getByTestId("DiningCommonsTable-cell-row-0-col-meal-breakfast"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("DiningCommonsTable-cell-row-0-col-meal-lunch"),
+    ).toBeInTheDocument();
+  });
 });
