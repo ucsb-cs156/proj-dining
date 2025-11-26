@@ -89,12 +89,12 @@ describe("AdminUsersPage tests", () => {
 
     // Verify the correct endpoint was called
     const apiCall = axiosMock.history.get.find(
-      call => call.url === "/api/admin/users"
+      (call) => call.url === "/api/admin/users",
     );
     expect(apiCall).toBeDefined();
-});
+  });
 
-test("renders users table with data", async () => {
+  test("renders users table with data", async () => {
     const queryClient = new QueryClient();
     axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
 
@@ -109,8 +109,12 @@ test("renders users table with data", async () => {
     await screen.findByText("Users");
 
     await waitFor(() => {
-      expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toBeInTheDocument();
-      expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-id`),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-id`),
+      ).toHaveTextContent("1");
     });
   });
 });

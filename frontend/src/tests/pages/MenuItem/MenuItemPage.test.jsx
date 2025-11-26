@@ -37,9 +37,17 @@ describe("MenuItemPage", () => {
   let axiosMock;
   let queryClient;
 
-  beforeAll(() => {
+  beforeEach(() => {
     axiosMock = new AxiosMockAdapter(axios);
     queryClient = new QueryClient();
+
+    // Set up common mocks
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.userOnly);
   });
 
   afterEach(() => {
@@ -51,12 +59,6 @@ describe("MenuItemPage", () => {
     axiosMock
       .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
       .timeout();
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock
-      .onGet("/api/currentUser")
-      .reply(200, apiCurrentUserFixtures.userOnly);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -75,31 +77,11 @@ describe("MenuItemPage", () => {
       screen.queryByText("MenuItemTable-cell-header-col-name"),
     ).not.toBeInTheDocument();
   });
-});
 
-describe("MenuItemPage renders table correctly", () => {
-  let axiosMock;
-  let queryClient;
-
-  beforeAll(() => {
-    axiosMock = new AxiosMockAdapter(axios);
-    queryClient = new QueryClient();
-  });
-
-  afterEach(() => {
-    axiosMock.reset();
-    queryClient.clear();
-  });
   test("MenuItemPage renders 5 Menu Items Correctly", async () => {
     axiosMock
       .onGet("/api/diningcommons/2025-03-11/carrillo/breakfast")
       .reply(200, menuItemFixtures.fiveMenuItems);
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
-    axiosMock
-      .onGet("/api/currentUser")
-      .reply(200, apiCurrentUserFixtures.userOnly);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -109,7 +91,12 @@ describe("MenuItemPage renders table correctly", () => {
       </QueryClientProvider>,
     );
 
-    await screen.findByTestId("MenuItemTable-cell-row-0-col-name");
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("MenuItemTable-cell-row-0-col-name"),
+      ).toBeInTheDocument();
+    });
+
     for (let i = 0; i < menuItemFixtures.fiveMenuItems.length; i++) {
       expect(
         screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`),

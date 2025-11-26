@@ -11,7 +11,7 @@ export default function MenuItemPage() {
     "dining-commons-code": diningCommons,
     meal,
   } = useParams();
-  const { data: menuItems, status } = useBackend(
+  const { data: menuItems } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/diningcommons/${date}/${diningCommons}/${meal}`],
     {
@@ -26,9 +26,7 @@ export default function MenuItemPage() {
   return (
     <BasicLayout>
       <h2>{meal.at(0).toUpperCase() + meal.substring(1)}</h2>
-
-      {status === "loading" && <p>Loading...</p>}
-      {status === "success" && <MenuItemTable currentUser={currentUser} menuItems={menuItems} />}
+      <MenuItemTable currentUser={currentUser} menuItems={menuItems} />
     </BasicLayout>
   );
 }
