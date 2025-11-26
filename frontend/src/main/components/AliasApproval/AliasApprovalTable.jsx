@@ -5,6 +5,7 @@ export default function AliasApprovalTable({
   aliases,
   approveCallback,
   rejectCallback,
+  moderatorOptions,
 }) {
   const testid = "Aliasapprovaltable";
 
@@ -15,8 +16,10 @@ export default function AliasApprovalTable({
     },
   ];
 
-  columns.push(ButtonColumn("Approve", "primary", approveCallback, testid));
-  columns.push(ButtonColumn("Reject", "danger", rejectCallback, testid));
+  if (moderatorOptions) {
+    columns.push(ButtonColumn("Approve", "primary", approveCallback, testid));
+    columns.push(ButtonColumn("Reject", "danger", rejectCallback, testid));
+  }
 
   return (
     <OurTable

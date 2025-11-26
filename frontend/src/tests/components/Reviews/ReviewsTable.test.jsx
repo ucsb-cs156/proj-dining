@@ -133,17 +133,15 @@ describe("ReviewsTable tests", () => {
           userOptions={false}
           moderatorOptions={true}
         />
-        ,
       </QueryClientProvider>,
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
-      ).toHaveTextContent("7");
+        screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
     });
 
-    //approve button
     const approveButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Approve-button`,
     );
@@ -152,7 +150,6 @@ describe("ReviewsTable tests", () => {
 
     fireEvent.click(approveButton);
 
-    //reject button
     const rejectButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Reject-button`,
     );

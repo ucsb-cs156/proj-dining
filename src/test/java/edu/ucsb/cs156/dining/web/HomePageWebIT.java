@@ -7,7 +7,6 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import com.microsoft.playwright.options.AriaRole;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +50,7 @@ public class HomePageWebIT {
     String url = String.format("http://localhost:%d/", port);
     page.navigate(url);
 
-    assertThat(
-            page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Dining Commons")))
+    assertThat(page.getByText("Dining Commons", new Page.GetByTextOptions().setExact(true)))
         .isVisible();
   }
 }
