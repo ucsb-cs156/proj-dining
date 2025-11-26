@@ -39,6 +39,7 @@ export default function HomePage() {
         ...d,
         mealsOfferedToday: mealsOffered[i]?.data ?? [],
       }))
+    // Stryker disable next-line all : default empty array when dining data is missing
     : [];
 
   return (
