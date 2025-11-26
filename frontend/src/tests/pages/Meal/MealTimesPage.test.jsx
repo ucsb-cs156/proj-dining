@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import MealTimesPage from "main/pages/Meal/MealTimesPage";
@@ -22,6 +22,8 @@ vi.mock("react-router", async () => {
       "date-time": "2024-11-25",
       "dining-commons-code": "portola",
     }),
+    useNavigate: () => mockNavigate,
+
     Navigate: (x) => {
       mockNavigate(x);
       return null;
@@ -105,5 +107,25 @@ describe("MealTimesPage tests", () => {
     });
 
     expect(screen.queryByText("Breakfast")).not.toBeInTheDocument();
+  });
+
+  test("changing the date navigates to correct URL", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/diningcommons/2024-11-25/portola"]}>
+          <MealTimesPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Meals at portola for 2024-11-25");
+
+    const input = screen.getByLabelText("Select Date:");
+
+    fireEvent.change(input, { target: { value: "2025-11-01" } });
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/diningcommons/2025-11-01/portola",
+    );
   });
 });
