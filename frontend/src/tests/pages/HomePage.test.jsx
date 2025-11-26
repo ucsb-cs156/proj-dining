@@ -380,10 +380,13 @@ describe("HomePage meals offered today tests", () => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
     });
 
-    // Verify NO meal endpoints were called
     const mealCalls = axiosMock.history.get.filter((call) =>
       call.url.includes("/api/diningcommons/"),
     );
     expect(mealCalls.length).toBe(0);
+
+    expect(
+      screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
+    ).not.toBeInTheDocument();
   });
 });
