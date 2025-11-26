@@ -9,6 +9,7 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
+import { useBackend } from "main/utils/useBackend";
 
 const mockToast = vi.fn();
 vi.mock("react-toastify", async () => {
@@ -19,6 +20,18 @@ vi.mock("react-toastify", async () => {
     toast: (x) => mockToast(x),
   };
 });
+
+// Spy-style mock: we wrap the real useBackend so axios tests still work
+vi.mock("main/utils/useBackend", async () => {
+  const actual = await vi.importActual("main/utils/useBackend");
+  return {
+    __esModule: true,
+    ...actual,
+    useBackend: vi.fn(actual.useBackend),
+  };
+});
+
+const mockedUseBackend = useBackend;
 
 const axiosMock = new AxiosMockAdapter(axios);
 describe("ReviewsPage tests", () => {
@@ -36,6 +49,7 @@ describe("ReviewsPage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
+    vi.clearAllMocks();
   });
 
   const renderWithRoute = (itemid) => {
@@ -55,7 +69,6 @@ describe("ReviewsPage tests", () => {
     const itemid = "7";
     setupUserOnly();
     axiosMock.onGet(`/api/reviews/approved/forItem/${itemid}`).timeout();
-    // const restoreConsole = mockConsole();
 
     renderWithRoute(itemid);
 
@@ -82,5 +95,25 @@ describe("ReviewsPage tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toBeInTheDocument();
     });
+  });
+
+  // NEW: kills the Stryker mutant that changes method: "GET" -> ""
+  test("calls useBackend with GET method and correct URL", async () => {
+    const itemid = "7";
+    setupUserOnly();
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemid}`).reply(200, []);
+
+    renderWithRoute(itemid);
+
+    await waitFor(() => {
+      expect(mockedUseBackend).toHaveBeenCalled();
+    });
+
+    const url = `/api/reviews/approved/forItem/${itemid}`;
+    expect(mockedUseBackend).toHaveBeenCalledWith(
+      [`/api/reviews/approved/forItem/${itemid}`],
+      { method: "GET", url },
+      [],
+    );
   });
 });
