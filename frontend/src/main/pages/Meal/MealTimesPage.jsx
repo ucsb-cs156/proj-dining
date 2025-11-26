@@ -1,5 +1,6 @@
+import { useState } from "react";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useBackend } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 import MealTable from "main/components/Meal/MealTable";
@@ -16,6 +17,14 @@ export default function MealTimesPage() {
       url: `/api/diningcommons/${dateTime}/${diningCommonsCode}`,
     },
   );
+  const [selectedDate, setSelectedDate] = useState(dateTime);
+  const navigate = useNavigate();
+
+  const onChangeDate = (e) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+    navigate(`/diningcommons/${newDate}/${diningCommonsCode}`);
+  };
 
   if (status === 204) {
     const message = `${diningCommonsCode} is closed on ${dateTime}. Please select another date or dining common.`;
@@ -25,6 +34,17 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
+        <p>
+          <label htmlFor="dateSelector">Select Date:</label>
+          <br></br>
+          <input
+            type="date"
+            id="dateSelector"
+            name="dateSelector"
+            value={selectedDate}
+            onChange={onChangeDate}
+          />
+        </p>
       </BasicLayout>
     );
   }
@@ -35,6 +55,17 @@ export default function MealTimesPage() {
         <h1>
           Meals at {diningCommonsCode} for {dateTime}
         </h1>
+        <p>
+          <label htmlFor="dateSelector">Select Date:</label>
+          <br></br>
+          <input
+            type="date"
+            id="dateSelector"
+            name="dateSelector"
+            value={selectedDate}
+            onChange={onChangeDate}
+          />
+        </p>
         {meals && (
           <MealTable
             meals={meals}
