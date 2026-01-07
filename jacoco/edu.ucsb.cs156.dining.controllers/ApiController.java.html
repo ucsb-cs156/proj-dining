@@ -7,12 +7,13 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /** This is an abstract class that provides common functionality for all API controllers. */
-<span class="fc" id="L14">@Slf4j</span>
-<span class="fc" id="L15">public abstract class ApiController {</span>
+<span class="fc" id="L15">@Slf4j</span>
+<span class="fc" id="L16">public abstract class ApiController {</span>
   @Autowired private CurrentUserService currentUserService;
 
   /**
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
    * @return the current user
    */
   protected CurrentUser getCurrentUser() {
-<span class="fc" id="L24">    return currentUserService.getCurrentUser();</span>
+<span class="fc" id="L25">    return currentUserService.getCurrentUser();</span>
   }
 
   /**
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
    * @return a map with the message
    */
   protected Object genericMessage(String message) {
-<span class="fc" id="L34">    return Map.of(&quot;message&quot;, message);</span>
+<span class="fc" id="L35">    return Map.of(&quot;message&quot;, message);</span>
   }
 
   /**
@@ -43,9 +44,21 @@ import org.springframework.web.bind.annotation.ResponseStatus;
   @ExceptionHandler({EntityNotFoundException.class})
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public Object handleGenericException(Throwable e) {
-<span class="fc" id="L46">    return Map.of(</span>
-<span class="fc" id="L47">        &quot;type&quot;, e.getClass().getSimpleName(),</span>
-<span class="fc" id="L48">        &quot;message&quot;, e.getMessage());</span>
+<span class="fc" id="L47">    return Map.of(</span>
+<span class="fc" id="L48">        &quot;type&quot;, e.getClass().getSimpleName(),</span>
+<span class="fc" id="L49">        &quot;message&quot;, e.getMessage());</span>
+  }
+
+  /**
+   * This method handles the UnsupportedOperationException. This maps to a 403/Forbidden.
+   *
+   * @param e the exception
+   * @return a map with the type and message of the exception
+   */
+  @ExceptionHandler(UnsupportedOperationException.class)
+  public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleUnsupportedOperation(
+      UnsupportedOperationException e) {
+<span class="fc" id="L61">    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(&quot;message&quot;, e.getMessage()));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

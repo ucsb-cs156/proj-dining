@@ -44,10 +44,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 <span class="fc bfc" id="L44" title="All 2 branches covered.">                        !grantedAuth.getAuthority().equals(&quot;ROLE_ADMIN&quot;)</span>
 <span class="fc bfc" id="L45" title="All 2 branches covered.">                            &amp;&amp; !grantedAuth.getAuthority().equals(&quot;ROLE_MODERATOR&quot;))</span>
 <span class="fc" id="L46">                .collect(Collectors.toSet());</span>
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (user.getAdmin()) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (user.isAdmin()) {</span>
 <span class="fc" id="L48">          revisedAuthorities.add(new SimpleGrantedAuthority(&quot;ROLE_ADMIN&quot;));</span>
         }
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (user.getModerator()) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (user.isModerator()) {</span>
 <span class="fc" id="L51">          revisedAuthorities.add(new SimpleGrantedAuthority(&quot;ROLE_MODERATOR&quot;));</span>
         }
 <span class="fc" id="L53">        Authentication newAuth =</span>

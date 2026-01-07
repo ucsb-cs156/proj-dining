@@ -210,7 +210,7 @@ import org.springframework.web.bind.annotation.RestController;
 <span class="fc" id="L210">            .orElseThrow(() -&gt; new EntityNotFoundException(Review.class, id));</span>
 
 <span class="fc" id="L212">    User current = getCurrentUser().getUser();</span>
-<span class="fc bfc" id="L213" title="All 4 branches covered.">    if (current.getId() != review.getReviewer().getId() &amp;&amp; !current.getAdmin()) {</span>
+<span class="fc bfc" id="L213" title="All 4 branches covered.">    if (current.getId() != review.getReviewer().getId() &amp;&amp; !current.isAdmin()) {</span>
 <span class="fc" id="L214">      throw new AccessDeniedException(&quot;No permission to delete review&quot;);</span>
     }
 
@@ -241,6 +241,36 @@ import org.springframework.web.bind.annotation.RestController;
   public Iterable&lt;Review&gt; needsmoderation() {
 <span class="fc" id="L242">    Iterable&lt;Review&gt; reviewsList = reviewRepository.findByStatus(ModerationStatus.AWAITING_REVIEW);</span>
 <span class="fc" id="L243">    return reviewsList;</span>
+  }
+
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/{id}&quot;)
+  public Review getReviewById(@PathVariable Long id) {
+
+    // 1. Look up the review or 404
+<span class="fc" id="L251">    Review review =</span>
+        reviewRepository
+<span class="fc" id="L253">            .findById(id)</span>
+<span class="fc" id="L254">            .orElseThrow(() -&gt; new EntityNotFoundException(Review.class, id));</span>
+
+    // 2. Get current requester
+<span class="fc" id="L257">    User requester = getCurrentUser().getUser();</span>
+
+    // 3. Evaluate permissions
+<span class="fc bfc" id="L260" title="All 2 branches covered.">    boolean isOwner = (review.getReviewer().getId() == requester.getId());</span>
+<span class="fc" id="L261">    boolean isAdmin =</span>
+<span class="fc" id="L262">        getCurrentUser().getRoles().stream().anyMatch(r -&gt; r.getAuthority().equals(&quot;ROLE_ADMIN&quot;));</span>
+<span class="fc" id="L263">    boolean isModerator =</span>
+<span class="fc" id="L264">        getCurrentUser().getRoles().stream()</span>
+<span class="fc" id="L265">            .anyMatch(r -&gt; r.getAuthority().equals(&quot;ROLE_MODERATOR&quot;));</span>
+
+    // 4. Enforce access rules
+<span class="fc bfc" id="L268" title="All 6 branches covered.">    if (!(isOwner || isAdmin || isModerator)) {</span>
+<span class="fc" id="L269">      throw new AccessDeniedException(&quot;No permission to view this review&quot;);</span>
+    }
+
+    // 5. Return the review
+<span class="fc" id="L273">    return review;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
