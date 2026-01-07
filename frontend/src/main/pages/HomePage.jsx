@@ -1,6 +1,9 @@
+import { useState } from "react";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useBackend } from "../utils/useBackend";
-import DiningCommonsTable from "../components/DiningCommons/DiningCommonsTable";
+import { useQueries } from "react-query";
+import axios from "axios";
+import { useBackend } from "main/utils/useBackend";
+import DiningCommonsTable from "main/components/DiningCommons/DiningCommonsTable";
 
 export default function HomePage() {
   const { data } = useBackend(
@@ -11,11 +14,49 @@ export default function HomePage() {
   );
 
   const date = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(date);
+
+  const onChangeDate = (e) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+  };
+  const queries = [];
+  if (Array.isArray(data)) {
+    for (const d of data) {
+      queries.push({
+        queryKey: ["meals", d.code, selectedDate],
+        queryFn: () =>
+          axios
+            .get(`/api/diningcommons/${selectedDate}/${d.code}`)
+            .then((res) => res.data),
+      });
+    }
+  }
+  const mealsOffered = useQueries(queries);
+
+  const combined = Array.isArray(data)
+    ? data.map((d, i) => ({
+        ...d,
+        mealsOfferedToday: mealsOffered[i]?.data ?? [],
+      }))
+    : // Stryker disable next-line all : default empty array when dining data is missing
+      [];
 
   return (
     <BasicLayout>
       <h1>Dining Commons</h1>
-      <DiningCommonsTable commons={data} date={date} />
+      <p>
+        <label htmlFor="dateSelector">Select Date:</label>
+        <br></br>
+        <input
+          type="date"
+          id="dateSelector"
+          name="dateSelector"
+          value={selectedDate}
+          onChange={onChangeDate}
+        />
+      </p>
+      <DiningCommonsTable commons={combined} date={selectedDate} />
     </BasicLayout>
   );
 }

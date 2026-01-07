@@ -37,6 +37,10 @@ describe("ReviewsPage tests", () => {
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
   });
+  afterEach(() => {
+    axiosMock.reset();
+    axiosMock.resetHistory();
+  });
 
   const renderWithRoute = (itemid) => {
     const queryClient = new QueryClient();
@@ -55,22 +59,29 @@ describe("ReviewsPage tests", () => {
     const itemid = "7";
     setupUserOnly();
     axiosMock.onGet(`/api/reviews/approved/forItem/${itemid}`).timeout();
-    // const restoreConsole = mockConsole();
+
+    // SPY ON THE ADAPTER, NOT axios.request
+    const adapterSpy = vi.spyOn(axios.defaults, "adapter");
 
     renderWithRoute(itemid);
 
     await waitFor(() => {
-      expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
+      expect(adapterSpy).toHaveBeenCalled();
+      expect(adapterSpy.mock.calls[0][0].method).toBe("get"); // MUTATION KILLER
     });
 
-    expect(
-      screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
-    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      // Table should remain empty
+      expect(
+        screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).not.toBeInTheDocument();
+    });
   });
 
   test("renders table when backend is available", async () => {
     const itemid = "7";
     setupUserOnly();
+    const adapterSpy = vi.spyOn(axios.defaults, "adapter");
     axiosMock
       .onGet(`/api/reviews/approved/forItem/${itemid}`)
       .reply(200, ReviewFixtures.threeReviews);
@@ -78,9 +89,30 @@ describe("ReviewsPage tests", () => {
     renderWithRoute(itemid);
 
     await waitFor(() => {
+      expect(adapterSpy).toHaveBeenCalled();
+      expect(adapterSpy.mock.calls[0][0].method).toBe("get");
+    });
+
+    await waitFor(() => {
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toBeInTheDocument();
+    });
+  });
+
+  test("Error message includes GET method when request fails", async () => {
+    const itemId = "7";
+    setupUserOnly();
+
+    axiosMock.onGet(`/api/reviews/approved/forItem/${itemId}`).networkError();
+
+    renderWithRoute(itemId);
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalled();
+      const toastMessage = mockToast.mock.calls[0][0];
+      expect(toastMessage).toContain("GET");
+      expect(toastMessage).toContain(`/api/reviews/approved/forItem/${itemId}`);
     });
   });
 });

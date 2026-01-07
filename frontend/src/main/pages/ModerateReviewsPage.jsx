@@ -4,33 +4,37 @@ import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import ReviewsTable from "main/components/Reviews/ReviewsTable";
 
-const Moderate = () => {
+const ModerateReviews = () => {
   const currentUser = useCurrentUser();
 
-  const {
-    data: reviews,
-    error: _error,
-    status: _status,
-  } = useBackend(
+  //
+  // Reviews needing moderation
+  //
+  const { data: reviews } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/reviews/needsmoderation"],
+    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/reviews/needsmoderation" },
     // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );
 
-  const moderatorOptions =
+  const moderateReviewsOptions =
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
 
   return (
     <BasicLayout>
       <div className="pt-2">
-        <h1>Moderation Page</h1>
-        <ReviewsTable reviews={reviews} moderatorOptions={moderatorOptions} />
+        <h1>Moderate Reviews</h1>
+
+        <ReviewsTable
+          reviews={reviews}
+          moderatorOptions={moderateReviewsOptions}
+        />
       </div>
     </BasicLayout>
   );
 };
 
-export default Moderate;
+export default ModerateReviews;

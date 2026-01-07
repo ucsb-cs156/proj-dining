@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
-import ReviewsTable from "../../../main/components/Reviews/ReviewsTable";
-import { ReviewFixtures } from "../../../fixtures/reviewFixtures";
+import ReviewsTable from "main/components/Reviews/ReviewsTable";
+import { ReviewFixtures } from "fixtures/reviewFixtures";
 import { QueryClient, QueryClientProvider } from "react-query";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
@@ -27,7 +27,7 @@ describe("ReviewsTable tests", () => {
         ,
       </QueryClientProvider>,
     );
-
+    expect(screen.getByText("Moderation Status")).toBeInTheDocument();
     expect(screen.getByText("Item Id")).toBeInTheDocument();
     expect(screen.getByText("Item Name")).toBeInTheDocument();
     expect(screen.getByText("Score")).toBeInTheDocument();
@@ -35,6 +35,9 @@ describe("ReviewsTable tests", () => {
     expect(screen.getByText("Date Served")).toBeInTheDocument();
     expect(screen.getByText("Dining Commons Code")).toBeInTheDocument();
 
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
+    ).toBeInTheDocument();
     expect(
       screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
     ).toBeInTheDocument();
@@ -53,6 +56,10 @@ describe("ReviewsTable tests", () => {
     expect(
       screen.getByTestId(`Reviewstable-cell-row-0-col-item.diningCommonsCode`),
     ).toBeInTheDocument();
+
+    const statusCell = screen.getByTestId("Reviewstable-cell-row-0-col-status");
+    const expectedStatus = ReviewFixtures.threeReviews[0].status;
+    expect(statusCell).toHaveTextContent(expectedStatus);
 
     const editButton = screen.queryByTestId(
       `Reviewstable-cell-row-0-col-Edit-button`,
@@ -126,17 +133,15 @@ describe("ReviewsTable tests", () => {
           userOptions={false}
           moderatorOptions={true}
         />
-        ,
       </QueryClientProvider>,
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
-      ).toHaveTextContent("7");
+        screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
     });
 
-    //approve button
     const approveButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Approve-button`,
     );
@@ -145,7 +150,6 @@ describe("ReviewsTable tests", () => {
 
     fireEvent.click(approveButton);
 
-    //reject button
     const rejectButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Reject-button`,
     );

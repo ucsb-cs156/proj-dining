@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useCurrentUser, useLogout, hasRole } from "main/utils/currentUser";
-import { renderHook, waitFor, act } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import {
   apiCurrentUserFixtures,
   currentUserFixtures,
@@ -154,10 +154,9 @@ describe("utils/currentUser tests", () => {
 
       const { result } = renderHook(() => useLogout(), { wrapper });
 
-      act(() => {
-        expect(useNavigate).toHaveBeenCalled();
-        result.current.mutate();
-      });
+      expect(useNavigate).toHaveBeenCalled();
+      result.current.mutate();
+
       await waitFor(() => expect(navigateSpy).toHaveBeenCalledWith("/"));
 
       await waitFor(() =>

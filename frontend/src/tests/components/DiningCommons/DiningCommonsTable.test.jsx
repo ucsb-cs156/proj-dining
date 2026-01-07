@@ -18,6 +18,7 @@ describe("DiningCommonsTable tests", () => {
   const expectedHeaders = [
     "Code",
     "Name",
+    "Meals Offered Today",
     "Has Dining Cam",
     "Has Sack Meal",
     "Has Takeout Meal",
@@ -25,6 +26,7 @@ describe("DiningCommonsTable tests", () => {
   const expectedFields = [
     "code",
     "name",
+    "mealsOfferedToday",
     "hasDiningCam",
     "hasSackMeal",
     "hasTakeoutMeal",
@@ -68,6 +70,59 @@ describe("DiningCommonsTable tests", () => {
         screen.getByTestId(`DiningCommonsTable-cell-row-${i}-col-hasDiningCam`),
       ).toHaveTextContent(fourCommons[i].hasDiningCam ? "✅" : "❌");
     }
+  });
+
+  test("Meals Offered Today renders meal links correctly when there are no meals offered", async () => {
+    const combinedMealsEmpty = {
+      ...diningCommonsFixtures.oneCommonsDiningCamFalse,
+      mealsOfferedToday: [],
+    };
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={[combinedMealsEmpty]} date={date} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByText("No meals offered today")).toBeInTheDocument();
+  });
+
+  test("Meals Offered Today renders meal links correctly when there are meals offered", async () => {
+    const combinedMeals = {
+      ...diningCommonsFixtures.oneCommonsDiningCamFalse,
+      mealsOfferedToday: [
+        {
+          name: "Breakfast",
+          code: "breakfast",
+        },
+        {
+          name: "Lunch",
+          code: "lunch",
+        },
+        {
+          name: "Dinner",
+          code: "dinner",
+        },
+      ],
+    };
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={[combinedMeals]} date={date} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    ["Breakfast", "Lunch", "Dinner"].forEach((meal) => {
+      const link = screen.getByText(meal).closest("a");
+      expect(link).toHaveAttribute(
+        "href",
+        `/diningcommons/${date}/carrillo/${meal.toLowerCase()}`,
+      );
+    });
   });
 
   test("Checkmark / X for Boolean columns shows up as expected when hasDiningCam is false", async () => {
@@ -256,6 +311,7 @@ describe("DiningCommonsTable tests", () => {
     const expectedHeaders = [
       "Code",
       "Name",
+      "Meals Offered Today",
       "Has Dining Cam",
       "Has Sack Meal",
       "Has Takeout Meal",
@@ -263,6 +319,7 @@ describe("DiningCommonsTable tests", () => {
     const expectedFields = [
       "code",
       "name",
+      "mealsOfferedToday",
       "hasDiningCam",
       "hasSackMeal",
       "hasTakeoutMeal",
@@ -285,5 +342,36 @@ describe("DiningCommonsTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-code`),
     ).toHaveTextContent("de-la-guerra");
+  });
+
+  test("meal links have correct testids", async () => {
+    const combinedMeals = {
+      ...diningCommonsFixtures.oneCommonsDiningCamFalse,
+      mealsOfferedToday: [
+        {
+          name: "Breakfast",
+          code: "breakfast",
+        },
+        {
+          name: "Lunch",
+          code: "lunch",
+        },
+      ],
+    };
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <DiningCommonsTable commons={[combinedMeals]} date={date} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(
+      screen.getByTestId("DiningCommonsTable-cell-row-0-col-meal-breakfast"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("DiningCommonsTable-cell-row-0-col-meal-lunch"),
+    ).toBeInTheDocument();
   });
 });

@@ -2,14 +2,14 @@ import React from "react";
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import AliasApprovalTable from "main/components/AliasApproval/AliasApprovalTable";
 import { QueryClient, QueryClientProvider } from "react-query";
-import usersFixtures from "fixtures/usersFixtures";
 import { vi } from "vitest";
+import { AliasFixtures } from "fixtures/aliasFixtures";
 
 describe("AliasApprovalTable tests", () => {
   const queryClient = new QueryClient();
 
   it("renders the header even with no data", () => {
-    render(<AliasApprovalTable aliases={[]} />);
+    render(<AliasApprovalTable aliases={[]} moderatorOptions={true} />);
 
     expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
 
@@ -24,12 +24,20 @@ describe("AliasApprovalTable tests", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a data row for each user", () => {
-    render(<AliasApprovalTable aliases={usersFixtures.threeUsers} />);
-    expect(screen.getByText("Ali1")).toBeInTheDocument();
-    expect(
-      screen.queryByTestId("Aliasapprovaltable-cell-row-1-col-proposedAlias"),
-    ).not.toBeInTheDocument();
+  it("only renders users with AWAITING_REVIEW status", () => {
+    const fakeAliases = [
+      ...AliasFixtures.threeAliases,
+      { id: 8, proposedAlias: "test2", status: "APPROVED" },
+    ];
+
+    render(
+      <AliasApprovalTable aliases={fakeAliases} moderatorOptions={true} />,
+    );
+
+    expect(screen.getByText("vnarasiman")).toBeInTheDocument();
+    expect(screen.getByText("alias 4")).toBeInTheDocument();
+    expect(screen.queryByText("test")).not.toBeInTheDocument();
+    expect(screen.queryByText("test2")).not.toBeInTheDocument();
   });
 
   it("buttons appear and work properly", async () => {
@@ -39,9 +47,10 @@ describe("AliasApprovalTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <AliasApprovalTable
-          aliases={usersFixtures.threeUsers}
+          aliases={AliasFixtures.threeAliases}
           approveCallback={approveCallback}
           rejectCallback={rejectCallback}
+          moderatorOptions={true}
         />
         ,
       </QueryClientProvider>,
@@ -50,7 +59,7 @@ describe("AliasApprovalTable tests", () => {
     await waitFor(() => {
       expect(
         screen.getByTestId(`Aliasapprovaltable-cell-row-0-col-proposedAlias`),
-      ).toHaveTextContent("Ali1");
+      ).toHaveTextContent("vnarasiman");
     });
 
     //approve button
@@ -72,5 +81,22 @@ describe("AliasApprovalTable tests", () => {
 
     fireEvent.click(rejectButton);
     expect(rejectCallback).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not render approve/reject buttons when moderatorOptions is false", () => {
+    render(
+      <AliasApprovalTable
+        aliases={AliasFixtures.threeAliases}
+        moderatorOptions={false}
+      />,
+    );
+
+    expect(screen.getByText("Proposed Alias")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("Aliasapprovaltable-header-Approve"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("Aliasapprovaltable-header-Reject"),
+    ).not.toBeInTheDocument();
   });
 });

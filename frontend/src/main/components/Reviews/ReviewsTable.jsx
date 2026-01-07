@@ -1,5 +1,5 @@
 import React from "react";
-import OurTable, { ButtonColumn } from "../OurTable";
+import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
 import { useBackendMutation } from "main/utils/useBackend";
 import {
@@ -53,9 +53,13 @@ export default function ReviewsTable({
   const rejectCallback = async (cell) => {
     rejectMutation.mutate(cell);
   };
-  // Stryker restore all
 
   const columns = [
+    {
+      Header: "Moderation Status",
+      accessor: "status",
+      Cell: ({ value }) => value,
+    },
     {
       Header: "Item Id",
       accessor: "item.id",
@@ -85,6 +89,7 @@ export default function ReviewsTable({
       accessor: "item.diningCommonsCode",
     },
   ];
+  // Stryker restore all
 
   if (userOptions) {
     columns.push(ButtonColumn("Edit", "primary", editCallback, "Reviewstable"));

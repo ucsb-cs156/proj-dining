@@ -33,6 +33,10 @@ public class UCSBDiningMenuController extends ApiController {
 
     String body = ucsbDiningMenuService.getJSON(datetime, diningcommoncode);
 
+    if (body == null || body.isEmpty() || body.equals("[]")) {
+      return ResponseEntity.noContent().build();
+    }
+
     return ResponseEntity.ok().body(body);
   }
 }

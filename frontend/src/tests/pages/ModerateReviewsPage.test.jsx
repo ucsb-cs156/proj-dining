@@ -1,7 +1,7 @@
 import { render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
-import Moderate from "main/pages/ModeratePage";
+import ModerateReviews from "main/pages/ModerateReviewsPage";
 import { vi } from "vitest";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
@@ -21,7 +21,7 @@ vi.mock("react-toastify", async () => {
   };
 });
 
-describe("Moderate Page Tests", () => {
+describe("ModerateReviews Page Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
 
   const testId = "Reviewstable";
@@ -69,7 +69,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviews />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -98,7 +98,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviews />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -126,7 +126,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviews />
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -156,7 +156,7 @@ describe("Moderate Page Tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <Moderate />
+          <ModerateReviews />
         </MemoryRouter>
       </QueryClientProvider>,
     );
