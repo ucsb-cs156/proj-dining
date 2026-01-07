@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/Nav/Footer.js</title>
+    <title>Code coverage report for components/Nav/AppNavbarLocalhost.jsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/Nav</a> Footer.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/Nav</a> AppNavbarLocalhost.jsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
                 <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
                 <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -80,10 +80,27 @@
 <a name='L15'></a><a href='#L15'>15</a>
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">41x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -97,21 +114,58 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Container } from "react-bootstrap";
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Container, Nav, Navbar } from "react-bootstrap";
 &nbsp;
-export default function Footer() {
+export default function AppNavbarLocalhost({ url }) {
   return (
-    &lt;footer className="bg-light pt-3 pt-md-4 pb-4 pb-md-5" data-testid="Footer"&gt;
-      &lt;Container&gt;
-        &lt;p&gt;
-          This is a sample webapp using React with a Spring Boot backend. See
-          the source code on{" "}
-          &lt;a href="https://github.com/ucsb-cs156/spring-react-template"&gt;
-            Github.
-          &lt;/a&gt;
-        &lt;/p&gt;
-      &lt;/Container&gt;
-    &lt;/footer&gt;
+    &lt;&gt;
+      &lt;Navbar
+        expand="sm"
+        bg="warning"
+        sticky="top"
+        data-testid="AppNavbarLocalhost"
+      &gt;
+        &lt;Container&gt;
+          &lt;Navbar.Brand href="http://localhost:8080"&gt;Warning&lt;/Navbar.Brand&gt;
+&nbsp;
+          &lt;Navbar.Toggle /&gt;
+&nbsp;
+          &lt;Navbar.Collapse className="justify-content-between"&gt;
+            &lt;Nav className="mr-auto text-center"&gt;
+              &lt;Nav.Item className="text-center"&gt;
+                &lt;p data-testid="AppNavbarLocalhost-message1"&gt;
+                  Running on &lt;code&gt;{url}&lt;/code&gt; with no backend.
+                &lt;/p&gt;
+                &lt;p data-testid="AppNavbarLocalhost-message2"&gt;
+                  You probably want{" "}
+                  &lt;a href="http://localhost:8080"&gt;http://localhost:8080&lt;/a&gt;{" "}
+                  instead.
+                &lt;/p&gt;
+              &lt;/Nav.Item&gt;
+            &lt;/Nav&gt;
+          &lt;/Navbar.Collapse&gt;
+        &lt;/Container&gt;
+      &lt;/Navbar&gt;
+    &lt;/&gt;
   );
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -121,7 +175,7 @@ export default function Footer() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-11T19:52:45.688Z
+                at 2026-01-07T19:44:32.539Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
