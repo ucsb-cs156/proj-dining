@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsersController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">UsersController.java</span></div><h1>UsersController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
+import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+/**
+ * This is a REST controller for getting information about the users.
+ *
+ * &lt;p&gt;These endpoints are only accessible to users with the role &quot;ROLE_ADMIN&quot;.
+ */
+@Tag(name = &quot;User information (admin only)&quot;)
+@RequestMapping(&quot;/api&quot;)
+@RestController
+<span class="fc" id="L34">public class UsersController extends ApiController {</span>
+
+<span class="fc" id="L36">  @Value(&quot;${app.admin.emails}&quot;)</span>
+  private final List&lt;String&gt; adminEmails = new ArrayList&lt;&gt;();
+
+  @Autowired UserRepository userRepository;
+
+  @Autowired ObjectMapper mapper;
+
+  /**
+   * This method returns a list of all users. Accessible only to users with the role &quot;ROLE_ADMIN&quot;.
+   *
+   * @return a list of all users
+   * @throws JsonProcessingException if there is an error processing the JSON
+   */
+  @Operation(summary = &quot;Get a list of all users&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+  @GetMapping(&quot;/admin/users&quot;)
+  public ResponseEntity&lt;String&gt; users() throws JsonProcessingException {
+
+<span class="fc" id="L54">    Iterable&lt;User&gt; users = userRepository.findAll();</span>
+<span class="fc" id="L55">    String body = mapper.writeValueAsString(users);</span>
+<span class="fc" id="L56">    return ResponseEntity.ok().body(body);</span>
+  }
+
+  /**
+   * This method returns list of all users with a proposed alias.
+   *
+   * @return a list of users with a proposed alias
+   * @throws JsonProcessingException if there is an error processing the JSON
+   */
+  @Operation(summary = &quot;Get a list of all users with a proposed alias&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+  @GetMapping(&quot;/admin/usersWithProposedAlias&quot;)
+  public ResponseEntity&lt;String&gt; getUsersWithProposedAlias() throws JsonProcessingException {
+<span class="fc" id="L69">    Iterable&lt;User&gt; users = userRepository.findByProposedAliasNotNull();</span>
+<span class="fc" id="L70">    String body = mapper.writeValueAsString(users);</span>
+<span class="fc" id="L71">    return ResponseEntity.ok().body(body);</span>
+  }
+
+  /** Get all users whose proposed alias is awaiting moderation. */
+  @Operation(summary = &quot;Get all aliases needing moderation&quot;)
+  @PreAuthorize(&quot;hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')&quot;)
+  @GetMapping(&quot;/admin/users/needsmoderation&quot;)
+  public ResponseEntity&lt;String&gt; getAliasesNeedingModeration() throws JsonProcessingException {
+
+<span class="fc" id="L80">    Iterable&lt;User&gt; users =</span>
+<span class="fc" id="L81">        userRepository.findByStatusAndProposedAliasNotNull(ModerationStatus.AWAITING_REVIEW);</span>
+
+<span class="fc" id="L83">    String body = mapper.writeValueAsString(users);</span>
+
+<span class="fc" id="L85">    return ResponseEntity.ok().body(body);</span>
+  }
+
+  /**
+   * This method allows the user to update their alias.
+   *
+   * @param proposedAlias the new alias
+   * @return the updated user
+   */
+  @Operation(summary = &quot;Update proposed alias of the current user&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @PostMapping(&quot;/currentUser/updateAlias&quot;)
+  public ResponseEntity&lt;User&gt; updateProposedAlias(@RequestParam String proposedAlias) {
+<span class="fc" id="L98">    CurrentUser currentUser = super.getCurrentUser();</span>
+<span class="fc" id="L99">    User user = currentUser.getUser();</span>
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">    if (userRepository.findByAlias(proposedAlias).isPresent()) {</span>
+<span class="fc" id="L102">      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Alias already in use.&quot;);</span>
+    }
+
+<span class="fc" id="L105">    user.setProposedAlias(proposedAlias);</span>
+<span class="fc" id="L106">    user.setStatus(ModerationStatus.AWAITING_REVIEW);</span>
+<span class="fc" id="L107">    User savedUser = userRepository.save(user);</span>
+
+<span class="fc" id="L109">    return ResponseEntity.ok(savedUser);</span>
+  }
+
+  /**
+   * This method allows an admin to update the moderation status of a user's alias.
+   *
+   * @param id the id of the user to update
+   * @param approved the new moderation status
+   * @return the updated user
+   */
+  @PreAuthorize(&quot;hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')&quot;)
+  @PutMapping(&quot;/currentUser/updateAliasModeration&quot;)
+  public User updateAliasModeration(@RequestParam long id, @RequestParam Boolean approved) {
+
+<span class="fc" id="L123">    User user =</span>
+<span class="fc" id="L124">        userRepository.findById(id).orElseThrow(() -&gt; new EntityNotFoundException(User.class, id));</span>
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">    if (approved) {</span>
+<span class="fc" id="L127">      user.setAlias(user.getProposedAlias());</span>
+<span class="fc" id="L128">      user.setStatus(ModerationStatus.APPROVED);</span>
+<span class="fc" id="L129">      user.setDateApproved(LocalDate.now());</span>
+<span class="fc" id="L130">      user.setProposedAlias(null);</span>
+    } else {
+<span class="fc" id="L132">      user.setStatus(ModerationStatus.REJECTED);</span>
+    }
+
+<span class="fc" id="L135">    userRepository.save(user);</span>
+
+<span class="fc" id="L137">    return user;</span>
+  }
+
+  /**
+   * This method allows an admin to toggle the admin status of a user. Will not toggle status of
+   * admin in adminEmails.
+   *
+   * @param id the id of the user to toggle
+   * @return the updated user
+   */
+  @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+  @PutMapping(&quot;/admin/toggleAdmin&quot;)
+  public User toggleAdminStatus(@RequestParam long id) {
+
+<span class="fc" id="L151">    User user =</span>
+<span class="fc" id="L152">        userRepository.findById(id).orElseThrow(() -&gt; new EntityNotFoundException(User.class, id));</span>
+
+<span class="fc bfc" id="L154" title="All 2 branches covered.">    if (!adminEmails.contains(user.getEmail())) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">      user.setAdmin(!user.isAdmin());</span>
+    }
+
+<span class="fc" id="L158">    userRepository.save(user);</span>
+
+<span class="fc" id="L160">    return user;</span>
+  }
+
+  /**
+   * This method allows an admin to toggle the moderator status of a user.
+   *
+   * @param id the id of the user to toggle
+   * @return the updated user
+   */
+  @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+  @PutMapping(&quot;/admin/toggleModerator&quot;)
+  public User toggleModeratorStatus(@RequestParam long id) {
+
+<span class="fc" id="L173">    User user =</span>
+<span class="fc" id="L174">        userRepository.findById(id).orElseThrow(() -&gt; new EntityNotFoundException(User.class, id));</span>
+
+<span class="fc bfc" id="L176" title="All 2 branches covered.">    user.setModerator(!user.isModerator());</span>
+
+<span class="fc" id="L178">    userRepository.save(user);</span>
+
+<span class="fc" id="L180">    return user;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
