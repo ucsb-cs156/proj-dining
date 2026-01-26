@@ -14,6 +14,7 @@ import edu.ucsb.cs156.dining.config.SecurityConfig;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ import org.springframework.test.web.servlet.MvcResult;
 public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
   @Autowired private MockMvc mockMvc;
+
+  @MockBean private UserRepository userRepository;
 
   @MockBean private UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
 

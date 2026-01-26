@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.config.SecurityConfig;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import org.springframework.test.web.servlet.MvcResult;
 public class UCSBDiningMenuControllerTests extends ControllerTestCase {
 
   @Autowired private MockMvc mockMvc;
+
+  @MockBean private UserRepository userRepository;
 
   @MockBean private UCSBDiningMenuService ucsbDiningMenuService;
 

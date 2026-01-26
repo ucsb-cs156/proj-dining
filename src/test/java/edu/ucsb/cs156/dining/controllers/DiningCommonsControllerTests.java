@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.models.DiningCommons;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.DiningCommonsService;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ import org.springframework.test.web.servlet.MvcResult;
 public class DiningCommonsControllerTests extends ControllerTestCase {
 
   @Autowired private MockMvc mockMvc;
+
+  @MockBean private UserRepository userRepository;
 
   @MockBean DiningCommonsService diningCommonsService;
 
