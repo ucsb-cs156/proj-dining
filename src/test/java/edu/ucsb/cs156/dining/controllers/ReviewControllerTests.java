@@ -19,7 +19,6 @@ import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.EditedReview;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.CurrentUserService;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
@@ -45,8 +44,6 @@ public class ReviewControllerTests extends ControllerTestCase {
   @MockBean ReviewRepository reviewRepository;
 
   @Autowired private ObjectMapper mapper;
-
-  @MockBean UserRepository userRepository;
 
   @MockBean private MenuItemRepository menuItemRepository;
 
