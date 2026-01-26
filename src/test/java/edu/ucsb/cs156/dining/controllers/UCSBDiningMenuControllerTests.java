@@ -14,8 +14,8 @@ import edu.ucsb.cs156.dining.services.UCSBDiningMenuService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -25,9 +25,9 @@ public class UCSBDiningMenuControllerTests extends ControllerTestCase {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockBean private UserRepository userRepository;
+  @MockitoBean private UserRepository userRepository;
 
-  @MockBean private UCSBDiningMenuService ucsbDiningMenuService;
+  @MockitoBean private UCSBDiningMenuService ucsbDiningMenuService;
 
   @Test
   public void users_can_see_meal_times() throws Exception {

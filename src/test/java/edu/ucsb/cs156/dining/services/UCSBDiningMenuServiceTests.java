@@ -15,9 +15,9 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,7 +29,7 @@ public class UCSBDiningMenuServiceTests {
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
-  @MockBean private WiremockService wiremockService;
+  @MockitoBean private WiremockService wiremockService;
 
   @Mock private RestTemplate restTemplate;
 

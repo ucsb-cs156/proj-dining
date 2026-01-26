@@ -7,15 +7,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.models.SystemInfo;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.SystemInfoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(controllers = SystemInfoController.class)
 public class SystemInfoControllerTests extends ControllerTestCase {
 
-  @MockBean SystemInfoService mockSystemInfoService;
+  @MockitoBean SystemInfoService mockSystemInfoService;
+
+  @MockitoBean public UserRepository userRepository;
 
   @Test
   public void systemInfo__admin_logged_in() throws Exception {

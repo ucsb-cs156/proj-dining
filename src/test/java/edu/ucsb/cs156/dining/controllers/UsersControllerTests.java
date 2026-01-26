@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +34,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Import(TestConfig.class)
 @TestPropertySource(properties = {"ADMIN_EMAILS=superadmin@example.org"})
 public class UsersControllerTests extends ControllerTestCase {
+
+  @MockitoBean public UserRepository userRepository;
 
   @Test
   public void users__logged_out() throws Exception {

@@ -7,7 +7,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
+import edu.ucsb.cs156.dining.controllers.UserInfoController;
 import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +19,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -29,15 +29,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(controllers = UserInfoController.class)
 public class RoleInterceptorTests extends ControllerTestCase {
 
   @Autowired private RequestMappingHandlerMapping mapping;
+
+  @MockitoBean public UserRepository userRepository;
 
   @BeforeEach
   public void mockLogin() {

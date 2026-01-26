@@ -17,9 +17,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -29,9 +29,9 @@ public class DiningCommonsControllerTests extends ControllerTestCase {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockBean private UserRepository userRepository;
+  @MockitoBean DiningCommonsService diningCommonsService;
 
-  @MockBean DiningCommonsService diningCommonsService;
+  @MockitoBean public UserRepository userRepository;
 
   @Autowired private ObjectMapper objectMapper;
 

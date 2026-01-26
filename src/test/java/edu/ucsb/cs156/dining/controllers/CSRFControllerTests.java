@@ -5,17 +5,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 
 @ActiveProfiles("development")
 @WebMvcTest(controllers = CSRFController.class)
 @Import(TestConfig.class)
 public class CSRFControllerTests extends ControllerTestCase {
+
+  @MockitoBean public UserRepository userRepository;
 
   @Test
   public void csrf_returns_ok() throws Exception {
