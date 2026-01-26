@@ -2,6 +2,7 @@ package edu.ucsb.cs156.dining;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.services.CurrentUserService;
 import edu.ucsb.cs156.dining.services.GrantedAuthoritiesService;
 import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
@@ -25,6 +26,8 @@ public abstract class ControllerTestCase {
   @Autowired public MockMvc mockMvc;
 
   @Autowired public ObjectMapper mapper;
+
+  @MockBean UserRepository userRepository;
 
   @MockBean WiremockService mockWiremockService;
 

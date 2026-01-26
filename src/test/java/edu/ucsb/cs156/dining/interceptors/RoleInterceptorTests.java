@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.User;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,8 +36,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @SpringBootTest
 @AutoConfigureMockMvc
 public class RoleInterceptorTests extends ControllerTestCase {
-
-  @MockBean UserRepository userRepository;
 
   @Autowired private RequestMappingHandlerMapping mapping;
 
