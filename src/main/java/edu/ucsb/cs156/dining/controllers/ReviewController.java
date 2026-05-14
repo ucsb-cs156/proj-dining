@@ -41,6 +41,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ReviewController extends ApiController {
 
+  private boolean hasReviewerComments(String reviewerComments) {
+    return reviewerComments != null && !reviewerComments.trim().isEmpty();
+  }
+
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Map<String, String>> handleValidationExceptions(
       IllegalArgumentException ex) {
@@ -118,9 +122,12 @@ public class ReviewController extends ApiController {
     Review review = new Review();
     review.setDateItemServed(dateItemServed);
 
-    // Ensures content of truly empty and sets to null if so
-    if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
+    if (hasReviewerComments(reviewerComments)) {
       review.setReviewerComments(reviewerComments);
+      review.setStatus(ModerationStatus.AWAITING_REVIEW);
+    } else {
+      review.setReviewerComments(null);
+      review.setStatus(ModerationStatus.APPROVED);
     }
 
     // Ensure user inputs rating 1-5
@@ -134,10 +141,6 @@ public class ReviewController extends ApiController {
         menuItemRepository
             .findById(itemId)
             .orElseThrow(() -> new EntityNotFoundException(MenuItem.class, itemId));
-
-    if (review.getReviewerComments() == null) {
-      review.setStatus(ModerationStatus.APPROVED);
-    }
 
     review.setItem(reviewedItem);
     CurrentUser user = getCurrentUser();
@@ -182,8 +185,7 @@ public class ReviewController extends ApiController {
       oldReview.setItemsStars(incoming.getItemStars());
     }
 
-    if (incoming.getReviewerComments() != null
-        && !incoming.getReviewerComments().trim().isEmpty()) {
+    if (hasReviewerComments(incoming.getReviewerComments())) {
       oldReview.setReviewerComments(incoming.getReviewerComments());
       oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
     } else {
