@@ -8,7 +8,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +26,10 @@ public class UCSBDiningMenuItemsService {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
-  private RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate;
 
-  public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {
-    restTemplate = restTemplateBuilder.build();
+  public UCSBDiningMenuItemsService(RestTemplate template) throws Exception {
+    restTemplate = template;
   }
 
   public static final String ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT =

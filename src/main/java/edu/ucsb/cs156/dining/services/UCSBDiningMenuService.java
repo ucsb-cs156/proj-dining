@@ -3,7 +3,6 @@ package edu.ucsb.cs156.dining.services;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +23,10 @@ public class UCSBDiningMenuService {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
-  private RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate;
 
-  public UCSBDiningMenuService(RestTemplateBuilder restTemplateBuilder) throws Exception {
-    restTemplate = restTemplateBuilder.build();
+  public UCSBDiningMenuService(RestTemplate template) throws Exception {
+    restTemplate = template;
   }
 
   public static final String ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT =

@@ -8,7 +8,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -40,8 +39,8 @@ public class DiningCommonsService {
 
   private final RestTemplate restTemplate;
 
-  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {
-    restTemplate = restTemplateBuilder.build();
+  public DiningCommonsService(RestTemplate template) {
+    restTemplate = template;
   }
 
   @Cacheable("diningCommons")
