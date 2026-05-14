@@ -1,23 +1,22 @@
-import { Button, Form, Row, Col} from "react-bootstrap";
+import { Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 
 export default function ReviewForm({
   initialItemName,
-  submitAction, 
+  submitAction,
   buttonLabel = "Submit Review",
 }) {
-
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm({ 
+  } = useForm({
     defaultValues: {
       reviewerComments: "",
-      itemStars: 5,
+      itemsStars: 5,
       dateItemServed: new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
-    }
+    },
   });
 
   const navigate = useNavigate();
@@ -53,10 +52,11 @@ export default function ReviewForm({
             <Form.Select
               data-testid="ReviewForm-review-stars"
               id="review-stars"
-              {...register("itemStars", { // default+unemptiable, so required unneeded
+              {...register("itemsStars", {
+                // default+unemptiable, so required unneeded
                 valueAsNumber: true,
                 min: 1,
-                max: 5
+                max: 5,
               })}
             >
               {[1, 2, 3, 4, 5].map((num) => (
@@ -78,9 +78,9 @@ export default function ReviewForm({
               type="datetime-local" // HTML native handling of invalid input. default already step="60" as desired
               isInvalid={Boolean(errors.dateItemServed)}
               {...register("dateItemServed", {
-                required: "Date is required."
+                required: "Date is required.",
               })}
-              />
+            />
           </Form.Group>
         </Col>
       </Row>
