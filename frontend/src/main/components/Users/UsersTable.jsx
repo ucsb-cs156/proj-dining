@@ -1,4 +1,8 @@
 import OurTable from "main/components/OurTable";
+import { Button } from "react-bootstrap";
+import { useBackendMutation } from "main/utils/useBackend";
+import { useQueryClient } from "react-query";
+import { toast } from "react-toastify";
 
 const columns = [
   {
@@ -54,5 +58,75 @@ const columns = [
 ];
 
 export default function UsersTable({ users }) {
-  return <OurTable data={users} columns={columns} testid={"UsersTable"} />;
+  const queryClient = useQueryClient();
+  
+  const toggleAdminMutation = useBackendMutation(
+    (cell) => ({
+      url: "/api/admin/toggleAdmin",
+      method: "PUT",
+      params: {
+        id: cell.row.values.id,
+      },
+    }),
+    {
+      onSuccess: () => {
+        toast("Admin status toggled");
+        queryClient.invalidateQueries(["/api/admin/users"]);
+      },
+    },
+    ["/api/admin/users"],
+  );
+
+  const toggleModeratorMutation = useBackendMutation(
+    (cell) => ({
+      url: "/api/admin/toggleModerator",
+      method: "PUT",
+      params: {
+        id: cell.row.values.id,
+      },
+    }),
+    {
+      onSuccess: () => {
+        toast("Moderator status toggled");
+        queryClient.invalidateQueries(["/api/admin/users"]);
+      },
+    },
+    ["/api/admin/users"],
+  );
+
+  const toggleAdminColumn = {
+    Header: "Toggle Admin",
+    id: "toggle-admin",
+    Cell: (cell) => (
+      <Button
+        variant="primary"
+        onClick={() => toggleAdminMutation.mutate(cell)}
+        data-testid={`UsersTable-cell-row-${cell.row.index}-col-toggle-admin-button`}
+      >
+        Toggle Admin
+      </Button>
+    ),
+  };
+
+  const toggleModeratorColumn = {
+    Header: "Toggle Moderator",
+    id: "toggle-moderator",
+    Cell: (cell) => (
+      <Button
+        variant="primary"
+        onClick={() => toggleModeratorMutation.mutate(cell)}
+        data-testid={`UsersTable-cell-row-${cell.row.index}-col-toggle-moderator-button`}
+      >
+        Toggle Moderator
+      </Button>
+    ),
+  };
+
+  return (
+    <OurTable
+      data={users}
+      columns={[...columns, toggleAdminColumn, toggleModeratorColumn]}
+      testid={"UsersTable"}
+    />
+  );
 }
