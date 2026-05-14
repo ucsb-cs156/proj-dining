@@ -59,14 +59,18 @@ public class UCSBDiningMenuItemsService {
 <span class="fc" id="L59">    url = url.replace(&quot;{dining-common-code}&quot;, diningCommonCode);</span>
 <span class="fc" id="L60">    url = url.replace(&quot;{meal-code}&quot;, mealCode);</span>
 
-<span class="fc" id="L62">    System.out.println(&quot;currently running&quot;);</span>
+<span class="fc" id="L62">    log.info(</span>
+        &quot;Fetching menu items for date: {}, dining common: {}, meal: {}&quot;,
+        dateTime,
+        diningCommonCode,
+        mealCode);
 
-<span class="fc" id="L64">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
-<span class="fc" id="L65">    String retBody = re.getBody();</span>
+<span class="fc" id="L68">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L69">    String retBody = re.getBody();</span>
 
-<span class="fc" id="L67">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
+<span class="fc" id="L71">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
 
-<span class="fc" id="L69">    return menuItems;</span>
+<span class="fc" id="L73">    return menuItems;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
