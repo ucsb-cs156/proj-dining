@@ -75,11 +75,9 @@ export default function ReviewForm({
             <Form.Control
               data-testid="ReviewForm-review-date"
               id="review-date"
-              type="datetime-local" // HTML native handling of invalid input. default already step="60" as desired
+              type="datetime-local" // HTML native handling of invalid input, so required unneeded. default already step="60" as desired
               isInvalid={Boolean(errors.dateItemServed)}
-              {...register("dateItemServed", {
-                required: "Date is required.",
-              })}
+              {...register("dateItemServed")}
             />
           </Form.Group>
         </Col>
