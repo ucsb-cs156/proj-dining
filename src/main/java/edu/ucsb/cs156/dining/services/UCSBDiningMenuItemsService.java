@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,6 +44,7 @@ public class UCSBDiningMenuItemsService {
    * @param mealCode String of meal code
    * @return a list of menu items
    */
+  @Cacheable("menuItem")
   public List<Entree> get(String dateTime, String diningCommonCode, String mealCode)
       throws JsonProcessingException {
 
@@ -56,6 +58,12 @@ public class UCSBDiningMenuItemsService {
     url = url.replace("{date-time}", dateTime);
     url = url.replace("{dining-common-code}", diningCommonCode);
     url = url.replace("{meal-code}", mealCode);
+
+    log.info(
+        "Fetching menu items for date: {}, dining common: {}, meal: {}",
+        dateTime,
+        diningCommonCode,
+        mealCode);
 
     ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
     String retBody = re.getBody();

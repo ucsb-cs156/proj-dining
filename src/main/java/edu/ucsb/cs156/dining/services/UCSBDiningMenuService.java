@@ -4,6 +4,7 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,6 +33,7 @@ public class UCSBDiningMenuService {
   public static final String ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT =
       "https://api.ucsb.edu/dining/menu/v1/{date-time}/{dining-common-code}";
 
+  @Cacheable("menu")
   public String getJSON(String dateTime, String diningCommonCode) throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
