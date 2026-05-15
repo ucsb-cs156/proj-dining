@@ -1,24 +1,30 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 
 export default function ReviewForm({ initialItemName, submitAction }) {
-  const [comments, setComments] = React.useState("");
-  const [stars, setStars] = React.useState(5);
-  const [dateServed, setDateServed] = React.useState(() => {
-    return new Date().toISOString().slice(0, 16); // Default to now, in YYYY-MM-DDTHH:mm format
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      comments: "",
+      stars: 5,
+      dateServed: new Date().toISOString().slice(0, 16),
+    },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = (data) => {
     submitAction({
-      reviewerComments: comments,
-      itemsStars: stars,
-      dateItemServed: dateServed,
+      reviewerComments: data.comments,
+      itemsStars: data.stars,
+      dateItemServed: data.dateServed,
     });
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-item-name">Item Name</Form.Label>
         <Form.Control
@@ -35,24 +41,33 @@ export default function ReviewForm({ initialItemName, submitAction }) {
           id="review-comments"
           as="textarea"
           rows={3}
-          value={comments}
-          onChange={(e) => setComments(e.target.value)}
+          isInvalid={Boolean(errors.comments)}
+          {...register("comments", {
+            required: "Comments is required.",
+            maxLength: { value: 255, message: "Max length 255 characters" },
+          })}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.comments?.message}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-stars">Stars (1 to 5)</Form.Label>
-        <Form.Select
+        <Form.Control
           id="review-stars"
-          value={stars}
-          onChange={(e) => setStars(Number(e.target.value))}
-        >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </Form.Select>
+          type="number"
+          isInvalid={Boolean(errors.stars)}
+          {...register("stars", {
+            required: "Stars is required.",
+            valueAsNumber: true,
+            min: { value: 1, message: "Stars must be between 1 and 5" },
+            max: { value: 5, message: "Stars must be between 1 and 5" },
+          })}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.stars?.message}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">
@@ -62,9 +77,12 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         <Form.Control
           id="review-date"
           type="datetime-local"
-          value={dateServed}
-          onChange={(e) => setDateServed(e.target.value)}
+          isInvalid={Boolean(errors.dateServed)}
+          {...register("dateServed", { required: "Date is required" })}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.dateServed?.message}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <Button type="submit">Submit Review</Button>
