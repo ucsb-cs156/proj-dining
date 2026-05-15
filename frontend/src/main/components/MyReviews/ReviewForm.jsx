@@ -56,8 +56,7 @@ export default function ReviewForm({
                 // default+unemptiable, so required unneeded for frontend
                 valueAsNumber: true,
                 min: 1,
-                max: 5,
-                required: true,
+                max: 5
               })}
             >
               {[1, 2, 3, 4, 5].map((num) => (
@@ -78,9 +77,7 @@ export default function ReviewForm({
               id="review-date"
               type="datetime-local" // HTML native handling of invalid input, so required unneeded for frontend. default already step="60" as desired
               isInvalid={Boolean(errors.dateItemServed)}
-              {...register("dateItemServed", {
-                required: true,
-              })}
+              {...register("dateItemServed")}
             />
           </Form.Group>
         </Col>
