@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
@@ -70,9 +76,11 @@ describe("UserTable tests", () => {
       "Moderator",
       "Alias",
       "Proposed Alias",
+      "Status",
       "Toggle Admin",
       "Toggle Moderator",
     ];
+
     const expectedFields = [
       "id",
       "givenName",
@@ -85,11 +93,12 @@ describe("UserTable tests", () => {
       "toggle-admin",
       "toggle-moderator",
     ];
+
     const testId = "UsersTable";
 
     expectedHeaders.forEach((headerText) => {
-      const headers = screen.getAllByText(headerText);
-      expect(headers.length).toBeGreaterThan(0);
+      const header = screen.getByRole("columnheader", { name: headerText });
+      expect(header).toBeInTheDocument();
     });
 
     expectedFields.forEach((field) => {
@@ -116,12 +125,24 @@ describe("UserTable tests", () => {
       screen.getByTestId(`${testId}-cell-row-0-col-moderator`),
     ).toHaveTextContent("false");
 
+    const toggleAdminCell = screen.getByTestId(
+      `${testId}-cell-row-0-col-toggle-admin`,
+    );
+    const toggleModeratorCell = screen.getByTestId(
+      `${testId}-cell-row-0-col-toggle-moderator`,
+    );
+
+    expect(toggleAdminCell).toBeInTheDocument();
+    expect(toggleModeratorCell).toBeInTheDocument();
+
     expect(
-      screen.getByTestId("UsersTable-cell-row-0-col-toggle-admin-button"),
+      within(toggleAdminCell).getByRole("button", { name: "Toggle Admin" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByTestId("UsersTable-cell-row-0-col-toggle-moderator-button"),
+      within(toggleModeratorCell).getByRole("button", {
+        name: "Toggle Moderator",
+      }),
     ).toBeInTheDocument();
 
     expect(
