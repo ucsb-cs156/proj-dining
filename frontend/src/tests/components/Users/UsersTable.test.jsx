@@ -12,12 +12,21 @@ import { vi } from "vitest";
 import { toast } from "react-toastify";
 import usersFixtures from "fixtures/usersFixtures";
 import UsersTable from "main/components/Users/UsersTable";
+import { useBackendMutation } from "main/utils/useBackend";
 
 vi.mock("react-toastify", async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
     toast: vi.fn(),
+  };
+});
+
+vi.mock("main/utils/useBackend", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useBackendMutation: vi.fn(actual.useBackendMutation),
   };
 });
 
@@ -109,18 +118,23 @@ describe("UserTable tests", () => {
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent(
       "1",
     );
+
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-admin`),
     ).toHaveTextContent("true");
+
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-moderator`),
     ).toHaveTextContent("false");
+
     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent(
       "2",
     );
+
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-admin`),
     ).toHaveTextContent("false");
+
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-moderator`),
     ).toHaveTextContent("false");
@@ -128,6 +142,7 @@ describe("UserTable tests", () => {
     const toggleAdminCell = screen.getByTestId(
       `${testId}-cell-row-0-col-toggle-admin`,
     );
+
     const toggleModeratorCell = screen.getByTestId(
       `${testId}-cell-row-0-col-toggle-moderator`,
     );
@@ -152,6 +167,28 @@ describe("UserTable tests", () => {
     expect(
       screen.getByTestId("UsersTable-cell-row-0-col-toggle-moderator-button"),
     ).toHaveTextContent("Toggle Moderator");
+  });
+
+  test("useBackendMutation is configured to refresh admin users after toggles", () => {
+    renderWithQueryClient(<UsersTable users={usersFixtures.threeUsers} />);
+
+    expect(useBackendMutation).toHaveBeenNthCalledWith(
+      1,
+      expect.any(Function),
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+      }),
+      ["/api/admin/users"],
+    );
+
+    expect(useBackendMutation).toHaveBeenNthCalledWith(
+      2,
+      expect.any(Function),
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+      }),
+      ["/api/admin/users"],
+    );
   });
 
   test("Status column appends approval date only for approved users with a valid date", () => {
@@ -199,7 +236,9 @@ describe("UserTable tests", () => {
       expect(toast).toHaveBeenCalledWith("Admin status toggled");
     });
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["/api/admin/users"]);
+    await waitFor(() => {
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["/api/admin/users"]);
+    });
   });
 
   test("Clicking Toggle Moderator calls the toggleModerator endpoint", async () => {
@@ -229,6 +268,8 @@ describe("UserTable tests", () => {
       expect(toast).toHaveBeenCalledWith("Moderator status toggled");
     });
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["/api/admin/users"]);
+    await waitFor(() => {
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["/api/admin/users"]);
+    });
   });
 });
