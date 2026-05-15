@@ -56,7 +56,7 @@ export default function ReviewForm({
                 // default+unemptiable, so required unneeded for frontend
                 valueAsNumber: true,
                 min: 1,
-                max: 5
+                max: 5,
               })}
             >
               {[1, 2, 3, 4, 5].map((num) => (
