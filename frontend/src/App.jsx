@@ -35,15 +35,9 @@ function App() {
         {hasRole(currentUser, "ROLE_USER") && (
           <>
             <Route path="/myreviews" element={<MyReviewsIndexPage />} />
-            <Route
-              path="/reviews/post/:id"
-              element={<PostReviewPage />}
-            />
+            <Route path="/reviews/post/:id" element={<PostReviewPage />} />
 
-            <Route
-              path="/reviews/edit/:id"
-              element={<EditReviewPage />}
-            />
+            <Route path="/reviews/edit/:id" element={<EditReviewPage />} />
 
             <Route path="/reviews/:itemid" element={<ReviewsPage />} />
           </>
@@ -52,10 +46,7 @@ function App() {
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <>
             <Route path="/moderate" element={<ModerateReviews />} />
-            <Route
-              path="/moderate/aliases"
-              element={<ModerateAliases />}
-            />
+            <Route path="/moderate/aliases" element={<ModerateAliases />} />
           </>
         )}
         <>
