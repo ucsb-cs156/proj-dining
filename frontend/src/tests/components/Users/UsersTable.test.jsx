@@ -1,17 +1,55 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter";
+import { vi } from "vitest";
+import { toast } from "react-toastify";
 import usersFixtures from "fixtures/usersFixtures";
 import UsersTable from "main/components/Users/UsersTable";
 
-const queryClient = new QueryClient();
+vi.mock("react-toastify", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    toast: vi.fn(),
+  };
+});
+
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
 
 const renderWithQueryClient = (ui) => {
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
-  );
+  const queryClient = createQueryClient();
+
+  return {
+    queryClient,
+    ...render(
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    ),
+  };
 };
 
 describe("UserTable tests", () => {
+  let axiosMock;
+
+  beforeEach(() => {
+    axiosMock = new AxiosMockAdapter(axios);
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    axiosMock.restore();
+  });
+
   test("renders without crashing for empty table", () => {
     renderWithQueryClient(<UsersTable users={[]} />);
   });
@@ -44,6 +82,8 @@ describe("UserTable tests", () => {
       "moderator",
       "alias",
       "proposedAlias",
+      "toggle-admin",
+      "toggle-moderator",
     ];
     const testId = "UsersTable";
 
@@ -53,8 +93,8 @@ describe("UserTable tests", () => {
     });
 
     expectedFields.forEach((field) => {
-      const header = screen.getByTestId(`${testId}-cell-row-0-col-${field}`);
-      expect(header).toBeInTheDocument();
+      const cell = screen.getByTestId(`${testId}-cell-row-0-col-${field}`);
+      expect(cell).toBeInTheDocument();
     });
 
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent(
@@ -109,5 +149,65 @@ describe("UserTable tests", () => {
     expect(screen.getByText("Approved")).toBeInTheDocument();
     expect(screen.getByText("Rejected")).toBeInTheDocument();
     expect(screen.getByText("Awaiting Moderation")).toBeInTheDocument();
+  });
+
+  test("Clicking Toggle Admin calls the toggleAdmin endpoint", async () => {
+    const { queryClient } = renderWithQueryClient(
+      <UsersTable users={usersFixtures.threeUsers} />,
+    );
+
+    const invalidateQueriesSpy = vi.spyOn(queryClient, "invalidateQueries");
+
+    axiosMock.onPut("/api/admin/toggleAdmin").reply((config) => {
+      expect(config.params).toEqual({ id: 1 });
+      return [200, { ...usersFixtures.threeUsers[0], admin: false }];
+    });
+
+    fireEvent.click(
+      screen.getByTestId("UsersTable-cell-row-0-col-toggle-admin-button"),
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
+    });
+
+    expect(axiosMock.history.put[0].url).toBe("/api/admin/toggleAdmin");
+    expect(axiosMock.history.put[0].params).toEqual({ id: 1 });
+
+    await waitFor(() => {
+      expect(toast).toHaveBeenCalledWith("Admin status toggled");
+    });
+
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["/api/admin/users"]);
+  });
+
+  test("Clicking Toggle Moderator calls the toggleModerator endpoint", async () => {
+    const { queryClient } = renderWithQueryClient(
+      <UsersTable users={usersFixtures.threeUsers} />,
+    );
+
+    const invalidateQueriesSpy = vi.spyOn(queryClient, "invalidateQueries");
+
+    axiosMock.onPut("/api/admin/toggleModerator").reply((config) => {
+      expect(config.params).toEqual({ id: 1 });
+      return [200, { ...usersFixtures.threeUsers[0], moderator: true }];
+    });
+
+    fireEvent.click(
+      screen.getByTestId("UsersTable-cell-row-0-col-toggle-moderator-button"),
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
+    });
+
+    expect(axiosMock.history.put[0].url).toBe("/api/admin/toggleModerator");
+    expect(axiosMock.history.put[0].params).toEqual({ id: 1 });
+
+    await waitFor(() => {
+      expect(toast).toHaveBeenCalledWith("Moderator status toggled");
+    });
+
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["/api/admin/users"]);
   });
 });

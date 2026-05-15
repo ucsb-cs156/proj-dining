@@ -1,7 +1,7 @@
 import OurTable from "main/components/OurTable";
 import { Button } from "react-bootstrap";
-import { useBackendMutation } from "main/utils/useBackend";
 import { useQueryClient } from "react-query";
+import { useBackendMutation } from "main/utils/useBackend";
 import { toast } from "react-toastify";
 
 const columns = [
@@ -59,7 +59,7 @@ const columns = [
 
 export default function UsersTable({ users }) {
   const queryClient = useQueryClient();
-  
+
   const toggleAdminMutation = useBackendMutation(
     (cell) => ({
       url: "/api/admin/toggleAdmin",
