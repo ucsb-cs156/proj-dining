@@ -51,8 +51,8 @@ describe("ReviewForm tests", () => {
     const submitButton = screen.getByTestId("ReviewForm-submit");
     const reviewDateField = screen.getByTestId("ReviewForm-review-date");
 
-    await fireEvent.change(reviewDateField, { target: { value: "" } });
-    await fireEvent.click(submitButton);
+    fireEvent.change(reviewDateField, { target: { value: "" } });
+    fireEvent.click(submitButton);
 
     // HTML native validation will prevent missing date from going through (but no rendered msg)
     await waitFor(() => expect(mockSubmitAction).not.toHaveBeenCalled());
