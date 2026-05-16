@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import ModerateReviews from "main/pages/ModerateReviewsPage";
 import { vi } from "vitest";
+import { render, waitFor, screen, fireEvent } from "@testing-library/react";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
@@ -173,5 +174,105 @@ describe("ModerateReviews Page Tests", () => {
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-Reject-button`),
     ).not.toBeInTheDocument();
+  });
+
+  test("openModal sets selected review and status and opens modal when Approve clicked", async () => {
+  setupModerator();
+  const queryClient = new QueryClient();
+  axiosMock
+    .onGet("/api/reviews/needsmoderation")
+    .reply(200, ReviewFixtures.threeReviews);
+
+  render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <ModerateReviews />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+
+  await waitFor(() => {
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+    ).toBeInTheDocument();
+  });
+
+  fireEvent.click(
+    screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+  );
+
+  // Modal should now be open with Approve title
+  await waitFor(() => {
+    expect(screen.getByText("Approve Review")).toBeInTheDocument();
+  });
+});
+
+  test("openModal sets selected review and status and opens modal when Reject clicked", async () => {
+    setupModerator();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
+    );
+
+    // Modal should now be open with Reject title
+    await waitFor(() => {
+      expect(screen.getByText("Reject Review")).toBeInTheDocument();
+    });
+  });
+
+  test("closeModal closes the modal when Cancel is clicked", async () => {
+    setupModerator();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    // Open the modal first
+    fireEvent.click(
+      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Approve Review")).toBeInTheDocument();
+    });
+
+    // Now close it
+    fireEvent.click(screen.getByText("Cancel"));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    });
   });
 });

@@ -6,6 +6,7 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { vi } from "vitest";
 
+
 const mockedNavigate = vi.fn();
 
 vi.mock("react-router", async () => ({
@@ -125,13 +126,50 @@ describe("ReviewsTable tests", () => {
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
   });
 
+  // test("Moderator buttons appear and work properly", async () => {
+  //   render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <ReviewsTable
+  //         reviews={ReviewFixtures.threeReviews}
+  //         userOptions={false}
+  //         moderatorOptions={true}
+  //       />
+  //     </QueryClientProvider>,
+  //   );
+
+  //   await waitFor(() => {
+  //     expect(
+  //       screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+  //     ).toBeInTheDocument();
+  //   });
+
+  //   const approveButton = screen.getByTestId(
+  //     `Reviewstable-cell-row-0-col-Approve-button`,
+  //   );
+  //   expect(approveButton).toBeInTheDocument();
+  //   expect(approveButton).toHaveClass("btn-primary");
+
+  //   fireEvent.click(approveButton);
+
+  //   const rejectButton = screen.getByTestId(
+  //     `Reviewstable-cell-row-0-col-Reject-button`,
+  //   );
+  //   expect(rejectButton).toBeInTheDocument();
+  //   expect(rejectButton).toHaveClass("btn-danger");
+
+  //   fireEvent.click(rejectButton);
+  // });
+
   test("Moderator buttons appear and work properly", async () => {
+    const mockOpenModal = vi.fn();
+
     render(
       <QueryClientProvider client={queryClient}>
         <ReviewsTable
           reviews={ReviewFixtures.threeReviews}
           userOptions={false}
           moderatorOptions={true}
+          openModal={mockOpenModal}
         />
       </QueryClientProvider>,
     );
@@ -149,6 +187,10 @@ describe("ReviewsTable tests", () => {
     expect(approveButton).toHaveClass("btn-primary");
 
     fireEvent.click(approveButton);
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      ReviewFixtures.threeReviews[0],
+      "APPROVED",
+    );
 
     const rejectButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Reject-button`,
@@ -157,7 +199,12 @@ describe("ReviewsTable tests", () => {
     expect(rejectButton).toHaveClass("btn-danger");
 
     fireEvent.click(rejectButton);
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      ReviewFixtures.threeReviews[0],
+      "REJECTED",
+    );
   });
+  
 
   test("Renders stars icons and formatted date correctly", () => {
     render(

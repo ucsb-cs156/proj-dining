@@ -13,6 +13,7 @@ export default function ReviewsTable({
   reviews,
   userOptions,
   moderatorOptions,
+  openModal,
 }) {
   const navigate = useNavigate();
 
@@ -34,25 +35,25 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
-  const approveMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
+  // const approveMutation = useBackendMutation(
+  //   (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
+  //   { onSuccess: onModerateSuccess },
+  //   ["/api/reviews/needsmoderation"],
+  // );
 
-  const rejectMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
+  // const rejectMutation = useBackendMutation(
+  //   (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
+  //   { onSuccess: onModerateSuccess },
+  //   ["/api/reviews/needsmoderation"],
+  // );
 
-  const approveCallback = async (cell) => {
-    approveMutation.mutate(cell);
-  };
+  // const approveCallback = async (cell) => {
+  //   approveMutation.mutate(cell);
+  // };
 
-  const rejectCallback = async (cell) => {
-    rejectMutation.mutate(cell);
-  };
+  // const rejectCallback = async (cell) => {
+  //   rejectMutation.mutate(cell);
+  // };
 
   const columns = [
     {
@@ -100,11 +101,28 @@ export default function ReviewsTable({
 
   if (moderatorOptions) {
     columns.push(
-      ButtonColumn("Approve", "primary", approveCallback, "Reviewstable"),
+      ButtonColumn(
+        "Approve",
+        "primary",
+        (cell) => openModal(cell.row.original, "APPROVED"),
+        "Reviewstable",
+      ),
     );
+
     columns.push(
-      ButtonColumn("Reject", "danger", rejectCallback, "Reviewstable"),
-    );
+      ButtonColumn(
+        "Reject",
+        "danger",
+        (cell) => openModal(cell.row.original, "REJECTED"),
+        "Reviewstable",
+      ),
+    );    
+    // columns.push(
+    //   ButtonColumn("Approve", "primary", approveCallback, "Reviewstable"),
+    // );
+    // columns.push(
+    //   ButtonColumn("Reject", "danger", rejectCallback, "Reviewstable"),
+    // );
   }
 
   return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
