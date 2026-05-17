@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,12 +44,15 @@ public class DiningCommonsService {
     restTemplate = restTemplateBuilder.build();
   }
 
+  @Cacheable("diningCommons")
   public List<DiningCommons> get() throws JsonProcessingException {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("ucsb-api-key", this.apiKey);
+
+    log.info("Fetching dining commons from UCSB API");
 
     HttpEntity<String> entity = new HttpEntity<>(headers);
     ResponseEntity<String> re =
