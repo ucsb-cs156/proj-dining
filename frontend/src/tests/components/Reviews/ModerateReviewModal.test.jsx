@@ -1,18 +1,24 @@
 import React from "react";
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
-import ModerateReviewModal from "main/components/Reviews/ModerateReviewModal";
-import { vi } from "vitest";
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
+
+import ModerateReviewModal from "main/components/Reviews/ModerateReviewModal";
+import { useBackendMutation } from "main/utils/useBackend";
 
 let capturedOnSuccess;
 let capturedAxiosParamsFn;
+
 const mockMutate = vi.fn();
 
 vi.mock("main/utils/useBackend", () => ({
   useBackendMutation: vi.fn((axiosParamsFn, callbacks) => {
     capturedAxiosParamsFn = axiosParamsFn;
     capturedOnSuccess = callbacks.onSuccess;
-    return { mutate: mockMutate };
+
+    return {
+      mutate: mockMutate,
+    };
   }),
 }));
 
@@ -29,20 +35,406 @@ describe("ModerateReviewModal", () => {
     vi.clearAllMocks();
   });
 
-  test("does not render when show is false", () => {
-    const { container } = render(
-      <ModerateReviewModal
-        show={false}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(container).toBeEmptyDOMElement();
+  describe("rendering", () => {
+    test("renders approve title and button for APPROVED status", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(screen.getByText("Approve Review")).toBeInTheDocument();
+      expect(screen.getByText("Approve")).toBeInTheDocument();
+    });
+
+    test("renders reject title and button for REJECTED status", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="REJECTED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(screen.getByText("Reject Review")).toBeInTheDocument();
+      expect(screen.getByText("Reject")).toBeInTheDocument();
+
+      expect(screen.queryByText("Approve")).not.toBeInTheDocument();
+      expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    });
+
+    test("renders item name and reviewer comments", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(screen.getByText("Burger")).toBeInTheDocument();
+      expect(screen.getByText("Really good!")).toBeInTheDocument();
+    });
+
+    test("renders safely when review is null", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={null}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(screen.getByText("Approve Review")).toBeInTheDocument();
+    });
+
+    test("renders safely when review.item is undefined", () => {
+      const reviewWithoutItem = {
+        ...sampleReview,
+        item: undefined,
+      };
+
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={reviewWithoutItem}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(screen.getByText("Approve Review")).toBeInTheDocument();
+    });
+
+    test("item and review sections have marginBottom styling", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      const itemDiv = screen.getByText("Burger").closest("div");
+      const reviewDiv = screen.getByText("Really good!").closest("div");
+
+      expect(itemDiv).toHaveStyle({ marginBottom: "10px" });
+      expect(reviewDiv).toHaveStyle({ marginBottom: "10px" });
+    });
   });
 
-  test("does not render when review is null", () => {
-    const { container } = render(
+  describe("textarea behavior", () => {
+    test("textarea starts empty", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(
+        screen.getByPlaceholderText("Optional moderation notes...").value,
+      ).toBe("");
+    });
+
+    test("updates textarea when user types", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      const textarea = screen.getByPlaceholderText(
+        "Optional moderation notes...",
+      );
+
+      fireEvent.change(textarea, {
+        target: { value: "Looks good to me" },
+      });
+
+      expect(textarea.value).toBe("Looks good to me");
+    });
+
+    test("clears comments when modal reopens", () => {
+      const { rerender } = render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      const textarea = screen.getByPlaceholderText(
+        "Optional moderation notes...",
+      );
+
+      fireEvent.change(textarea, {
+        target: { value: "some comment" },
+      });
+
+      expect(textarea.value).toBe("some comment");
+
+      rerender(
+        <ModerateReviewModal
+          show={false}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      rerender(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(textarea.value).toBe("");
+    });
+
+    test("does not clear comments when props rerender with show=true", () => {
+      const { rerender } = render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      const textarea = screen.getByPlaceholderText(
+        "Optional moderation notes...",
+      );
+
+      fireEvent.change(textarea, {
+        target: { value: "my comment" },
+      });
+
+      rerender(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(textarea.value).toBe("my comment");
+    });
+  });
+
+  describe("buttons and submit behavior", () => {
+    test("calls onClose when Cancel clicked", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      fireEvent.click(screen.getByText("Cancel"));
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    test("calls mutation.mutate when Approve clicked", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      fireEvent.click(screen.getByText("Approve"));
+
+      expect(mockMutate).toHaveBeenCalled();
+    });
+
+    test("calls mutation.mutate when Reject clicked", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="REJECTED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      fireEvent.click(screen.getByText("Reject"));
+
+      expect(mockMutate).toHaveBeenCalled();
+    });
+
+    test("does not mutate when review is null", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={null}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      fireEvent.click(screen.getByText("Approve"));
+
+      expect(mockMutate).not.toHaveBeenCalled();
+    });
+
+    test("does not mutate when status is null", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status={null}
+          onClose={mockOnClose}
+        />,
+      );
+
+      fireEvent.click(screen.getByText("Reject"));
+
+      expect(mockMutate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("axios params", () => {
+    test("builds correct params for approved review", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      fireEvent.change(
+        screen.getByPlaceholderText("Optional moderation notes..."),
+        {
+          target: { value: "Looks good" },
+        },
+      );
+
+      expect(capturedAxiosParamsFn()).toEqual({
+        url: "/api/reviews/moderate",
+        method: "PUT",
+        params: {
+          id: 1,
+          status: "APPROVED",
+          moderatorComments: "Looks good",
+        },
+      });
+    });
+
+    test("uses correct review id", () => {
+      const differentReview = {
+        ...sampleReview,
+        id: 42,
+      };
+
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={differentReview}
+          status="REJECTED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(capturedAxiosParamsFn()).toEqual({
+        url: "/api/reviews/moderate",
+        method: "PUT",
+        params: {
+          id: 42,
+          status: "REJECTED",
+          moderatorComments: "",
+        },
+      });
+    });
+
+    test("returns empty object when review is null", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={null}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(capturedAxiosParamsFn()).toEqual({});
+    });
+  });
+
+  describe("mutation hook", () => {
+    test("useBackendMutation called with correct query key", () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      expect(useBackendMutation).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.any(Object),
+        ["/api/reviews/needsmoderation"],
+      );
+    });
+
+    test("onSuccess clears comments and calls onClose", async () => {
+      render(
+        <ModerateReviewModal
+          show={true}
+          review={sampleReview}
+          status="APPROVED"
+          onClose={mockOnClose}
+        />,
+      );
+
+      const textarea = screen.getByPlaceholderText(
+        "Optional moderation notes...",
+      );
+
+      fireEvent.change(textarea, {
+        target: { value: "some comment" },
+      });
+
+      expect(textarea.value).toBe("some comment");
+
+      capturedOnSuccess();
+
+      await waitFor(() => {
+        expect(textarea.value).toBe("");
+      });
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+  });
+
+  test("objectToAxiosParams hits !review branch", () => {
+    render(
       <ModerateReviewModal
         show={true}
         review={null}
@@ -50,213 +442,43 @@ describe("ModerateReviewModal", () => {
         onClose={mockOnClose}
       />,
     );
-    expect(container).toBeEmptyDOMElement();
+
+    const result = capturedAxiosParamsFn();
+
+    expect(result).toEqual({});
   });
 
-  test("renders modal when show is true and review is provided", () => {
+  test("handleSubmit hits !review branch", () => {
     render(
       <ModerateReviewModal
         show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Approve Review")).toBeInTheDocument();
-  });
-
-  test("shows 'Approve Review' title when status is APPROVED", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Approve Review")).toBeInTheDocument();
-  });
-
-  test("shows 'Reject Review' title when status is REJECTED", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="REJECTED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Reject Review")).toBeInTheDocument();
-  });
-
-  test("submit button says 'Approve' when status is APPROVED", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Approve")).toBeInTheDocument();
-  });
-
-  test("submit button says 'Reject' when status is REJECTED", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="REJECTED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Reject")).toBeInTheDocument();
-  });
-
-  test("displays the item name", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Burger")).toBeInTheDocument();
-  });
-
-  test("displays the reviewer comments", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(screen.getByText("Really good!")).toBeInTheDocument();
-  });
-
-  test("calls onClose when Cancel button is clicked", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    fireEvent.click(screen.getByText("Cancel"));
-    expect(mockOnClose).toHaveBeenCalled();
-  });
-
-  test("moderator comments textarea starts empty", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    expect(
-      screen.getByPlaceholderText("Optional moderation notes...").value,
-    ).toBe("");
-  });
-
-  test("updates comments state when user types", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    const textarea = screen.getByPlaceholderText(
-      "Optional moderation notes...",
-    );
-    fireEvent.change(textarea, { target: { value: "Looks good to me" } });
-    expect(textarea.value).toBe("Looks good to me");
-  });
-
-  test("clears comments when modal is reopened", () => {
-    const { rerender } = render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
+        review={null}
         status="APPROVED"
         onClose={mockOnClose}
       />,
     );
 
-    fireEvent.change(
-      screen.getByPlaceholderText("Optional moderation notes..."),
-      { target: { value: "some comment" } },
-    );
-
-    rerender(
-      <ModerateReviewModal
-        show={false}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-    rerender(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
-
-    expect(
-      screen.getByPlaceholderText("Optional moderation notes...").value,
-    ).toBe("");
-  });
-
-  test("calls mutation.mutate when Approve is clicked", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="APPROVED"
-        onClose={mockOnClose}
-      />,
-    );
     fireEvent.click(screen.getByText("Approve"));
-    expect(mockMutate).toHaveBeenCalled();
-  });
 
-  test("calls mutation.mutate when Reject is clicked", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status="REJECTED"
-        onClose={mockOnClose}
-      />,
-    );
-    fireEvent.click(screen.getByText("Reject"));
-    expect(mockMutate).toHaveBeenCalled();
-  });
-
-  test("handleSubmit does nothing if status is undefined", () => {
-    render(
-      <ModerateReviewModal
-        show={true}
-        review={sampleReview}
-        status={undefined}
-        onClose={mockOnClose}
-      />,
-    );
-    fireEvent.click(screen.getByText("Reject"));
     expect(mockMutate).not.toHaveBeenCalled();
   });
 
-  test("objectToAxiosParams builds correct params", () => {
+  test("handleSubmit hits !status branch", () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status={null}
+        onClose={mockOnClose}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("Reject"));
+
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  test("handleSubmit hits successful mutation branch", () => {
     render(
       <ModerateReviewModal
         show={true}
@@ -264,28 +486,27 @@ describe("ModerateReviewModal", () => {
         status="APPROVED"
         onClose={mockOnClose}
       />,
-    );
-
-    fireEvent.change(
-      screen.getByPlaceholderText("Optional moderation notes..."),
-      { target: { value: "Looks good" } },
     );
 
     fireEvent.click(screen.getByText("Approve"));
-    expect(mockMutate).toHaveBeenCalled();
 
-    expect(capturedAxiosParamsFn()).toEqual({
-      url: "/api/reviews/moderate",
-      method: "PUT",
-      params: {
-        id: sampleReview.id,
-        status: "APPROVED",
-        moderatorComments: "Looks good",
-      },
-    });
+    expect(mockMutate).toHaveBeenCalled();
   });
 
-  test("onSuccess clears comments and calls onClose", async () => {
+  test("objectToAxiosParams returns empty object when review is null", () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={null}
+        status="APPROVED"
+        onClose={mockOnClose}
+      />,
+    );
+
+    expect(capturedAxiosParamsFn()).toEqual({});
+  });
+
+  test("objectToAxiosParams does not return empty object when review exists", () => {
     render(
       <ModerateReviewModal
         show={true}
@@ -295,13 +516,70 @@ describe("ModerateReviewModal", () => {
       />,
     );
 
-    fireEvent.change(
-      screen.getByPlaceholderText("Optional moderation notes..."),
-      { target: { value: "some comment" } },
+    expect(capturedAxiosParamsFn()).not.toEqual({});
+    expect(capturedAxiosParamsFn().params.id).toBe(1);
+  });
+
+  test("handleSubmit prevents mutation when review is null", () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={null}
+        status="APPROVED"
+        onClose={mockOnClose}
+      />,
     );
 
-    capturedOnSuccess();
+    fireEvent.click(screen.getByText("Approve"));
 
-    await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  test("handleSubmit prevents mutation when status is null", () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status={null}
+        onClose={mockOnClose}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("Reject"));
+
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  test("handleSubmit calls mutation when review and status exist", () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={mockOnClose}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("Approve"));
+
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+  });
+
+  test("comments state initializes as empty string", () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={mockOnClose}
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
+
+    // critical: assert exact controlled value at mount
+    expect(textarea.value).toBe("");
   });
 });

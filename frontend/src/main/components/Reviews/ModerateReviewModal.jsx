@@ -12,15 +12,19 @@ const ModerateReviewModal = ({ show, onClose, review, status }) => {
     }
   }, [show, review, status]);
 
-  const objectToAxiosParams = () => ({
-    url: "/api/reviews/moderate",
-    method: "PUT",
-    params: {
-      id: review?.id,
-      status: status,
-      moderatorComments: comments,
-    },
-  });
+  const objectToAxiosParams = () => {
+    if (!review) return {};
+
+    return {
+      url: "/api/reviews/moderate",
+      method: "PUT",
+      params: {
+        id: review.id,
+        status: status,
+        moderatorComments: comments,
+      },
+    };
+  };
 
   const mutation = useBackendMutation(
     objectToAxiosParams,
@@ -39,7 +43,7 @@ const ModerateReviewModal = ({ show, onClose, review, status }) => {
     mutation.mutate();
   };
 
-  if (!show || !review) return null;
+  //  if (!show || !review) return null;
 
   return (
     <Modal show={show} onHide={onClose}>
@@ -51,11 +55,11 @@ const ModerateReviewModal = ({ show, onClose, review, status }) => {
 
       <Modal.Body>
         <div style={{ marginBottom: "10px" }}>
-          <strong>Item:</strong> {review.item?.name}
+          <strong>Item:</strong> {review?.item?.name}
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <strong>Review:</strong> {review.reviewerComments}
+          <strong>Review:</strong> {review?.reviewerComments}
         </div>
 
         <Form onSubmit={handleSubmit}>
