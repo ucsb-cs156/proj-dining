@@ -6,7 +6,6 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { vi } from "vitest";
 
-
 const mockedNavigate = vi.fn();
 
 vi.mock("react-router", async () => ({
@@ -95,7 +94,6 @@ describe("ReviewsTable tests", () => {
       </QueryClientProvider>,
     );
 
-    //edit button
     const editButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Edit-button`,
     );
@@ -108,7 +106,6 @@ describe("ReviewsTable tests", () => {
       expect(mockedNavigate).toHaveBeenCalledWith("/reviews/edit/1"),
     );
 
-    //delete button
     const deleteButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Delete-button`,
     );
@@ -125,40 +122,6 @@ describe("ReviewsTable tests", () => {
     await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
   });
-
-  // test("Moderator buttons appear and work properly", async () => {
-  //   render(
-  //     <QueryClientProvider client={queryClient}>
-  //       <ReviewsTable
-  //         reviews={ReviewFixtures.threeReviews}
-  //         userOptions={false}
-  //         moderatorOptions={true}
-  //       />
-  //     </QueryClientProvider>,
-  //   );
-
-  //   await waitFor(() => {
-  //     expect(
-  //       screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
-  //     ).toBeInTheDocument();
-  //   });
-
-  //   const approveButton = screen.getByTestId(
-  //     `Reviewstable-cell-row-0-col-Approve-button`,
-  //   );
-  //   expect(approveButton).toBeInTheDocument();
-  //   expect(approveButton).toHaveClass("btn-primary");
-
-  //   fireEvent.click(approveButton);
-
-  //   const rejectButton = screen.getByTestId(
-  //     `Reviewstable-cell-row-0-col-Reject-button`,
-  //   );
-  //   expect(rejectButton).toBeInTheDocument();
-  //   expect(rejectButton).toHaveClass("btn-danger");
-
-  //   fireEvent.click(rejectButton);
-  // });
 
   test("Moderator buttons appear and work properly", async () => {
     const mockOpenModal = vi.fn();
@@ -204,7 +167,6 @@ describe("ReviewsTable tests", () => {
       "REJECTED",
     );
   });
-  
 
   test("Renders stars icons and formatted date correctly", () => {
     render(

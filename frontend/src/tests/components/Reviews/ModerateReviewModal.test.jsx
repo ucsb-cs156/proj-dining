@@ -29,8 +29,6 @@ describe("ModerateReviewModal", () => {
     vi.clearAllMocks();
   });
 
-  // ─── Rendering ───────────────────────────────────────────────────────────────
-
   test("does not render when show is false", () => {
     const { container } = render(
       <ModerateReviewModal
@@ -67,8 +65,6 @@ describe("ModerateReviewModal", () => {
     expect(screen.getByText("Approve Review")).toBeInTheDocument();
   });
 
-  // ─── Title changes by status ──────────────────────────────────────────────────
-
   test("shows 'Approve Review' title when status is APPROVED", () => {
     render(
       <ModerateReviewModal
@@ -92,8 +88,6 @@ describe("ModerateReviewModal", () => {
     );
     expect(screen.getByText("Reject Review")).toBeInTheDocument();
   });
-
-  // ─── Submit button label changes by status ────────────────────────────────────
 
   test("submit button says 'Approve' when status is APPROVED", () => {
     render(
@@ -119,8 +113,6 @@ describe("ModerateReviewModal", () => {
     expect(screen.getByText("Reject")).toBeInTheDocument();
   });
 
-  // ─── Review content displayed ─────────────────────────────────────────────────
-
   test("displays the item name", () => {
     render(
       <ModerateReviewModal
@@ -145,8 +137,6 @@ describe("ModerateReviewModal", () => {
     expect(screen.getByText("Really good!")).toBeInTheDocument();
   });
 
-  // ─── Cancel / close ───────────────────────────────────────────────────────────
-
   test("calls onClose when Cancel button is clicked", () => {
     render(
       <ModerateReviewModal
@@ -159,8 +149,6 @@ describe("ModerateReviewModal", () => {
     fireEvent.click(screen.getByText("Cancel"));
     expect(mockOnClose).toHaveBeenCalled();
   });
-
-  // ─── Comments textarea ────────────────────────────────────────────────────────
 
   test("moderator comments textarea starts empty", () => {
     render(
@@ -185,7 +173,9 @@ describe("ModerateReviewModal", () => {
         onClose={mockOnClose}
       />,
     );
-    const textarea = screen.getByPlaceholderText("Optional moderation notes...");
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
     fireEvent.change(textarea, { target: { value: "Looks good to me" } });
     expect(textarea.value).toBe("Looks good to me");
   });
@@ -226,8 +216,6 @@ describe("ModerateReviewModal", () => {
       screen.getByPlaceholderText("Optional moderation notes...").value,
     ).toBe("");
   });
-
-  // ─── Mutation ─────────────────────────────────────────────────────────────────
 
   test("calls mutation.mutate when Approve is clicked", () => {
     render(

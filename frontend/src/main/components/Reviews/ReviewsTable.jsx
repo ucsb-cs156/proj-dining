@@ -2,12 +2,7 @@ import React from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
 import { useBackendMutation } from "main/utils/useBackend";
-import {
-  cellToAxiosParamsDelete,
-  onDeleteSuccess,
-  cellToAxiosParamsModerate,
-  onModerateSuccess,
-} from "main/utils/Reviews";
+import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/utils/Reviews";
 
 export default function ReviewsTable({
   reviews,
@@ -35,25 +30,6 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
-  // const approveMutation = useBackendMutation(
-  //   (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
-  //   { onSuccess: onModerateSuccess },
-  //   ["/api/reviews/needsmoderation"],
-  // );
-
-  // const rejectMutation = useBackendMutation(
-  //   (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
-  //   { onSuccess: onModerateSuccess },
-  //   ["/api/reviews/needsmoderation"],
-  // );
-
-  // const approveCallback = async (cell) => {
-  //   approveMutation.mutate(cell);
-  // };
-
-  // const rejectCallback = async (cell) => {
-  //   rejectMutation.mutate(cell);
-  // };
 
   const columns = [
     {
@@ -116,13 +92,7 @@ export default function ReviewsTable({
         (cell) => openModal(cell.row.original, "REJECTED"),
         "Reviewstable",
       ),
-    );    
-    // columns.push(
-    //   ButtonColumn("Approve", "primary", approveCallback, "Reviewstable"),
-    // );
-    // columns.push(
-    //   ButtonColumn("Reject", "danger", rejectCallback, "Reviewstable"),
-    // );
+    );
   }
 
   return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;

@@ -1,55 +1,45 @@
 import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import { useBackendMutation } from "main/utils/useBackend";
 
-const ModerateReviewModal = ({
-  show,
-  onClose,
-  review,
-  status,
-}) => {
-    const [comments, setComments] = useState("");
+const ModerateReviewModal = ({ show, onClose, review, status }) => {
+  const [comments, setComments] = useState("");
 
-    useEffect(() => {
-        if (show) {
+  useEffect(() => {
+    if (show) {
+      setComments("");
+    }
+  }, [show, review, status]);
+
+  const objectToAxiosParams = () => ({
+    url: "/api/reviews/moderate",
+    method: "PUT",
+    params: {
+      id: review?.id,
+      status: status,
+      moderatorComments: comments,
+    },
+  });
+
+  const mutation = useBackendMutation(
+    objectToAxiosParams,
+    {
+      onSuccess: () => {
         setComments("");
-        }
-    }, [show, review, status]);
+        onClose();
+      },
+    },
+    ["/api/reviews/needsmoderation"],
+  );
 
-    const objectToAxiosParams = () => ({
-        url: "/api/reviews/moderate",
-        method: "PUT",
-        params: {
-        id: review?.id,
-        status: status,
-        moderatorComments: comments,
-        },
-    });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!review || !status) return;
+    mutation.mutate();
+  };
 
-    const mutation = useBackendMutation(
-        objectToAxiosParams,
-        {
-        onSuccess: () => {
-            setComments("");
-            onClose();
-        },
-        },
-        ["/api/reviews/needsmoderation"]
-    );
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!review || !status) return;
-        mutation.mutate();
-    };
-
-    if (!show || !review) return null;
-
-    // disabled={!review || !status}
-
+  if (!show || !review) return null;
 
   return (
     <Modal show={show} onHide={onClose}>
