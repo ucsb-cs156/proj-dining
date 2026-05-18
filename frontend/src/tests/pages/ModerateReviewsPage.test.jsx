@@ -274,4 +274,30 @@ describe("ModerateReviews Page Tests", () => {
       expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
     });
   });
+
+  test("modal is NOT visible on initial render", async () => {
+    setupModerator();
+    const queryClient = new QueryClient();
+
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("Reviewstable-cell-row-0-col-Approve-button"),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reject Review")).not.toBeInTheDocument();
+  });
 });

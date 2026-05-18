@@ -579,7 +579,186 @@ describe("ModerateReviewModal", () => {
       "Optional moderation notes...",
     );
 
-    // critical: assert exact controlled value at mount
     expect(textarea.value).toBe("");
+  });
+
+  test("does NOT reset comments when show remains true", () => {
+    const { rerender } = render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
+
+    fireEvent.change(textarea, {
+      target: { value: "persistent comment" },
+    });
+
+    expect(textarea.value).toBe("persistent comment");
+
+    // rerender with SAME show=true
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    // THIS is what kills the mutant
+    expect(textarea.value).toBe("persistent comment");
+  });
+
+  test("clears comments only when show transitions false -> true", () => {
+    const { rerender } = render(
+      <ModerateReviewModal
+        show={false}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    // open modal
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
+
+    fireEvent.change(textarea, {
+      target: { value: "A" },
+    });
+
+    expect(textarea.value).toBe("A");
+
+    // rerender WITHOUT changing show
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    // must NOT reset
+    expect(textarea.value).toBe("A");
+
+    // close
+    rerender(
+      <ModerateReviewModal
+        show={false}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    // reopen
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    // now reset should happen
+    expect(textarea.value).toBe("");
+  });
+
+  test("does not reset comments when show changes true -> true (no transition)", () => {
+    const { rerender } = render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
+
+    fireEvent.change(textarea, {
+      target: { value: "X" },
+    });
+
+    expect(textarea.value).toBe("X");
+
+    // IMPORTANT: no state transition
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    // hard invariant
+    expect(textarea.value).toBe("X");
+  });
+
+  test("does not reset comments when unrelated props change but show stays true", () => {
+    const { rerender } = render(
+      <ModerateReviewModal
+        show={true}
+        review={{ ...sampleReview, id: 1 }}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
+
+    fireEvent.change(textarea, { target: { value: "keep" } });
+
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={{ ...sampleReview, id: 2 }}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(textarea.value).toBe("keep");
+  });
+
+  test("comments are cleared after modal opens", async () => {
+    render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText("Optional moderation notes...").value,
+      ).toBe("");
+    });
   });
 });

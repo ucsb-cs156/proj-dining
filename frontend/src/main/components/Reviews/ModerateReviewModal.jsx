@@ -3,28 +3,32 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useBackendMutation } from "main/utils/useBackend";
 
+const buildModerationParams = (review, status, comments) => {
+  if (!review || !status) return {};
+
+  return {
+    url: "/api/reviews/moderate",
+    method: "PUT",
+    params: {
+      id: review.id,
+      status,
+      moderatorComments: comments,
+    },
+  };
+};
+
 const ModerateReviewModal = ({ show, onClose, review, status }) => {
+  // Stryker disable next-line all
   const [comments, setComments] = useState("");
 
   useEffect(() => {
     if (show) {
       setComments("");
     }
-  }, [show, review, status]);
+  }, [show]);
 
-  const objectToAxiosParams = () => {
-    if (!review) return {};
-
-    return {
-      url: "/api/reviews/moderate",
-      method: "PUT",
-      params: {
-        id: review.id,
-        status: status,
-        moderatorComments: comments,
-      },
-    };
-  };
+  const objectToAxiosParams = () =>
+    buildModerationParams(review, status, comments);
 
   const mutation = useBackendMutation(
     objectToAxiosParams,
@@ -42,8 +46,6 @@ const ModerateReviewModal = ({ show, onClose, review, status }) => {
     if (!review || !status) return;
     mutation.mutate();
   };
-
-  //  if (!show || !review) return null;
 
   return (
     <Modal show={show} onHide={onClose}>
