@@ -763,34 +763,32 @@ describe("ModerateReviewModal", () => {
   });
 
   test("does not clear comments when modal stays open", () => {
-  const { rerender } = render(
-    <ModerateReviewModal
-      show={true}
-      review={sampleReview}
-      status="APPROVED"
-      onClose={vi.fn()}
-    />
-  );
+    const { rerender } = render(
+      <ModerateReviewModal
+        show={true}
+        review={sampleReview}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
 
-  const textarea = screen.getByPlaceholderText(
-    "Optional moderation notes..."
-  );
+    const textarea = screen.getByPlaceholderText(
+      "Optional moderation notes...",
+    );
 
-  fireEvent.change(textarea, {
-    target: { value: "keep me" },
+    fireEvent.change(textarea, {
+      target: { value: "keep me" },
+    });
+
+    rerender(
+      <ModerateReviewModal
+        show={true}
+        review={{ ...sampleReview, id: 999 }}
+        status="APPROVED"
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(textarea.value).toBe("keep me");
   });
-
-  rerender(
-    <ModerateReviewModal
-      show={true}
-      review={{ ...sampleReview, id: 999 }}
-      status="APPROVED"
-      onClose={vi.fn()}
-    />
-  );
-
-  expect(textarea.value).toBe("keep me");
-});
-
-
 });

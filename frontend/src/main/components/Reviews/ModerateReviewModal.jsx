@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useBackendMutation } from "main/utils/useBackend";
 
 const buildModerationParams = (review, status, comments) => {
@@ -18,7 +18,7 @@ const buildModerationParams = (review, status, comments) => {
 };
 
 const ModerateReviewModal = ({ show, onClose, review, status }) => {
-    // Stryker disable all : not testing the internal state of the modal, just that it opens and closes correctly and calls the backend with the right parameters
+  // Stryker disable all : not testing the internal state of the modal, just that it opens and closes correctly and calls the backend with the right parameters
   const [comments, setComments] = useState("");
 
   useEffect(() => {
@@ -27,8 +27,7 @@ const ModerateReviewModal = ({ show, onClose, review, status }) => {
     }
   }, [show]);
 
-    // Stryker restore all
-
+  // Stryker restore all
 
   const objectToAxiosParams = () =>
     buildModerationParams(review, status, comments);
