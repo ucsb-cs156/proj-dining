@@ -18,7 +18,6 @@ const buildModerationParams = (review, status, comments) => {
 };
 
 const ModerateReviewModal = ({ show, onClose, review, status }) => {
-  // Stryker disable next-line all
   const [comments, setComments] = useState("");
 
   useEffect(() => {
