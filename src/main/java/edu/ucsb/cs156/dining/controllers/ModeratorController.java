@@ -2,7 +2,10 @@ package edu.ucsb.cs156.dining.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.entities.Moderator;
+import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.utilities.CanonicalFormConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * This is a REST controller for getting information about the instructors. These endpoints are only
- * accessible to instructors with the role "ROLE_ADMIN".
+ * This is a REST controller for getting information about the moderators. These endpoints are only
+ * accessible to moderators with the role "ROLE_ADMIN".
  */
 @Tag(name = "Moderators")
 @RequestMapping("/api/admin/moderators")
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ModeratorController extends ApiController {
   @Autowired ModeratorRepository moderatorRepository;
+  @Autowired UserRepository userRepository;
 
   @Autowired ObjectMapper mapper;
 
@@ -39,10 +43,18 @@ public class ModeratorController extends ApiController {
   @Operation(summary = "Create a new Moderator")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
-  public Moderator postInstructor(@RequestParam String email) {
+  public Moderator postModerator(@RequestParam String email) {
     String convertedEmail = CanonicalFormConverter.convertToValidEmail(email);
     Moderator moderator = Moderator.builder().email(convertedEmail).build();
+    User user =
+        userRepository
+            .findByEmail(convertedEmail)
+            .orElseThrow(() -> new EntityNotFoundException(User.class, convertedEmail));
     moderatorRepository.save(moderator);
+
+    user.setModerator(true);
+    userRepository.save(user);
+
     return moderator;
   }
 
@@ -54,7 +66,7 @@ public class ModeratorController extends ApiController {
   @Operation(summary = "List all Moderators")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping("/get")
-  public Iterable<Moderator> allInstructors() {
+  public Iterable<Moderator> allModerators() {
     Iterable<Moderator> moderators = moderatorRepository.findAll();
     return moderators;
   }
@@ -63,15 +75,20 @@ public class ModeratorController extends ApiController {
   @Operation(summary = "Delete a Moderator by email")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @DeleteMapping("/delete")
-  public ResponseEntity<String> deleteInstructor(@RequestParam String email) {
+  public ResponseEntity<String> deleteModerator(@RequestParam String email) {
     Moderator moderator = moderatorRepository.findById(email).orElse(null);
+    User user = userRepository.findByEmail(email).orElse(null);
 
     if (moderator == null) {
       return ResponseEntity.status(404)
           .body(String.format("Moderator with email %s not found.", email));
     }
-
+    if (user == null) {
+      return ResponseEntity.status(404).body(String.format("User with email %s not found.", email));
+    }
     moderatorRepository.delete(moderator);
+    user.setModerator(false);
+    userRepository.save(user);
     return ResponseEntity.status(200)
         .body(String.format("Moderator with email %s deleted.", email));
   }
