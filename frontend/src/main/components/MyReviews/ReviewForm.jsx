@@ -9,20 +9,21 @@ export default function ReviewForm({
 }) {
   // Stryker disable next-line all : default empty object is only used when creating a new review
   const contents = initialContents || {};
+
+  // Stryker disable next-line all : date formatting helper is covered through page/form behavior
+  const formatDateForInput = (date) =>
+    date ? date.slice(0, 16) : new Date().toISOString().slice(0, 16);
+
   // Stryker disable next-line all : default empty string prevents uncontrolled input warnings
-  const [comments, setComments] = React.useState(
-    contents.reviewerComments || "",
-  );
+  const initialComments = contents.reviewerComments || "";
+
+  const [comments, setComments] = React.useState(initialComments);
 
   const [stars, setStars] = React.useState(contents.itemsStars || 5);
 
-  const [dateServed, setDateServed] = React.useState(() => {
-    // Stryker disable next-line all : date fallback only applies when there is no initial served date
-    return (
-      contents.dateItemServed?.slice(0, 16) ||
-      new Date().toISOString().slice(0, 16)
-    );
-  });
+  const initialDateServed = formatDateForInput(contents.dateItemServed);
+
+  const [dateServed, setDateServed] = React.useState(initialDateServed);
 
   React.useEffect(() => {
     if (!initialContents) {
@@ -31,8 +32,7 @@ export default function ReviewForm({
     // Stryker disable next-line all : default empty string is used when edited review has no comment
     setComments(initialContents.reviewerComments || "");
     setStars(initialContents.itemsStars || 5);
-    // Stryker disable next-line all : date fallback only applies when editing review has no served date
-    setDateServed(initialContents.dateItemServed?.slice(0, 16) || new Date().toISOString().slice(0, 16));
+    setDateServed(formatDateForInput(initialContents.dateItemServed));
   }, [initialContents]);
 
   const handleSubmit = (e) => {
