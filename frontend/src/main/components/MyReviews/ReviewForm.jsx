@@ -57,7 +57,6 @@ export default function ReviewForm({ initialItemName, submitAction }) {
           id="review-stars"
           isInvalid={Boolean(errors.stars)}
           {...register("stars", {
-            required: "Stars is required.",
             valueAsNumber: true,
           })}
         >
