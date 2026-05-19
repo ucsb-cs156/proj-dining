@@ -15,7 +15,11 @@ export function cellToAxiosParamsDelete(cell) {
   };
 }
 
-export function cellToAxiosParamsModerate(cell, status, moderatorComments = "") {
+export function cellToAxiosParamsModerate(
+  cell,
+  status,
+  moderatorComments = "",
+) {
   return {
     url: "/api/reviews/moderate",
     method: "PUT",
