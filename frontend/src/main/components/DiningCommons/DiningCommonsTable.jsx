@@ -26,6 +26,7 @@ export default function DiningCommonsTable({ commons, date }) {
               ? "No meals offered today"
               : value.map((meal) => (
                   <Link
+                    key={meal.code}
                     to={`/diningcommons/${date}/${row.original.code}/${meal.code}`}
                     className="p-2"
                     data-testid={`DiningCommonsTable-cell-row-${row.index}-col-meal-${meal.code}`}
