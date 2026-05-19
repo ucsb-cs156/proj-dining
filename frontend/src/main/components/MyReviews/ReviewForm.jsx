@@ -43,7 +43,6 @@ export default function ReviewForm({ initialItemName, submitAction }) {
           rows={3}
           isInvalid={Boolean(errors.comments)}
           {...register("comments", {
-            required: "Comments is required.",
             maxLength: { value: 255, message: "Max length 255 characters" },
           })}
         />
