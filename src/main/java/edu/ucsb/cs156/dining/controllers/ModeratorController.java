@@ -83,12 +83,11 @@ public class ModeratorController extends ApiController {
       return ResponseEntity.status(404)
           .body(String.format("Moderator with email %s not found.", email));
     }
-    if (user == null) {
-      return ResponseEntity.status(404).body(String.format("User with email %s not found.", email));
-    }
     moderatorRepository.delete(moderator);
-    user.setModerator(false);
-    userRepository.save(user);
+    if (user != null) {
+      user.setModerator(false);
+      userRepository.save(user);
+    }
     return ResponseEntity.status(200)
         .body(String.format("Moderator with email %s deleted.", email));
   }
