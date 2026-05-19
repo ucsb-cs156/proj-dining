@@ -1,9 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import usersFixtures from "fixtures/usersFixtures";
 import UsersTable from "main/components/Users/UsersTable";
 import { within } from "storybook/test";
 import { MemoryRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
+import AxiosMockAdapter from "axios-mock-adapter";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useCurrentUser } from "main/utils/currentUser";
 
 const mockedNavigate = vi.fn();
 vi.mock("react-router", async () => {
@@ -13,6 +17,16 @@ vi.mock("react-router", async () => {
     useNavigate: () => mockedNavigate,
   };
 });
+
+vi.mock("main/utils/currentUser", () => ({
+  useCurrentUser: vi.fn(),
+}));
+
+vi.mock("react-toastify", () => ({
+  toast: vi.fn(),
+}));
+
+let axiosMock;
 
 const renderWithProviders = (ui) => {
   const queryClient = new QueryClient();
@@ -24,6 +38,17 @@ const renderWithProviders = (ui) => {
 };
 
 describe("UserTable tests", () => {
+  beforeEach(() => {
+    axiosMock = new AxiosMockAdapter(axios);
+    useCurrentUser.mockReturnValue({ data: { loggedIn: false, root: null } });
+    toast.mockClear();
+    mockedNavigate.mockClear();
+  });
+
+  afterEach(() => {
+    axiosMock.restore();
+  });
+
   test("renders without crashing for empty table", () => {
     renderWithProviders(<UsersTable users={[]} />);
   });
@@ -139,5 +164,29 @@ describe("UserTable tests", () => {
     expect(
       within(row3).getByRole("checkbox", { name: /moderator/i }),
     ).not.toBeChecked();
+  });
+
+  test("clicking admin checkbox on self shows success toast and navigates to homepage", async () => {
+    useCurrentUser.mockReturnValue({
+      data: {
+        loggedIn: true,
+        root: { user: usersFixtures.threeUsers[0] },
+      },
+    });
+    axiosMock
+      .onPut("/api/admin/toggleAdmin")
+      .reply(200, usersFixtures.threeUsers[0]);
+
+    renderWithProviders(<UsersTable users={usersFixtures.threeUsers} />);
+
+    const row0 = screen.getByTestId("UsersTable-row-0");
+    fireEvent.click(within(row0).getByRole("checkbox", { name: /admin/i }));
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith(
+        "Updated admin status for user Phill",
+      ),
+    );
+    expect(mockedNavigate).toHaveBeenCalledWith("/");
   });
 });

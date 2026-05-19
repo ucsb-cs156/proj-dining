@@ -1,8 +1,15 @@
 import OurTable from "main/components/OurTable";
 import { useBackendMutation } from "main/utils/useBackend";
+import { useQueryClient } from "react-query";
+import { useCurrentUser } from "main/utils/currentUser";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 export default function UsersTable({ users }) {
+  const { data: currentUser } = useCurrentUser();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   // helper function to toggle admin status
   const toggleAdminMutation = useBackendMutation(
     (row) => ({
@@ -11,8 +18,22 @@ export default function UsersTable({ users }) {
       params: { id: row.id },
     }),
     {
-      onSuccess: (_data, row) =>
-        toast("Updated admin status for user " + row.givenName),
+      onSuccess: (_data, row) => {
+        toast("Updated admin status for user " + row.givenName);
+        // stryker mutates by removing ?'s - when we are not admin, this page is not accessible, so currentUsers.root.user is guaranteed to have values
+        // Stryker disable next-line OptionalChaining
+        if (row.id === currentUser?.root?.user?.id) {
+          navigate("/");
+        }
+      },
+      // skip cache invalidation for self-toggle: we're navigating away and are no longer admin, so the refetch would 403
+      // Stryker disable next-line all : don't test internal caching of react query
+      onSettled: (_data, _error, row) => {
+        // Stryker disable next-line OptionalChaining
+        if (row.id !== currentUser?.root?.user?.id) {
+          queryClient.invalidateQueries(["/api/admin/users"]);
+        }
+      },
     },
     // Stryker disable next-line all : don't test internal caching of react query
     ["/api/admin/users"],
