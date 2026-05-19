@@ -1,18 +1,39 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
 
-export default function ReviewForm({ initialItemName, submitAction }) {
-  const [comments, setComments] = React.useState("");
-  const [stars, setStars] = React.useState(5);
+export default function ReviewForm({
+    initialItemName,
+    initialContents = {},
+    submitAction,
+    buttonLabel = "Submit Review"
+  }) {
+  const [comments, setComments] = React.useState(
+    initialContents.reviewerComments || "",
+  );
+
+  const [stars, setStars] = React.useState(initialContents.itemsStars || 5);
+
   const [dateServed, setDateServed] = React.useState(() => {
-    return new Date().toISOString().slice(0, 16); // Default to now, in YYYY-MM-DDTHH:mm format
+    return (
+      initialContents.dateItemServed?.slice(0, 16) ||
+      new Date().toISOString().slice(0, 16) // Default to now, in YYYY-MM-DDTHH:mm format
+    );
   });
+
+  React.useEffect(() => {
+    setComments(initialContents.reviewerComments || "");
+    setStars(initialContents.itemsStars || 5);
+    setDateServed(
+      initialContents.dateItemServed?.slice(0, 16) ||
+        new Date().toISOString().slice(0, 16),
+    );
+  }, [initialContents]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     submitAction({
       reviewerComments: comments,
-      itemsStars: stars,
+      itemStars: stars,
       dateItemServed: dateServed,
     });
   };
@@ -67,7 +88,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         />
       </Form.Group>
 
-      <Button type="submit">Submit Review</Button>
+      <Button type="submit">{buttonLabel}</Button>
     </Form>
   );
 }
