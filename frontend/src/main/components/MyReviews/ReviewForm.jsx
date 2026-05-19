@@ -54,20 +54,20 @@ export default function ReviewForm({ initialItemName, submitAction }) {
 
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-stars">Stars (1 to 5)</Form.Label>
-        <Form.Control
+        <Form.Select
           id="review-stars"
-          type="number"
           isInvalid={Boolean(errors.stars)}
           {...register("stars", {
             required: "Stars is required.",
             valueAsNumber: true,
-            min: { value: 1, message: "Stars must be between 1 and 5" },
-            max: { value: 5, message: "Stars must be between 1 and 5" },
           })}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.stars?.message}
-        </Form.Control.Feedback>
+        >
+          {[1, 2, 3, 4, 5].map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+        </Form.Select>
       </Form.Group>
 
       <Form.Group className="mb-3">
