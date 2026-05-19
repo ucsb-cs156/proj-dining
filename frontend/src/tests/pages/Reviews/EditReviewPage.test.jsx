@@ -73,6 +73,9 @@ describe("EditReviewPage tests", () => {
     ).toBeInTheDocument();
     expect(await screen.findByDisplayValue("Old comment")).toBeInTheDocument();
     expect(screen.getByLabelText(/Stars/i)).toHaveValue("3");
+    expect(screen.getByLabelText(/Date and Time/i)).toHaveValue(
+      "2026-05-18T23:57",
+    );
   });
 
   test("update button is enabled by default", async () => {
@@ -202,5 +205,17 @@ describe("EditReviewPage tests", () => {
         /Error updating review: Request failed with status code 500/i,
       ),
     ).toBeInTheDocument();
+  });
+
+  test("star dropdown contains five options", async () => {
+    axiosMock.onGet("/api/reviews/2").reply(200, mockReview);
+
+    renderWithDefaultRouter();
+
+    const options = await screen.findAllByRole("option");
+
+    expect(options).toHaveLength(5);
+    expect(options[0]).toHaveTextContent("1");
+    expect(options[4]).toHaveTextContent("5");
   });
 });
