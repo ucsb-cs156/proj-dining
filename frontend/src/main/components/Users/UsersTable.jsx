@@ -66,7 +66,7 @@ export default function UsersTable({ users }) {
   const columns = [
     {
       Header: "id",
-      accessor: "id",
+      accessor: "id", // accessor is the "key" in the data
     },
     {
       Header: "First Name",
@@ -130,6 +130,7 @@ export default function UsersTable({ users }) {
       Header: "Status",
       accessor: (row) => {
         if (row.status === "Approved" && row.dateApproved) {
+          // Parse as local date (YYYY-MM-DD)
           const [year, month, day] = row.dateApproved.split("-");
           const formattedDate = new Date(
             year,

@@ -183,9 +183,7 @@ describe("UserTable tests", () => {
     fireEvent.click(within(row0).getByRole("checkbox", { name: /admin/i }));
 
     await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(
-        "Updated admin status for user Phill",
-      ),
+      expect(toast).toHaveBeenCalledWith("Updated admin status for user Phill"),
     );
     expect(mockedNavigate).toHaveBeenCalledWith("/");
   });
