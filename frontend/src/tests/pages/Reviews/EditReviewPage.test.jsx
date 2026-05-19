@@ -8,7 +8,6 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { vi } from "vitest";
 
-
 // silence console.error during tests to keep logs clean
 beforeAll(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -69,7 +68,9 @@ describe("EditReviewPage tests", () => {
   test("renders form fields with expected defaults", async () => {
     axiosMock.onGet("/api/reviews/2").reply(200, mockReview);
     renderWithDefaultRouter();
-    expect(await screen.findByDisplayValue("Eggs Benedict")).toBeInTheDocument();
+    expect(
+      await screen.findByDisplayValue("Eggs Benedict"),
+    ).toBeInTheDocument();
     expect(await screen.findByDisplayValue("Old comment")).toBeInTheDocument();
     expect(screen.getByLabelText(/Stars/i)).toHaveValue("3");
   });
@@ -137,7 +138,9 @@ describe("EditReviewPage tests", () => {
 
   test("shows server error message when response has error field", async () => {
     axiosMock.onGet("/api/reviews/2").reply(200, mockReview);
-    axiosMock.onPut("/api/reviews/reviewer").reply(500, { error: "Server error" });
+    axiosMock
+      .onPut("/api/reviews/reviewer")
+      .reply(500, { error: "Server error" });
     renderWithDefaultRouter();
 
     fireEvent.change(await screen.findByLabelText(/comments/i), {
@@ -200,7 +203,4 @@ describe("EditReviewPage tests", () => {
       ),
     ).toBeInTheDocument();
   });
-
-
-
 });

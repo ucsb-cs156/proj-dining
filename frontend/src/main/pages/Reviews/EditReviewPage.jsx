@@ -24,7 +24,7 @@ export default function EditReviewPage() {
   );
 
   const itemName = review.item?.name;
-  
+
   const submitReview = async (formData) => {
     try {
       await axios.put("/api/reviews/reviewer", formData, {
@@ -46,11 +46,12 @@ export default function EditReviewPage() {
     <BasicLayout>
       <div className="pt-2">
         <h1>Edit review with id {id}</h1>
-        <ReviewForm 
+        <ReviewForm
           initialItemName={review.item?.name}
           initialContents={review}
           submitAction={submitReview}
-          buttonLabel="Update Review" />
+          buttonLabel="Update Review"
+        />
       </div>
     </BasicLayout>
   );
