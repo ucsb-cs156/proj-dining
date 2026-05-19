@@ -32,10 +32,7 @@ export default function ReviewForm({
     setComments(initialContents.reviewerComments || "");
     setStars(initialContents.itemsStars || 5);
     // Stryker disable next-line all : date fallback only applies when editing review has no served date
-    setDateServed(
-      initialContents.dateItemServed?.slice(0, 16) ||
-        new Date().toISOString().slice(0, 16),
-    );
+    setDateServed(initialContents.dateItemServed?.slice(0, 16) || new Date().toISOString().slice(0, 16));
   }, [initialContents]);
 
   const handleSubmit = (e) => {
