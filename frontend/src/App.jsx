@@ -25,7 +25,12 @@ function App() {
   const { data: currentUser } = useCurrentUser();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_relativeSplatPath: true,
+        v7_startTransition: true,
+      }}
+    >
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
