@@ -153,7 +153,6 @@ export default function UsersTable({ users, showToggleButtons = false }) {
   );
 }
 
-UsersTable.propTypes = {
-  users: PropTypes.array.isRequired,
-  showToggleButtons: PropTypes.bool,
-};
+UsersTable.propTypes = Object.create(null);
+UsersTable.propTypes.users = PropTypes.array.isRequired;
+UsersTable.propTypes.showToggleButtons = PropTypes.bool;
