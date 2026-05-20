@@ -184,4 +184,47 @@ describe("ReviewsTable tests", () => {
     );
     expect(dateCell).toHaveTextContent(formattedDate);
   });
+
+  test("opens moderation modal and submits approve review comments", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.onPut("/api/reviews/moderate").reply(200, {
+      message: "Review moderated",
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    const approveButton = await screen.findByTestId(
+      `Reviewstable-cell-row-0-col-Approve-button`,
+    );
+    fireEvent.click(approveButton);
+
+    expect(screen.getByText("Approve Review")).toBeInTheDocument();
+
+    const commentsField = screen.getByTestId("moderation-modal-comments");
+    const submitButton = screen.getByTestId("moderation-modal-submit");
+
+    expect(submitButton).toBeDisabled();
+    fireEvent.change(commentsField, {
+      target: { value: "Looks good" },
+    });
+    expect(submitButton).not.toBeDisabled();
+
+    fireEvent.click(submitButton);
+
+    await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
+    expect(axiosMock.history.put[0].url).toBe("/api/reviews/moderate");
+    expect(axiosMock.history.put[0].params).toEqual({
+      id: 1,
+      status: "APPROVED",
+      moderatorComments: "Looks good",
+    });
+  });
 });
