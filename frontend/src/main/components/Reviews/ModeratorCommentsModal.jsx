@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 
-export default function ModeratorCommentsModal({ show, onHide, status, onSubmit }) {
+export default function ModeratorCommentsModal({
+  show,
+  onHide,
+  status,
+  onSubmit,
+}) {
   const [comments, setComments] = useState("");
 
   const handleSubmit = () => {
@@ -16,7 +21,11 @@ export default function ModeratorCommentsModal({ show, onHide, status, onSubmit 
   };
 
   return (
-    <Modal show={show} onHide={handleClose} data-testid="ModeratorCommentsModal">
+    <Modal
+      show={show}
+      onHide={handleClose}
+      data-testid="ModeratorCommentsModal"
+    >
       <Modal.Header closeButton data-testid="ModeratorCommentsModal-header">
         <Modal.Title data-testid="ModeratorCommentsModal-title">
           {status === "APPROVED" ? "Approve Review" : "Reject Review"}

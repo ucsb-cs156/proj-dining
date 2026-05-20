@@ -38,16 +38,9 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
-  const approveMutation = useBackendMutation(
-    ({ cell, moderatorComments }) =>
-      cellToAxiosParamsModerate(cell, "APPROVED", moderatorComments),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
-
-  const rejectMutation = useBackendMutation(
-    ({ cell, moderatorComments }) =>
-      cellToAxiosParamsModerate(cell, "REJECTED", moderatorComments),
+  const moderateMutation = useBackendMutation(
+    ({ cell, status, moderatorComments }) =>
+      cellToAxiosParamsModerate(cell, status, moderatorComments),
     { onSuccess: onModerateSuccess },
     ["/api/reviews/needsmoderation"],
   );
@@ -66,11 +59,11 @@ export default function ReviewsTable({
   };
 
   const handleModalSubmit = (comments) => {
-    if (pendingStatus === "APPROVED") {
-      approveMutation.mutate({ cell: pendingCell, moderatorComments: comments });
-    } else {
-      rejectMutation.mutate({ cell: pendingCell, moderatorComments: comments });
-    }
+    moderateMutation.mutate({
+      cell: pendingCell,
+      status: pendingStatus,
+      moderatorComments: comments,
+    });
   };
 
   // Stryker disable all

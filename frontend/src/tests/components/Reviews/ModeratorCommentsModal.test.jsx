@@ -22,9 +22,9 @@ describe("ModeratorCommentsModal tests", () => {
     expect(
       screen.getByTestId("ModeratorCommentsModal-submit"),
     ).toHaveTextContent("Approve");
-    expect(
-      screen.getByTestId("ModeratorCommentsModal-submit"),
-    ).toHaveClass("btn-primary");
+    expect(screen.getByTestId("ModeratorCommentsModal-submit")).toHaveClass(
+      "btn-primary",
+    );
   });
 
   test("renders Reject title when status is REJECTED", () => {
@@ -46,9 +46,9 @@ describe("ModeratorCommentsModal tests", () => {
     expect(
       screen.getByTestId("ModeratorCommentsModal-submit"),
     ).toHaveTextContent("Reject");
-    expect(
-      screen.getByTestId("ModeratorCommentsModal-submit"),
-    ).toHaveClass("btn-danger");
+    expect(screen.getByTestId("ModeratorCommentsModal-submit")).toHaveClass(
+      "btn-danger",
+    );
   });
 
   test("textarea accepts input", () => {
@@ -91,7 +91,7 @@ describe("ModeratorCommentsModal tests", () => {
     expect(onHide).toHaveBeenCalled();
   });
 
-  test("Cancel button calls onHide", () => {
+  test("Cancel button clears textarea and calls onHide", () => {
     const onHide = vi.fn();
     const onSubmit = vi.fn();
 
@@ -104,10 +104,15 @@ describe("ModeratorCommentsModal tests", () => {
       />,
     );
 
+    const textarea = screen.getByTestId("ModeratorCommentsModal-comments");
+    fireEvent.change(textarea, { target: { value: "Some text" } });
+    expect(textarea).toHaveValue("Some text");
+
     fireEvent.click(screen.getByTestId("ModeratorCommentsModal-cancel"));
 
     expect(onHide).toHaveBeenCalled();
     expect(onSubmit).not.toHaveBeenCalled();
+    expect(textarea).toHaveValue("");
   });
 
   test("textarea resets to empty after submit", () => {
@@ -138,9 +143,9 @@ describe("ModeratorCommentsModal tests", () => {
       />,
     );
 
-    expect(
-      screen.getByTestId("ModeratorCommentsModal-comments"),
-    ).toHaveValue("");
+    expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+      "",
+    );
   });
 
   test("does not render modal content when show is false", () => {
