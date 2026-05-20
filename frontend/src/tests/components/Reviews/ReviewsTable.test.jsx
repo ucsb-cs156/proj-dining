@@ -142,6 +142,10 @@ describe("ReviewsTable tests", () => {
       ).toBeInTheDocument();
     });
 
+    expect(
+      screen.queryByTestId("ModeratorCommentsModal-title"),
+    ).not.toBeInTheDocument();
+
     const approveButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Approve-button`,
     );
