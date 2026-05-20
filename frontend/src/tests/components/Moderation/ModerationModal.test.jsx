@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { vi } from "vitest";
 import ModerationModal from "main/components/Moderation/ModerationModal";
 
@@ -63,17 +63,45 @@ describe("ModerationModal tests", () => {
     );
 
     expect(screen.getByText("Reject Review")).toBeInTheDocument();
+    const rejectModal = within(screen.getByRole("dialog"));
     expect(
-      screen.getByText(
-        /Please add moderator comments before rejecting this review./i,
-      ),
+      rejectModal.getByText(/Please add moderator comments before rejecting/i),
     ).toBeInTheDocument();
+    expect(rejectModal.getByText(/this review\./i)).toBeInTheDocument();
 
     const submitButton = screen.getByTestId("moderation-modal-submit");
     expect(submitButton).not.toBeDisabled();
 
     fireEvent.click(submitButton);
     expect(onSubmit).toHaveBeenCalled();
+  });
+
+  test("disables submit for whitespace-only comments and shows active Approve text", () => {
+    const onHide = vi.fn();
+    const onModeratorCommentsChange = vi.fn();
+    const onSubmit = vi.fn();
+
+    render(
+      <ModerationModal
+        show={true}
+        onHide={onHide}
+        status="APPROVED"
+        moderatorComments="   "
+        onModeratorCommentsChange={onModeratorCommentsChange}
+        onSubmit={onSubmit}
+        review={review}
+      />,
+    );
+
+    const approveModal = within(screen.getByRole("dialog"));
+    expect(
+      approveModal.getByText(/Please add moderator comments before/i),
+    ).toBeInTheDocument();
+    expect(approveModal.getByText(/this review\./i)).toBeInTheDocument();
+    expect(screen.getByText("Approve")).toBeInTheDocument();
+
+    const submitButton = screen.getByTestId("moderation-modal-submit");
+    expect(submitButton).toBeDisabled();
   });
 
   test("shows Unknown when review item name is missing", () => {

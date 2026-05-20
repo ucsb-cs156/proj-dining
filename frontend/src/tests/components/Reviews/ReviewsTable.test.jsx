@@ -257,9 +257,7 @@ describe("ReviewsTable tests", () => {
     fireEvent.click(screen.getByText("Cancel"));
 
     await waitFor(() =>
-      expect(
-        screen.queryByText("Reject Review"),
-      ).not.toBeInTheDocument(),
+      expect(screen.queryByText("Reject Review")).not.toBeInTheDocument(),
     );
     expect(axiosMock.history.put.length).toBe(0);
   });
