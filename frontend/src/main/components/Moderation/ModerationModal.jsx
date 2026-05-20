@@ -20,7 +20,7 @@ export default function ModerationModal({
       </Modal.Header>
       <Modal.Body>
         <p>
-          Please add moderator comments before {actionText.toLowerCase()}ing
+          Please add moderator comments before {actionText.toLowerCase()}
           this review.
         </p>
         <Form.Group controlId="moderatorComments">
