@@ -229,12 +229,17 @@ describe("UserTable tests", () => {
           { id: 4, status: "Awaiting Moderation", dateApproved: null },
           { id: 5, status: "Approved", dateApproved: "not-a-date" },
           { id: 6, status: "Approved", dateApproved: "2024-02-31" },
+          { id: 7, status: "Approved", dateApproved: "0000-01-01" },
+          { id: 8, status: "Approved", dateApproved: "x2024-10-31" },
+          { id: 9, status: "Approved", dateApproved: "2024-10-31x" },
+          { id: 10, status: "Approved", dateApproved: "notadate" },
+          { id: 11, status: "Approved", dateApproved: "2024-aa-31" },
         ]}
       />,
     );
 
     expect(screen.getByText("Approved on 10/31/2024")).toBeInTheDocument();
-    expect(screen.getAllByText("Approved")).toHaveLength(3);
+    expect(screen.getAllByText("Approved")).toHaveLength(8);
     expect(screen.getByText("Rejected")).toBeInTheDocument();
     expect(screen.getByText("Awaiting Moderation")).toBeInTheDocument();
   });

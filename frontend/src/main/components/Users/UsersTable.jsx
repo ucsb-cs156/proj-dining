@@ -9,22 +9,20 @@ const formatApprovalDate = (dateApproved) => {
     return null;
   }
 
-  const match = dateApproved.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) {
-    return null;
-  }
-
-  const [, yearString, monthString, dayString] = match;
+  const dateParts = dateApproved.split("-");
+  const yearString = dateParts[0];
+  const monthString = dateParts[1];
+  const dayString = dateParts[2];
   const year = Number(yearString);
   const month = Number(monthString);
   const day = Number(dayString);
   const date = new Date(Date.UTC(year, month - 1, day));
 
-  if (
-    date.getUTCFullYear() !== year ||
-    date.getUTCMonth() !== month - 1 ||
-    date.getUTCDate() !== day
-  ) {
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  if (date.toISOString().slice(0, 10) !== dateApproved) {
     return null;
   }
 
@@ -156,19 +154,6 @@ export default function UsersTable({ users, showToggleButtons = false }) {
 }
 
 UsersTable.propTypes = {
-  users: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      givenName: PropTypes.string,
-      familyName: PropTypes.string,
-      email: PropTypes.string,
-      admin: PropTypes.bool,
-      moderator: PropTypes.bool,
-      alias: PropTypes.string,
-      proposedAlias: PropTypes.string,
-      status: PropTypes.string,
-      dateApproved: PropTypes.string,
-    }),
-  ).isRequired,
+  users: PropTypes.array.isRequired,
   showToggleButtons: PropTypes.bool,
 };
