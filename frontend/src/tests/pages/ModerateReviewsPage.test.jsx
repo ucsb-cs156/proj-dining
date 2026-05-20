@@ -80,7 +80,9 @@ describe("ModerateReviews Page Tests", () => {
       ).toHaveTextContent("7");
     });
     expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`)).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+    ).toBeInTheDocument();
     expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
@@ -111,7 +113,9 @@ describe("ModerateReviews Page Tests", () => {
       ).toHaveTextContent("7");
     });
     expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`)).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+    ).toBeInTheDocument();
     expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
