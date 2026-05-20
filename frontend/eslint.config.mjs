@@ -51,7 +51,6 @@ export default defineConfig([
                 { varsIgnorePattern: "^[A-Z_].*", argsIgnorePattern: "^_" },
             ],
             "react/prop-types": "off",
-            "react/jsx-key": "off",
         },
     },
     {
