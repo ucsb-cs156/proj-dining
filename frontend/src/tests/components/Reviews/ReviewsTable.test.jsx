@@ -227,4 +227,80 @@ describe("ReviewsTable tests", () => {
       moderatorComments: "Looks good",
     });
   });
+
+  test("opens reject modal and closes without submitting", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.onPut("/api/reviews/moderate").reply(200, {
+      message: "Review moderated",
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    const rejectButton = await screen.findByTestId(
+      `Reviewstable-cell-row-0-col-Reject-button`,
+    );
+    fireEvent.click(rejectButton);
+
+    expect(screen.getByText("Reject Review")).toBeInTheDocument();
+    expect(screen.getByTestId("moderation-modal-submit")).toHaveClass(
+      "btn-danger",
+    );
+
+    fireEvent.click(screen.getByText("Cancel"));
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText("Reject Review"),
+      ).not.toBeInTheDocument(),
+    );
+    expect(axiosMock.history.put.length).toBe(0);
+  });
+
+  test("opens reject modal and submits reject review comments", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.onPut("/api/reviews/moderate").reply(200, {
+      message: "Review moderated",
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    const rejectButton = await screen.findByTestId(
+      `Reviewstable-cell-row-0-col-Reject-button`,
+    );
+    fireEvent.click(rejectButton);
+
+    const commentsField = screen.getByTestId("moderation-modal-comments");
+    const submitButton = screen.getByTestId("moderation-modal-submit");
+
+    fireEvent.change(commentsField, {
+      target: { value: "Not acceptable" },
+    });
+    expect(submitButton).not.toBeDisabled();
+
+    fireEvent.click(submitButton);
+
+    await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
+    expect(axiosMock.history.put[0].url).toBe("/api/reviews/moderate");
+    expect(axiosMock.history.put[0].params).toEqual({
+      id: 1,
+      status: "REJECTED",
+      moderatorComments: "Not acceptable",
+    });
+  });
 });

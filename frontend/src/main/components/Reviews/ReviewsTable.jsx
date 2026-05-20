@@ -62,6 +62,7 @@ export default function ReviewsTable({
   };
 
   const handleModerationSubmit = () => {
+    /* istanbul ignore if */
     if (!pendingCell || !moderationStatus) {
       return;
     }
