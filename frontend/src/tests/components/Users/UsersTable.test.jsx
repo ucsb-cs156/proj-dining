@@ -86,8 +86,6 @@ describe("UserTable tests", () => {
       "Alias",
       "Proposed Alias",
       "Status",
-      "Toggle Admin",
-      "Toggle Moderator",
     ];
 
     const expectedFields = [
@@ -99,8 +97,6 @@ describe("UserTable tests", () => {
       "moderator",
       "alias",
       "proposedAlias",
-      "toggle-admin",
-      "toggle-moderator",
     ];
 
     const testId = "UsersTable";
@@ -138,13 +134,43 @@ describe("UserTable tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-moderator`),
     ).toHaveTextContent("false");
+  });
+
+  test("does not show toggle buttons by default", () => {
+    renderWithQueryClient(<UsersTable users={usersFixtures.threeUsers} />);
+
+    expect(
+      screen.queryByRole("columnheader", { name: "Toggle Admin" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("columnheader", { name: "Toggle Moderator" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("UsersTable-cell-row-0-col-toggle-admin-button"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("UsersTable-cell-row-0-col-toggle-moderator-button"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("shows toggle columns and buttons when enabled", () => {
+    renderWithQueryClient(
+      <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true} />,
+    );
+
+    expect(
+      screen.getByRole("columnheader", { name: "Toggle Admin" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: "Toggle Moderator" }),
+    ).toBeInTheDocument();
 
     const toggleAdminCell = screen.getByTestId(
-      `${testId}-cell-row-0-col-toggle-admin`,
+      "UsersTable-cell-row-0-col-toggle-admin",
     );
 
     const toggleModeratorCell = screen.getByTestId(
-      `${testId}-cell-row-0-col-toggle-moderator`,
+      "UsersTable-cell-row-0-col-toggle-moderator",
     );
 
     expect(toggleAdminCell).toBeInTheDocument();
@@ -170,7 +196,9 @@ describe("UserTable tests", () => {
   });
 
   test("useBackendMutation is configured to refresh admin users after toggles", () => {
-    renderWithQueryClient(<UsersTable users={usersFixtures.threeUsers} />);
+    renderWithQueryClient(
+      <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true} />,
+    );
 
     expect(useBackendMutation).toHaveBeenNthCalledWith(
       1,
@@ -211,7 +239,7 @@ describe("UserTable tests", () => {
 
   test("Clicking Toggle Admin calls the toggleAdmin endpoint", async () => {
     const { queryClient } = renderWithQueryClient(
-      <UsersTable users={usersFixtures.threeUsers} />,
+      <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true} />,
     );
 
     const invalidateQueriesSpy = vi.spyOn(queryClient, "invalidateQueries");
@@ -243,7 +271,7 @@ describe("UserTable tests", () => {
 
   test("Clicking Toggle Moderator calls the toggleModerator endpoint", async () => {
     const { queryClient } = renderWithQueryClient(
-      <UsersTable users={usersFixtures.threeUsers} />,
+      <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true} />,
     );
 
     const invalidateQueriesSpy = vi.spyOn(queryClient, "invalidateQueries");

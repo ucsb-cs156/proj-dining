@@ -56,7 +56,7 @@ const columns = [
   },
 ];
 
-export default function UsersTable({ users }) {
+export default function UsersTable({ users, showToggleButtons = false }) {
   const toggleAdminMutation = useBackendMutation(
     (cell) => ({
       url: "/api/admin/toggleAdmin",
@@ -120,7 +120,11 @@ export default function UsersTable({ users }) {
   return (
     <OurTable
       data={users}
-      columns={[...columns, toggleAdminColumn, toggleModeratorColumn]}
+      columns={
+        showToggleButtons
+          ? [...columns, toggleAdminColumn, toggleModeratorColumn]
+          : columns
+      }
       testid={"UsersTable"}
     />
   );
