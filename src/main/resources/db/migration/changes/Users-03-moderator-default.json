@@ -1,0 +1,34 @@
+{ "databaseChangeLog": [
+  {
+    "changeSet": {
+      "id": "Users-03-moderator-default",
+      "author": "ccabacungan",
+      "preConditions": [
+        {
+          "onFail": "MARK_RAN"
+        },
+        {
+          "tableExists": {
+            "tableName": "USERS"
+          }
+        },
+        {
+          "columnExists": {
+            "tableName": "USERS",
+            "columnName": "MODERATOR"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "addDefaultValue": {
+            "tableName": "USERS",
+            "columnName": "MODERATOR",
+            "columnDataType": "BOOLEAN",
+            "defaultValueBoolean": false
+          }
+        }
+      ]
+    }
+  }
+]}

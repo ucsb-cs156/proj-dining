@@ -33,7 +33,6 @@
                   "constraints": {
                     "nullable": false
                   },
-                  "defaultValueBoolean": false,
                   "name": "MODERATOR",
                   "type": "BOOLEAN"
                 }
