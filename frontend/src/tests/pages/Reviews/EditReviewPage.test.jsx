@@ -66,6 +66,7 @@ describe("EditReviewPage tests", () => {
 
     renderWithRoute(1);
 
+    expect(screen.getByText("Loading review...")).toBeInTheDocument();
     expect(await screen.findByText("Edit Review")).toBeInTheDocument();
     const itemName = await screen.findByLabelText("Item Name");
     expect(itemName).toHaveValue("Make Your Own Waffle (v)");
@@ -77,14 +78,13 @@ describe("EditReviewPage tests", () => {
     );
   });
 
-  test("renders blank form values before the review finishes loading", () => {
+  test("shows a loading message before the review finishes loading", () => {
     axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
 
     renderWithRoute(1);
 
-    expect(screen.getByLabelText("Item Name")).toHaveValue("");
-    expect(screen.getByLabelText("Comments")).toHaveValue("");
-    expect(screen.getByLabelText("Stars (1 to 5)")).toHaveValue("5");
+    expect(screen.getByText("Loading review...")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Comments")).not.toBeInTheDocument();
   });
 
   test("submits edited review and navigates back on success", async () => {
@@ -98,7 +98,10 @@ describe("EditReviewPage tests", () => {
 
     renderWithRoute(1);
 
-    fireEvent.change(await screen.findByLabelText("Comments"), {
+    const commentsField = await screen.findByLabelText("Comments");
+    await waitFor(() => expect(commentsField).toHaveValue("good food"));
+
+    fireEvent.change(commentsField, {
       target: { value: "Updated comments" },
     });
     fireEvent.change(screen.getByLabelText("Stars (1 to 5)"), {

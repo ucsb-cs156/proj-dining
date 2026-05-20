@@ -19,8 +19,6 @@ export default function EditReviewPage() {
       // Stryker disable next-line all : id will be defined by the route
       url: `/api/reviews/${id}`,
     },
-    // Stryker disable next-line all : Don't test empty initial data
-    {},
   );
 
   const submitReview = async (formData) => {
@@ -49,22 +47,22 @@ export default function EditReviewPage() {
     }
   };
 
-  const itemName = review.item ? review.item.name : "";
-  const initialComments = review.reviewerComments || "";
-  const initialStars = review.itemsStars || 5;
-
   return (
     <BasicLayout>
       <div className="pt-2">
         <h1>Edit Review</h1>
-        <ReviewForm
-          initialItemName={itemName}
-          initialComments={initialComments}
-          initialStars={initialStars}
-          initialDateServed={review.dateItemServed}
-          submitAction={submitReview}
-          submitButtonText="Update Review"
-        />
+        {!review || !review.item ? (
+          <p>Loading review...</p>
+        ) : (
+          <ReviewForm
+            initialItemName={review.item.name}
+            initialComments={review.reviewerComments}
+            initialStars={review.itemsStars}
+            initialDateServed={review.dateItemServed}
+            submitAction={submitReview}
+            submitButtonText="Update Review"
+          />
+        )}
       </div>
     </BasicLayout>
   );
