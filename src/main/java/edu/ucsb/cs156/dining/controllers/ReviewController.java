@@ -124,9 +124,7 @@ public class ReviewController extends ApiController {
 
     if (hasReviewerComments(reviewerComments)) {
       review.setReviewerComments(reviewerComments);
-      review.setStatus(ModerationStatus.AWAITING_REVIEW);
     } else {
-      review.setReviewerComments(null);
       review.setStatus(ModerationStatus.APPROVED);
     }
 
