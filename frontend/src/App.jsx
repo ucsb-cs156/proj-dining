@@ -53,6 +53,7 @@ function App() {
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <>
+            <Route exact path="/moderation" element={<ModerateReviews />} />
             <Route exact path="/moderate" element={<ModerateReviews />} />
             <Route
               exact
