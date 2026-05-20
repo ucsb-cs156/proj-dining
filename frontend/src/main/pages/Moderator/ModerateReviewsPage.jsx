@@ -2,7 +2,7 @@ import React from "react";
 import { useBackend } from "main/utils/useBackend";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import ReviewsTable from "main/components/ModerateReviews/ModerateReviewsTable";
+import ReviewsTable from "main/components/reviewsTable";
 
 const ModerateReviews = () => {
   const currentUser = useCurrentUser();
