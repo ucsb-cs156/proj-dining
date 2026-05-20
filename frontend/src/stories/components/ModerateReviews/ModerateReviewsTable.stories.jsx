@@ -1,5 +1,5 @@
 import React from "react";
-import ReviewsTable from "main/components/Reviews/ReviewsTable";
+import ReviewsTable from "main/components/ModerateReviews/ModerateReviewsTable";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 
 export default {

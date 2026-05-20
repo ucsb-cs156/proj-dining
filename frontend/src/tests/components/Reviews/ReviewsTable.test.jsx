@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
-import ReviewsTable from "main/components/Reviews/ReviewsTable";
+import ReviewsTable from "main/components/ModerateReviews/ModerateReviewsTable";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 import { QueryClient, QueryClientProvider } from "react-query";
 import AxiosMockAdapter from "axios-mock-adapter";
