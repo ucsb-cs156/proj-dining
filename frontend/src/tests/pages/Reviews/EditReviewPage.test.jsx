@@ -115,6 +115,18 @@ describe("EditReviewPage tests", () => {
     expect(screen.getByText(/Unable to load review/i)).toBeInTheDocument();
   });
 
+  test("shows loading when review is undefined and not loading", () => {
+    vi.spyOn(useBackendModule, "useBackend").mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+    });
+
+    renderPage();
+
+    expect(screen.getByText(/Loading review.../i)).toBeInTheDocument();
+  });
+
   test("shows an error toast when update fails", async () => {
     axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
     axiosMock
@@ -129,6 +141,21 @@ describe("EditReviewPage tests", () => {
 
     expect(
       await screen.findByText(/Error updating review: Server error/i),
+    ).toBeInTheDocument();
+  });
+
+  test("shows an error toast when update fails with a network error (no response)", async () => {
+    axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
+    axiosMock.onPut("/api/reviews/reviewer").networkErrorOnce();
+
+    renderPage();
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /update review/i }),
+    );
+
+    expect(
+      await screen.findByText(/Error updating review: Network Error/i),
     ).toBeInTheDocument();
   });
 });
