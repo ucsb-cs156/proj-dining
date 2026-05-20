@@ -2,6 +2,34 @@ import OurTable from "main/components/OurTable";
 import { Button } from "react-bootstrap";
 import { useBackendMutation } from "main/utils/useBackend";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
+
+const formatApprovalDate = (dateApproved) => {
+  if (typeof dateApproved !== "string") {
+    return null;
+  }
+
+  const match = dateApproved.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) {
+    return null;
+  }
+
+  const [, yearString, monthString, dayString] = match;
+  const year = Number(yearString);
+  const month = Number(monthString);
+  const day = Number(dayString);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return null;
+  }
+
+  return `${month}/${day}/${year}`;
+};
 
 const columns = [
   {
@@ -41,14 +69,11 @@ const columns = [
   {
     Header: "Status",
     accessor: (row) => {
-      if (row.status === "Approved" && row.dateApproved) {
-        // Parse as local date (YYYY-MM-DD)
-        const [year, month, day] = row.dateApproved.split("-");
-        const formattedDate = new Date(
-          year,
-          month - 1,
-          day,
-        ).toLocaleDateString();
+      if (row.status === "Approved") {
+        const formattedDate = formatApprovalDate(row.dateApproved);
+        if (!formattedDate) {
+          return row.status;
+        }
         return `Approved on ${formattedDate}`;
       }
       return row.status;
@@ -129,3 +154,21 @@ export default function UsersTable({ users, showToggleButtons = false }) {
     />
   );
 }
+
+UsersTable.propTypes = {
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      givenName: PropTypes.string,
+      familyName: PropTypes.string,
+      email: PropTypes.string,
+      admin: PropTypes.bool,
+      moderator: PropTypes.bool,
+      alias: PropTypes.string,
+      proposedAlias: PropTypes.string,
+      status: PropTypes.string,
+      dateApproved: PropTypes.string,
+    }),
+  ).isRequired,
+  showToggleButtons: PropTypes.bool,
+};
