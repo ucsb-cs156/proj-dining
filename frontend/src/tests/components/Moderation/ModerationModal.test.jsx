@@ -71,9 +71,48 @@ describe("ModerationModal tests", () => {
 
     const submitButton = screen.getByTestId("moderation-modal-submit");
     expect(submitButton).not.toBeDisabled();
+    expect(submitButton).toHaveClass("btn-danger");
 
     fireEvent.click(submitButton);
     expect(onSubmit).toHaveBeenCalled();
+  });
+
+  test("renders approve and reject buttons with correct bootstrap variants", () => {
+    const onHide = vi.fn();
+    const onModeratorCommentsChange = vi.fn();
+    const onSubmit = vi.fn();
+
+    const { rerender } = render(
+      <ModerationModal
+        show={true}
+        onHide={onHide}
+        status="APPROVED"
+        moderatorComments="Looks good"
+        onModeratorCommentsChange={onModeratorCommentsChange}
+        onSubmit={onSubmit}
+        review={review}
+      />,
+    );
+
+    const approveButton = screen.getByTestId("moderation-modal-submit");
+    expect(approveButton).toHaveClass("btn-primary");
+    expect(approveButton).toHaveTextContent("Approve");
+
+    rerender(
+      <ModerationModal
+        show={true}
+        onHide={onHide}
+        status="REJECTED"
+        moderatorComments="Needs changes"
+        onModeratorCommentsChange={onModeratorCommentsChange}
+        onSubmit={onSubmit}
+        review={review}
+      />,
+    );
+
+    const rejectButton = screen.getByTestId("moderation-modal-submit");
+    expect(rejectButton).toHaveClass("btn-danger");
+    expect(rejectButton).toHaveTextContent("Reject");
   });
 
   test("disables submit for whitespace-only comments and shows active Approve text", () => {
