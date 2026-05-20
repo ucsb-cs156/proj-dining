@@ -112,6 +112,34 @@ describe("ReviewForm tests", () => {
     );
   });
 
+  test("resets stars to 5 when the prop becomes null", async () => {
+    const submitAction = vi.fn();
+
+    const { rerender } = render(
+      <ReviewForm
+        initialItemName="Item A"
+        initialReviewerComments="great"
+        initialItemsStars={4}
+        initialDateItemServed="2024-05-01T10:30:00"
+        submitAction={submitAction}
+      />,
+    );
+
+    rerender(
+      <ReviewForm
+        initialItemName="Item A"
+        initialReviewerComments="great"
+        initialItemsStars={null}
+        initialDateItemServed="2024-05-01T10:30:00"
+        submitAction={submitAction}
+      />,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/stars/i)).toHaveValue("5"),
+    );
+  });
+
   test("keeps the current comment value when the prop becomes undefined", async () => {
     const submitAction = vi.fn();
 
