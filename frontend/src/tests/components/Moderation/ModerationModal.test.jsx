@@ -64,7 +64,9 @@ describe("ModerationModal tests", () => {
 
     expect(screen.getByText("Reject Review")).toBeInTheDocument();
     expect(
-      screen.getByText(/Please add moderator comments before rejecting this review./i),
+      screen.getByText(
+        /Please add moderator comments before rejecting this review./i,
+      ),
     ).toBeInTheDocument();
 
     const submitButton = screen.getByTestId("moderation-modal-submit");
