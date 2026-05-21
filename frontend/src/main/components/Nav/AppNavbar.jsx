@@ -33,12 +33,12 @@ export default function AppNavbar({
           <Nav className="me-auto">
             {systemInfo?.springH2ConsoleEnabled && (
               <>
-                <Nav.Link href="/h2-console">H2Console</Nav.Link>
+                <Nav.Link as={Link} to="/h2-console">H2Console</Nav.Link>
               </>
             )}
             {systemInfo?.showSwaggerUILink && (
               <>
-                <Nav.Link href="/swagger-ui/index.html">Swagger</Nav.Link>
+                <Nav.Link as={Link} to="/swagger-ui/index.html">Swagger</Nav.Link>
               </>
             )}
           </Nav>
@@ -56,7 +56,7 @@ export default function AppNavbar({
                     id="appnavbar-admin-dropdown"
                     data-testid="appnavbar-admin-dropdown"
                   >
-                    <NavDropdown.Item href="/admin/users">
+                    <NavDropdown.Item as={Link} to="/admin/users">
                       Users
                     </NavDropdown.Item>
                   </NavDropdown>
@@ -70,10 +70,10 @@ export default function AppNavbar({
                     id="appnavbar-moderate-dropdown"
                     data-testid="appnavbar-moderate-dropdown"
                   >
-                    <NavDropdown.Item href="/moderate/aliases">
+                    <NavDropdown.Item as={Link} to="/moderate/aliases">
                       Moderator Page
                     </NavDropdown.Item>
-                    <NavDropdown.Item href="/moderate">
+                    <NavDropdown.Item as={Link} to="/moderate">
                       Moderate Reviews
                     </NavDropdown.Item>
                   </NavDropdown>
