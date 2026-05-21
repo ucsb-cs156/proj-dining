@@ -70,7 +70,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     <>
       <input
         type="text"
-        placeholder="Search for item by keywords separated by space or comma"
+        placeholder="Search by keywords (separated by space or comma)"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
