@@ -2,7 +2,9 @@ package edu.ucsb.cs156.dining.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.entities.Moderator;
+import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
+import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.utilities.CanonicalFormConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +32,8 @@ public class ModeratorController extends ApiController {
 
   @Autowired ObjectMapper mapper;
 
+  @Autowired UserRepository userRepository;
+
   /**
    * Create a new Moderator, available only to Admins.
    *
@@ -39,11 +43,22 @@ public class ModeratorController extends ApiController {
   @Operation(summary = "Create a new Moderator")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
-  public Moderator postInstructor(@RequestParam String email) {
+  public ResponseEntity<Object> postInstructor(@RequestParam String email) {
     String convertedEmail = CanonicalFormConverter.convertToValidEmail(email);
+
+    User user = userRepository.findByEmail(convertedEmail).orElse(null);
+    if (user == null) {
+      return ResponseEntity.status(404)
+          .body(String.format("User with email %s not found.", convertedEmail));
+    }
+
+    user.setModerator(true);
+    userRepository.save(user);
+
     Moderator moderator = Moderator.builder().email(convertedEmail).build();
     moderatorRepository.save(moderator);
-    return moderator;
+
+    return ResponseEntity.status(200).body(moderator);
   }
 
   /**
