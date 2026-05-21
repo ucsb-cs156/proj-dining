@@ -32,7 +32,7 @@ vi.mock("react-router", async (importOriginal) => {
 const useBackendMutationSpy = vi.spyOn(useBackendModule, "useBackendMutation");
 
 describe("ModeratorsCreatePage tests", () => {
-  const axiosMock = new AxiosMockAdapter(axios);
+  let axiosMock;
 
   const renderPage = () => {
     const queryClient = new QueryClient();
@@ -48,8 +48,7 @@ describe("ModeratorsCreatePage tests", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    axiosMock.reset();
-    axiosMock.resetHistory();
+    axiosMock = new AxiosMockAdapter(axios);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.adminUser);
@@ -60,6 +59,7 @@ describe("ModeratorsCreatePage tests", () => {
 
   afterEach(() => {
     useBackendMutationSpy.mockClear();
+    axiosMock.restore();
   });
 
   test("renders without crashing", async () => {
