@@ -10,7 +10,6 @@ export default function EditReviewPage() {
   const navigate = useNavigate();
 
   const { data: review } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/reviews/${id}`],
     // Stryker disable next-line all
     {

@@ -34,9 +34,8 @@ vi.mock("react-toastify", async () => {
 describe("EditReviewPage tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
 
-  const renderWithRoute = (id = 1) => {
-    const queryClient = new QueryClient();
-    render(
+  const renderWithRoute = (id = 1, queryClient = new QueryClient()) => {
+    return render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={[`/reviews/edit/${id}`]}>
           <Routes>
@@ -85,6 +84,35 @@ describe("EditReviewPage tests", () => {
 
     expect(screen.getByText("Loading review...")).toBeInTheDocument();
     expect(screen.queryByLabelText("Comments")).not.toBeInTheDocument();
+  });
+
+  test("fetches a different review when the route id changes", async () => {
+    const queryClient = new QueryClient();
+
+    axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
+    axiosMock
+      .onGet("/api/reviews/2")
+      .reply(200, ReviewFixtures.threeReviews[1]);
+
+    const firstRender = renderWithRoute(1, queryClient);
+
+    expect(
+      await screen.findByDisplayValue("Make Your Own Waffle (v)"),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Comments")).toHaveValue("good food");
+
+    firstRender.unmount();
+
+    renderWithRoute(2, queryClient);
+
+    expect(screen.getByText("Loading review...")).toBeInTheDocument();
+    expect(
+      screen.queryByDisplayValue("Make Your Own Waffle (v)"),
+    ).not.toBeInTheDocument();
+    expect(
+      await screen.findByDisplayValue("Danish Pastry (w/nuts) (v)"),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Comments")).toHaveValue("bad food");
   });
 
   test("submits edited review and navigates back on success", async () => {
