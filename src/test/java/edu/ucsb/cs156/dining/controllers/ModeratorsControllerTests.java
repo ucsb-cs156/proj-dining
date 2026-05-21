@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Moderator;
+import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
@@ -54,8 +56,9 @@ public class ModeratorsControllerTests extends ControllerTestCase {
   @Test
   public void logged_in_admins_can_post() throws Exception {
     // arrage
+    User user = User.builder().email("ins@ucsb.edu").moderator(false).build();
     Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
-    when(moderatorRepository.findAll()).thenReturn(new ArrayList<>(Arrays.asList(moderator)));
+    when(userRepository.findByEmail("ins@ucsb.edu")).thenReturn(Optional.of(user));
 
     // act
     MvcResult response =
@@ -65,10 +68,27 @@ public class ModeratorsControllerTests extends ControllerTestCase {
             .andReturn();
 
     // assert
+    assertTrue(user.isModerator());
+    verify(userRepository, times(1)).save(eq(user));
     verify(moderatorRepository, times(1)).save(eq(moderator));
     String expectedJson = mapper.writeValueAsString(moderator);
-    String responseString = response.getResponse().getContentAsString();
-    assertEquals(expectedJson, responseString);
+    assertEquals(expectedJson, response.getResponse().getContentAsString());
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void admin_try_to_post_moderator_user_not_found() throws Exception {
+    when(userRepository.findByEmail("notfound@ucsb.edu")).thenReturn(Optional.empty());
+
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/admin/moderators/post?email=notfound@ucsb.edu").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    verify(moderatorRepository, times(0)).save(any());
+    String expectedMessage = "User with email notfound@ucsb.edu not found.";
+    assertEquals(expectedMessage, response.getResponse().getContentAsString());
   }
 
   @WithMockUser(roles = {"ADMIN"})
