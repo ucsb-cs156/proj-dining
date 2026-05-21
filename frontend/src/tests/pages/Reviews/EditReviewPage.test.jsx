@@ -106,7 +106,7 @@ describe("EditReviewPage tests", () => {
     renderWithDefaultRouter();
 
     const commentsField = await screen.findByLabelText(/Comments/i);
-    await userEvent.clear(commentsField);
+    fireEvent.change(commentsField, { target: { value: "" } });
     await userEvent.type(commentsField, "Updated comment");
 
     await userEvent.selectOptions(screen.getByLabelText(/Stars/i), "4");
