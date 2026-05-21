@@ -67,7 +67,7 @@ const columns = [
   {
     Header: "Status",
     accessor: (row) => {
-      if (row.status === "Approved") {
+      if (row.status === "APPROVED") {
         const formattedDate = formatApprovalDate(row.dateApproved);
         if (!formattedDate) {
           return row.status;

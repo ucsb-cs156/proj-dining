@@ -223,25 +223,25 @@ describe("UserTable tests", () => {
     renderWithQueryClient(
       <UsersTable
         users={[
-          { id: 1, status: "Approved", dateApproved: "2024-10-31" },
-          { id: 2, status: "Approved", dateApproved: null },
-          { id: 3, status: "Rejected", dateApproved: "2024-11-01" },
-          { id: 4, status: "Awaiting Moderation", dateApproved: null },
-          { id: 5, status: "Approved", dateApproved: "not-a-date" },
-          { id: 6, status: "Approved", dateApproved: "2024-02-31" },
-          { id: 7, status: "Approved", dateApproved: "0000-01-01" },
-          { id: 8, status: "Approved", dateApproved: "x2024-10-31" },
-          { id: 9, status: "Approved", dateApproved: "2024-10-31x" },
-          { id: 10, status: "Approved", dateApproved: "notadate" },
-          { id: 11, status: "Approved", dateApproved: "2024-aa-31" },
+          { id: 1, status: "APPROVED", dateApproved: "2024-10-31" },
+          { id: 2, status: "APPROVED", dateApproved: null },
+          { id: 3, status: "REJECTED", dateApproved: "2024-11-01" },
+          { id: 4, status: "AWAITING_REVIEW", dateApproved: null },
+          { id: 5, status: "APPROVED", dateApproved: "not-a-date" },
+          { id: 6, status: "APPROVED", dateApproved: "2024-02-31" },
+          { id: 7, status: "APPROVED", dateApproved: "0000-01-01" },
+          { id: 8, status: "APPROVED", dateApproved: "x2024-10-31" },
+          { id: 9, status: "APPROVED", dateApproved: "2024-10-31x" },
+          { id: 10, status: "APPROVED", dateApproved: "notadate" },
+          { id: 11, status: "APPROVED", dateApproved: "2024-aa-31" },
         ]}
       />,
     );
 
     expect(screen.getByText("Approved on 10/31/2024")).toBeInTheDocument();
-    expect(screen.getAllByText("Approved")).toHaveLength(8);
-    expect(screen.getByText("Rejected")).toBeInTheDocument();
-    expect(screen.getByText("Awaiting Moderation")).toBeInTheDocument();
+    expect(screen.getAllByText("APPROVED")).toHaveLength(8);
+    expect(screen.getByText("REJECTED")).toBeInTheDocument();
+    expect(screen.getByText("AWAITING_REVIEW")).toBeInTheDocument();
   });
 
   test("Clicking Toggle Admin calls the toggleAdmin endpoint", async () => {
