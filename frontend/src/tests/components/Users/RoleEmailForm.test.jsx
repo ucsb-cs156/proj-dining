@@ -26,6 +26,9 @@ describe("RoleEmailForm tests", () => {
     );
 
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    expect(screen.getByTestId("RoleEmailForm-email")).toBeInTheDocument();
+    expect(screen.getByTestId("RoleEmailForm-submit")).toBeInTheDocument();
+    expect(screen.getByTestId("RoleEmailForm-cancel")).toBeInTheDocument();
     expect(screen.getByText("Create")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
@@ -80,6 +83,23 @@ describe("RoleEmailForm tests", () => {
       target: { value: "not-an-email" },
     });
     fireEvent.click(screen.getByText("Create"));
+
+    expect(
+      await screen.findByText("A valid email is required."),
+    ).toBeInTheDocument();
+    expect(submitAction).not.toHaveBeenCalled();
+  });
+
+  test("requires an email", async () => {
+    const submitAction = vi.fn();
+
+    render(
+      <MemoryRouter>
+        <RoleEmailForm submitAction={submitAction} />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByTestId("RoleEmailForm-submit"));
 
     expect(
       await screen.findByText("A valid email is required."),
