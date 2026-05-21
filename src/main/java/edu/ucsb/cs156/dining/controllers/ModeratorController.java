@@ -5,6 +5,7 @@ import edu.ucsb.cs156.dining.entities.Moderator;
 import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.utilities.CanonicalFormConverter;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,8 @@ public class ModeratorController extends ApiController {
    */
   @Operation(summary = "List all Moderators")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @GetMapping("/get")
-  public Iterable<Moderator> allInstructors() {
+  @GetMapping("/all")
+  public Iterable<Moderator> allModerators() {
     Iterable<Moderator> moderators = moderatorRepository.findAll();
     return moderators;
   }
@@ -63,16 +64,13 @@ public class ModeratorController extends ApiController {
   @Operation(summary = "Delete a Moderator by email")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @DeleteMapping("/delete")
-  public ResponseEntity<String> deleteInstructor(@RequestParam String email) {
+  public ResponseEntity<String> deleteModerator(
+      @Parameter(name = "email") @RequestParam String email) {
     Moderator moderator = moderatorRepository.findById(email).orElse(null);
-
     if (moderator == null) {
-      return ResponseEntity.status(404)
-          .body(String.format("Moderator with email %s not found.", email));
+      return ResponseEntity.status(404).body("Moderator with email %s not found.".formatted(email));
     }
-
     moderatorRepository.delete(moderator);
-    return ResponseEntity.status(200)
-        .body(String.format("Moderator with email %s deleted.", email));
+    return ResponseEntity.status(200).body("Moderator with email %s deleted.".formatted(email));
   }
 }
