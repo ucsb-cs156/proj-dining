@@ -146,6 +146,9 @@ describe("UserTable tests", () => {
       />,
     );
 
+    expect(
+      screen.getByTestId("UsersTable-header-Toggle Admin"),
+    ).toHaveTextContent("Toggle Admin");
     const adminBtn = screen.getByTestId(
       "UsersTable-cell-row-0-col-Toggle Admin-button",
     );
