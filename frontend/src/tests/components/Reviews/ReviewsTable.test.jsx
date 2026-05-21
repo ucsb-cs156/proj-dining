@@ -323,5 +323,4 @@ describe("ReviewsTable tests", () => {
       screen.getByText(ReviewFixtures.threeReviews[0].reviewerComments),
     ).toBeInTheDocument();
   });
-
 });
