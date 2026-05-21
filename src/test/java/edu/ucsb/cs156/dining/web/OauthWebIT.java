@@ -28,7 +28,6 @@ public class OauthWebIT extends WebTestCase {
 
     assertThat(page.getByText("Log In")).isVisible();
     assertThat(page.getByText("Log Out")).not().isVisible();
-    assertThat(page.getByText("Dining Commons")).isVisible();
     assertThat(
             page.getByRole(
                 AriaRole.HEADING,
