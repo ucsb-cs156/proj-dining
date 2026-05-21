@@ -24,6 +24,9 @@ describe("AdminUsersPage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/admin/defaultAdminEmails")
+      .reply(200, ["phtcon@ucsb.edu"]);
   });
 
   test("renders without crashing on three users", async () => {
@@ -115,6 +118,28 @@ describe("AdminUsersPage tests", () => {
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toHaveTextContent("1");
+    });
+  });
+
+  test("Toggle Admin button is disabled for default admin and enabled for others", async () => {
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminUsersPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Toggle Admin-button`),
+      ).toBeDisabled();
+      expect(
+        screen.getByTestId(`${testId}-cell-row-1-col-Toggle Admin-button`),
+      ).not.toBeDisabled();
     });
   });
 });

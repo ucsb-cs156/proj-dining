@@ -42,6 +42,31 @@ public class UsersControllerTests extends ControllerTestCase {
     mockMvc.perform(get("/api/admin/users")).andExpect(status().is(403));
   }
 
+  @Test
+  public void defaultAdminEmails__logged_out() throws Exception {
+    mockMvc.perform(get("/api/admin/defaultAdminEmails")).andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void defaultAdminEmails__user_logged_in() throws Exception {
+    mockMvc.perform(get("/api/admin/defaultAdminEmails")).andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void defaultAdminEmails__admin_logged_in() throws Exception {
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/admin/defaultAdminEmails"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(List.of("superadmin@example.org"));
+    assertEquals(expectedJson, responseString);
+  }
+
   @WithMockUser(roles = {"USER"})
   @Test
   public void users__user_logged_in() throws Exception {

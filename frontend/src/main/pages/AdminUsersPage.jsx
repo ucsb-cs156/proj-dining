@@ -18,6 +18,13 @@ const AdminUsersPage = () => {
     [],
   );
 
+  const { data: defaultAdminEmails } = useBackend(
+    // Stryker disable next-line all : don't test internal caching of React Query
+    ["/api/admin/defaultAdminEmails"],
+    { method: "GET", url: "/api/admin/defaultAdminEmails" },
+    [],
+  );
+
   return (
     <BasicLayout>
       <h2>Users</h2>
@@ -25,6 +32,7 @@ const AdminUsersPage = () => {
         users={users}
         showToggleRoleButtons={true}
         currentUser={currentUser}
+        defaultAdminEmails={defaultAdminEmails}
       />
     </BasicLayout>
   );

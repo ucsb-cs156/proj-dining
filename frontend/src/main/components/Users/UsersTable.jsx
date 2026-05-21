@@ -73,6 +73,7 @@ export default function UsersTable({
   users,
   showToggleRoleButtons,
   currentUser,
+  defaultAdminEmails,
 }) {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -93,6 +94,7 @@ export default function UsersTable({
   // Stryker restore all
 
   const toggleAdminCallback = (cell) => {
+    // Stryker disable next-line OptionalChaining
     if (currentUser?.root?.user?.id === cell.row.values.id) {
       setPendingCell(cell);
       setShowModal(true);
@@ -121,14 +123,25 @@ export default function UsersTable({
   const columns = [...baseColumns];
 
   if (showToggleRoleButtons) {
-    columns.push(
-      ButtonColumn(
-        "Toggle Admin",
-        "primary",
-        toggleAdminCallback,
-        "UsersTable",
-      ),
-    );
+    columns.push({
+      Header: "Toggle Admin",
+      id: "Toggle Admin",
+      Cell: ({ cell }) => {
+        const isDefaultAdmin =
+          Array.isArray(defaultAdminEmails) &&
+          defaultAdminEmails.includes(cell.row.values.email);
+        return (
+          <Button
+            variant="primary"
+            onClick={() => toggleAdminCallback(cell)}
+            disabled={isDefaultAdmin}
+            data-testid={`UsersTable-cell-row-${cell.row.index}-col-Toggle Admin-button`}
+          >
+            Toggle Admin
+          </Button>
+        );
+      },
+    });
     columns.push(
       ButtonColumn(
         "Toggle Moderator",
@@ -155,9 +168,7 @@ export default function UsersTable({
             <p>
               Are you sure you want to toggle admin status for your own account?
             </p>
-            <p>
-              You will lose admin access and be redirected to the home page.
-            </p>
+            <p>You will lose admin access and be redirected to the home page.</p>
           </Modal.Body>
           <Modal.Footer>
             <Button
