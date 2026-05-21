@@ -73,10 +73,10 @@ describe("ModerationModal tests", () => {
     expect(screen.getByText("Reject Review")).toBeInTheDocument();
     const rejectModal = within(screen.getByRole("dialog"));
     expect(
-      rejectModal.getByText(/Please add moderator comments before rejecting/i),
+      rejectModal.getByText(
+        /Please add moderator comments before rejecting this review\./i,
+      ),
     ).toBeInTheDocument();
-    expect(rejectModal.getByText(/this review\./i)).toBeInTheDocument();
-
     const submitButton = screen.getByTestId("moderation-modal-submit");
     expect(submitButton).not.toBeDisabled();
     expect(submitButton).toHaveClass("btn-danger");
