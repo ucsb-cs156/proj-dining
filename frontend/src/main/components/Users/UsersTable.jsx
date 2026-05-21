@@ -125,7 +125,7 @@ export default function UsersTable({
   if (showToggleRoleButtons) {
     columns.push({
       Header: "Toggle Admin",
-      id: "Toggle Admin",
+      //id: "Toggle Admin",
       Cell: ({ cell }) => {
         const isDefaultAdmin =
           Array.isArray(defaultAdminEmails) &&
