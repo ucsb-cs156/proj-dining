@@ -53,22 +53,29 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
-  const searchedItems = menuItems.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()),);
+  // split input (delimiters: space, comma) into non-empty keywords
+  const keywords = searchTerm
+    .toLowerCase()
+    .split(/[\s,]+/)
+    .filter(Boolean);
+  const searchedItems = menuItems.filter((item) => {
+    return keywords.every(
+      (kw) =>
+        item.name.toLowerCase().includes(kw) ||
+        item.station.toLowerCase().includes(kw),
+    );
+  });
 
   return (
     <>
       <input
         type="text"
-        placeholder="Search name"
+        placeholder="Search for item by keywords separated by space or comma"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
       />
-      <OurTable 
-        columns={columns} 
-        data={searchedItems} 
-        testid={testid} 
-        />
+      <OurTable columns={columns} data={searchedItems} testid={testid} />
     </>
-    );
+  );
 }

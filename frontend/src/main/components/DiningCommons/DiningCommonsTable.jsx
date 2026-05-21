@@ -24,17 +24,23 @@ export default function DiningCommonsTable({ commons, date }) {
           <div>
             {!value || value.length === 0
               ? "No meals offered today"
-              : value.map((meal) => (
-                  <div key={meal.id}>
-                    <Link
-                      to={`/diningcommons/${date}/${row.original.code}/${meal.code}`}
-                      className="p-2"
-                      data-testid={`DiningCommonsTable-cell-row-${row.index}-col-meal-${meal.code}`}
-                    >
-                      {meal.name}
-                    </Link>
-                  </div>
-                ))}
+              : value.map(
+                  (
+                    meal,
+                    index, // span to keep on one line while satisfying jsx-key
+                  ) => (
+                    <span key={meal.id}>
+                      <Link
+                        to={`/diningcommons/${date}/${row.original.code}/${meal.code}`}
+                        className="p-2"
+                        data-testid={`DiningCommonsTable-cell-row-${row.index}-col-meal-${meal.code}`}
+                      >
+                        {meal.name}
+                      </Link>
+                      {index < value.length - 1 && " | "}
+                    </span>
+                  ),
+                )}
           </div>
         );
       },
