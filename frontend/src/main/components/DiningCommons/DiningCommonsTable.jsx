@@ -25,7 +25,7 @@ export default function DiningCommonsTable({ commons, date }) {
             {!value || value.length === 0
               ? "No meals offered today"
               : value.map((meal) => (
-                  <li key={meal.id}>
+                  <div key={meal.id}>
                     <Link
                       to={`/diningcommons/${date}/${row.original.code}/${meal.code}`}
                       className="p-2"
@@ -33,7 +33,7 @@ export default function DiningCommonsTable({ commons, date }) {
                     >
                       {meal.name}
                     </Link>
-                  </li>
+                  </div>
                 ))}
           </div>
         );

@@ -53,6 +53,8 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
+  const searchedItems = menuItems.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()),);
+
   return (
     <>
       <input
@@ -64,7 +66,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
       />
       <OurTable 
         columns={columns} 
-        data={menuItems.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase))} 
+        data={searchedItems} 
         testid={testid} 
         />
     </>
