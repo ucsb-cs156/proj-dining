@@ -8,6 +8,7 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { vi } from "vitest";
 import * as useBackendModule from "main/utils/useBackend";
+import userEvent from "@testing-library/user-event";
 
 const useBackendSpy = vi.spyOn(useBackendModule, "useBackend");
 
@@ -104,15 +105,16 @@ describe("EditReviewPage tests", () => {
 
     renderWithDefaultRouter();
 
-    fireEvent.change(await screen.findByLabelText(/Comments/i), {
-      target: { value: "Updated comment" },
-    });
-    fireEvent.change(screen.getByLabelText(/Stars/i), {
-      target: { value: "4" },
-    });
+    const commentsField = await screen.findByLabelText(/Comments/i);
+    await userEvent.clear(commentsField);
+    await userEvent.type(commentsField, "Updated comment");
+
+    await userEvent.selectOptions(screen.getByLabelText(/Stars/i), "4");
+
     fireEvent.change(screen.getByLabelText(/Date and Time/i), {
       target: { value: "2026-05-19T10:30" },
     });
+
     fireEvent.click(screen.getByRole("button", { name: /update review/i }));
 
     await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
