@@ -104,10 +104,10 @@ describe("EditReviewPage tests", () => {
     axiosMock.onPut("/api/reviews/reviewer").reply(200, {});
 
     renderWithDefaultRouter();
+    await screen.findByDisplayValue("Old comment");
 
     const commentsField = await screen.findByLabelText(/Comments/i);
-    fireEvent.change(commentsField, { target: { value: "" } });
-    await userEvent.type(commentsField, "Updated comment");
+    fireEvent.change(commentsField, { target: { value: "Updated comment" } });
 
     await userEvent.selectOptions(screen.getByLabelText(/Stars/i), "4");
 
@@ -127,6 +127,9 @@ describe("EditReviewPage tests", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(
+      await screen.findByText(/Review updated for Eggs Benedict/i),
+    ).toBeInTheDocument();
   });
 
   test("shows error toast on network error during edit with fallback message", async () => {
