@@ -11,13 +11,9 @@ export default function EditReviewPage() {
   const navigate = useNavigate();
 
   const { data: review } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
     [`/api/reviews/${id}`],
-    // Stryker disable next-line all : the default method is GET, so mutating this does not change behavior
     {
-      // Stryker disable next-line all : the default method is get, so replacing with an empty string will do nothing
       method: "GET",
-      // Stryker disable next-line all : id will be defined
       url: `/api/reviews/${id}`,
     },
     {},
@@ -32,7 +28,6 @@ export default function EditReviewPage() {
           id,
         },
       });
-      // Stryker disable next-line all : itemName will be defined
       toast(`Review updated for ${itemName}`);
       navigate(-1);
     } catch (err) {

@@ -7,6 +7,9 @@ import EditReviewPage from "main/pages/Reviews/EditReviewPage";
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { vi } from "vitest";
+import * as useBackendModule from "main/utils/useBackend";
+
+const useBackendSpy = vi.spyOn(useBackendModule, "useBackend");
 
 // silence console.error during tests to keep logs clean
 beforeAll(() => {
@@ -14,6 +17,7 @@ beforeAll(() => {
 });
 afterAll(() => {
   console.error.mockRestore();
+  useBackendSpy.mockClear();
 });
 
 // Always provide working versions of the router hooks that the page expects
@@ -29,7 +33,7 @@ vi.mock("react-router", async () => {
 
 const axiosMock = new AxiosMockAdapter(axios);
 describe("EditReviewPage tests", () => {
-  const queryClient = new QueryClient();
+  let queryClient;
 
   const mockReview = {
     id: 2,
@@ -53,6 +57,7 @@ describe("EditReviewPage tests", () => {
     );
 
   beforeEach(() => {
+    queryClient = new QueryClient();
     mockNavigate.mockClear();
     axiosMock.reset();
     axiosMock.resetHistory();
@@ -76,6 +81,12 @@ describe("EditReviewPage tests", () => {
     expect(screen.getByLabelText(/Date and Time/i)).toHaveValue(
       "2026-05-18T23:57",
     );
+    expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(1);
+    const reviewRequest = axiosMock.history.get.find(
+      (req) => req.url === `/api/reviews/2`,
+    );
+    expect(reviewRequest).toBeDefined();
+    expect(reviewRequest.method).toBe("get");
   });
 
   test("update button is enabled by default", async () => {
@@ -217,5 +228,14 @@ describe("EditReviewPage tests", () => {
     expect(options).toHaveLength(5);
     expect(options[0]).toHaveTextContent("1");
     expect(options[4]).toHaveTextContent("5");
+  });
+
+  test("useBackend is called with correct cache query key", async () => {
+    renderWithDefaultRouter();
+    expect(useBackendSpy).toHaveBeenCalledWith(
+      [`/api/reviews/2`],
+      { method: "GET", url: `/api/reviews/2` },
+      {},
+    );
   });
 });
