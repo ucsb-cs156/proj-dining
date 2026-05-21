@@ -301,4 +301,32 @@ describe("ReviewsTable tests", () => {
       moderatorComments: "Not acceptable",
     });
   });
+
+  test("approve modal handles missing item safely", async () => {
+    const reviewsWithMissingItem = [
+      {
+        ...ReviewFixtures.threeReviews[0],
+        item: undefined,
+      },
+    ];
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={reviewsWithMissingItem}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    const approveButton = await screen.findByTestId(
+      `Reviewstable-cell-row-0-col-Approve-button`,
+    );
+
+    fireEvent.click(approveButton);
+
+    expect(screen.getByText("Approve Review")).toBeInTheDocument();
+    expect(screen.getByText(/Unknown/i)).toBeInTheDocument();
+  });
 });
