@@ -2,6 +2,7 @@ package edu.ucsb.cs156.dining.web;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+import com.microsoft.playwright.options.AriaRole;
 import edu.ucsb.cs156.dining.WebTestCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,5 +29,10 @@ public class OauthWebIT extends WebTestCase {
     assertThat(page.getByText("Log In")).isVisible();
     assertThat(page.getByText("Log Out")).not().isVisible();
     assertThat(page.getByText("Dining Commons")).isVisible();
+    assertThat(
+            page.getByRole(
+                AriaRole.HEADING,
+                new com.microsoft.playwright.Page.GetByRoleOptions().setName("Dining Commons")))
+        .isVisible();
   }
 }
