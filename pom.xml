@@ -472,6 +472,7 @@
                 </goals>
                 <configuration>
                   <nodeVersion>${node.version}</nodeVersion>
+                  <skip>${npm.install.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -480,7 +481,8 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>ci</arguments>
+                  <arguments>install</arguments>
+                  <skip>${npm.install.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -490,6 +492,7 @@
                 </goals>
                 <configuration>
                   <arguments>run build</arguments>
+                  <skip>${npm.build.skip}</skip>
                 </configuration>
               </execution>
             </executions>
@@ -499,11 +502,57 @@
             <version>${maven-antrun-plugin.version}</version>
             <executions>
               <execution>
+                <id>check-frontend-uptodate</id>
+                <phase>initialize</phase>
+                <configuration>
+                  <exportAntProperties>true</exportAntProperties>
+                  <target>
+                    <!--
+                      Set npm.install.skip=true when node is already installed
+                      and package.json / package-lock.json are unchanged.
+                    -->
+                    <uptodate
+                      property="npm.install.skip"
+                      targetfile="${project.build.directory}/node/node">
+                      <srcfiles
+                        dir="${project.basedir}/frontend"
+                        includes="package.json,package-lock.json" />
+                    </uptodate>
+                    <!--
+                      Set npm.build.skip=true when both the frontend source files
+                      and package files are all older than the last copied output.
+                    -->
+                    <condition property="npm.build.skip" value="true">
+                      <and>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend/src"
+                            includes="**/*" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend"
+                            includes="package.json,package-lock.json" />
+                        </uptodate>
+                      </and>
+                    </condition>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>copy-frontend-build</id>
                 <phase>generate-resources</phase>
                 <configuration>
                   <target>
                     <copy todir="${project.build.outputDirectory}/public">
-                      <fileset dir="${project.basedir}/frontend/build" />
+                      <fileset
+                        dir="${project.basedir}/frontend/build"
+                        erroronmissingdir="false" />
                     </copy>
                   </target>
                 </configuration>
