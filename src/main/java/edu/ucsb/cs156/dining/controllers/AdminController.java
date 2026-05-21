@@ -89,7 +89,7 @@ public class AdminController extends ApiController {
       throw new UnsupportedOperationException(
           "Forbidden to delete an admin from ADMIN_EMAILS list");
     }
-    adminRepository.delete(admin);
+    adminRepository.deleteByEmail(admin.getEmail());
     return genericMessage("Admin with id %s deleted".formatted(email));
   }
 }

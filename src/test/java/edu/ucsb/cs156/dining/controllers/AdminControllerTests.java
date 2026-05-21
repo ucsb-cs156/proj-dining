@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -157,7 +156,7 @@ public class AdminControllerTests extends ControllerTestCase {
 
     // assert
     verify(adminRepository, times(1)).findByEmail("acdamstedt@gmail.com");
-    verify(adminRepository, times(1)).delete(any());
+    verify(adminRepository, times(1)).deleteByEmail("acdamstedt@gmail.com");
 
     Map<String, Object> json = responseToJson(response);
     assertEquals("Admin with id acdamstedt@gmail.com deleted", json.get("message"));
