@@ -1,10 +1,12 @@
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { hasRole } from "main/utils/currentUser";
 import { useNavigate } from "react-router";
+import React, { useState } from "react";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
   const reviewCallback = async (_cell) => {
     const itemId = _cell.row.original.id;
     navigate(`/reviews/post/${itemId}`);
@@ -51,5 +53,20 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
-  return <OurTable columns={columns} data={menuItems} testid={testid} />;
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Search name"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="form-control mb-3"
+      />
+      <OurTable 
+        columns={columns} 
+        data={menuItems.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase))} 
+        testid={testid} 
+        />
+    </>
+    );
 }
