@@ -93,7 +93,8 @@ export default function UsersTable({
   // Stryker restore all
 
   const toggleAdminCallback = (cell) => {
-    if (currentUser?.root?.user?.id === cell.row.values.id) {
+    const selfUser = currentUser?.root?.user;
+    if (selfUser != null && selfUser.id === cell.row.values.id) {
       setPendingCell(cell);
       setShowModal(true);
     } else {
