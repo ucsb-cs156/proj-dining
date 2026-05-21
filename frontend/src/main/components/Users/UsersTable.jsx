@@ -168,9 +168,7 @@ export default function UsersTable({
             <p>
               Are you sure you want to toggle admin status for your own account?
             </p>
-            <p>
-              You will lose admin access and be redirected to the home page.
-            </p>
+            <p>You will lose admin access and be redirected to the home page.</p>
           </Modal.Body>
           <Modal.Footer>
             <Button

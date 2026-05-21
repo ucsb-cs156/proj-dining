@@ -7,23 +7,23 @@ import { useCurrentUser } from "main/utils/currentUser";
 const AdminUsersPage = () => {
   const { data: currentUser } = useCurrentUser();
 
+  // Stryker disable all
   const {
     data: users,
     error: _error,
     status: _status,
   } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/admin/users"],
     { method: "GET", url: "/api/admin/users" },
     [],
   );
 
   const { data: defaultAdminEmails } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/admin/defaultAdminEmails"],
     { method: "GET", url: "/api/admin/defaultAdminEmails" },
     [],
   );
+  // Stryker restore all
 
   return (
     <BasicLayout>

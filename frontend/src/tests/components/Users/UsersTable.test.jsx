@@ -134,7 +134,9 @@ describe("UserTable tests", () => {
       screen.queryByTestId("UsersTable-cell-row-0-col-Toggle Admin-button"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("UsersTable-cell-row-0-col-Toggle Moderator-button"),
+      screen.queryByTestId(
+        "UsersTable-cell-row-0-col-Toggle Moderator-button",
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -155,7 +157,9 @@ describe("UserTable tests", () => {
     expect(adminBtn).toBeInTheDocument();
     expect(adminBtn).toHaveClass("btn-primary");
     expect(
-      screen.getByTestId("UsersTable-cell-row-0-col-Toggle Moderator-button"),
+      screen.getByTestId(
+        "UsersTable-cell-row-0-col-Toggle Moderator-button",
+      ),
     ).toBeInTheDocument();
   });
 
