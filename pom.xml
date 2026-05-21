@@ -511,18 +511,19 @@
                     <mkdir dir="${project.build.directory}/frontend" />
                     <uptodate property="frontend.dependency.skip"
                               targetfile="${project.build.directory}/frontend/dependencies.timestamp">
-                      <srcfiles>
-                        <file file="${project.basedir}/frontend/package.json" />
-                        <file file="${project.basedir}/frontend/package-lock.json" />
+                      <srcfiles dir="${project.basedir}/frontend">
+                        <include name="package.json" />
+                        <include name="package-lock.json" />
                       </srcfiles>
                     </uptodate>
+
                     <uptodate property="frontend.build.skip"
                               targetfile="${project.build.directory}/frontend/build.timestamp">
-                      <srcfiles>
-                        <fileset dir="${project.basedir}/frontend/src" includes="**/*" />
-                        <file file="${project.basedir}/frontend/package.json" />
-                        <file file="${project.basedir}/frontend/package-lock.json" />
-                        <file file="${project.basedir}/frontend/vite.config.js" />
+                      <srcfiles dir="${project.basedir}/frontend">
+                        <include name="src/**/*" />
+                        <include name="package.json" />
+                        <include name="package-lock.json" />
+                        <include name="vite.config.js" />
                       </srcfiles>
                     </uptodate>
                     <touch file="${project.build.directory}/frontend/dependencies.timestamp" />
