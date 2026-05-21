@@ -188,4 +188,28 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
       };
     });
   });
+
+  test("shows error when comments exceed 255 characters", async () => {
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/comments/i), {
+      target: { value: "a".repeat(256) },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(
+      await screen.findByText(/max length 255 characters/i),
+    ).toBeInTheDocument();
+  });
+
+  test("shows error when date is not provided", async () => {
+    renderWithDefaultRouter();
+
+    fireEvent.change(await screen.findByLabelText(/date and time/i), {
+      target: { value: "" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(await screen.findByText(/date is required/i)).toBeInTheDocument();
+  });
 });
