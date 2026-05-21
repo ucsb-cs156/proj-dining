@@ -317,6 +317,31 @@ public class UsersControllerTests extends ControllerTestCase {
   }
 
   @Test
+  @WithMockUser(roles = {"MODERATOR"})
+  public void moderator_can_get_all_users_with_proposed_alias() throws Exception {
+    // arrange
+    User user1 = User.builder().id(1L).proposedAlias("Chipo").build();
+    User user2 = User.builder().id(2L).proposedAlias("Taco").build();
+
+    List<User> users = Arrays.asList(user1, user2);
+
+    when(userRepository.findByProposedAliasNotNull()).thenReturn(users);
+    String expectedJson = mapper.writeValueAsString(users);
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/admin/usersWithProposedAlias").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+    verify(userRepository, times(1)).findByProposedAliasNotNull();
+  }
+
+  @Test
   @WithMockUser(roles = {"USER"})
   public void can_get_alias() throws Exception {
     // arrange
