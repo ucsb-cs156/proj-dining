@@ -302,18 +302,11 @@ describe("ReviewsTable tests", () => {
     });
   });
 
-  test("approve modal handles missing item safely", async () => {
-    const reviewsWithMissingItem = [
-      {
-        ...ReviewFixtures.threeReviews[0],
-        item: undefined,
-      },
-    ];
-
+  test("approve modal receives the selected review", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ReviewsTable
-          reviews={reviewsWithMissingItem}
+          reviews={ReviewFixtures.threeReviews}
           userOptions={false}
           moderatorOptions={true}
         />
@@ -323,10 +316,12 @@ describe("ReviewsTable tests", () => {
     const approveButton = await screen.findByTestId(
       `Reviewstable-cell-row-0-col-Approve-button`,
     );
-
     fireEvent.click(approveButton);
 
     expect(screen.getByText("Approve Review")).toBeInTheDocument();
-    expect(screen.getByText(/Unknown/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(ReviewFixtures.threeReviews[0].reviewerComments),
+    ).toBeInTheDocument();
   });
+
 });

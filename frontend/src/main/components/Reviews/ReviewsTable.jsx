@@ -149,7 +149,7 @@ export default function ReviewsTable({
         moderatorComments={moderatorComments}
         onModeratorCommentsChange={setModeratorComments}
         onSubmit={handleModerationSubmit}
-        review={pendingCell?.row?.original}
+        review={pendingCell?.row.original}
       />
     </>
   );
