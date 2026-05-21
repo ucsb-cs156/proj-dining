@@ -4,7 +4,7 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
 import { http, HttpResponse } from "msw";
 
-import Moderate from "main/pages/Moderator/ModerateReviewsPage";
+import Moderate from "main/pages/ModerateReviewsPage";
 
 export default {
   title: "pages/Moderate",

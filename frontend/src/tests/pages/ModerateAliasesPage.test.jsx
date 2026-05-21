@@ -1,7 +1,7 @@
 import { render, waitFor, screen, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
-import ModerateAliases from "main/pages/Moderator/ModerateAliasesPage";
+import ModerateAliases from "main/pages/ModerateAliasesPage";
 import { vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 

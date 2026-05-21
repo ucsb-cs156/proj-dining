@@ -2,7 +2,7 @@ import React from "react";
 import { useBackend } from "main/utils/useBackend";
 
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import ReviewsTable from "main/components/reviewsTable";
+import ReviewsTable from "main/components/Reviews/ReviewsTable";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
 
 export default function MyReviewsIndexPage() {
