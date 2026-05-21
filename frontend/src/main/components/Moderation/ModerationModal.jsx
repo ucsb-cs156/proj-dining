@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
@@ -21,9 +20,7 @@ export default function ModerationModal({
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>
-          Please add moderator comments before {actionVerb} this review.
-        </p>
+        <p>Please add moderator comments before {actionVerb} this review.</p>
         <Form.Group controlId="moderatorComments">
           <Form.Label>Moderator Comments</Form.Label>
           <Form.Control
