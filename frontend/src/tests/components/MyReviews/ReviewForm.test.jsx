@@ -18,9 +18,7 @@ describe("ReviewForm", () => {
   });
 
   test("marks comments field invalid when submit is attempted without text", async () => {
-    render(
-      <ReviewForm initialItemName="Burger" submitAction={vi.fn()} />,
-    );
+    render(<ReviewForm initialItemName="Burger" submitAction={vi.fn()} />);
 
     fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
 
