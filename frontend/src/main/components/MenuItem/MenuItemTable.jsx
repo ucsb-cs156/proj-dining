@@ -54,10 +54,7 @@ export default function MenuItemTable({ menuItems, currentUser }) {
   }
 
   // split input (delimiters: space, comma) into non-empty keywords
-  const keywords = searchTerm
-    .toLowerCase()
-    .split(/[\s,]+/)
-    .filter(Boolean);
+  const keywords = splitKeywords(searchTerm);
   const searchedItems = menuItems.filter((item) => {
     return keywords.every(
       (kw) =>
@@ -79,3 +76,9 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     </>
   );
 }
+
+export const splitKeywords = (searchTerms) =>
+  searchTerms
+    .toLowerCase()
+    .split(/[\s,]+/)
+    .filter(Boolean);
