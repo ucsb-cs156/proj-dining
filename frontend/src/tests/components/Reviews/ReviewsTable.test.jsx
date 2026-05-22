@@ -80,6 +80,8 @@ describe("ReviewsTable tests", () => {
       `Reviewstable-cell-row-0-col-Reject-button`,
     );
     expect(rejectButton).not.toBeInTheDocument();
+    expect(screen.queryByText("Reviewer Email")).not.toBeInTheDocument();
+    expect(screen.queryByText("phtcon@ucsb.edu")).not.toBeInTheDocument();
   });
 
   test("Regular user buttons appear and work properly", async () => {
@@ -125,7 +127,7 @@ describe("ReviewsTable tests", () => {
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
   });
 
-  test("Moderator buttons appear and work properly", async () => {
+  test("Moderator buttons and reviewer email appear", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ReviewsTable
@@ -135,6 +137,14 @@ describe("ReviewsTable tests", () => {
         />
       </QueryClientProvider>,
     );
+
+    expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
+
+    expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
+
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-reviewer.email`),
+    ).toBeInTheDocument();
 
     await waitFor(() => {
       expect(

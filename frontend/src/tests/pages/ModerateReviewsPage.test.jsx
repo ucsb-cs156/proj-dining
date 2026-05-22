@@ -79,7 +79,11 @@ describe("ModerateReviews Page Tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
-
+    expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+    ).toBeInTheDocument();
+    expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
     ).toBeInTheDocument();
@@ -108,7 +112,11 @@ describe("ModerateReviews Page Tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
-
+    expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+    ).toBeInTheDocument();
+    expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
     ).toBeInTheDocument();
@@ -166,7 +174,7 @@ describe("ModerateReviews Page Tests", () => {
         screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
       ).not.toBeInTheDocument();
     });
-
+    expect(screen.queryByText("Reviewer Email")).not.toBeInTheDocument();
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-Approve-button`),
     ).not.toBeInTheDocument();

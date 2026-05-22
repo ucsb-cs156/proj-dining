@@ -32,7 +32,7 @@ const usersFixtures = {
       locale: "en",
       hostedDomain: null,
       admin: false,
-      moderator: false,
+      moderator: true,
       alias: "Alias2",
       proposedAlias: null,
       status: "APPROVED",
