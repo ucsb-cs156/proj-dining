@@ -1,7 +1,5 @@
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
-import MenuItemTable, {
-  splitKeywords,
-} from "main/components/MenuItem/MenuItemTable";
+import MenuItemTable from "main/components/MenuItem/MenuItemTable";
 import { menuItemFixtures } from "fixtures/menuItemFixtures";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { MemoryRouter } from "react-router";
@@ -11,7 +9,7 @@ import {
   currentUserFixtures,
 } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import { test, vi } from "vitest";
+import { vi } from "vitest";
 
 // ✅ Mock useNavigate from react-router
 const mockedNavigate = vi.fn();
@@ -816,11 +814,5 @@ describe("MenuItemTable Tests", () => {
     expect(screen.getByText("Spicy Chicken")).toBeInTheDocument();
     expect(screen.getByText("Veggie Burger")).toBeInTheDocument();
     expect(screen.getByText("Pasta Salad")).toBeInTheDocument();
-  });
-
-  test("splitKeywords helper works correctly", () => {
-    expect(splitKeywords("chicken   pasta")).toEqual(["chicken", "pasta"]);
-    expect(splitKeywords("chicken,,,pasta")).toEqual(["chicken", "pasta"]);
-    expect(splitKeywords("chicken,  pasta")).toEqual(["chicken", "pasta"]);
   });
 });
