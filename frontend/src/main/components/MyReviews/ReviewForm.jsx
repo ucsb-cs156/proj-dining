@@ -66,6 +66,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         <Form.Label htmlFor="dateItemServed">
           Date and Time Item was Served
         </Form.Label>
+
         <Form.Control
           id="dateItemServed"
           type="datetime-local"
@@ -73,7 +74,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         />
       </Form.Group>
 
-      <Button type="submit">Submit Review</Button>
+      <Button type="submit">{buttonLabel}</Button>
     </Form>
   );
 }

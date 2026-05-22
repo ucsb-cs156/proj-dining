@@ -112,6 +112,10 @@ export default function ReviewsTable({
   }
 
   if (moderatorOptions) {
+    columns.splice(1, 0, {
+      Header: "Reviewer Email",
+      accessor: "reviewer.email",
+    });
     columns.push(
       ButtonColumn("Approve", "primary", approveCallback, "Reviewstable"),
     );

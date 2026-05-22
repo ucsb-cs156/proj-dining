@@ -2,6 +2,7 @@ package edu.ucsb.cs156.dining.services;
 
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +32,8 @@ public class CurrentUserServiceImpl extends CurrentUserService {
   @Autowired private UserRepository userRepository;
 
   @Autowired GrantedAuthoritiesService grantedAuthoritiesService;
+
+  @Autowired private ModeratorRepository moderatorRepository;
 
   @Value("${app.admin.emails}")
   private final List<String> adminEmails = new ArrayList<String>();
@@ -80,6 +83,11 @@ public class CurrentUserServiceImpl extends CurrentUserService {
         u.setAdmin(true);
         userRepository.save(u);
       }
+      boolean isModerator = moderatorRepository.findById(email).isPresent();
+      if (isModerator != u.isModerator()) {
+        u.setModerator(isModerator);
+        userRepository.save(u);
+      }
       return u;
     }
 
@@ -95,6 +103,7 @@ public class CurrentUserServiceImpl extends CurrentUserService {
             .locale(locale)
             .hostedDomain(hostedDomain)
             .admin(adminEmails.contains(email))
+            .moderator(moderatorRepository.findById(email).isPresent())
             .build();
     userRepository.save(u);
     return u;

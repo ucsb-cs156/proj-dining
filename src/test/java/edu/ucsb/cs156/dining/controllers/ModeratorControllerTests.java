@@ -75,7 +75,7 @@ public class ModeratorControllerTests extends ControllerTestCase {
   @Test
   public void logged_out_users_cannot_get() throws Exception {
     mockMvc
-        .perform(get("/api/admin/moderators/get"))
+        .perform(get("/api/admin/moderators/all"))
         .andExpect(status().is(403)); // logged out users cannot get
   }
 
@@ -83,7 +83,7 @@ public class ModeratorControllerTests extends ControllerTestCase {
   @Test
   public void logged_in_users_cannot_get() throws Exception {
     mockMvc
-        .perform(get("/api/admin/moderators/get"))
+        .perform(get("/api/admin/moderators/all"))
         .andExpect(status().is(403)); // logged in users cannot get
   }
 
@@ -98,7 +98,7 @@ public class ModeratorControllerTests extends ControllerTestCase {
 
     // act
     MvcResult response =
-        mockMvc.perform(get("/api/admin/moderators/get")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/admin/moderators/all")).andExpect(status().isOk()).andReturn();
 
     // assert
     verify(moderatorRepository, times(1)).findAll();

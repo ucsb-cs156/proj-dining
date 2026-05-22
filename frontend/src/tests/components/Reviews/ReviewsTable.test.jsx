@@ -125,6 +125,14 @@ describe("ReviewsTable", () => {
       </QueryClientProvider>,
     );
 
+    expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
+
+    expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
+
+    expect(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-reviewer.email`),
+    ).toBeInTheDocument();
+
     await waitFor(() => {
       expect(
         screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
