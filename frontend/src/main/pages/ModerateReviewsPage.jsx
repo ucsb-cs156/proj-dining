@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 
 import { useBackend } from "main/utils/useBackend";
+import { useBackendMutation } from "main/utils/useBackend";
 import { useCurrentUser, hasRole } from "main/utils/currentUser";
+
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import ReviewsTable from "main/components/Reviews/ReviewsTable";
 import ModerateReviewModal from "main/components/Reviews/ModerateReviewModal";
@@ -9,25 +11,40 @@ import ModerateReviewModal from "main/components/Reviews/ModerateReviewModal";
 const ModerateReviews = () => {
   const currentUser = useCurrentUser();
 
-  const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  //
-  // Reviews needing moderation
-  //
+
   const { data: reviews } = useBackend(
-    // Stryker disable next-line all : don't test internal caching of React Query
     ["/api/reviews/needsmoderation"],
-    // Stryker disable next-line all : don't test internal caching of React Query
     { method: "GET", url: "/api/reviews/needsmoderation" },
-    // Stryker disable next-line all : don't test internal caching of React Query
-    [],
+    []
   );
 
   const moderateReviewsOptions =
     hasRole(currentUser, "ROLE_ADMIN") ||
     hasRole(currentUser, "ROLE_MODERATOR");
+
+  const moderationMutation = useBackendMutation(
+    (payload) => ({
+      url: "/api/reviews/moderate",
+      method: "PUT",
+      params: {
+        id: payload.review.id,
+        status: payload.status,
+        moderatorComments: payload.moderatorComments,
+      },
+    }),
+    {
+      onSuccess: () => {
+        setIsModalOpen(false);
+        setSelectedReview(null);
+        setSelectedStatus(null);
+      },
+    },
+    ["/api/reviews/needsmoderation"]
+  );
 
   const openModal = (review, status) => {
     setSelectedReview(review);
@@ -37,6 +54,16 @@ const ModerateReviews = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedReview(null);
+    setSelectedStatus(null);
+  };
+
+  const handleModerationSubmit = (data) => {
+    moderationMutation.mutate({
+      review: selectedReview,
+      status: selectedStatus,
+      moderatorComments: data.moderatorComments,
+    });
   };
 
   return (
@@ -49,15 +76,19 @@ const ModerateReviews = () => {
           moderatorOptions={moderateReviewsOptions}
           openModal={openModal}
         />
+
         <ModerateReviewModal
-          show={isModalOpen}
+          showModal={isModalOpen}
+          toggleShowModal={closeModal}
           review={selectedReview}
           status={selectedStatus}
-          onClose={closeModal}
+          onSubmitAction={handleModerationSubmit}
         />
       </div>
     </BasicLayout>
   );
+
+  
 };
 
 export default ModerateReviews;

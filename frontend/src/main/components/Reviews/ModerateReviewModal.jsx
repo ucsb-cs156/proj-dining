@@ -1,96 +1,116 @@
-import React from "react";
-import { Modal, Button, Form } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import { useBackendMutation } from "main/utils/useBackend";
+import Modal from "react-bootstrap/Modal";
+import { Button, Form } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
-const buildModerationParams = (review, status, comments) => {
-  if (!review || !status) return {};
+function ModerateReviewModal({
+  showModal,
+  toggleShowModal,
+  review,
+  status,
+  onSubmitAction,
+}) {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({});
 
-  return {
-    url: "/api/reviews/moderate",
-    method: "PUT",
-    params: {
-      id: review.id,
-      status,
-      moderatorComments: comments,
-    },
-  };
-};
-
-const ModerateReviewModal = ({ show, onClose, review, status }) => {
-  // Stryker disable all : not testing the internal state of the modal, just that it opens and closes correctly and calls the backend with the right parameters
-  const [comments, setComments] = useState("");
-
+  // reset whenever modal opens or review changes
   useEffect(() => {
-    if (show) {
-      setComments("");
+    if (showModal) {
+      reset({ moderatorComments: "" });
     }
-  }, [show]);
+  }, [showModal, review, reset]);
 
-  // Stryker restore all
+  const closeModal = () => {
+    toggleShowModal(false);
+  };
 
-  const objectToAxiosParams = () =>
-    buildModerationParams(review, status, comments);
-
-  const mutation = useBackendMutation(
-    objectToAxiosParams,
-    {
-      onSuccess: () => {
-        setComments("");
-        onClose();
-      },
-    },
-    ["/api/reviews/needsmoderation"],
-  );
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const submitWrapper = (data) => {
     if (!review || !status) return;
-    mutation.mutate();
+
+    onSubmitAction({
+      review,
+      status,
+      moderatorComments: data.moderatorComments,
+    });
+
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
-      <Modal.Header closeButton>
+    <Modal
+      show={showModal}
+      onHide={closeModal}
+      centered
+      data-testid="ModerateReviewModal-base"
+    >
+      <Modal.Header>
         <Modal.Title>
           {status === "APPROVED" ? "Approve Review" : "Reject Review"}
         </Modal.Title>
+
+        <button
+          type="button"
+          className="btn-close"
+          aria-label="Close"
+          onClick={closeModal}
+          data-testid="ModerateReviewModal-closeButton"
+        />
       </Modal.Header>
 
-      <Modal.Body>
-        <div style={{ marginBottom: "10px" }}>
-          <strong>Item:</strong> {review?.item?.name}
-        </div>
+      <Form onSubmit={handleSubmit(submitWrapper)}>
+        <Modal.Body>
+          <div style={{ marginBottom: "10px" }}>
+            <strong>Item:</strong> {review?.item.name}
+          </div>
 
-        <div style={{ marginBottom: "10px" }}>
-          <strong>Review:</strong> {review?.reviewerComments}
-        </div>
+          <div style={{ marginBottom: "10px" }}>
+            <strong>Review:</strong> {review?.reviewerComments}
+          </div>
 
-        <Form onSubmit={handleSubmit}>
           <Form.Group>
-            <Form.Label>Moderator Comments</Form.Label>
+            <Form.Label htmlFor="moderatorComments">
+              Moderator Comments
+            </Form.Label>
+
             <Form.Control
+              id="moderatorComments"
               as="textarea"
               rows={4}
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
               placeholder="Optional moderation notes..."
+              isInvalid={Boolean(errors.moderatorComments)}
+              data-testid="ModerateReviewModal-comments"
+              {...register("moderatorComments")}
             />
+
+            <Form.Control.Feedback type="invalid">
+              {errors.moderatorComments?.message}
+            </Form.Control.Feedback>
           </Form.Group>
-        </Form>
-      </Modal.Body>
+        </Modal.Body>
 
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Cancel
-        </Button>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={closeModal}
+            data-testid="ModerateReviewModal-cancel"
+          >
+            Cancel
+          </Button>
 
-        <Button variant="primary" onClick={handleSubmit}>
-          {status === "APPROVED" ? "Approve" : "Reject"}
-        </Button>
-      </Modal.Footer>
+          <Button
+            type="submit"
+            variant="primary"
+            data-testid="ModerateReviewModal-submit"
+          >
+            {status === "APPROVED" ? "Approve" : "Reject"}
+          </Button>
+        </Modal.Footer>
+      </Form>
     </Modal>
   );
-};
+}
 
 export default ModerateReviewModal;
