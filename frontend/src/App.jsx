@@ -27,38 +27,26 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<HomePage />} />
-        <Route exact path="/profile" element={<ProfilePage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         {hasRole(currentUser, "ROLE_ADMIN") && (
-          <Route exact path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
         )}
         {hasRole(currentUser, "ROLE_USER") && (
           <>
-            <Route exact path="/myreviews" element={<MyReviewsIndexPage />} />
-            <Route
-              exact
-              path="/reviews/post/:id"
-              element={<PostReviewPage />}
-            />
+            <Route path="/myreviews" element={<MyReviewsIndexPage />} />
+            <Route path="/reviews/post/:id" element={<PostReviewPage />} />
 
-            <Route
-              exact
-              path="/reviews/edit/:id"
-              element={<EditReviewPage />}
-            />
+            <Route path="/reviews/edit/:id" element={<EditReviewPage />} />
 
-            <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
+            <Route path="/reviews/:itemid" element={<ReviewsPage />} />
           </>
         )}
         {(hasRole(currentUser, "ROLE_ADMIN") ||
           hasRole(currentUser, "ROLE_MODERATOR")) && (
           <>
-            <Route exact path="/moderate" element={<ModerateReviews />} />
-            <Route
-              exact
-              path="/moderate/aliases"
-              element={<ModerateAliases />}
-            />
+            <Route path="/moderate" element={<ModerateReviews />} />
+            <Route path="/moderate/aliases" element={<ModerateAliases />} />
           </>
         )}
         <>
