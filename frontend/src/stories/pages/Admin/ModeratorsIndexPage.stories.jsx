@@ -1,0 +1,56 @@
+import React from "react";
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import { roleEmailFixtures } from "fixtures/roleEmailFixtures";
+import { http, HttpResponse } from "msw";
+
+import ModeratorsIndexPage from "main/pages/Admin/ModeratorsIndexPage";
+
+export default {
+  title: "pages/Admins/ModeratorsIndexPage",
+  component: ModeratorsIndexPage,
+};
+
+const Template = () => <ModeratorsIndexPage storybook={true} />;
+
+export const Empty = Template.bind({});
+
+Empty.parameters = {
+  msw: [
+    http.get("/api/currentUser", () => {
+      return HttpResponse.json(apiCurrentUserFixtures.adminUser, {
+        status: 200,
+      });
+    }),
+    http.get("/api/systemInfo", () => {
+      return HttpResponse.json(systemInfoFixtures.showingNeither, {
+        status: 200,
+      });
+    }),
+    http.get("/api/admin/moderators/get", () => {
+      return HttpResponse.json([], { status: 200 });
+    }),
+  ],
+};
+
+export const ThreeItemsAdminUser = Template.bind({});
+
+ThreeItemsAdminUser.parameters = {
+  msw: [
+    http.get("/api/currentUser", () => {
+      return HttpResponse.json(apiCurrentUserFixtures.adminUser);
+    }),
+    http.get("/api/systemInfo", () => {
+      return HttpResponse.json(systemInfoFixtures.showingNeither);
+    }),
+    http.get("/api/admin/moderators/get", () => {
+      return HttpResponse.json(roleEmailFixtures.threeItems);
+    }),
+    http.delete("/api/admins/moderators/all", () => {
+      return HttpResponse.json(
+        { message: "Item deleted successfully" },
+        { status: 200 },
+      );
+    }),
+  ],
+};
