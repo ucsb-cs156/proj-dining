@@ -32,7 +32,7 @@ export default function PostReviewPage() {
         params: {
           itemId: id,
           reviewerComments: formData.reviewerComments,
-          itemsStars: formData.itemsStars,
+          itemsStars: formData.itemStars,
           dateItemServed: formData.dateItemServed,
         },
       });
