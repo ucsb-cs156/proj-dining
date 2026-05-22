@@ -153,7 +153,9 @@ describe("EditReviewPage tests", () => {
     fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
 
     expect(
-      await screen.findByText(/Error updating review: Request failed with status code 500/i),
+      await screen.findByText(
+        /Error updating review: Request failed with status code 500/i,
+      ),
     ).toBeInTheDocument();
   });
 
