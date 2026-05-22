@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
 import { useBackendMutation } from "main/utils/useBackend";
-import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/utils/Reviews";
+import {
+  cellToAxiosParamsDelete,
+  onDeleteSuccess,
+  cellToAxiosParamsModerate,
+  onModerateSuccess,
+} from "main/utils/Reviews";
+import ModeratorCommentsModal from "main/components/Reviews/ModeratorCommentsModal";
 
 export default function ReviewsTable({
   reviews,
   userOptions,
   moderatorOptions,
-  openModal,
 }) {
   const navigate = useNavigate();
+  const [modalShow, setModalShow] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(null);
+  const [pendingCell, setPendingCell] = useState(null);
 
   const editCallback = (cell) => {
     navigate(`/reviews/edit/${cell.row.original.id}`);
@@ -30,7 +38,35 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
+  const moderateMutation = useBackendMutation(
+    ({ cell, status, moderatorComments }) =>
+      cellToAxiosParamsModerate(cell, status, moderatorComments),
+    { onSuccess: onModerateSuccess },
+    ["/api/reviews/needsmoderation"],
+  );
+  // Stryker restore all
 
+  const approveCallback = (cell) => {
+    setPendingStatus("APPROVED");
+    setPendingCell(cell);
+    setModalShow(true);
+  };
+
+  const rejectCallback = (cell) => {
+    setPendingStatus("REJECTED");
+    setPendingCell(cell);
+    setModalShow(true);
+  };
+
+  const handleModalSubmit = (comments) => {
+    moderateMutation.mutate({
+      cell: pendingCell,
+      status: pendingStatus,
+      moderatorComments: comments,
+    });
+  };
+
+  // Stryker disable all
   const columns = [
     {
       Header: "Moderation Status",
@@ -77,23 +113,22 @@ export default function ReviewsTable({
 
   if (moderatorOptions) {
     columns.push(
-      ButtonColumn(
-        "Approve",
-        "primary",
-        (cell) => openModal(cell.row.original, "APPROVED"),
-        "Reviewstable",
-      ),
+      ButtonColumn("Approve", "primary", approveCallback, "Reviewstable"),
     );
-
     columns.push(
-      ButtonColumn(
-        "Reject",
-        "danger",
-        (cell) => openModal(cell.row.original, "REJECTED"),
-        "Reviewstable",
-      ),
+      ButtonColumn("Reject", "danger", rejectCallback, "Reviewstable"),
     );
   }
 
-  return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
+  return (
+    <>
+      <ModeratorCommentsModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        status={pendingStatus}
+        onSubmit={handleModalSubmit}
+      />
+      <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />
+    </>
+  );
 }
