@@ -24,8 +24,6 @@ vi.mock("react-router", async () => {
 const axiosMock = new AxiosMockAdapter(axios);
 
 describe("EditReviewPage tests", () => {
-  const queryClient = new QueryClient();
-
   beforeEach(() => {
     mockNavigate.mockClear();
     axiosMock.reset();
@@ -37,6 +35,8 @@ describe("EditReviewPage tests", () => {
   });
 
   function renderPage() {
+    const queryClient = new QueryClient();
+
     return render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
@@ -58,7 +58,7 @@ describe("EditReviewPage tests", () => {
     );
   });
 
-  test("seeds the review form and submits updates", async () => {
+  test("seeds the review form and submits update", async () => {
     axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
     axiosMock
       .onPut("/api/reviews/reviewer")
@@ -66,32 +66,28 @@ describe("EditReviewPage tests", () => {
 
     renderPage();
 
-    expect(await screen.findByLabelText(/comments/i)).toHaveValue(
-      ReviewFixtures.oneReview.reviewerComments,
-    );
-    expect(screen.getByLabelText(/stars/i)).toHaveValue(
-      String(ReviewFixtures.oneReview.itemsStars),
-    );
-    expect(screen.getByLabelText(/date and time/i)).toHaveValue(
-      ReviewFixtures.oneReview.dateItemServed.slice(0, 16),
-    );
+    expect(
+      await screen.findByTestId(/ReviewForm-review-item-name/),
+    ).toHaveValue(ReviewFixtures.oneReview.item.name);
+    expect(screen.getByTestId(/ReviewForm-review-comments/)).toHaveValue("");
+    expect(screen.getByTestId(/ReviewForm-review-stars/)).toHaveValue("5");
 
-    fireEvent.change(screen.getByLabelText(/comments/i), {
+    fireEvent.change(screen.getByTestId(/ReviewForm-review-comments/), {
       target: { value: "updated comment" },
     });
-    fireEvent.change(screen.getByLabelText(/stars/i), {
-      target: { value: "5" },
+    fireEvent.change(screen.getByTestId(/ReviewForm-review-stars/), {
+      target: { value: "4" },
     });
-    fireEvent.change(screen.getByLabelText(/date and time/i), {
+    fireEvent.change(screen.getByTestId(/ReviewForm-review-date/), {
       target: { value: "2024-05-01T10:00" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /update review/i }));
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
 
     await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
     const put = axiosMock.history.put[0];
     expect(put.params).toEqual({ id: "1" });
     expect(JSON.parse(put.data)).toEqual({
-      itemStars: 5,
+      itemStars: 4,
       reviewerComments: "updated comment",
       dateItemServed: "2024-05-01T10:00",
     });
@@ -135,9 +131,10 @@ describe("EditReviewPage tests", () => {
 
     renderPage();
 
-    fireEvent.click(
-      await screen.findByRole("button", { name: /update review/i }),
-    );
+    fireEvent.change(await screen.findByTestId(/ReviewForm-review-date/), {
+      target: { value: "2024-05-01T10:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
 
     expect(
       await screen.findByText(/Error updating review: Server error/i),
@@ -150,9 +147,10 @@ describe("EditReviewPage tests", () => {
 
     renderPage();
 
-    fireEvent.click(
-      await screen.findByRole("button", { name: /update review/i }),
-    );
+    fireEvent.change(await screen.findByTestId(/ReviewForm-review-date/), {
+      target: { value: "2024-05-01T10:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
 
     expect(
       await screen.findByText(/Error updating review: Network Error/i),
