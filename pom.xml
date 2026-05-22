@@ -446,8 +446,6 @@
       </activation>
       <properties>
         <springProfiles>integration</springProfiles>
-        <frontend.dependency.skip>false</frontend.dependency.skip>
-        <frontend.build.skip>false</frontend.build.skip>
       </properties>
       <dependencies>
         <dependency>
@@ -474,7 +472,6 @@
                 </goals>
                 <configuration>
                   <nodeVersion>${node.version}</nodeVersion>
-                  <skip>${frontend.dependency.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -484,7 +481,6 @@
                 </goals>
                 <configuration>
                   <arguments>ci</arguments>
-                  <skip>${frontend.dependency.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -494,7 +490,6 @@
                 </goals>
                 <configuration>
                   <arguments>run build</arguments>
-                  <skip>${frontend.build.skip}</skip>
                 </configuration>
               </execution>
             </executions>
@@ -503,37 +498,6 @@
             <artifactId>maven-antrun-plugin</artifactId>
             <version>${maven-antrun-plugin.version}</version>
             <executions>
-              <execution>
-                <id>check-frontend-up-to-date</id>
-                <phase>initialize</phase>
-                <configuration>
-                  <target>
-                    <mkdir dir="${project.build.directory}/frontend" />
-                    <uptodate property="frontend.dependency.skip"
-                              targetfile="${project.build.directory}/frontend/dependencies.timestamp">
-                      <srcfiles dir="${project.basedir}/frontend">
-                        <include name="package.json" />
-                        <include name="package-lock.json" />
-                      </srcfiles>
-                    </uptodate>
-
-                    <uptodate property="frontend.build.skip"
-                              targetfile="${project.build.directory}/frontend/build.timestamp">
-                      <srcfiles dir="${project.basedir}/frontend">
-                        <include name="src/**/*" />
-                        <include name="package.json" />
-                        <include name="package-lock.json" />
-                        <include name="vite.config.js" />
-                      </srcfiles>
-                    </uptodate>
-                    <touch file="${project.build.directory}/frontend/dependencies.timestamp" />
-                    <touch file="${project.build.directory}/frontend/build.timestamp" />
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
               <execution>
                 <phase>generate-resources</phase>
                 <configuration>
