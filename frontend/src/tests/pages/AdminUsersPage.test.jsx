@@ -139,5 +139,5 @@ describe("AdminUsersPage tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-Toggle Moderator-button`),
       ).toBeInTheDocument();
     });
-  });  
+  });
 });
