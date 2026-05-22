@@ -1,66 +1,32 @@
-import React from "react";
-import { Form, Button } from "react-bootstrap";
-
-function formatDateTimeLocal(value) {
-  if (!value) {
-    return "";
-  }
-
-  if (typeof value === "string") {
-    return value.slice(0, 16);
-  }
-
-  return new Date(value).toISOString().slice(0, 16);
-}
+import { Button, Form, Row, Col } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 
 export default function ReviewForm({
   initialItemName,
-  initialReviewerComments,
-  initialItemsStars,
-  initialDateItemServed,
   submitAction,
-  submitButtonText = "Submit Review",
+  buttonLabel = "Submit Review",
 }) {
-  const [comments, setComments] = React.useState(initialReviewerComments ?? "");
-  const [stars, setStars] = React.useState(initialItemsStars ?? 5);
-  const [dateServed, setDateServed] = React.useState(() => {
-    return initialDateItemServed
-      ? formatDateTimeLocal(initialDateItemServed)
-      : new Date().toISOString().slice(0, 16);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      reviewerComments: "",
+      itemsStars: 5,
+      dateItemServed: new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
+    },
   });
 
-  React.useEffect(() => {
-    if (initialReviewerComments !== undefined) {
-      setComments(initialReviewerComments ?? "");
-    }
-  }, [initialReviewerComments]);
-
-  React.useEffect(() => {
-    if (initialItemsStars !== undefined) {
-      setStars(initialItemsStars ?? 5);
-    }
-  }, [initialItemsStars]);
-
-  React.useEffect(() => {
-    if (initialDateItemServed !== undefined) {
-      setDateServed(formatDateTimeLocal(initialDateItemServed));
-    }
-  }, [initialDateItemServed]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    submitAction({
-      reviewerComments: comments,
-      itemsStars: stars,
-      dateItemServed: dateServed,
-    });
-  };
+  const navigate = useNavigate();
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit(submitAction)}>
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-item-name">Item Name</Form.Label>
         <Form.Control
+          data-testid="ReviewForm-review-item-name"
           id="review-item-name"
           type="text"
           value={initialItemName ?? ""}
@@ -71,42 +37,66 @@ export default function ReviewForm({
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-comments">Comments</Form.Label>
         <Form.Control
+          data-testid="ReviewForm-review-comments"
           id="review-comments"
           as="textarea"
           rows={3}
-          value={comments}
-          onChange={(e) => setComments(e.target.value)}
+          {...register("reviewerComments")} // not required
         />
       </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label htmlFor="review-stars">Stars (1 to 5)</Form.Label>
-        <Form.Select
-          id="review-stars"
-          value={stars}
-          onChange={(e) => setStars(Number(e.target.value))}
-        >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </Form.Select>
-      </Form.Group>
+      <Row>
+        <Col>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="review-stars">Stars (1 to 5)</Form.Label>
+            <Form.Select
+              data-testid="ReviewForm-review-stars"
+              id="review-stars"
+              {...register("itemsStars", {
+                // default+unemptiable, so required unneeded for frontend
+                valueAsNumber: true,
+                min: 1,
+                max: 5,
+              })}
+            >
+              {[1, 2, 3, 4, 5].map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        <Col>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="review-date">
+              Date and Time Item was Served
+            </Form.Label>
+            <Form.Control
+              data-testid="ReviewForm-review-date"
+              id="review-date"
+              type="datetime-local" // HTML native handling of invalid input, so required unneeded for frontend. default already step="60" as desired
+              isInvalid={Boolean(errors.dateItemServed)}
+              {...register("dateItemServed")}
+            />
+          </Form.Group>
+        </Col>
+      </Row>
 
-      <Form.Group className="mb-3">
-        <Form.Label htmlFor="review-date">
-          Date and Time Item was Served
-        </Form.Label>
-        <Form.Control
-          id="review-date"
-          type="datetime-local"
-          value={dateServed}
-          onChange={(e) => setDateServed(e.target.value)}
-        />
-      </Form.Group>
-
-      <Button type="submit">{submitButtonText}</Button>
+      <Row>
+        <Col>
+          <Button type="submit" data-testid="ReviewForm-submit">
+            {buttonLabel}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate(-1)}
+            data-testid="ReviewForm-cancel"
+          >
+            Cancel
+          </Button>
+        </Col>
+      </Row>
     </Form>
   );
 }

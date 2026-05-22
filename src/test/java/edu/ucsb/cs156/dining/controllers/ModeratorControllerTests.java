@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Moderator;
+import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
@@ -55,7 +56,9 @@ public class ModeratorControllerTests extends ControllerTestCase {
   public void logged_in_admins_can_post() throws Exception {
     // arrage
     Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
+    User user = User.builder().email("ins@ucsb.edu").moderator(false).build();
     when(moderatorRepository.findAll()).thenReturn(new ArrayList<>(Arrays.asList(moderator)));
+    when(userRepository.findByEmail("ins@ucsb.edu")).thenReturn(Optional.of(user));
 
     // act
     MvcResult response =
@@ -66,9 +69,28 @@ public class ModeratorControllerTests extends ControllerTestCase {
 
     // assert
     verify(moderatorRepository, times(1)).save(eq(moderator));
+    verify(userRepository, times(1)).save(eq(user));
+    assertEquals(true, user.isModerator());
     String expectedJson = mapper.writeValueAsString(moderator);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void logged_in_admin_cannot_post_if_nonexistent_user() throws Exception {
+    // Arrange
+    when(userRepository.findByEmail("ins@ucsb.edu")).thenReturn(Optional.empty());
+
+    // Act
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/admin/moderators/post?email=ins@ucsb.edu").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // Assert
+    verify(moderatorRepository, times(0)).save(any());
   }
 
   // Tests for the GET endpoint
@@ -128,7 +150,9 @@ public class ModeratorControllerTests extends ControllerTestCase {
   public void logged_in_admins_can_delete() throws Exception {
     // Arrange
     Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
+    User user = User.builder().email("ins@ucsb.edu").moderator(true).build();
     when(moderatorRepository.findById(eq("ins@ucsb.edu"))).thenReturn(Optional.of(moderator));
+    when(userRepository.findByEmail("ins@ucsb.edu")).thenReturn(Optional.of(user));
 
     // Act
     MvcResult response =
@@ -141,6 +165,8 @@ public class ModeratorControllerTests extends ControllerTestCase {
     // Assert
     verify(moderatorRepository, times(1)).findById("ins@ucsb.edu");
     verify(moderatorRepository, times(1)).delete(moderator);
+    verify(userRepository, times(1)).save(user);
+    assertEquals(false, user.isModerator());
     String expectedMessage =
         String.format("Moderator with email %s deleted.", moderator.getEmail());
     String responseString = response.getResponse().getContentAsString();
