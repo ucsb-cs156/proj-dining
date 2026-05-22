@@ -182,9 +182,9 @@ describe("ModerateReviewsPage", () => {
       expect(
         screen.getByTestId("ModeratorCommentsModal-title"),
       ).toHaveTextContent("Approve Review");
-      expect(
-        screen.getByTestId("ModeratorCommentsModal-comments"),
-      ).toHaveValue("");
+      expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+        "",
+      );
     });
 
     fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
@@ -313,9 +313,9 @@ describe("ModerateReviewsPage", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByTestId("ModeratorCommentsModal-comments"),
-      ).toHaveValue("");
+      expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+        "",
+      );
     });
 
     fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {

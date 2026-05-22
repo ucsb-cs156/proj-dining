@@ -180,9 +180,9 @@ describe("ReviewsTable", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByTestId("ModeratorCommentsModal-comments"),
-      ).toHaveValue("");
+      expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+        "",
+      );
     });
 
     fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
@@ -229,9 +229,9 @@ describe("ReviewsTable", () => {
       expect(
         screen.getByTestId("ModeratorCommentsModal-title"),
       ).toHaveTextContent("Reject Review");
-      expect(
-        screen.getByTestId("ModeratorCommentsModal-comments"),
-      ).toHaveValue("");
+      expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+        "",
+      );
     });
 
     fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
