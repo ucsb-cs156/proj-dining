@@ -54,7 +54,9 @@ export default function MenuItemTable({ menuItems, currentUser }) {
   }
 
   // split input (delimiters: space, comma) into non-empty keywords
-  const keywords = searchTerm.toLowerCase().split(/[\s,]/).filter(Boolean);
+  // Stryker disable all : equivalent mutation problem (but this is more optimal than its equivalent mutant without the +)
+  const keywords = searchTerm.toLowerCase().split(/[\s,]+/);
+  // Stryker restore all
   const searchedItems = menuItems.filter((item) => {
     return keywords.every(
       (kw) =>
