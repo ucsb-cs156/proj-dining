@@ -36,7 +36,6 @@ function ModerateReviewModal({
       status,
       moderatorComments: data.moderatorComments,
     });
-
   };
 
   return (

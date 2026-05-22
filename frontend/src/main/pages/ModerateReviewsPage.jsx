@@ -15,11 +15,10 @@ const ModerateReviews = () => {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const { data: reviews } = useBackend(
     ["/api/reviews/needsmoderation"],
     { method: "GET", url: "/api/reviews/needsmoderation" },
-    []
+    [],
   );
 
   const moderateReviewsOptions =
@@ -43,7 +42,7 @@ const ModerateReviews = () => {
         setSelectedStatus(null);
       },
     },
-    ["/api/reviews/needsmoderation"]
+    ["/api/reviews/needsmoderation"],
   );
 
   const openModal = (review, status) => {
@@ -87,8 +86,6 @@ const ModerateReviews = () => {
       </div>
     </BasicLayout>
   );
-
-  
 };
 
 export default ModerateReviews;

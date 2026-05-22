@@ -27,7 +27,7 @@ describe("ModerateReviewModal (strong tests)", () => {
           status={status}
           onSubmitAction={mockOnSubmitAction}
         />
-      </div>
+      </div>,
     );
   };
 
@@ -68,7 +68,7 @@ describe("ModerateReviewModal (strong tests)", () => {
 
     await user.type(
       screen.getByPlaceholderText("Optional moderation notes..."),
-      "good review"
+      "good review",
     );
 
     await user.click(screen.getByTestId("ModerateReviewModal-submit"));
@@ -91,7 +91,7 @@ describe("ModerateReviewModal (strong tests)", () => {
 
     await user.type(
       screen.getByPlaceholderText("Optional moderation notes..."),
-      "not acceptable"
+      "not acceptable",
     );
 
     await user.click(screen.getByTestId("ModerateReviewModal-submit"));
@@ -117,20 +117,21 @@ describe("ModerateReviewModal (strong tests)", () => {
     expect(mockOnSubmitAction).not.toHaveBeenCalled();
   });
 
-    test("does not submit when status is null", async () => {
-      const user = userEvent.setup();
-
-      renderModal(null);
-
-      await user.click(screen.getByTestId("ModerateReviewModal-submit"));
-
-      expect(mockOnSubmitAction).not.toHaveBeenCalled();
-    });
-
-    test("textarea starts empty on open", async () => {
+  test("does not submit when status is null", async () => {
     const user = userEvent.setup();
+
+    renderModal(null);
+
+    await user.click(screen.getByTestId("ModerateReviewModal-submit"));
+
+    expect(mockOnSubmitAction).not.toHaveBeenCalled();
+  });
+
+  test("textarea starts empty on open", async () => {
     renderModal("APPROVED");
-    expect(screen.getByPlaceholderText("Optional moderation notes...").value).toBe("");
+    expect(
+      screen.getByPlaceholderText("Optional moderation notes...").value,
+    ).toBe("");
   });
 
   test("item and review divs have correct marginBottom style", () => {
@@ -142,9 +143,4 @@ describe("ModerateReviewModal (strong tests)", () => {
     expect(itemDiv).toHaveStyle({ marginBottom: "10px" });
     expect(reviewDiv).toHaveStyle({ marginBottom: "10px" });
   });
-
-
-
-
 });
-

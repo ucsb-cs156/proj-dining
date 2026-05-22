@@ -2,10 +2,7 @@ import React from "react";
 import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
-export default function ReviewForm({
-  initialItemName,
-  submitAction,
-}) {
+export default function ReviewForm({ initialItemName, submitAction }) {
   const {
     register,
     handleSubmit,
@@ -15,9 +12,7 @@ export default function ReviewForm({
     defaultValues: {
       reviewerComments: "",
       itemsStars: 5,
-      dateItemServed: new Date()
-        .toISOString()
-        .slice(0, 16),
+      dateItemServed: new Date().toISOString().slice(0, 16),
     },
   });
 
@@ -38,26 +33,23 @@ export default function ReviewForm({
         <Form.Control type="text" value={initialItemName} disabled />
       </Form.Group>
 
+      <Form.Group className="mb-3">
+        <Form.Label htmlFor="reviewerComments">Comments</Form.Label>
 
-    <Form.Group className="mb-3"> 
-      <Form.Label htmlFor="reviewerComments">
-        Comments
-      </Form.Label>
+        <Form.Control
+          id="reviewerComments"
+          as="textarea"
+          rows={3}
+          isInvalid={Boolean(errors.reviewerComments)}
+          {...register("reviewerComments", {
+            required: "Comments are required",
+          })}
+        />
 
-      <Form.Control
-        id="reviewerComments"
-        as="textarea"
-        rows={3}
-        isInvalid={Boolean(errors.reviewerComments)}
-        {...register("reviewerComments", {
-          required: "Comments are required",
-        })}
-      />
-
-      <Form.Control.Feedback type="invalid">
-        {errors.reviewerComments?.message}
-      </Form.Control.Feedback>
-    </Form.Group>
+        <Form.Control.Feedback type="invalid">
+          {errors.reviewerComments?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
 
       <Form.Group className="mb-3">
         <Form.Label htmlFor="itemsStars">Stars (1 to 5)</Form.Label>
@@ -71,7 +63,9 @@ export default function ReviewForm({
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="dateItemServed">Date and Time Item was Served</Form.Label>
+        <Form.Label htmlFor="dateItemServed">
+          Date and Time Item was Served
+        </Form.Label>
         <Form.Control
           id="dateItemServed"
           type="datetime-local"
