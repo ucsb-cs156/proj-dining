@@ -141,6 +141,22 @@ describe("EditReviewPage tests", () => {
     ).toBeInTheDocument();
   });
 
+  test("shows an error toast when update fails with response but no data", async () => {
+    axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
+    axiosMock.onPut("/api/reviews/reviewer").reply(500);
+
+    renderPage();
+
+    fireEvent.change(await screen.findByTestId(/ReviewForm-review-date/), {
+      target: { value: "2024-05-01T10:00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    expect(
+      await screen.findByText(/Error updating review: Request failed with status code 500/i),
+    ).toBeInTheDocument();
+  });
+
   test("shows an error toast when update fails with a network error (no response)", async () => {
     axiosMock.onGet("/api/reviews/1").reply(200, ReviewFixtures.oneReview);
     axiosMock.onPut("/api/reviews/reviewer").networkErrorOnce();
