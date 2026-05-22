@@ -37,7 +37,7 @@ export default function DiningCommonsTable({ commons, date }) {
                       >
                         {meal.name}
                       </Link>
-                      {index < value.length - 1 && " "}
+                      {index < value.length - 1 && ""}
                     </span>
                   ),
                 )}
