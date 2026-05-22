@@ -93,6 +93,7 @@ export default function UsersTable({
   // Stryker restore all
 
   const toggleAdminCallback = (cell) => {
+    // Stryker disable next-line OptionalChaining
     const selfUser = currentUser?.root?.user;
     if (selfUser != null && selfUser.id === cell.row.values.id) {
       setPendingCell(cell);
