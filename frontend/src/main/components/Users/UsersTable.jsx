@@ -23,15 +23,15 @@ export default function UsersTable({ users }) {
         // stryker mutates by removing ?'s - when we are not admin, this page is not accessible, so currentUsers.root.user is guaranteed to have values
         // non-self navigate behavior is tested implicitly via AdminUsersPage tests
         // Stryker disable next-line OptionalChaining, ConditionalExpression
-        if (row.id === currentUser?.root?.user?.id) {
+        if(row.id === currentUser?.root?.user?.id) {
           navigate("/");
         }
       },
       // skip cache invalidation for self-toggle: we're navigating away and are no longer admin, so the refetch would 403
       // Stryker disable next-line all : don't test internal caching of react query
       onSettled: (_data, _error, row) => {
-        // Stryker disable next-line OptionalChaining
-        if (row.id !== currentUser?.root?.user?.id) {
+        // Stryker disable next-line OptionalChaining, ConditionalExpression
+        if(row.id !== currentUser?.root?.user?.id) {
           // Stryker disable next-line all : don't test internal caching of react query
           queryClient.invalidateQueries(["/api/admin/users"]);
         }
@@ -131,7 +131,7 @@ export default function UsersTable({ users }) {
     {
       Header: "Status",
       accessor: (row) => {
-        if (row.status === "Approved" && row.dateApproved) {
+        if(row.status === "Approved" && row.dateApproved) {
           // Parse as local date (YYYY-MM-DD)
           const [year, month, day] = row.dateApproved.split("-");
           const formattedDate = new Date(
