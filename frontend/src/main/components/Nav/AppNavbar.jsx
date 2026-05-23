@@ -96,6 +96,20 @@ export default function AppNavbar({
                     >
                       Overview
                     </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/items/best"
+                      data-testid="appnavbar-statistics-best-items"
+                    >
+                      Best Rated Items
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/items/worst"
+                      data-testid="appnavbar-statistics-worst-items"
+                    >
+                      Worst Rated Items
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </>
               ) : (

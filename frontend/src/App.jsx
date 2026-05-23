@@ -16,6 +16,8 @@ import ModerateReviews from "main/pages/ModerateReviewsPage";
 import ModerateAliases from "main/pages/ModerateAliasesPage";
 
 import StatisticsIndexPage from "main/pages/Statistics/StatisticsIndexPage";
+import BestItemsPage from "main/pages/Statistics/BestItemsPage";
+import WorstItemsPage from "main/pages/Statistics/WorstItemsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -52,6 +54,16 @@ function App() {
             <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
 
             <Route exact path="/statistics" element={<StatisticsIndexPage />} />
+            <Route
+              exact
+              path="/statistics/items/best"
+              element={<BestItemsPage />}
+            />
+            <Route
+              exact
+              path="/statistics/items/worst"
+              element={<WorstItemsPage />}
+            />
           </>
         )}
         {(hasRole(currentUser, "ROLE_ADMIN") ||
