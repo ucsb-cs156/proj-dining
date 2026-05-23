@@ -32,6 +32,12 @@ describe("AppNavbar tests", () => {
     expect(
       await screen.findByTestId("appnavbar-statistics-overview"),
     ).toHaveAttribute("href", "/statistics");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-averages"),
+    ).toHaveAttribute("href", "/statistics/commons/averages");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-overtime"),
+    ).toHaveAttribute("href", "/statistics/commons/overtime");
   });
 
   test("does not render the Statistics dropdown when user is not logged in", async () => {
