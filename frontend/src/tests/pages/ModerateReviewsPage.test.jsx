@@ -77,7 +77,7 @@ describe("ModerateReviewsPage", () => {
     });
     expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-reviewer.email`),
     ).toBeInTheDocument();
     expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
@@ -117,7 +117,7 @@ describe("ModerateReviewsPage", () => {
     });
     expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-reviewer.email`),
     ).toBeInTheDocument();
     expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(

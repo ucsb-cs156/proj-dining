@@ -26,4 +26,34 @@ describe("ReviewForm", () => {
       expect(screen.getByLabelText(/comments/i)).toHaveClass("is-invalid");
     });
   });
+
+  test("uses empty date when initialContents has no dateItemServed", async () => {
+    const submitAction = vi.fn();
+
+    render(
+      <ReviewForm
+        initialItemName="Burger"
+        submitAction={submitAction}
+        initialContents={{
+          reviewerComments: "Some comment",
+          itemsStars: 4,
+          dateItemServed: null,
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/comments/i)).toHaveValue("Some comment");
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    await waitFor(() => {
+      expect(submitAction).toHaveBeenCalledWith({
+        reviewerComments: "Some comment",
+        itemsStars: 4,
+        dateItemServed: "",
+      });
+    });
+  });
 });

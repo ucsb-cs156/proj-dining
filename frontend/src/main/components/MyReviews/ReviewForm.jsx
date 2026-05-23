@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
-export default function ReviewForm({ initialItemName, submitAction }) {
+export default function ReviewForm({
+  initialItemName,
+  submitAction,
+  initialContents,
+  buttonLabel = "Submit Review",
+}) {
   const {
     register,
     handleSubmit,
@@ -15,6 +20,16 @@ export default function ReviewForm({ initialItemName, submitAction }) {
       dateItemServed: new Date().toISOString().slice(0, 16),
     },
   });
+
+  useEffect(() => {
+    if (initialContents?.reviewerComments !== undefined) {
+      reset({
+        reviewerComments: initialContents.reviewerComments,
+        itemsStars: initialContents.itemsStars,
+        dateItemServed: initialContents.dateItemServed?.slice(0, 16) ?? "",
+      });
+    }
+  }, [initialContents, reset]);
 
   const onSubmit = (data) => {
     submitAction({
