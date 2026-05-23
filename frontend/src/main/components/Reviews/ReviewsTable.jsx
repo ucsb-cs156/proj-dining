@@ -24,7 +24,7 @@ export default function ReviewsTable({
   const deleteMutation = useBackendMutation(
     cellToAxiosParamsDelete,
     { onSuccess: onDeleteSuccess },
-    ["/api/reviews/userReviews", "/api/reviews/needsmoderation"],
+    [["/api/reviews/userReviews"], ["/api/reviews/needsmoderation"]],
   );
   // Stryker restore all
 
