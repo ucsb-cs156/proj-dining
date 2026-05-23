@@ -56,4 +56,36 @@ describe("ReviewForm", () => {
       });
     });
   });
+
+  test("truncates dateItemServed from initialContents for datetime-local input", async () => {
+    const submitAction = vi.fn();
+
+    render(
+      <ReviewForm
+        initialItemName="Burger"
+        submitAction={submitAction}
+        initialContents={{
+          reviewerComments: "Some comment",
+          itemsStars: 4,
+          dateItemServed: "2026-05-18T23:57:00.000Z",
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/date and time item was served/i),
+      ).toHaveValue("2026-05-18T23:57");
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+
+    await waitFor(() => {
+      expect(submitAction).toHaveBeenCalledWith({
+        reviewerComments: "Some comment",
+        itemsStars: 4,
+        dateItemServed: "2026-05-18T23:57",
+      });
+    });
+  });
 });
