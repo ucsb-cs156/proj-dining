@@ -22,6 +22,7 @@ export default function ReviewsTable({
     navigate(`/reviews/edit/${cell.row.original.id}`);
   };
 
+  // added multiple-query invalidation to fix lack of cache invalidation/refresh upon hitting delete
   const deleteSuccess = (message) => {
     onDeleteSuccess(message);
     queryClient.invalidateQueries(["/api/reviews/userReviews"]);
