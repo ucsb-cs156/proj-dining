@@ -84,6 +84,19 @@ export default function AppNavbar({
                   <Nav.Link as={Link} to="/myreviews">
                     My Reviews
                   </Nav.Link>
+                  <NavDropdown
+                    title="Statistics"
+                    id="appnavbar-statistics-dropdown"
+                    data-testid="appnavbar-statistics-dropdown"
+                  >
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics"
+                      data-testid="appnavbar-statistics-overview"
+                    >
+                      Overview
+                    </NavDropdown.Item>
+                  </NavDropdown>
                 </>
               ) : (
                 <></>

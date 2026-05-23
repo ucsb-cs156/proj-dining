@@ -15,6 +15,8 @@ import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import ModerateReviews from "main/pages/ModerateReviewsPage";
 import ModerateAliases from "main/pages/ModerateAliasesPage";
 
+import StatisticsIndexPage from "main/pages/Statistics/StatisticsIndexPage";
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -48,6 +50,8 @@ function App() {
             />
 
             <Route exact path="/reviews/:itemid" element={<ReviewsPage />} />
+
+            <Route exact path="/statistics" element={<StatisticsIndexPage />} />
           </>
         )}
         {(hasRole(currentUser, "ROLE_ADMIN") ||
