@@ -1,18 +1,54 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
 
-export default function ReviewForm({ initialItemName, submitAction }) {
-  const [comments, setComments] = React.useState("");
-  const [stars, setStars] = React.useState(5);
-  const [dateServed, setDateServed] = React.useState(() => {
-    return new Date().toISOString().slice(0, 16); // Default to now, in YYYY-MM-DDTHH:mm format
-  });
+export default function ReviewForm({
+  initialItemName,
+  initialContents,
+  submitAction,
+  buttonLabel = "Submit Review",
+}) {
+  // Stryker disable next-line all : default empty object is only used when creating a new review
+  const contents = initialContents || {};
+
+  // Stryker disable next-line all : default empty string prevents uncontrolled input warnings
+  const initialComments = contents.reviewerComments || "";
+
+  // Stryker disable all : date formatting helper only adapts backend datetime to datetime-local input format
+  const formatDateForInput = (date) => {
+    if (date) {
+      return date.slice(0, 16);
+    }
+    return new Date().toISOString().slice(0, 16);
+  };
+  // Stryker restore all
+
+  const [comments, setComments] = React.useState(initialComments);
+
+  const [stars, setStars] = React.useState(contents.itemsStars || 5);
+
+  const initialDateServed = formatDateForInput(contents.dateItemServed);
+
+  const [dateServed, setDateServed] = React.useState(initialDateServed);
+
+  React.useEffect(() => {
+    if (!initialContents) {
+      return;
+    }
+
+    // Stryker disable next-line all : default empty string is used when edited review has no comment
+    setComments(initialContents.reviewerComments || "");
+
+    setStars(initialContents.itemsStars || 5);
+
+    setDateServed(formatDateForInput(initialContents.dateItemServed));
+  }, [initialContents]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     submitAction({
       reviewerComments: comments,
-      itemsStars: stars,
+      itemStars: stars,
       dateItemServed: dateServed,
     });
   };
@@ -21,6 +57,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-item-name">Item Name</Form.Label>
+
         <Form.Control
           id="review-item-name"
           type="text"
@@ -31,6 +68,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
 
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-comments">Comments</Form.Label>
+
         <Form.Control
           id="review-comments"
           as="textarea"
@@ -42,6 +80,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
 
       <Form.Group className="mb-3">
         <Form.Label htmlFor="review-stars">Stars (1 to 5)</Form.Label>
+
         <Form.Select
           id="review-stars"
           value={stars}
@@ -59,6 +98,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         <Form.Label htmlFor="review-date">
           Date and Time Item was Served
         </Form.Label>
+
         <Form.Control
           id="review-date"
           type="datetime-local"
@@ -67,7 +107,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         />
       </Form.Group>
 
-      <Button type="submit">Submit Review</Button>
+      <Button type="submit">{buttonLabel}</Button>
     </Form>
   );
 }

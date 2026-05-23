@@ -63,7 +63,7 @@ const ModerateAliases = () => {
   return (
     <BasicLayout>
       <div className="pt-2">
-        <h1>Manage Alias Requests</h1>
+        <h1>Manage Aliase Requests</h1>
         <AliasApprovalTable
           aliases={aliases}
           approveCallback={approveCallback}
