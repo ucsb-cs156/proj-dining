@@ -29,11 +29,9 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
-  const deleteMutation = useBackendMutation(
-    cellToAxiosParamsDelete,
-    { onSuccess: deleteSuccess },
-    ["/api/reviews/userReviews", "/api/reviews/needsmoderation"],
-  );
+  const deleteMutation = useBackendMutation(cellToAxiosParamsDelete, {
+    onSuccess: deleteSuccess,
+  });
   // Stryker restore all
 
   // Stryker disable next-line all
