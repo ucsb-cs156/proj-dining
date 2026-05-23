@@ -125,6 +125,39 @@ describe("ReviewsTable tests", () => {
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
   });
 
+  test("Delete invalidates the My Reviews and needs moderation queries", async () => {
+    const localQueryClient = new QueryClient();
+    const invalidateSpy = vi.spyOn(localQueryClient, "invalidateQueries");
+
+    render(
+      <QueryClientProvider client={localQueryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={true}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+
+    const deleteButton = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-Delete-button`,
+    );
+
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onDelete("/api/reviews/reviewer")
+      .reply(200, { message: "Review deleted" });
+
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
+    expect(invalidateSpy).toHaveBeenCalledWith(["/api/reviews/userReviews"]);
+    expect(invalidateSpy).toHaveBeenCalledWith([
+      "/api/reviews/needsmoderation",
+    ]);
+    expect(invalidateSpy).toHaveBeenCalledTimes(2);
+  });
+
   test("Moderator buttons appear and work properly", async () => {
     render(
       <QueryClientProvider client={queryClient}>
