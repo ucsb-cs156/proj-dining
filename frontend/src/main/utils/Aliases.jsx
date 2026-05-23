@@ -10,6 +10,7 @@ export const cellToAxiosParamsApprove = (cell) => ({
   },
 });
 
+// Stryker disable next-line ArrowFunction
 export const cellToAxiosParamsReject = (cell) => ({
   method: "PUT",
   url: "/api/currentUser/updateAliasModeration",

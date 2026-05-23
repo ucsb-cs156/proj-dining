@@ -84,6 +84,42 @@ describe("ReviewsTable tests", () => {
     expect(screen.queryByText("phtcon@ucsb.edu")).not.toBeInTheDocument();
   });
 
+  test("Edit and Delete buttons appear when userOptions is true, not when false", () => {
+    const qc = new QueryClient();
+    const { unmount } = render(
+      <QueryClientProvider client={qc}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+    expect(
+      screen.queryByTestId("Reviewstable-cell-row-0-col-Edit-button"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("Reviewstable-cell-row-0-col-Delete-button"),
+    ).not.toBeInTheDocument();
+    unmount();
+
+    render(
+      <QueryClientProvider client={qc}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={true}
+          moderatorOptions={false}
+        />
+      </QueryClientProvider>,
+    );
+    expect(
+      screen.getByTestId("Reviewstable-cell-row-0-col-Edit-button"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("Reviewstable-cell-row-0-col-Delete-button"),
+    ).toBeInTheDocument();
+  });
+
   test("Regular user buttons appear and work properly", async () => {
     render(
       <QueryClientProvider client={queryClient}>

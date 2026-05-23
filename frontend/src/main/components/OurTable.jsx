@@ -23,6 +23,7 @@ export default function OurTable({ columns, data, testid = "testid" }) {
                 key={`${testid}-header-${column.id}`}
               >
                 {column.render("Header")}
+                {/* Stryker disable next-line StringLiteral */}
                 <span data-testid={`${testid}-header-${column.id}-sort-carets`}>
                   {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
                 </span>

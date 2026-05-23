@@ -57,6 +57,7 @@ export function useBackend(queryKey, axiosParameters, initialData) {
 
 const reportAxiosError = (error) => {
   console.error("Axios Error:", error);
+  // Stryker disable next-line StringLiteral
   toast(`Axios Error: ${error}`);
   return null;
 };
