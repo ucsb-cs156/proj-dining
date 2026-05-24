@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
+import { afterEach } from "vitest";
 
 import StatisticsIndexPage from "main/pages/Statistics/StatisticsIndexPage";
 import { STATISTICS_PAGES } from "main/pages/Statistics/statisticsConstants";
@@ -22,6 +23,10 @@ describe("StatisticsIndexPage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
+  });
+
+  afterEach(() => {
+    axiosMock.reset();
   });
 
   test("renders all statistics navigation cards with links", async () => {
