@@ -673,6 +673,35 @@ public class StatisticsControllerTests extends ControllerTestCase {
 
   @WithMockUser(roles = {"USER"})
   @Test
+  public void commons_averages_sorts_alphabetically_when_data_arrives_unsorted() throws Exception {
+    LocalDateTime t = LocalDateTime.of(2025, 4, 1, 12, 0);
+    MenuItem portola = item(1L, "Portola item", "portola", "lunch", "Station");
+    MenuItem deLaGuerra = item(2L, "DLG item", "de-la-guerra", "lunch", "Station");
+    MenuItem carrillo = item(3L, "Carrillo item", "carrillo", "lunch", "Station");
+    when(reviewRepository.findByStatus(ModerationStatus.APPROVED))
+        .thenReturn(
+            Arrays.asList(
+                review(portola, 1L, t), review(deLaGuerra, 2L, t), review(carrillo, 3L, t)));
+
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/statistics/commons/averages"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    List<CommonsAverage> result =
+        objectMapper.readValue(
+            response.getResponse().getContentAsString(),
+            new TypeReference<List<CommonsAverage>>() {});
+
+    assertEquals(3, result.size());
+    assertEquals("carrillo", result.get(0).getDiningCommonsCode());
+    assertEquals("de-la-guerra", result.get(1).getDiningCommonsCode());
+    assertEquals("portola", result.get(2).getDiningCommonsCode());
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
   public void commons_averages_ignores_reviews_missing_required_fields() throws Exception {
     LocalDateTime t = LocalDateTime.of(2025, 4, 1, 12, 0);
     MenuItem good = item(1L, "Good", "carrillo", "breakfast", "Bakery");

@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -154,10 +155,7 @@ public class StatisticsController extends ApiController {
             .reversed()
             .thenComparing(Comparator.comparingLong(ItemStatistic::getReviewCount).reversed())
             .thenComparing(Comparator.comparing(ItemStatistic::getItemId)));
-    if (stats.size() > limit) {
-      return new ArrayList<>(stats.subList(0, limit));
-    }
-    return stats;
+    return stats.stream().limit(limit).collect(Collectors.toCollection(ArrayList::new));
   }
 
   /** Worst items endpoint, supports a time period filter and a maximum result count. */
@@ -178,10 +176,7 @@ public class StatisticsController extends ApiController {
         Comparator.comparingDouble(ItemStatistic::getAverageStars)
             .thenComparing(Comparator.comparingLong(ItemStatistic::getReviewCount).reversed())
             .thenComparing(Comparator.comparing(ItemStatistic::getItemId)));
-    if (stats.size() > limit) {
-      return new ArrayList<>(stats.subList(0, limit));
-    }
-    return stats;
+    return stats.stream().limit(limit).collect(Collectors.toCollection(ArrayList::new));
   }
 
   /** Average review score for each dining commons. */
