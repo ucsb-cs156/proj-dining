@@ -3,10 +3,7 @@ package edu.ucsb.cs156.dining.repositories;
 import edu.ucsb.cs156.dining.entities.Moderator;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +20,8 @@ public interface ModeratorRepository extends CrudRepository<Moderator, Long> {
 
   List<Moderator> findAllByEmail(String email);
 
-  @Modifying
   @Transactional
-  @Query(value = "DELETE FROM moderators WHERE email = :email", nativeQuery = true)
-  long deleteByEmail(@Param("email") String email);
+  long deleteByEmail(String email);
 
   boolean existsByEmail(String email);
 }
