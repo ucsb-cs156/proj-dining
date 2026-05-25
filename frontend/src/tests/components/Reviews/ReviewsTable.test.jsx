@@ -158,7 +158,7 @@ describe("ReviewsTable tests", () => {
     expect(invalidateSpy).toHaveBeenCalledTimes(2);
   });
 
-  test("Moderator buttons appear and work properly", async () => {
+  test("Moderator buttons appear and open modal on click", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ReviewsTable
@@ -175,21 +175,159 @@ describe("ReviewsTable tests", () => {
       ).toBeInTheDocument();
     });
 
+    expect(
+      screen.queryByTestId("ModeratorCommentsModal-title"),
+    ).not.toBeInTheDocument();
+
     const approveButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Approve-button`,
     );
-    expect(approveButton).toBeInTheDocument();
     expect(approveButton).toHaveClass("btn-primary");
 
     fireEvent.click(approveButton);
 
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("ModeratorCommentsModal-title"),
+      ).toHaveTextContent("Approve Review");
+    });
+
     const rejectButton = screen.getByTestId(
       `Reviewstable-cell-row-0-col-Reject-button`,
     );
-    expect(rejectButton).toBeInTheDocument();
     expect(rejectButton).toHaveClass("btn-danger");
+  });
 
-    fireEvent.click(rejectButton);
+  test("Approve modal submits PUT with APPROVED status and comments", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onPut("/api/reviews/moderate")
+      .reply(200, { ...ReviewFixtures.threeReviews[0], status: "APPROVED" });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("ModeratorCommentsModal-comments"),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
+      target: { value: "Looks good!" },
+    });
+
+    fireEvent.click(screen.getByTestId("ModeratorCommentsModal-submit"));
+
+    await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
+    expect(axiosMock.history.put[0].params).toEqual({
+      id: 1,
+      status: "APPROVED",
+      moderatorComments: "Looks good!",
+    });
+  });
+
+  test("Reject modal submits PUT with REJECTED status and comments", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onPut("/api/reviews/moderate")
+      .reply(200, { ...ReviewFixtures.threeReviews[0], status: "REJECTED" });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`Reviewstable-cell-row-0-col-Reject-button`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-Reject-button`),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("ModeratorCommentsModal-title"),
+      ).toHaveTextContent("Reject Review");
+    });
+
+    fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
+      target: { value: "Inappropriate content" },
+    });
+
+    fireEvent.click(screen.getByTestId("ModeratorCommentsModal-submit"));
+
+    await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
+    expect(axiosMock.history.put[0].params).toEqual({
+      id: 1,
+      status: "REJECTED",
+      moderatorComments: "Inappropriate content",
+    });
+  });
+
+  test("Modal cancel button closes modal without submitting", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("ModeratorCommentsModal-cancel"),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("ModeratorCommentsModal-cancel"));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("ModeratorCommentsModal-title"),
+      ).not.toBeInTheDocument();
+    });
+
+    expect(axiosMock.history.put.length).toBe(0);
   });
 
   test("Renders stars icons and formatted date correctly", () => {

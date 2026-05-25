@@ -117,4 +117,27 @@ describe("AdminUsersPage tests", () => {
       ).toHaveTextContent("1");
     });
   });
+  test("renders toggle role buttons for each user row", async () => {
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminUsersPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Users");
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Toggle Admin-button`),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Toggle Moderator-button`),
+      ).toBeInTheDocument();
+    });
+  });
 });
