@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 @RestController
 @Slf4j
-public class AdminController extends ApiController {
+public class AdminsController extends ApiController {
   @Autowired AdminRepository adminRepository;
 
   @Value("#{'${app.admin.emails}'.split(',')}")
@@ -47,7 +47,7 @@ public class AdminController extends ApiController {
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
   public Admin postAdmin(@Parameter(name = "email") @RequestParam String email) {
-    String convertedEmail = CanonicalFormConverter.convertToValidEmail(email);
+    String convertedEmail = CanonicalFormConverter.convertToValidEmail(email).strip();
     Admin admin = new Admin(convertedEmail);
     Admin savedAdmin = adminRepository.save(admin);
     return savedAdmin;

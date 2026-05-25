@@ -3,7 +3,7 @@ package edu.ucsb.cs156.dining.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-/** This is a JPA entity that represents an Moderator. */
+/** This is a JPA entity that represents a Moderator. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
