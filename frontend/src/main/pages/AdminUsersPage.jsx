@@ -17,7 +17,7 @@ const AdminUsersPage = () => {
   return (
     <BasicLayout>
       <h2>Users</h2>
-      <UsersTable users={users} />
+      <UsersTable users={users} showToggleButtons={true} />
     </BasicLayout>
   );
 };
