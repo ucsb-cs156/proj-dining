@@ -153,6 +153,14 @@ public class StatisticsControllerTests extends ControllerTestCase {
 
   @WithMockUser(roles = {"USER"})
   @Test
+  public void best_items_returns_bad_request_for_negative_limit() throws Exception {
+    mockMvc
+        .perform(get("/api/statistics/items/best").param("limit", "-1"))
+        .andExpect(status().isBadRequest());
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
   public void best_items_ranks_highest_average_first_and_respects_limit() throws Exception {
     MenuItem waffle = item(1L, "Waffle", "carrillo", "breakfast", "Bakery");
     MenuItem soup = item(2L, "Soup", "ortega", "lunch", "Stove");
@@ -502,6 +510,14 @@ public class StatisticsControllerTests extends ControllerTestCase {
             new TypeReference<List<ItemStatistic>>() {});
 
     assertEquals(Collections.emptyList(), result);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void worst_items_returns_bad_request_for_negative_limit() throws Exception {
+    mockMvc
+        .perform(get("/api/statistics/items/worst").param("limit", "-1"))
+        .andExpect(status().isBadRequest());
   }
 
   @WithMockUser(roles = {"USER"})
