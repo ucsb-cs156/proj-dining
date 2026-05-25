@@ -508,19 +508,19 @@
                   <exportAntProperties>true</exportAntProperties>
                   <target>
                     <!--
-                      Set npm.install.skip=true when node is already installed
-                      and package.json / package-lock.json are unchanged.
+                      Set npm.install.skip=true when package.json / package-lock.json
+                      are both older than the last copied build output (index.html).
                     -->
                     <uptodate
                       property="npm.install.skip"
-                      targetfile="${project.build.directory}/node/node">
+                      targetfile="${project.build.outputDirectory}/public/index.html">
                       <srcfiles
                         dir="${project.basedir}/frontend"
                         includes="package.json,package-lock.json" />
                     </uptodate>
                     <!--
-                      Set npm.build.skip=true when both the frontend source files
-                      and package files are all older than the last copied output.
+                      Set npm.build.skip=true when all frontend source files
+                      are older than the last copied output (index.html).
                     -->
                     <condition property="npm.build.skip" value="true">
                       <and>
@@ -535,6 +535,24 @@
                           <srcfiles
                             dir="${project.basedir}/frontend"
                             includes="package.json,package-lock.json" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend/node_modules"
+                            includes="**/*" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend/build"
+                            includes="**/*" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend"
+                            includes="vite.config.js" />
                         </uptodate>
                       </and>
                     </condition>
