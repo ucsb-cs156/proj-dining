@@ -58,7 +58,7 @@ describe("Reviews", () => {
   });
 
   describe("cellToAxiosParamsModerate", () => {
-    test("It returns the correct params for APPROVED", () => {
+    test("It returns the correct params for APPROVED with comments", () => {
       const cell = {
         row: {
           original: {
@@ -67,7 +67,7 @@ describe("Reviews", () => {
         },
       };
 
-      const result = cellToAxiosParamsModerate(cell, "APPROVED");
+      const result = cellToAxiosParamsModerate(cell, "APPROVED", "Looks good!");
 
       expect(result).toEqual({
         url: "/api/reviews/moderate",
@@ -75,12 +75,12 @@ describe("Reviews", () => {
         params: {
           id: 42,
           status: "APPROVED",
-          moderatorComments: "",
+          moderatorComments: "Looks good!",
         },
       });
     });
 
-    test("It returns the correct params for REJECTED", () => {
+    test("It returns the correct params for REJECTED with comments", () => {
       const cell = {
         row: {
           original: {
@@ -89,7 +89,11 @@ describe("Reviews", () => {
         },
       };
 
-      const result = cellToAxiosParamsModerate(cell, "REJECTED");
+      const result = cellToAxiosParamsModerate(
+        cell,
+        "REJECTED",
+        "Inappropriate content",
+      );
 
       expect(result).toEqual({
         url: "/api/reviews/moderate",
@@ -97,7 +101,7 @@ describe("Reviews", () => {
         params: {
           id: 99,
           status: "REJECTED",
-          moderatorComments: "",
+          moderatorComments: "Inappropriate content",
         },
       });
     });
