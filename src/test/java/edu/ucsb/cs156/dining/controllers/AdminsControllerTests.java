@@ -28,12 +28,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 
-@WebMvcTest(controllers = AdminController.class)
+@WebMvcTest(controllers = AdminsController.class)
 @Import(TestConfig.class)
 @TestPropertySource(
     properties =
         "ADMIN_EMAILS=djensen@ucsb.edu,benjaminconte@ucsb.edu,samuelzhu@ucsb.edu,divyanipunj@ucsb.edu,sangitakunapuli@ucsb.edu,amey@ucsb.edu,phtcon@ucsb.edu,acdamstedt@ucsb.edu,lzhou@ucsb.edu,hannahzhang@ucsb.edu,yilei_yan@ucsb.edu,zhixiuzhu@ucsb.edu,yuchenliu735@ucsb.edu")
-public class AdminControllerTests extends ControllerTestCase {
+public class AdminsControllerTests extends ControllerTestCase {
 
   @MockitoBean AdminRepository adminRepository;
 
@@ -108,21 +108,40 @@ public class AdminControllerTests extends ControllerTestCase {
 
   @WithMockUser(roles = {"ADMIN"})
   @Test
+  public void an_admin_user_can_post_a_new_admin_and_email_is_sanitized() throws Exception {
+    Admin admin =
+        Admin.builder().email("acdamstedt@ucsb.edu").build(); // Expect spaces to get sanitized
+    when(adminRepository.save(eq(admin))).thenReturn(admin);
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/admin/post?email= acdamstedt@ucsb.edu ").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+    // assert
+    verify(adminRepository, times(1)).save(admin);
+    String expectedJson = mapper.writeValueAsString(admin);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
   public void logged_in_admin_can_get_all_admins() throws Exception {
     List<String> adminEmails = Arrays.asList("acdamstedt@ucsb.edu");
 
     Admin admin1 = Admin.builder().email("acdamstedt@ucsb.edu").build();
 
-    AdminController.AdminDTO adminDTO1 = new AdminController.AdminDTO(admin1, adminEmails);
+    AdminsController.AdminDTO adminDTO1 = new AdminsController.AdminDTO(admin1, adminEmails);
 
     Admin admin2 = Admin.builder().email("acdamstedt@csil.cs.ucsb.edu").build();
 
-    AdminController.AdminDTO adminDTO2 = new AdminController.AdminDTO(admin2, adminEmails);
+    AdminsController.AdminDTO adminDTO2 = new AdminsController.AdminDTO(admin2, adminEmails);
 
     ArrayList<Admin> expectedAdmins = new ArrayList<>();
     expectedAdmins.addAll(Arrays.asList(admin1, admin2));
 
-    ArrayList<AdminController.AdminDTO> expectedAdminDTOs = new ArrayList<>();
+    ArrayList<AdminsController.AdminDTO> expectedAdminDTOs = new ArrayList<>();
     expectedAdminDTOs.addAll(Arrays.asList(adminDTO1, adminDTO2));
 
     when(adminRepository.findAll()).thenReturn(expectedAdmins);
