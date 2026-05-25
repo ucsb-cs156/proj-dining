@@ -29,7 +29,7 @@ describe("StatisticsIndexPage tests", () => {
     axiosMock.reset();
   });
 
-  test("renders all statistics navigation cards with links", async () => {
+  test("renders all statistics cards with disabled Coming Soon buttons", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -42,9 +42,9 @@ describe("StatisticsIndexPage tests", () => {
     expect(await screen.findByText("Review Statistics")).toBeInTheDocument();
 
     for (const page of STATISTICS_PAGES) {
-      const link = screen.getByTestId(page.testid);
-      expect(link).toHaveAttribute("href", page.to);
-      expect(link).toHaveTextContent("View");
+      const button = screen.getByTestId(page.testid);
+      expect(button).toBeDisabled();
+      expect(button).toHaveTextContent("Coming Soon");
       expect(screen.getByText(page.title)).toBeInTheDocument();
       expect(screen.getByText(page.description)).toBeInTheDocument();
     }
@@ -87,7 +87,7 @@ describe("StatisticsIndexPage tests", () => {
     ]);
   });
 
-  test("renders specific testid attributes on each card link", async () => {
+  test("renders specific testid attributes on each card button", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -97,21 +97,11 @@ describe("StatisticsIndexPage tests", () => {
       </QueryClientProvider>,
     );
 
-    expect(
-      await screen.findByTestId("StatisticsIndexPage-best-items"),
-    ).toHaveAttribute("href", "/statistics/items/best");
-    expect(
-      screen.getByTestId("StatisticsIndexPage-worst-items"),
-    ).toHaveAttribute("href", "/statistics/items/worst");
-    expect(
-      screen.getByTestId("StatisticsIndexPage-commons-averages"),
-    ).toHaveAttribute("href", "/statistics/commons/averages");
-    expect(
-      screen.getByTestId("StatisticsIndexPage-commons-overtime"),
-    ).toHaveAttribute("href", "/statistics/commons/overtime");
-    expect(
-      screen.getByTestId("StatisticsIndexPage-commons-meals"),
-    ).toHaveAttribute("href", "/statistics/commons/meals");
+    for (const page of STATISTICS_PAGES) {
+      const button = await screen.findByTestId(page.testid);
+      expect(button).toBeDisabled();
+      expect(button).toHaveTextContent("Coming Soon");
+    }
   });
 
   test("renders a wrapping column testid for each card", async () => {
