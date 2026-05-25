@@ -35,6 +35,18 @@ public class RoleRepositoryTests {
 
   @Test
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  public void deleteByEmail_deletes_duplicate_admin_emails() {
+    adminRepository.save(new Admin("duplicate-admin@example.org"));
+    adminRepository.save(new Admin("duplicate-admin@example.org"));
+
+    long deleted = adminRepository.deleteByEmail("duplicate-admin@example.org");
+
+    assertEquals(2, deleted);
+    assertFalse(adminRepository.existsByEmail("duplicate-admin@example.org"));
+  }
+
+  @Test
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
   public void deleteByEmail_deletes_moderator() {
     moderatorRepository.save(new Moderator("moderator@example.org"));
 

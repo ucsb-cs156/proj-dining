@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -145,7 +144,7 @@ public class AdminControllerTests extends ControllerTestCase {
 
     Admin admin = Admin.builder().email("acdamstedt@gmail.com").build();
 
-    when(adminRepository.findByEmail("acdamstedt@gmail.com")).thenReturn(Optional.of(admin));
+    when(adminRepository.findAllByEmail("acdamstedt@gmail.com")).thenReturn(List.of(admin));
 
     // act
     MvcResult response =
@@ -155,7 +154,7 @@ public class AdminControllerTests extends ControllerTestCase {
             .andReturn();
 
     // assert
-    verify(adminRepository, times(1)).findByEmail("acdamstedt@gmail.com");
+    verify(adminRepository, times(1)).findAllByEmail("acdamstedt@gmail.com");
     verify(adminRepository, times(1)).deleteByEmail("acdamstedt@gmail.com");
 
     Map<String, Object> json = responseToJson(response);
@@ -168,7 +167,7 @@ public class AdminControllerTests extends ControllerTestCase {
       throws Exception {
     // arrange
 
-    when(adminRepository.findByEmail("acdamstedt@gmail.com")).thenReturn(Optional.empty());
+    when(adminRepository.findAllByEmail("acdamstedt@gmail.com")).thenReturn(List.of());
 
     // act
     MvcResult response =
@@ -178,9 +177,34 @@ public class AdminControllerTests extends ControllerTestCase {
             .andReturn();
 
     // assert
-    verify(adminRepository, times(1)).findByEmail("acdamstedt@gmail.com");
+    verify(adminRepository, times(1)).findAllByEmail("acdamstedt@gmail.com");
     Map<String, Object> json = responseToJson(response);
     assertEquals("Admin with id acdamstedt@gmail.com not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void admin_can_delete_duplicate_admin_emails() throws Exception {
+    // arrange
+
+    Admin admin1 = Admin.builder().email("testadmin@ucsb.edu").build();
+    Admin admin2 = Admin.builder().email("testadmin@ucsb.edu").build();
+
+    when(adminRepository.findAllByEmail("testadmin@ucsb.edu")).thenReturn(List.of(admin1, admin2));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/admin/delete?email=testadmin@ucsb.edu").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(adminRepository, times(1)).findAllByEmail("testadmin@ucsb.edu");
+    verify(adminRepository, times(1)).deleteByEmail("testadmin@ucsb.edu");
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Admin with id testadmin@ucsb.edu deleted", json.get("message"));
   }
 
   @WithMockUser(roles = {"ADMIN"})
@@ -189,7 +213,7 @@ public class AdminControllerTests extends ControllerTestCase {
 
     Admin admin = Admin.builder().email("acdamstedt@ucsb.edu").build();
 
-    when(adminRepository.findByEmail("acdamstedt@ucsb.edu")).thenReturn(Optional.of(admin));
+    when(adminRepository.findAllByEmail("acdamstedt@ucsb.edu")).thenReturn(List.of(admin));
 
     // act
     MvcResult response =
@@ -202,7 +226,7 @@ public class AdminControllerTests extends ControllerTestCase {
     System.out.println("Response content: " + content);
 
     // assert
-    verify(adminRepository, times(1)).findByEmail("acdamstedt@ucsb.edu");
+    verify(adminRepository, times(1)).findAllByEmail("acdamstedt@ucsb.edu");
     Map<String, Object> json = responseToJson(response);
     assertEquals("Forbidden to delete an admin from ADMIN_EMAILS list", json.get("message"));
   }
