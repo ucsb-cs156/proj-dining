@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
 import { useBackendMutation } from "main/utils/useBackend";
@@ -8,6 +8,7 @@ import {
   cellToAxiosParamsModerate,
   onModerateSuccess,
 } from "main/utils/Reviews";
+import ModeratorCommentsModal from "main/components/Reviews/ModeratorCommentsModal";
 
 export default function ReviewsTable({
   reviews,
@@ -15,6 +16,9 @@ export default function ReviewsTable({
   moderatorOptions,
 }) {
   const navigate = useNavigate();
+  const [modalShow, setModalShow] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(null);
+  const [pendingCell, setPendingCell] = useState(null);
 
   const editCallback = (cell) => {
     navigate(`/reviews/edit/${cell.row.original.id}`);
@@ -34,26 +38,35 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
-  const approveMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
+  const moderateMutation = useBackendMutation(
+    ({ cell, status, moderatorComments }) =>
+      cellToAxiosParamsModerate(cell, status, moderatorComments),
     { onSuccess: onModerateSuccess },
     ["/api/reviews/needsmoderation"],
   );
+  // Stryker restore all
 
-  const rejectMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
-
-  const approveCallback = async (cell) => {
-    approveMutation.mutate(cell);
+  const approveCallback = (cell) => {
+    setPendingStatus("APPROVED");
+    setPendingCell(cell);
+    setModalShow(true);
   };
 
-  const rejectCallback = async (cell) => {
-    rejectMutation.mutate(cell);
+  const rejectCallback = (cell) => {
+    setPendingStatus("REJECTED");
+    setPendingCell(cell);
+    setModalShow(true);
   };
 
+  const handleModalSubmit = (comments) => {
+    moderateMutation.mutate({
+      cell: pendingCell,
+      status: pendingStatus,
+      moderatorComments: comments,
+    });
+  };
+
+  // Stryker disable all
   const columns = [
     {
       Header: "Moderation Status",
@@ -111,5 +124,15 @@ export default function ReviewsTable({
     );
   }
 
-  return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
+  return (
+    <>
+      <ModeratorCommentsModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        status={pendingStatus}
+        onSubmit={handleModalSubmit}
+      />
+      <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />
+    </>
+  );
 }
