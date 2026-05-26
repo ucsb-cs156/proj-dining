@@ -133,13 +133,6 @@ describe("AdminUsersPage tests", () => {
       </QueryClientProvider>,
     );
 
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-Toggle Admin-button`),
-      ).toBeDisabled();
-      expect(
-        screen.getByTestId(`${testId}-cell-row-1-col-Toggle Admin-button`),
-      ).not.toBeDisabled();
     await screen.findByText("Users");
 
     await waitFor(() => {
