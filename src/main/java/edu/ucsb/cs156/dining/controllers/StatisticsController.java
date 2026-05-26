@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatisticsController extends ApiController {
 
   @Autowired ReviewRepository reviewRepository;
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<Map<String, String>> handleValidationExceptions(
+      IllegalArgumentException ex) {
+    Map<String, String> errors = new HashMap<>();
+    errors.put("error", ex.getMessage());
+    return ResponseEntity.badRequest().body(errors);
+  }
 
   /** Supported time-period filters for the best/worst items endpoints. */
   public static final String PERIOD_ALL = "ALL";
@@ -136,6 +146,13 @@ public class StatisticsController extends ApiController {
     return stats;
   }
 
+  /** Rejects negative limits before they reach {@code Stream.limit}, which throws. */
+  private void validateLimit(int limit) {
+    if (limit < 0) {
+      throw new IllegalArgumentException("limit must be non-negative");
+    }
+  }
+
   /** Best items endpoint, supports a time period filter and a maximum result count. */
   @Operation(summary = "Best rated items, optionally restricted to a recent time period")
   @PreAuthorize("hasRole('ROLE_USER')")
@@ -148,6 +165,7 @@ public class StatisticsController extends ApiController {
           @RequestParam(name = "limit", defaultValue = "5")
           int limit) {
     log.info("statistics.bestItems period={} limit={}", period, limit);
+    validateLimit(limit);
     LocalDateTime cutoff = cutoffForPeriod(period, LocalDateTime.now());
     List<ItemStatistic> stats = aggregateByItem(filterByCutoff(approvedReviews(), cutoff));
     stats.sort(
@@ -170,6 +188,7 @@ public class StatisticsController extends ApiController {
           @RequestParam(name = "limit", defaultValue = "5")
           int limit) {
     log.info("statistics.worstItems period={} limit={}", period, limit);
+    validateLimit(limit);
     LocalDateTime cutoff = cutoffForPeriod(period, LocalDateTime.now());
     List<ItemStatistic> stats = aggregateByItem(filterByCutoff(approvedReviews(), cutoff));
     stats.sort(
