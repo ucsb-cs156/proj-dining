@@ -19,8 +19,7 @@ export default function CommonsAveragesOverTimePage() {
         <h1>Dining Commons Averages Over Time</h1>
         <p>
           Average rating per dining commons grouped by the month the meal was
-          served. This is the data behind the &quot;averages over time&quot;
-          graph.
+          served. An averages-over-time graph is potentially coming soon.
         </p>
         {rows && rows.length === 0 ? (
           <p data-testid="CommonsAveragesOverTimePage-empty">
