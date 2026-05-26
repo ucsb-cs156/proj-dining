@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import { currentUserFixtures } from "fixtures/currentUserFixtures";
@@ -43,6 +44,20 @@ describe("AppNavbar tests", () => {
     expect(adminMenu).toBeInTheDocument();
     const moderatorMenu = screen.getByText("Moderate");
     expect(moderatorMenu).toBeInTheDocument();
+
+    await userEvent.click(screen.getByText("Admin"));
+    const usersLink = await screen.findByText("Users");
+    expect(usersLink).toHaveAttribute("href", "/admin/users");
+    expect(usersLink.tagName).toBe("A");
+
+    await userEvent.click(screen.getByText("Moderate"));
+    const moderatorPageLink = await screen.findByText("Moderator Page");
+    expect(moderatorPageLink).toHaveAttribute("href", "/moderate/aliases");
+    expect(moderatorPageLink.tagName).toBe("A");
+
+    const moderateReviewsLink = screen.getByText("Moderate Reviews");
+    expect(moderateReviewsLink).toHaveAttribute("href", "/moderate");
+    expect(moderateReviewsLink.tagName).toBe("A");
   });
 
   test("renders correctly for moderator user", async () => {
@@ -60,6 +75,15 @@ describe("AppNavbar tests", () => {
     await screen.findByText("Welcome, nathanalexander626@gmail.com");
     const moderatorMenu = screen.getByText("Moderate");
     expect(moderatorMenu).toBeInTheDocument();
+
+    await userEvent.click(moderatorMenu);
+    const moderatorPageLink = await screen.findByText("Moderator Page");
+    expect(moderatorPageLink).toHaveAttribute("href", "/moderate/aliases");
+    expect(moderatorPageLink.tagName).toBe("A");
+
+    const moderateReviewsLink = screen.getByText("Moderate Reviews");
+    expect(moderateReviewsLink).toHaveAttribute("href", "/moderate");
+    expect(moderateReviewsLink.tagName).toBe("A");
   });
 
   test("renders H2Console and Swagger links correctly", async () => {
