@@ -45,6 +45,6 @@ export const STATISTICS_PAGES = [
     description: "Average review score for each meal at a dining commons.",
     to: "/statistics/commons/meals",
     testid: "StatisticsIndexPage-commons-meals",
-    comingSoon: true,
+    comingSoon: false,
   },
 ];

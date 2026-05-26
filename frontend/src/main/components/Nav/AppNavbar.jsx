@@ -121,6 +121,13 @@ export default function AppNavbar({
                     >
                       Commons Over Time
                     </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/commons/meals"
+                      data-testid="appnavbar-statistics-commons-meals"
+                    >
+                      Commons Meal Averages
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </>
               ) : (

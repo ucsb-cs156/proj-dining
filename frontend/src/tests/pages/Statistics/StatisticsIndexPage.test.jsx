@@ -98,11 +98,11 @@ describe("StatisticsIndexPage tests", () => {
       false,
       false,
       false,
-      true,
+      false,
     ]);
   });
 
-  test("renders View links for implemented statistics cards", async () => {
+  test("renders View links for all statistics cards", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -124,23 +124,9 @@ describe("StatisticsIndexPage tests", () => {
     expect(
       screen.getByTestId("StatisticsIndexPage-commons-overtime"),
     ).toHaveAttribute("href", "/statistics/commons/overtime");
-  });
-
-  test("renders Coming Soon buttons for not-yet-implemented cards", async () => {
-    const queryClient = new QueryClient();
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <StatisticsIndexPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    for (const testid of ["StatisticsIndexPage-commons-meals"]) {
-      const button = await screen.findByTestId(testid);
-      expect(button).toBeDisabled();
-      expect(button).toHaveTextContent("Coming Soon");
-    }
+    expect(
+      screen.getByTestId("StatisticsIndexPage-commons-meals"),
+    ).toHaveAttribute("href", "/statistics/commons/meals");
   });
 
   test("renders a wrapping column testid for each card", async () => {
