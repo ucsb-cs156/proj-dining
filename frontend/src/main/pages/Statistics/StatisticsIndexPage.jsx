@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
+import { Link } from "react-router";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { STATISTICS_PAGES } from "main/pages/Statistics/statisticsConstants";
 
@@ -24,9 +25,23 @@ export default function StatisticsIndexPage() {
                 <Card.Body>
                   <Card.Title>{page.title}</Card.Title>
                   <Card.Text>{page.description}</Card.Text>
-                  <Button variant="primary" disabled data-testid={page.testid}>
-                    Coming Soon
-                  </Button>
+                  {page.comingSoon !== false ? (
+                    <Button
+                      variant="primary"
+                      disabled
+                      data-testid={page.testid}
+                    >
+                      Coming Soon
+                    </Button>
+                  ) : (
+                    <Link
+                      to={page.to}
+                      className="btn btn-primary"
+                      data-testid={page.testid}
+                    >
+                      View
+                    </Link>
+                  )}
                 </Card.Body>
               </Card>
             </Col>
