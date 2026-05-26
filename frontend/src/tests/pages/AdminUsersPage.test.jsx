@@ -115,6 +115,12 @@ describe("AdminUsersPage tests", () => {
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toHaveTextContent("1");
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-toggle-admin-button`),
+      ).toHaveTextContent("Toggle Admin");
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-toggle-moderator-button`),
+      ).toHaveTextContent("Toggle Moderator");
     });
   });
 });
