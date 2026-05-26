@@ -1,4 +1,4 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import AdminUsersPage from "main/pages/AdminUsersPage";
@@ -130,10 +130,63 @@ describe("AdminUsersPage tests", () => {
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toBeInTheDocument();
-
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toHaveTextContent("1");
     });
+  });
+
+  test("pagination changes backend page correctly", async () => {
+    const queryClient = new QueryClient();
+
+    axiosMock.onGet("/api/admin/users").reply((config) => {
+      if (config.params.page === 0) {
+        return [
+          200,
+          {
+            content: [usersFixtures.threeUsers[0]],
+            totalPages: 2,
+          },
+        ];
+      }
+
+      return [
+        200,
+        {
+          content: [usersFixtures.threeUsers[1]],
+          totalPages: 2,
+        },
+      ];
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminUsersPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Users");
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-id`),
+      ).toHaveTextContent("1");
+    });
+
+    fireEvent.click(screen.getByText("2"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-id`),
+      ).toHaveTextContent("2");
+    });
+
+    const secondPageCall = axiosMock.history.get.find(
+      (call) => call.url === "/api/admin/users" && call.params?.page === 1,
+    );
+
+    expect(secondPageCall).toBeDefined();
   });
 });
