@@ -17,12 +17,16 @@ vi.mock("react-toastify", async (importOriginal) => {
 });
 
 describe("utils/useBackend tests", () => {
+  let axiosMock;
+
   beforeEach(() => {
     vi.spyOn(console, "error");
     console.error.mockImplementation(() => null);
   });
 
   afterEach(() => {
+    axiosMock?.restore();
+    axiosMock = undefined;
     console.error.mockRestore();
     mockToast.mockClear();
   });
@@ -42,7 +46,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
       const users = [{ id: 1, email: "cgaucho@ucsb.edu" }];
 
       axiosMock.onGet("/api/admin/users").reply(200, users);
@@ -57,9 +61,11 @@ describe("utils/useBackend tests", () => {
         { wrapper },
       );
 
-      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      // initialData [] makes isSuccess true before the fetch completes; wait for data
+      await waitFor(() => {
+        expect(result.current.data).toEqual(users);
+      });
 
-      expect(result.current.data).toEqual(users);
       expect(result.current.status).toBe(200);
     });
 
@@ -79,7 +85,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      var axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
 
       axiosMock.onGet("/api/admin/users").reply(404, {});
 
@@ -121,7 +127,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      var axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
 
       axiosMock.onPost("/api/recommendationrequest/post").reply(202, {
         id: 17,
@@ -199,7 +205,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
       axiosMock.onPost("/api/recommendationrequest/post").reply(404);
 
       const objectToAxiosParams = (request) => ({
