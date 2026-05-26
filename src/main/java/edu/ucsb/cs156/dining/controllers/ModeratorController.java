@@ -64,14 +64,12 @@ public class ModeratorController extends ApiController {
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @DeleteMapping("/delete")
   public ResponseEntity<String> deleteInstructor(@RequestParam String email) {
-    Moderator moderator = moderatorRepository.findById(email).orElse(null);
-
-    if (moderator == null) {
+    if (!moderatorRepository.existsByEmail(email)) {
       return ResponseEntity.status(404)
           .body(String.format("Moderator with email %s not found.", email));
     }
 
-    moderatorRepository.delete(moderator);
+    moderatorRepository.deleteByEmail(email);
     return ResponseEntity.status(200)
         .body(String.format("Moderator with email %s deleted.", email));
   }

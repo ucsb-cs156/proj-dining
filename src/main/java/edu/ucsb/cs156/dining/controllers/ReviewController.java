@@ -23,6 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -209,8 +210,13 @@ public class ReviewController extends ApiController {
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
 
-    User current = getCurrentUser().getUser();
-    if (current.getId() != review.getReviewer().getId() && !current.isAdmin()) {
+    CurrentUser currentUser = getCurrentUser();
+    User current = currentUser.getUser();
+    boolean currentUserIsAdmin =
+        currentUser.getRoles().stream()
+            .map(GrantedAuthority::getAuthority)
+            .anyMatch("ROLE_ADMIN"::equals);
+    if (current.getId() != review.getReviewer().getId() && !currentUserIsAdmin) {
       throw new AccessDeniedException("No permission to delete review");
     }
 
