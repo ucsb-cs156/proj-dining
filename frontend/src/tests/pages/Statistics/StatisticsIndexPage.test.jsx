@@ -29,7 +29,7 @@ describe("StatisticsIndexPage tests", () => {
     axiosMock.reset();
   });
 
-  test("renders all statistics cards with disabled Coming Soon buttons", async () => {
+  test("renders enabled View links and disabled Coming Soon buttons", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -42,9 +42,14 @@ describe("StatisticsIndexPage tests", () => {
     expect(await screen.findByText("Review Statistics")).toBeInTheDocument();
 
     for (const page of STATISTICS_PAGES) {
-      const button = screen.getByTestId(page.testid);
-      expect(button).toBeDisabled();
-      expect(button).toHaveTextContent("Coming Soon");
+      const control = screen.getByTestId(page.testid);
+      if (page.comingSoon !== false) {
+        expect(control).toBeDisabled();
+        expect(control).toHaveTextContent("Coming Soon");
+      } else {
+        expect(control).toHaveAttribute("href", page.to);
+        expect(control).toHaveTextContent("View");
+      }
       expect(screen.getByText(page.title)).toBeInTheDocument();
       expect(screen.getByText(page.description)).toBeInTheDocument();
     }
@@ -87,7 +92,7 @@ describe("StatisticsIndexPage tests", () => {
     ]);
   });
 
-  test("renders specific testid attributes on each card button", async () => {
+  test("renders View links for best and worst items cards", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -97,8 +102,30 @@ describe("StatisticsIndexPage tests", () => {
       </QueryClientProvider>,
     );
 
-    for (const page of STATISTICS_PAGES) {
-      const button = await screen.findByTestId(page.testid);
+    expect(
+      await screen.findByTestId("StatisticsIndexPage-best-items"),
+    ).toHaveAttribute("href", "/statistics/items/best");
+    expect(
+      screen.getByTestId("StatisticsIndexPage-worst-items"),
+    ).toHaveAttribute("href", "/statistics/items/worst");
+  });
+
+  test("renders Coming Soon buttons for not-yet-implemented cards", async () => {
+    const queryClient = new QueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <StatisticsIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    for (const testid of [
+      "StatisticsIndexPage-commons-averages",
+      "StatisticsIndexPage-commons-overtime",
+      "StatisticsIndexPage-commons-meals",
+    ]) {
+      const button = await screen.findByTestId(testid);
       expect(button).toBeDisabled();
       expect(button).toHaveTextContent("Coming Soon");
     }
