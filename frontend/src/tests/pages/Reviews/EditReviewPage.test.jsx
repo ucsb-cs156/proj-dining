@@ -29,9 +29,9 @@ const axiosMock = new AxiosMockAdapter(axios);
 
 const existingReview = {
   id: 1,
-  itemName: "Pasta",
+  item: { name: "Pasta" },
   reviewerComments: "Very good",
-  itemStars: 4,
+  itemsStars: 4,
   dateItemServed: "2024-04-01T12:00:00",
 };
 
@@ -84,10 +84,10 @@ describe("EditReviewPage tests", () => {
     renderPage();
 
     await waitFor(() =>
-      expect(axiosMock.history.get.some((r) => r.url === "/api/reviews/1")).toBe(true)
+      expect(
+        axiosMock.history.get.some((r) => r.url === "/api/reviews/1"),
+      ).toBe(true),
     );
-
-    
   });
 
   test("submits updated review and navigates to /myreviews", async () => {
@@ -105,10 +105,10 @@ describe("EditReviewPage tests", () => {
 
     await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
 
-    expect(await screen.findByText("Review updated!")).toBeInTheDocument();  // add here
+    expect(await screen.findByText("Review updated!")).toBeInTheDocument(); // add here
 
     expect(axiosMock.history.put[0].params).toEqual({ id: "1" });
-    
+
     const putBody = JSON.parse(axiosMock.history.put[0].data);
     expect(putBody).toEqual({
       reviewerComments: "Updated comment",
