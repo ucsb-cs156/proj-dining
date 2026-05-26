@@ -23,7 +23,7 @@ export default function EditReviewPage() {
       params: { id },
       data: {
         reviewerComments: updatedReview.reviewerComments,
-        itemStars: updatedReview.itemsStars,   // remap here
+        itemStars: updatedReview.itemsStars, 
         dateItemServed: updatedReview.dateItemServed,
       },
     }),
@@ -34,7 +34,7 @@ export default function EditReviewPage() {
       },
     },
     // Stryker disable next-line ArrayDeclaration,StringLiteral
-    [`/api/reviews?/${id}`]
+    [`/api/reviews/${id}`]
   );
 
   return (
@@ -43,10 +43,14 @@ export default function EditReviewPage() {
         <h1>Edit Review</h1>
         {review && (
           <ReviewForm
-            initialContents={review}
-            initialItemName={review.itemName}
-            submitAction={(data) => mutation.mutate(data)}
-            buttonLabel="Update Review"
+            initialContents={{
+            ...review,
+            itemStars: review.itemsStars, 
+            itemName: review.item?.name,    
+          }}
+          initialItemName={review.item?.name}
+          submitAction={(data) => mutation.mutate(data)}
+          buttonLabel="Update Review"
           />
         )}
       </div>
