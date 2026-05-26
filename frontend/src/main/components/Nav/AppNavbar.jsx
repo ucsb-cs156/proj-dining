@@ -107,6 +107,13 @@ export default function AppNavbar({
                     >
                       Worst Rated Items
                     </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/commons/meals"
+                      data-testid="appnavbar-statistics-commons-meals"
+                    >
+                      Commons Meal Averages
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </>
               ) : (
