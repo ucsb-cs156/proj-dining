@@ -158,4 +158,27 @@ describe("ProfilePage tests", () => {
     const errorMessage = await screen.findByText("Alias is required.");
     expect(errorMessage).toBeInTheDocument();
   });
+
+  test("renders correctly for moderator user", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.moderatorUser);
+    setupSystemInfo(axiosMock);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ProfilePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("role-badge-moderator");
+
+    expect(screen.getByTestId("role-badge-moderator")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-moderator"),
+    ).toHaveTextContent("true");
+  });
 });

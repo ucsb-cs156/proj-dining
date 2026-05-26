@@ -27,9 +27,12 @@ const ProfilePage = () => {
     toast(`Alias Awaiting Moderation: ${user.proposedAlias}`);
   };
 
-  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess }, [
-    "current user",
-  ]);
+  const mutation = useBackendMutation(
+    objectToAxiosParams,
+    { onSuccess },
+    // Stryker disable next-line all : don't test internal caching of React Query
+    ["current user"],
+  );
 
   if (!currentUser.loggedIn) {
     return <p>Not logged in.</p>;
@@ -65,6 +68,7 @@ const ProfilePage = () => {
           <RoleBadge role={"ROLE_USER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_MEMBER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_ADMIN"} currentUser={currentUser} />
+          <RoleBadge role={"ROLE_MODERATOR"} currentUser={currentUser} />
         </Col>
       </Row>
 
