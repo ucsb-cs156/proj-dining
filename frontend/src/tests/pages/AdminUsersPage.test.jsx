@@ -140,6 +140,15 @@ describe("AdminUsersPage tests", () => {
       expect(
         screen.getByTestId(`${testId}-cell-row-1-col-Toggle Admin-button`),
       ).not.toBeDisabled();
+    await screen.findByText("Users");
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Toggle Admin-button`),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-Toggle Moderator-button`),
+      ).toBeInTheDocument();
     });
   });
 });
