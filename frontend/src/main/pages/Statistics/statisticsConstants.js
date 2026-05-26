@@ -1,5 +1,13 @@
 /** Shared constants for the Review Statistics pages. */
 
+/** Period options accepted by the best/worst items endpoints. */
+export const PERIOD_OPTIONS = [
+  { value: "ALL", label: "All time" },
+  { value: "6M", label: "Last 6 months" },
+  { value: "1M", label: "Last month" },
+  { value: "1W", label: "Last week" },
+];
+
 /** Cards displayed on the statistics overview page. */
 export const STATISTICS_PAGES = [
   {
@@ -8,7 +16,7 @@ export const STATISTICS_PAGES = [
       "See the highest rated menu items overall and in recent time windows.",
     to: "/statistics/items/best",
     testid: "StatisticsIndexPage-best-items",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     title: "Worst Rated Items",
@@ -16,7 +24,7 @@ export const STATISTICS_PAGES = [
       "See the lowest rated menu items overall and in recent time windows.",
     to: "/statistics/items/worst",
     testid: "StatisticsIndexPage-worst-items",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     title: "Dining Commons Averages",

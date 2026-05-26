@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -149,6 +150,28 @@ public class StatisticsControllerTests extends ControllerTestCase {
             new TypeReference<List<ItemStatistic>>() {});
 
     assertEquals(Collections.emptyList(), result);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void best_items_returns_bad_request_for_negative_limit() throws Exception {
+    mockMvc
+        .perform(get("/api/statistics/items/best").param("limit", "-1"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("limit must be non-negative"));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void best_items_accepts_zero_limit() throws Exception {
+    when(reviewRepository.findByStatus(ModerationStatus.APPROVED))
+        .thenReturn(Collections.emptyList());
+
+    mockMvc
+        .perform(get("/api/statistics/items/best").param("limit", "0"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(0));
   }
 
   @WithMockUser(roles = {"USER"})
@@ -502,6 +525,28 @@ public class StatisticsControllerTests extends ControllerTestCase {
             new TypeReference<List<ItemStatistic>>() {});
 
     assertEquals(Collections.emptyList(), result);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void worst_items_returns_bad_request_for_negative_limit() throws Exception {
+    mockMvc
+        .perform(get("/api/statistics/items/worst").param("limit", "-1"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("limit must be non-negative"));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void worst_items_accepts_zero_limit() throws Exception {
+    when(reviewRepository.findByStatus(ModerationStatus.APPROVED))
+        .thenReturn(Collections.emptyList());
+
+    mockMvc
+        .perform(get("/api/statistics/items/worst").param("limit", "0"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(0));
   }
 
   @WithMockUser(roles = {"USER"})

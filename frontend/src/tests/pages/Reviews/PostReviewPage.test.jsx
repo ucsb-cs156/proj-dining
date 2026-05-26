@@ -49,6 +49,7 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
 
   test("renders form fields with expected defaults", async () => {
     renderWithDefaultRouter();
+    expect(await screen.findByLabelText(/item name/i)).toHaveValue("");
     expect(await screen.findByLabelText(/comments/i)).toHaveValue("");
     expect(screen.getByLabelText(/stars/i)).toHaveValue("5");
     const dateInput = screen.getByLabelText(/date and time/i);
