@@ -70,11 +70,8 @@ export default function AppNavbar({
                     id="appnavbar-moderate-dropdown"
                     data-testid="appnavbar-moderate-dropdown"
                   >
-                    <NavDropdown.Item href="/moderate/aliases">
+                    <NavDropdown.Item href="/moderation">
                       Moderator Page
-                    </NavDropdown.Item>
-                    <NavDropdown.Item href="/moderate">
-                      Moderate Reviews
                     </NavDropdown.Item>
                   </NavDropdown>
                 </>
@@ -95,6 +92,20 @@ export default function AppNavbar({
                       data-testid="appnavbar-statistics-overview"
                     >
                       Overview
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/items/best"
+                      data-testid="appnavbar-statistics-best-items"
+                    >
+                      Best Rated Items
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/items/worst"
+                      data-testid="appnavbar-statistics-worst-items"
+                    >
+                      Worst Rated Items
                     </NavDropdown.Item>
                     <NavDropdown.Item
                       as={Link}

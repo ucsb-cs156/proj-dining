@@ -3,13 +3,10 @@ package edu.ucsb.cs156.dining.services;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,9 +28,6 @@ public class CurrentUserServiceImpl extends CurrentUserService {
   @Autowired private UserRepository userRepository;
 
   @Autowired GrantedAuthoritiesService grantedAuthoritiesService;
-
-  @Value("${app.admin.emails}")
-  private final List<String> adminEmails = new ArrayList<String>();
 
   /**
    * This method returns the current user as a User object.
@@ -75,12 +69,7 @@ public class CurrentUserServiceImpl extends CurrentUserService {
 
     Optional<User> ou = userRepository.findByEmail(email);
     if (ou.isPresent()) {
-      User u = ou.get();
-      if (adminEmails.contains(email) && !u.isAdmin()) {
-        u.setAdmin(true);
-        userRepository.save(u);
-      }
-      return u;
+      return ou.get();
     }
 
     User u =
@@ -94,7 +83,6 @@ public class CurrentUserServiceImpl extends CurrentUserService {
             .emailVerified(emailVerified)
             .locale(locale)
             .hostedDomain(hostedDomain)
-            .admin(adminEmails.contains(email))
             .build();
     userRepository.save(u);
     return u;

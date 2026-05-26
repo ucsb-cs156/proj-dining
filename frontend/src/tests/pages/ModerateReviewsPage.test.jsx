@@ -3,10 +3,12 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import ModerateReviews from "main/pages/ModerateReviewsPage";
 import { vi } from "vitest";
+import userEvent from "@testing-library/user-event";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import { ReviewFixtures } from "fixtures/reviewFixtures";
+import { AliasFixtures } from "fixtures/aliasFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import mockConsole from "tests/testutils/mockConsole";
@@ -25,6 +27,11 @@ describe("ModerateReviews Page Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
 
   const testId = "Reviewstable";
+  const aliasTestId = "Aliasapprovaltable";
+
+  beforeEach(() => {
+    mockToast.mockClear();
+  });
 
   const setupModerator = () => {
     axiosMock.reset();
@@ -65,6 +72,9 @@ describe("ModerateReviews Page Tests", () => {
     axiosMock
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, AliasFixtures.threeAliases);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -85,6 +95,15 @@ describe("ModerateReviews Page Tests", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-proposedAlias`),
+    ).toHaveTextContent("vnarasiman");
+    expect(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-Approve-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-Reject-button`),
     ).toBeInTheDocument();
   });
 
@@ -94,6 +113,9 @@ describe("ModerateReviews Page Tests", () => {
     axiosMock
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, AliasFixtures.threeAliases);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -115,12 +137,21 @@ describe("ModerateReviews Page Tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
     ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-Approve-button`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-Reject-button`),
+    ).toBeInTheDocument();
   });
 
   test("handles error when backend is unavailable for moderator", async () => {
     setupModerator();
     const queryClient = new QueryClient();
     axiosMock.onGet("/api/reviews/needsmoderation").timeout();
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, AliasFixtures.threeAliases);
     const restoreConsole = mockConsole();
 
     render(
@@ -152,6 +183,9 @@ describe("ModerateReviews Page Tests", () => {
     axiosMock
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, AliasFixtures.threeAliases);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -163,8 +197,8 @@ describe("ModerateReviews Page Tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
-      ).not.toBeInTheDocument();
+        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
+      ).toHaveTextContent("7");
     });
 
     expect(
@@ -173,5 +207,81 @@ describe("ModerateReviews Page Tests", () => {
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-Reject-button`),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(`${aliasTestId}-cell-row-0-col-Approve-button`),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(`${aliasTestId}-cell-row-0-col-Reject-button`),
+    ).not.toBeInTheDocument();
+  });
+
+  test("approve alias button calls mutation and shows success", async () => {
+    setupAdmin();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, AliasFixtures.threeAliases);
+    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${aliasTestId}-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    await userEvent.click(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
+      expect(mockToast).toHaveBeenCalledWith("Moderation success");
+    });
+  });
+
+  test("reject alias button calls mutation and shows success", async () => {
+    setupAdmin();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+    axiosMock
+      .onGet("/api/admin/users/needsmoderation")
+      .reply(200, AliasFixtures.threeAliases);
+    axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${aliasTestId}-cell-row-0-col-Reject-button`),
+      ).toBeInTheDocument();
+    });
+
+    await userEvent.click(
+      screen.getByTestId(`${aliasTestId}-cell-row-0-col-Reject-button`),
+    );
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
+      expect(mockToast).toHaveBeenCalledWith("Moderation success");
+    });
   });
 });

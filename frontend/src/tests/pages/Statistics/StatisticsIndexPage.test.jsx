@@ -92,7 +92,17 @@ describe("StatisticsIndexPage tests", () => {
     ]);
   });
 
-  test("renders View links for commons averages cards", async () => {
+  test("exposes the expected comingSoon flags", () => {
+    expect(STATISTICS_PAGES.map((p) => p.comingSoon)).toEqual([
+      false,
+      false,
+      false,
+      false,
+      true,
+    ]);
+  });
+
+  test("renders View links for implemented statistics cards", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -103,7 +113,13 @@ describe("StatisticsIndexPage tests", () => {
     );
 
     expect(
-      await screen.findByTestId("StatisticsIndexPage-commons-averages"),
+      await screen.findByTestId("StatisticsIndexPage-best-items"),
+    ).toHaveAttribute("href", "/statistics/items/best");
+    expect(
+      screen.getByTestId("StatisticsIndexPage-worst-items"),
+    ).toHaveAttribute("href", "/statistics/items/worst");
+    expect(
+      screen.getByTestId("StatisticsIndexPage-commons-averages"),
     ).toHaveAttribute("href", "/statistics/commons/averages");
     expect(
       screen.getByTestId("StatisticsIndexPage-commons-overtime"),
@@ -120,11 +136,7 @@ describe("StatisticsIndexPage tests", () => {
       </QueryClientProvider>,
     );
 
-    for (const testid of [
-      "StatisticsIndexPage-best-items",
-      "StatisticsIndexPage-worst-items",
-      "StatisticsIndexPage-commons-meals",
-    ]) {
+    for (const testid of ["StatisticsIndexPage-commons-meals"]) {
       const button = await screen.findByTestId(testid);
       expect(button).toBeDisabled();
       expect(button).toHaveTextContent("Coming Soon");

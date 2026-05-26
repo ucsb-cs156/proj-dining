@@ -33,6 +33,12 @@ describe("AppNavbar tests", () => {
       await screen.findByTestId("appnavbar-statistics-overview"),
     ).toHaveAttribute("href", "/statistics");
     expect(
+      screen.getByTestId("appnavbar-statistics-best-items"),
+    ).toHaveAttribute("href", "/statistics/items/best");
+    expect(
+      screen.getByTestId("appnavbar-statistics-worst-items"),
+    ).toHaveAttribute("href", "/statistics/items/worst");
+    expect(
       screen.getByTestId("appnavbar-statistics-commons-averages"),
     ).toHaveAttribute("href", "/statistics/commons/averages");
     expect(
