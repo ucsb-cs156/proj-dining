@@ -59,6 +59,22 @@ export default function AppNavbar({
                     <NavDropdown.Item href="/admin/users">
                       Users
                     </NavDropdown.Item>
+
+                    <NavDropdown.Item href="/admin/admins">
+                      Admins
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item href="/admin/admins/create">
+                      Create Admin
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item href="/admin/moderators">
+                      Moderators
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item href="/admin/moderators/create">
+                      Create Moderator
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </>
               )}
