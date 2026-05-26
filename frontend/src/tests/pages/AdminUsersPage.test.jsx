@@ -28,7 +28,11 @@ describe("AdminUsersPage tests", () => {
 
   test("renders without crashing on three users", async () => {
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    axiosMock.onGet("/api/admin/users").reply(200, {
+      content: usersFixtures.threeUsers,
+      totalPages: 1,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -37,6 +41,7 @@ describe("AdminUsersPage tests", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
+
     await screen.findByText("Users");
   });
 
@@ -71,7 +76,11 @@ describe("AdminUsersPage tests", () => {
 
   test("fetches users from correct API endpoint", async () => {
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    axiosMock.onGet("/api/admin/users").reply(200, {
+      content: usersFixtures.threeUsers,
+      totalPages: 1,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -87,16 +96,25 @@ describe("AdminUsersPage tests", () => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(3);
     });
 
-    // Verify the correct endpoint was called
     const apiCall = axiosMock.history.get.find(
       (call) => call.url === "/api/admin/users",
     );
+
     expect(apiCall).toBeDefined();
+    expect(apiCall.params).toEqual({
+      page: 0,
+      size: 50,
+      sort: "id",
+    });
   });
 
   test("renders users table with data", async () => {
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    axiosMock.onGet("/api/admin/users").reply(200, {
+      content: usersFixtures.threeUsers,
+      totalPages: 1,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -112,6 +130,7 @@ describe("AdminUsersPage tests", () => {
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toBeInTheDocument();
+
       expect(
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toHaveTextContent("1");
