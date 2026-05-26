@@ -1,8 +1,7 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import ModerateReviews from "main/pages/ModerateReviewsPage";
-import { vi } from "vitest";
 
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
@@ -11,57 +10,54 @@ import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import mockConsole from "tests/testutils/mockConsole";
 
-const mockToast = vi.fn();
-vi.mock("react-toastify", async () => {
-  const originalModule = await vi.importActual("react-toastify");
-  return {
-    __esModule: true,
-    ...originalModule,
-    toast: (x) => mockToast(x),
-  };
-});
-
-describe("ModerateReviews Page Tests", () => {
+describe("ModerateReviewsPage", () => {
   const axiosMock = new AxiosMockAdapter(axios);
+  const tableTestId = "Reviewstable";
 
-  const testId = "Reviewstable";
-
-  const setupModerator = () => {
+  const mockModeratorSession = () => {
     axiosMock.reset();
     axiosMock.resetHistory();
+
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.moderatorUser);
+
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
   };
 
-  const setupAdmin = () => {
+  const mockAdminSession = () => {
     axiosMock.reset();
     axiosMock.resetHistory();
+
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.adminUser);
+
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
   };
 
-  const setupUserOnly = () => {
+  const mockRegularUserSession = () => {
     axiosMock.reset();
     axiosMock.resetHistory();
+
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
+
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
   };
 
-  test("renders reviews with approve/reject buttons for moderator", async () => {
-    setupModerator();
+  test("moderator sees moderation actions and no dialog on load", async () => {
+    mockModeratorSession();
+
     const queryClient = new QueryClient();
+
     axiosMock
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
@@ -76,25 +72,32 @@ describe("ModerateReviews Page Tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
+        screen.getByTestId(`${tableTestId}-cell-row-0-col-item.id`),
       ).toHaveTextContent("7");
     });
     expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-reviewer.email`),
     ).toBeInTheDocument();
     expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
     ).toBeInTheDocument();
+
     expect(
-      screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
+      screen.getByTestId(`${tableTestId}-cell-row-1-col-Reject-button`),
     ).toBeInTheDocument();
+
+    expect(
+      screen.queryByTestId("ModeratorCommentsModal-title"),
+    ).not.toBeInTheDocument();
   });
 
-  test("renders reviews with approve/reject buttons for admin", async () => {
-    setupAdmin();
+  test("admin sees approve and reject controls on the table", async () => {
+    mockAdminSession();
+
     const queryClient = new QueryClient();
+
     axiosMock
       .onGet("/api/reviews/needsmoderation")
       .reply(200, ReviewFixtures.threeReviews);
@@ -109,26 +112,153 @@ describe("ModerateReviews Page Tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-item.id`),
-      ).toHaveTextContent("7");
+        screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
     });
     expect(screen.getByText("Reviewer Email")).toBeInTheDocument();
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-reviewer.email`),
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-reviewer.email`),
     ).toBeInTheDocument();
     expect(screen.getByText("phtcon@ucsb.edu")).toBeInTheDocument();
     expect(
-      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId(`${testId}-cell-row-1-col-Reject-button`),
+      screen.getByTestId(`${tableTestId}-cell-row-1-col-Reject-button`),
     ).toBeInTheDocument();
   });
 
-  test("handles error when backend is unavailable for moderator", async () => {
-    setupModerator();
+  test("standard user does not get moderator controls", async () => {
+    mockRegularUserSession();
+
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/reviews/needsmoderation").timeout();
+
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId(`${tableTestId}-cell-row-0-col-item.id`),
+      ).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByTestId(`${tableTestId}-cell-row-0-col-Reject-button`),
+    ).not.toBeInTheDocument();
+  });
+
+  test("end-to-end approve from page sends moderation PUT", async () => {
+    mockModeratorSession();
+
+    const queryClient = new QueryClient();
+
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    axiosMock.onPut("/api/reviews/moderate").reply(200);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("ModeratorCommentsModal-title"),
+      ).toHaveTextContent("Approve Review");
+      expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+        "",
+      );
+    });
+
+    fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
+      target: { value: "Approved after review" },
+    });
+
+    fireEvent.click(screen.getByTestId("ModeratorCommentsModal-submit"));
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
+    });
+
+    const putRequest = axiosMock.history.put[0];
+    expect(putRequest.params.status).toBe("APPROVED");
+    expect(putRequest.params.moderatorComments).toBe("Approved after review");
+    expect(putRequest.params.id).toBeDefined();
+  });
+
+  test("cancel on the page closes the comments dialog", async () => {
+    mockModeratorSession();
+
+    const queryClient = new QueryClient();
+
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("ModeratorCommentsModal-title"),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("ModeratorCommentsModal-cancel"));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("ModeratorCommentsModal-title"),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("failed needsmoderation GET logs method and hides actions", async () => {
+    mockModeratorSession();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    axiosMock.onGet("/api/reviews/needsmoderation").reply(500);
     const restoreConsole = mockConsole();
 
     render(
@@ -150,16 +280,27 @@ describe("ModerateReviews Page Tests", () => {
     restoreConsole();
 
     expect(
-      screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
+      screen.queryByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
     ).not.toBeInTheDocument();
   });
 
-  test("does NOT render approve/reject buttons for regular user", async () => {
-    setupUserOnly();
+  test("successful moderation triggers a second fetch of pending reviews", async () => {
+    mockModeratorSession();
+
     const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/reviews/needsmoderation")
-      .reply(200, ReviewFixtures.threeReviews);
+
+    const singleReviewList = [ReviewFixtures.threeReviews[0]];
+    let fetchCount = 0;
+
+    axiosMock.onGet("/api/reviews/needsmoderation").reply(() => {
+      fetchCount += 1;
+      return [
+        200,
+        fetchCount === 1 ? ReviewFixtures.threeReviews : singleReviewList,
+      ];
+    });
+
+    axiosMock.onPut("/api/reviews/moderate").reply(200);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -171,15 +312,31 @@ describe("ModerateReviews Page Tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByTestId(`${testId}-cell-row-0-col-item.id`),
+        screen.getByTestId(`${tableTestId}-cell-row-1-col-item.id`),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`${tableTestId}-cell-row-0-col-Approve-button`),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("ModeratorCommentsModal-comments")).toHaveValue(
+        "",
+      );
+    });
+
+    fireEvent.change(screen.getByTestId("ModeratorCommentsModal-comments"), {
+      target: { value: "Done" },
+    });
+
+    fireEvent.click(screen.getByTestId("ModeratorCommentsModal-submit"));
+
+    await waitFor(() => {
+      expect(fetchCount).toBe(2);
+      expect(
+        screen.queryByTestId(`${tableTestId}-cell-row-1-col-item.id`),
       ).not.toBeInTheDocument();
     });
-    expect(screen.queryByText("Reviewer Email")).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId(`${testId}-cell-row-0-col-Approve-button`),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId(`${testId}-cell-row-0-col-Reject-button`),
-    ).not.toBeInTheDocument();
   });
 });
