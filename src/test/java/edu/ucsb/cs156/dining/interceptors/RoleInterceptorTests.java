@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,6 +41,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class RoleInterceptorTests extends ControllerTestCase {
 
   @MockBean UserRepository userRepository;
+  @MockBean AdminRepository adminRepository;
+  @MockBean ModeratorRepository moderatorRepository;
 
   @Autowired private RequestMappingHandlerMapping mapping;
 
@@ -82,10 +86,12 @@ public class RoleInterceptorTests extends ControllerTestCase {
   }
 
   @Test
-  public void updates_admin_role_when_user_admin_false() throws Exception {
+  public void updates_admin_role_when_not_in_admin_table() throws Exception {
     User user =
         User.builder().email("cgaucho@ucsb.edu").id(15L).admin(false).moderator(true).build();
     when(userRepository.findByEmail("cgaucho@ucsb.edu")).thenReturn(Optional.of(user));
+    when(adminRepository.existsByEmail("cgaucho@ucsb.edu")).thenReturn(false);
+    when(moderatorRepository.existsByEmail("cgaucho@ucsb.edu")).thenReturn(true);
 
     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/currentUser");
     HandlerExecutionChain chain = mapping.getHandler(request);
@@ -100,6 +106,8 @@ public class RoleInterceptorTests extends ControllerTestCase {
     RoleInterceptor.get().preHandle(request, response, chain.getHandler());
 
     verify(userRepository, times(1)).findByEmail("cgaucho@ucsb.edu");
+    verify(adminRepository, times(1)).existsByEmail("cgaucho@ucsb.edu");
+    verify(moderatorRepository, times(1)).existsByEmail("cgaucho@ucsb.edu");
 
     Collection<? extends GrantedAuthority> authorities =
         SecurityContextHolder.getContext().getAuthentication().getAuthorities();
@@ -119,10 +127,12 @@ public class RoleInterceptorTests extends ControllerTestCase {
   }
 
   @Test
-  public void updates_moderator_role_when_user_moderator_false() throws Exception {
+  public void updates_moderator_role_when_not_in_moderator_table() throws Exception {
     User user =
         User.builder().email("cgaucho@ucsb.edu").id(15L).admin(true).moderator(false).build();
     when(userRepository.findByEmail("cgaucho@ucsb.edu")).thenReturn(Optional.of(user));
+    when(adminRepository.existsByEmail("cgaucho@ucsb.edu")).thenReturn(true);
+    when(moderatorRepository.existsByEmail("cgaucho@ucsb.edu")).thenReturn(false);
 
     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/currentUser");
     HandlerExecutionChain chain = mapping.getHandler(request);
@@ -137,6 +147,8 @@ public class RoleInterceptorTests extends ControllerTestCase {
     RoleInterceptor.get().preHandle(request, response, chain.getHandler());
 
     verify(userRepository, times(1)).findByEmail("cgaucho@ucsb.edu");
+    verify(adminRepository, times(1)).existsByEmail("cgaucho@ucsb.edu");
+    verify(moderatorRepository, times(1)).existsByEmail("cgaucho@ucsb.edu");
 
     Collection<? extends GrantedAuthority> authorities =
         SecurityContextHolder.getContext().getAuthentication().getAuthorities();
@@ -150,16 +162,14 @@ public class RoleInterceptorTests extends ControllerTestCase {
     boolean role_member =
         authorities.stream()
             .anyMatch(grantedAuth -> grantedAuth.getAuthority().equals("ROLE_MEMBER"));
-    assertTrue(role_admin, "ROLE_ADMIN should not be in roles list");
-    assertFalse(role_moderator, "ROLE_MODERATOR should be in roles list");
+    assertTrue(role_admin, "ROLE_ADMIN should be in roles list");
+    assertFalse(role_moderator, "ROLE_MODERATOR should not be in roles list");
     assertTrue(role_member, "ROLE_MEMBER should be in roles list");
   }
 
   @Test
   public void updates_nothing_when_user_not_present() throws Exception {
-    User user =
-        User.builder().email("cgaucho2@ucsb.edu").id(15L).admin(false).moderator(false).build();
-    when(userRepository.findByEmail("cgaucho2@ucsb.edu")).thenReturn(Optional.of(user));
+    when(userRepository.findByEmail("cgaucho@ucsb.edu")).thenReturn(Optional.empty());
 
     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/currentUser");
     HandlerExecutionChain chain = mapping.getHandler(request);
@@ -187,7 +197,7 @@ public class RoleInterceptorTests extends ControllerTestCase {
     boolean role_member =
         authorities.stream()
             .anyMatch(grantedAuth -> grantedAuth.getAuthority().equals("ROLE_MEMBER"));
-    assertTrue(role_admin, "ROLE_ADMIN should not be in roles list");
+    assertTrue(role_admin, "ROLE_ADMIN should be in roles list");
     assertTrue(role_moderator, "ROLE_MODERATOR should be in roles list");
     assertTrue(role_member, "ROLE_MEMBER should be in roles list");
   }
