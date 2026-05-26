@@ -180,4 +180,27 @@ describe("ModerationModal tests", () => {
     expect(screen.getByText(/Item:/i)).toBeInTheDocument();
     expect(screen.getByText(/Unknown/i)).toBeInTheDocument();
   });
+
+  test("shows Unknown when review item is missing", () => {
+    const onHide = vi.fn();
+    const onModeratorCommentsChange = vi.fn();
+    const onSubmit = vi.fn();
+
+    render(
+      <ModerationModal
+        show={true}
+        onHide={onHide}
+        status="APPROVED"
+        moderatorComments=""
+        onModeratorCommentsChange={onModeratorCommentsChange}
+        onSubmit={onSubmit}
+        review={{ id: 321 }}
+      />,
+    );
+
+    expect(screen.getByText(/Review ID:/i)).toBeInTheDocument();
+    expect(screen.getByText(/321/)).toBeInTheDocument();
+    expect(screen.getByText(/Item:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Unknown/i)).toBeInTheDocument();
+  });
 });

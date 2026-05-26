@@ -19,6 +19,7 @@ export default function ReviewsTable({
   const [showModerationModal, setShowModerationModal] = useState(false);
   const [pendingCell, setPendingCell] = useState(null);
   const [moderationStatus, setModerationStatus] = useState(null);
+  // Stryker disable next-line StringLiteral: value is reset whenever the modal opens
   const [moderatorComments, setModeratorComments] = useState("");
 
   const editCallback = (cell) => {

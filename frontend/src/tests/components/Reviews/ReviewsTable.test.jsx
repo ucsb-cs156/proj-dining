@@ -71,10 +71,10 @@ describe("ReviewsTable tests", () => {
     );
     expect(deleteButton).not.toBeInTheDocument();
 
-    const acceptButton = screen.queryByTestId(
-      `Reviewstable-cell-row-0-col-Accept-button`,
+    const approveButton = screen.queryByTestId(
+      `Reviewstable-cell-row-0-col-Approve-button`,
     );
-    expect(acceptButton).not.toBeInTheDocument();
+    expect(approveButton).not.toBeInTheDocument();
 
     const rejectButton = screen.queryByTestId(
       `Reviewstable-cell-row-0-col-Reject-button`,
