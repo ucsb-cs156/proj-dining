@@ -472,6 +472,7 @@
                 </goals>
                 <configuration>
                   <nodeVersion>${node.version}</nodeVersion>
+                  <skip>${npm.install.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -480,7 +481,8 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>ci</arguments>
+                  <arguments>install</arguments>
+                  <skip>${npm.install.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -490,6 +492,7 @@
                 </goals>
                 <configuration>
                   <arguments>run build</arguments>
+                  <skip>${npm.build.skip}</skip>
                 </configuration>
               </execution>
             </executions>
@@ -499,11 +502,75 @@
             <version>${maven-antrun-plugin.version}</version>
             <executions>
               <execution>
+                <id>check-frontend-uptodate</id>
+                <phase>initialize</phase>
+                <configuration>
+                  <exportAntProperties>true</exportAntProperties>
+                  <target>
+                    <!--
+                      Set npm.install.skip=true when package.json / package-lock.json
+                      are both older than the last copied build output (index.html).
+                    -->
+                    <uptodate
+                      property="npm.install.skip"
+                      targetfile="${project.build.outputDirectory}/public/index.html">
+                      <srcfiles
+                        dir="${project.basedir}/frontend"
+                        includes="package.json,package-lock.json" />
+                    </uptodate>
+                    <!--
+                      Set npm.build.skip=true when all frontend source files
+                      are older than the last copied output (index.html).
+                    -->
+                    <condition property="npm.build.skip" value="true">
+                      <and>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend/src"
+                            includes="**/*" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend"
+                            includes="package.json,package-lock.json" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend/node_modules"
+                            includes="**/*" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend/build"
+                            includes="**/*" />
+                        </uptodate>
+                        <uptodate
+                          targetfile="${project.build.outputDirectory}/public/index.html">
+                          <srcfiles
+                            dir="${project.basedir}/frontend"
+                            includes="vite.config.js" />
+                        </uptodate>
+                      </and>
+                    </condition>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>copy-frontend-build</id>
                 <phase>generate-resources</phase>
                 <configuration>
                   <target>
                     <copy todir="${project.build.outputDirectory}/public">
-                      <fileset dir="${project.basedir}/frontend/build" />
+                      <fileset
+                        dir="${project.basedir}/frontend/build"
+                        erroronmissingdir="false" />
                     </copy>
                   </target>
                 </configuration>
