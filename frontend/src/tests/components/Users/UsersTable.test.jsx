@@ -94,6 +94,10 @@ describe("UserTable tests", () => {
       expect(header).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId(`${testId}-header-givenName`)).toHaveTextContent(
+      "First Name",
+    );
+
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent(
       "1",
     );

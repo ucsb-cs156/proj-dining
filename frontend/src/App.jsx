@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
-import AdminUsersPage from "main/pages/AdminUsersPage";
+import AdminUsersPage from "main/pages/Admin/AdminUsersPage";
+import AdminsIndexPage from "main/pages/Admin/AdminsIndexPage";
+import AdminsCreatePage from "main/pages/Admin/AdminsCreatePage";
+import ModeratorsIndexPage from "main/pages/Admin/ModeratorsIndexPage";
+import ModeratorsCreatePage from "main/pages/Admin/ModeratorsCreatePage";
 
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
 
@@ -30,7 +34,16 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/profile" element={<ProfilePage />} />
         {hasRole(currentUser, "ROLE_ADMIN") && (
-          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <>
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/admins" element={<AdminsIndexPage />} />
+            <Route path="/admin/admins/create" element={<AdminsCreatePage />} />
+            <Route path="/admin/moderators" element={<ModeratorsIndexPage />} />
+            <Route
+              path="/admin/moderators/create"
+              element={<ModeratorsCreatePage />}
+            />
+          </>
         )}
         {hasRole(currentUser, "ROLE_USER") && (
           <>

@@ -63,6 +63,19 @@ describe("OurTable tests", () => {
     await screen.findByTestId("testid-header-col1");
   });
 
+  test("renders cell content with correct testids", () => {
+    render(<OurTable columns={columns} data={threeRows} />);
+    expect(screen.getByTestId("testid-cell-row-0-col-col1")).toHaveTextContent(
+      "Hello",
+    );
+    expect(screen.getByTestId("testid-cell-row-0-col-col2")).toHaveTextContent(
+      "World",
+    );
+    expect(screen.getByTestId("testid-cell-row-1-col-col1")).toHaveTextContent(
+      "react-table",
+    );
+  });
+
   test("click on a header and a sort caret should appear", async () => {
     render(
       <OurTable columns={columns} data={threeRows} testid={"sampleTestId"} />,

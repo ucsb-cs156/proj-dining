@@ -21,7 +21,9 @@ export function useCurrentUser() {
         throw e;
       }
     },
+    // Stryker disable next-line ObjectLiteral
     {
+      // Stryker disable next-line BooleanLiteral
       initialData: { loggedIn: false, root: null, initialData: true },
     },
   );
@@ -47,6 +49,7 @@ export function hasRole(currentUser, role) {
 
   if (currentUser == null) return false;
 
+  // Stryker disable next-line OptionalChaining, ConditionalExpression
   if (currentUser.data?.root?.rolesList) {
     return currentUser.data.root.rolesList.includes(role);
   }

@@ -136,6 +136,24 @@ describe("utils/currentUser tests", () => {
     });
   });
   describe("useLogout tests", () => {
+    test("useLogout returns a mutation object with a mutate function", async () => {
+      const queryClient = new QueryClient();
+      const wrapper = ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>{children}</MemoryRouter>
+        </QueryClientProvider>
+      );
+      const navigateSpy = vi.fn();
+      useNavigate.mockImplementation(() => navigateSpy);
+
+      const { result } = renderHook(() => useLogout(), { wrapper });
+
+      expect(result.current).toBeDefined();
+      expect(typeof result.current.mutate).toBe("function");
+
+      queryClient.clear();
+    });
+
     test("useLogout", async () => {
       const queryClient = new QueryClient();
       const wrapper = ({ children }) => (
