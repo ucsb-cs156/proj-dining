@@ -57,7 +57,9 @@ describe("utils/currentUser tests", () => {
     test("useCurrentUser retrieves data from API", async () => {
       const queryClient = new QueryClient();
       const wrapper = ({ children }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
       );
 
       const axiosMock = new AxiosMockAdapter(axios);
