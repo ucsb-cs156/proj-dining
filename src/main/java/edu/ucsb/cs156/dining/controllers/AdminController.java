@@ -81,15 +81,15 @@ public class AdminController extends ApiController {
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @DeleteMapping("/delete")
   public Object deleteAdmin(@Parameter(name = "email") @RequestParam String email) {
-    Admin admin =
-        adminRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException(Admin.class, email));
+    List<Admin> admins = adminRepository.findAllByEmail(email);
+    if (admins.isEmpty()) {
+      throw new EntityNotFoundException(Admin.class, email);
+    }
     if (adminEmails.contains(email)) {
       throw new UnsupportedOperationException(
           "Forbidden to delete an admin from ADMIN_EMAILS list");
     }
-    adminRepository.delete(admin);
+    adminRepository.deleteByEmail(email);
     return genericMessage("Admin with id %s deleted".formatted(email));
   }
 }
