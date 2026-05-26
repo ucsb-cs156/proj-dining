@@ -58,7 +58,7 @@ describe("Reviews", () => {
   });
 
   describe("cellToAxiosParamsModerate", () => {
-    test("It returns the correct params for APPROVED", () => {
+    test("builds PUT params for an APPROVED decision with comments", () => {
       const cell = {
         row: {
           original: {
@@ -67,7 +67,11 @@ describe("Reviews", () => {
         },
       };
 
-      const result = cellToAxiosParamsModerate(cell, "APPROVED");
+      const result = cellToAxiosParamsModerate(
+        cell,
+        "APPROVED",
+        "Clear and helpful",
+      );
 
       expect(result).toEqual({
         url: "/api/reviews/moderate",
@@ -75,12 +79,12 @@ describe("Reviews", () => {
         params: {
           id: 42,
           status: "APPROVED",
-          moderatorComments: "",
+          moderatorComments: "Clear and helpful",
         },
       });
     });
 
-    test("It returns the correct params for REJECTED", () => {
+    test("builds PUT params for a REJECTED decision with comments", () => {
       const cell = {
         row: {
           original: {
@@ -89,7 +93,11 @@ describe("Reviews", () => {
         },
       };
 
-      const result = cellToAxiosParamsModerate(cell, "REJECTED");
+      const result = cellToAxiosParamsModerate(
+        cell,
+        "REJECTED",
+        "Does not meet standards",
+      );
 
       expect(result).toEqual({
         url: "/api/reviews/moderate",
@@ -97,14 +105,14 @@ describe("Reviews", () => {
         params: {
           id: 99,
           status: "REJECTED",
-          moderatorComments: "",
+          moderatorComments: "Does not meet standards",
         },
       });
     });
   });
 
   describe("onModerateSuccess", () => {
-    test("It puts the message on console.log and in a toast", () => {
+    test("logs a moderation success message", () => {
       const restoreConsole = mockConsole();
 
       onModerateSuccess();

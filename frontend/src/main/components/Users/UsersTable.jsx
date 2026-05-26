@@ -87,7 +87,7 @@ export default function UsersTable({ users }) {
       id: "admin",
       accessor: (row) => {
         return (
-          // Stryker disable next-line StringLiteral
+          // Stryker disable next-line StringLiteral, ObjectLiteral
           <div style={{ display: "flex", gap: "5%", justifyContent: "center" }}>
             {/* checkbox: toggle admin status */}
             <input

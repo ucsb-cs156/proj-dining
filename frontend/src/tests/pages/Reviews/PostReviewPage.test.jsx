@@ -63,6 +63,20 @@ describe("MyReviewsCreatePage - full coverage tests", () => {
     expect(button).toBeEnabled();
   });
 
+  test("does not post when comments are empty", async () => {
+    axiosMock.onPost("/api/reviews/post").reply(200, {});
+    renderWithDefaultRouter();
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /submit review/i }),
+    );
+
+    expect(
+      await screen.findByText("Comments are required"),
+    ).toBeInTheDocument();
+    expect(axiosMock.history.post.length).toBe(0);
+  });
+
   test("submits form and navigates on successful post", async () => {
     axiosMock.onPost("/api/reviews/post").reply(200, {});
     renderWithDefaultRouter();
