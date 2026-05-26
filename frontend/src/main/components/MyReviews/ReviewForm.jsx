@@ -2,16 +2,16 @@ import React from "react";
 import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
-export default function ReviewForm({ initialItemName, submitAction }) {
+export default function ReviewForm({ initialItemName, initialContents, submitAction, buttonLabel = "Submit Review" }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      comments: "",
-      stars: 5,
-      dateServed: new Date().toISOString().slice(0, 16),
+      comments: initialContents?.reviewerComments ?? "",
+      stars: initialContents?.itemStars ?? 5,
+      dateServed: initialContents?.dateItemServed?.slice(0,16) ?? new Date().toISOString().slice(0, 16),
     },
   });
 
@@ -83,7 +83,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Button type="submit">Submit Review</Button>
+      <Button type="submit">{buttonLabel}</Button>
     </Form>
   );
 }
