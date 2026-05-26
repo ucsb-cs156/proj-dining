@@ -1,109 +1,91 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 
 export default function ReviewForm({
   initialItemName,
-  initialContents,
   submitAction,
+  initialContents,
   buttonLabel = "Submit Review",
 }) {
-  // Stryker disable next-line all : default empty object is only used when creating a new review
-  const contents = initialContents || {};
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      reviewerComments: "",
+      itemsStars: 5,
+      dateItemServed: new Date().toISOString().slice(0, 16),
+    },
+  });
 
-  // Stryker disable next-line all : default empty string prevents uncontrolled input warnings
-  const initialComments = contents.reviewerComments || "";
-
-  // Stryker disable all : date formatting helper only adapts backend datetime to datetime-local input format
-  const formatDateForInput = (date) => {
-    if (date) {
-      return date.slice(0, 16);
+  useEffect(() => {
+    if (initialContents?.reviewerComments !== undefined) {
+      reset({
+        reviewerComments: initialContents.reviewerComments,
+        itemsStars: initialContents.itemsStars,
+        dateItemServed: initialContents.dateItemServed?.slice(0, 16) ?? "",
+      });
     }
-    return new Date().toISOString().slice(0, 16);
-  };
-  // Stryker restore all
+  }, [initialContents, reset]);
 
-  const [comments, setComments] = React.useState(initialComments);
-
-  const [stars, setStars] = React.useState(contents.itemsStars || 5);
-
-  const initialDateServed = formatDateForInput(contents.dateItemServed);
-
-  const [dateServed, setDateServed] = React.useState(initialDateServed);
-
-  React.useEffect(() => {
-    if (!initialContents) {
-      return;
-    }
-
-    // Stryker disable next-line all : default empty string is used when edited review has no comment
-    setComments(initialContents.reviewerComments || "");
-
-    setStars(initialContents.itemsStars || 5);
-
-    setDateServed(formatDateForInput(initialContents.dateItemServed));
-  }, [initialContents]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const onSubmit = (data) => {
     submitAction({
-      reviewerComments: comments,
-      itemStars: stars,
-      dateItemServed: dateServed,
+      reviewerComments: data.reviewerComments,
+      itemsStars: Number(data.itemsStars),
+      dateItemServed: data.dateItemServed,
     });
+
+    reset();
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="review-item-name">Item Name</Form.Label>
-
-        <Form.Control
-          id="review-item-name"
-          type="text"
-          value={initialItemName}
-          disabled
-        />
+        <Form.Label>Item Name</Form.Label>
+        <Form.Control type="text" value={initialItemName} disabled />
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="review-comments">Comments</Form.Label>
+        <Form.Label htmlFor="reviewerComments">Comments</Form.Label>
 
         <Form.Control
-          id="review-comments"
+          id="reviewerComments"
           as="textarea"
           rows={3}
-          value={comments}
-          onChange={(e) => setComments(e.target.value)}
+          isInvalid={Boolean(errors.reviewerComments)}
+          {...register("reviewerComments", {
+            required: "Comments are required",
+          })}
         />
+
+        <Form.Control.Feedback type="invalid">
+          {errors.reviewerComments?.message}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="review-stars">Stars (1 to 5)</Form.Label>
-
-        <Form.Select
-          id="review-stars"
-          value={stars}
-          onChange={(e) => setStars(Number(e.target.value))}
-        >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
+        <Form.Label htmlFor="itemsStars">Stars (1 to 5)</Form.Label>
+        <Form.Select id="itemsStars" {...register("itemsStars")}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <option key={n} value={n}>
+              {n}
             </option>
           ))}
         </Form.Select>
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="review-date">
+        <Form.Label htmlFor="dateItemServed">
           Date and Time Item was Served
         </Form.Label>
 
         <Form.Control
-          id="review-date"
+          id="dateItemServed"
           type="datetime-local"
-          value={dateServed}
-          onChange={(e) => setDateServed(e.target.value)}
+          {...register("dateItemServed")}
         />
       </Form.Group>
 
