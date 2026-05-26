@@ -17,6 +17,7 @@ import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.EditedReview;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
@@ -49,6 +50,8 @@ public class ReviewControllerTests extends ControllerTestCase {
   @MockBean UserRepository userRepository;
 
   @MockBean private MenuItemRepository menuItemRepository;
+
+  @MockBean AdminRepository adminRepository;
 
   @Autowired private CurrentUserService currentUserService;
 
@@ -888,6 +891,7 @@ public class ReviewControllerTests extends ControllerTestCase {
             .build();
 
     when(reviewRepository.findById(eq(1L))).thenReturn(Optional.of(review1));
+    when(adminRepository.existsByEmail("user@example.org")).thenReturn(true);
 
     MvcResult response =
         mockMvc
@@ -896,6 +900,8 @@ public class ReviewControllerTests extends ControllerTestCase {
             .andReturn();
 
     verify(reviewRepository, times(1)).delete(eq(review1));
+    verify(adminRepository, times(1)).existsByEmail("user@example.org");
+
     Map<String, Object> json = responseToJson(response);
     assertEquals("Review with id 1 deleted", json.get("message"));
   }

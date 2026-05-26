@@ -1,0 +1,62 @@
+{ "databaseChangeLog": [
+  {
+    "changeSet": {
+      "id": "Users-03-remove-admin",
+      "author": "ibrahimgok01",
+      "preConditions": [
+        {
+          "onFail": "MARK_RAN"
+        },
+        {
+          "tableExists": {
+            "tableName": "USERS"
+          }
+        },
+        {
+          "columnExists": {
+            "tableName": "USERS",
+            "columnName": "ADMIN"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "dropColumn": {
+            "tableName": "USERS",
+            "columnName": "ADMIN"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "changeSet": {
+      "id": "Users-04-remove-moderator",
+      "author": "ibrahimgok01",
+      "preConditions": [
+        {
+          "onFail": "MARK_RAN"
+        },
+        {
+          "tableExists": {
+            "tableName": "USERS"
+          }
+        },
+        {
+          "columnExists": {
+            "tableName": "USERS",
+            "columnName": "MODERATOR"
+          }
+        }
+      ],
+      "changes": [
+        {
+          "dropColumn": {
+            "tableName": "USERS",
+            "columnName": "MODERATOR"
+          }
+        }
+      ]
+    }
+  }
+]}

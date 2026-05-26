@@ -2,7 +2,8 @@ package edu.ucsb.cs156.dining.config;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +57,10 @@ public class SecurityConfig {
   private final List<String> adminEmails = new ArrayList<>();
 
   @Autowired UserRepository userRepository;
+
+  @Autowired AdminRepository adminRepository;
+
+  @Autowired ModeratorRepository moderatorRepository;
 
   /**
    * The `filterChain` method in this Java code configures various security settings for an HTTP
@@ -152,8 +156,7 @@ public class SecurityConfig {
     if (adminEmails.contains(email)) {
       return true;
     }
-    Optional<User> u = userRepository.findByEmail(email);
-    return u.isPresent() && u.get().isAdmin();
+    return adminRepository.existsByEmail(email);
   }
 
   /**
@@ -164,8 +167,7 @@ public class SecurityConfig {
    * @return whether the user with the given email is a moderator
    */
   public boolean getModerator(String email) {
-    Optional<User> u = userRepository.findByEmail(email);
-    return u.isPresent() && u.get().isModerator();
+    return moderatorRepository.existsByEmail(email);
   }
 }
 
