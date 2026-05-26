@@ -55,6 +55,9 @@ describe("WorstItemsPage tests", () => {
         screen.getByTestId("WorstItemsPage-table-cell-row-0-col-itemName"),
       ).toHaveTextContent("Mystery Meat");
     });
+
+    const select = screen.getByTestId("WorstItemsPage-period-select");
+    expect(select).toHaveValue("ALL");
   });
 
   test("refetches with the new period when the dropdown changes", async () => {
@@ -95,6 +98,16 @@ describe("WorstItemsPage tests", () => {
         screen.queryByTestId("WorstItemsPage-table-cell-row-1-col-itemName"),
       ).not.toBeInTheDocument();
     });
+
+    expect(useBackendSpy).toHaveBeenCalledWith(
+      ["/api/statistics/items/worst", "6M"],
+      {
+        method: "GET",
+        url: "/api/statistics/items/worst",
+        params: { period: "6M" },
+      },
+      [],
+    );
   });
 
   test("renders empty message when there are no items", async () => {

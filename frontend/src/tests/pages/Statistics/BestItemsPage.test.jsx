@@ -98,6 +98,16 @@ describe("BestItemsPage tests", () => {
         screen.queryByTestId("BestItemsPage-table-cell-row-1-col-itemName"),
       ).not.toBeInTheDocument();
     });
+
+    expect(useBackendSpy).toHaveBeenCalledWith(
+      ["/api/statistics/items/best", "1W"],
+      {
+        method: "GET",
+        url: "/api/statistics/items/best",
+        params: { period: "1W" },
+      },
+      [],
+    );
   });
 
   test("renders empty message when there are no items", async () => {
