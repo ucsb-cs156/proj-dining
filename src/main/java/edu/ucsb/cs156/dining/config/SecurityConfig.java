@@ -2,8 +2,8 @@ package edu.ucsb.cs156.dining.config;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-import edu.ucsb.cs156.dining.entities.User;
-import edu.ucsb.cs156.dining.repositories.UserRepository;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -51,10 +50,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class SecurityConfig {
 
-  @Value("${app.admin.emails}")
+  @Value("#{'${app.admin.emails}'.split(',')}")
   private final List<String> adminEmails = new ArrayList<>();
 
-  @Autowired UserRepository userRepository;
+  @Autowired AdminRepository adminRepository;
+
+  @Autowired ModeratorRepository moderatorRepository;
 
   /**
    * The `filterChain` method in this Java code configures various security settings for an HTTP
@@ -131,7 +132,7 @@ public class SecurityConfig {
 
   /**
    * This method checks if the given email belongs to an admin user either from a predefined list or
-   * by querying the user repository.
+   * by querying the admin repository.
    *
    * @param email email address of the user
    * @return whether the user with the given email is an admin
@@ -140,20 +141,18 @@ public class SecurityConfig {
     if (adminEmails.contains(email)) {
       return true;
     }
-    Optional<User> u = userRepository.findByEmail(email);
-    return u.isPresent() && u.get().isAdmin();
+    return adminRepository.existsByEmail(email);
   }
 
   /**
-   * This method checks if the given email belongs to a moderator user by querying the user
+   * This method checks if the given email belongs to a moderator user by querying the moderator
    * repository.
    *
    * @param email email address of the user
    * @return whether the user with the given email is a moderator
    */
   public boolean getModerator(String email) {
-    Optional<User> u = userRepository.findByEmail(email);
-    return u.isPresent() && u.get().isModerator();
+    return moderatorRepository.existsByEmail(email);
   }
 }
 
