@@ -47,6 +47,15 @@ const statisticsFixtures = {
       averageStars: 1.5,
       reviewCount: 6,
     },
+    {
+      itemId: 6,
+      itemName: "Stale Bread",
+      diningCommonsCode: "ortega",
+      mealCode: "lunch",
+      station: "Bakery",
+      averageStars: 1.8,
+      reviewCount: 4,
+    },
   ],
 };
 

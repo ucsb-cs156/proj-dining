@@ -89,6 +89,12 @@ describe("WorstItemsPage tests", () => {
       );
       expect(callsForSixMonths.length).toBeGreaterThanOrEqual(1);
     });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("WorstItemsPage-table-cell-row-1-col-itemName"),
+      ).not.toBeInTheDocument();
+    });
   });
 
   test("renders empty message when there are no items", async () => {
