@@ -19,7 +19,6 @@ import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -128,7 +127,7 @@ public class ModeratorControllerTests extends ControllerTestCase {
   public void logged_in_admins_can_delete() throws Exception {
     // Arrange
     Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
-    when(moderatorRepository.findById(eq("ins@ucsb.edu"))).thenReturn(Optional.of(moderator));
+    when(moderatorRepository.existsByEmail(eq("ins@ucsb.edu"))).thenReturn(true);
 
     // Act
     MvcResult response =
@@ -139,8 +138,8 @@ public class ModeratorControllerTests extends ControllerTestCase {
             .andReturn();
 
     // Assert
-    verify(moderatorRepository, times(1)).findById("ins@ucsb.edu");
-    verify(moderatorRepository, times(1)).delete(moderator);
+    verify(moderatorRepository, times(1)).existsByEmail("ins@ucsb.edu");
+    verify(moderatorRepository, times(1)).deleteByEmail("ins@ucsb.edu");
     String expectedMessage =
         String.format("Moderator with email %s deleted.", moderator.getEmail());
     String responseString = response.getResponse().getContentAsString();
@@ -152,7 +151,7 @@ public class ModeratorControllerTests extends ControllerTestCase {
   public void admin_try_to_delete_a_moderator_not_found() throws Exception {
     // Arrange
     String email = "nonexistent@ucsb.edu";
-    when(moderatorRepository.findById(eq(email))).thenReturn(Optional.empty());
+    when(moderatorRepository.existsByEmail(eq(email))).thenReturn(false);
 
     // Act
     MvcResult response =
@@ -162,8 +161,8 @@ public class ModeratorControllerTests extends ControllerTestCase {
             .andReturn();
 
     // Assert
-    verify(moderatorRepository, times(1)).findById(email);
-    verify(moderatorRepository, times(0)).delete(any());
+    verify(moderatorRepository, times(1)).existsByEmail(email);
+    verify(moderatorRepository, times(0)).deleteByEmail(any());
     String expectedMessage = String.format("Moderator with email %s not found.", email);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedMessage, responseString);
