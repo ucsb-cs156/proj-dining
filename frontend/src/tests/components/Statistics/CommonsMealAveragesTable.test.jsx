@@ -5,7 +5,9 @@ import { statisticsFixtures } from "fixtures/statisticsFixtures";
 
 describe("CommonsMealAveragesTable tests", () => {
   test("renders default headers when no testIdPrefix is provided", () => {
-    render(<CommonsMealAveragesTable averages={statisticsFixtures.mealAverages} />);
+    render(
+      <CommonsMealAveragesTable averages={statisticsFixtures.mealAverages} />,
+    );
 
     expect(
       screen.getByTestId("CommonsMealAveragesTable-header-mealCode"),

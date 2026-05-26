@@ -207,7 +207,9 @@ describe("CommonsMealAveragesPage tests", () => {
 
     expect(useBackendSpy).not.toHaveBeenCalledWith(
       expect.arrayContaining([
-        expect.stringMatching(/^\/api\/statistics\/commons\/.+\/meals\/averages$/),
+        expect.stringMatching(
+          /^\/api\/statistics\/commons\/.+\/meals\/averages$/,
+        ),
       ]),
       expect.any(Object),
       expect.any(Array),
