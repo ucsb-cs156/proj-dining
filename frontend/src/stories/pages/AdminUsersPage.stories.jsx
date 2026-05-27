@@ -1,46 +1,61 @@
 import React from "react";
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import { http, HttpResponse } from "msw";
 
 import AdminUsersPage from "main/pages/AdminUsersPage";
-
-import { toast } from "react-toastify";
-import { http, HttpResponse } from "msw";
 import usersFixtures from "fixtures/usersFixtures";
-import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 
 export default {
   title: "pages/AdminUsersPage",
   component: AdminUsersPage,
 };
 
-const Template = () => <AdminUsersPage />;
+const Template = () => <AdminUsersPage storybook={true} />;
 
-export const Default = Template.bind({});
-Default.parameters = {
+export const Empty = Template.bind({});
+
+Empty.parameters = {
   msw: [
-    http.get("/api/admin/users", () => {
-      return HttpResponse.json(usersFixtures.threeUsers, {
-        status: 200,
-      });
-    }),
-    http.get("/api/systemInfo", () => {
-      return HttpResponse.json(systemInfoFixtures.showingBoth, {
-        status: 200,
-      });
-    }),
     http.get("/api/currentUser", () => {
       return HttpResponse.json(apiCurrentUserFixtures.adminUser, {
         status: 200,
       });
     }),
-    http.post("/logout", ({ request }) => {
-      toast(`Generated: ${request.method} ${request.url}`);
-      return HttpResponse.json(
-        {},
-        {
-          status: 200,
-        },
-      );
+    http.get("/api/systemInfo", () => {
+      return HttpResponse.json(systemInfoFixtures.showingNeither, {
+        status: 200,
+      });
+    }),
+    http.get("/api/admin/users", () => {
+      return HttpResponse.json({ content: [], totalPages: 1 }, { status: 200 });
+    }),
+  ],
+};
+
+export const TwoItemsAdminUser = Template.bind({});
+
+TwoItemsAdminUser.parameters = {
+  msw: [
+    http.get("/api/currentUser", () => {
+      return HttpResponse.json(apiCurrentUserFixtures.adminUser);
+    }),
+    http.get("/api/systemInfo", () => {
+      return HttpResponse.json(systemInfoFixtures.showingNeither);
+    }),
+    http.get("/api/admin/users", ({ request }) => {
+      const url = new URL(request.url);
+      if (url.searchParams.get("page") === "0") {
+        return HttpResponse.json({
+          content: [usersFixtures.threeUsers[0]],
+          totalPages: 2,
+        });
+      } else {
+        return HttpResponse.json({
+          content: [usersFixtures.threeUsers[1]],
+          totalPages: 2,
+        });
+      }
     }),
   ],
 };

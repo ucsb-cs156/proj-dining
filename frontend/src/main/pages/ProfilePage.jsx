@@ -1,6 +1,6 @@
 import { Row, Col, Button, Form } from "react-bootstrap";
 import RoleBadge from "main/components/Profile/RoleBadge";
-import { useCurrentUser } from "main/utils/currentUser";
+import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,7 @@ const ProfilePage = () => {
       proposedAlias: user.proposedAlias,
     },
   });
+
   const onSuccess = (user) => {
     toast(`Alias Awaiting Moderation: ${user.proposedAlias}`);
   };
@@ -29,16 +30,23 @@ const ProfilePage = () => {
   const mutation = useBackendMutation(
     objectToAxiosParams,
     { onSuccess },
-    // Stryker disable next-line all : don't test for React Query caching
+    // Stryker disable next-line all : don't test internal caching of React Query
     ["current user"],
   );
 
   if (!currentUser.loggedIn) {
     return <p>Not logged in.</p>;
   }
+
   const { root } = currentUser;
   const { user } = root;
   const { email, pictureUrl, fullName } = user;
+
+  const profileUser = {
+    ...user,
+    admin: hasRole(currentUser, "ROLE_ADMIN"),
+    moderator: hasRole(currentUser, "ROLE_MODERATOR"),
+  };
 
   const onSubmit = async (data) => {
     mutation.mutate({ proposedAlias: data.alias });
@@ -60,8 +68,10 @@ const ProfilePage = () => {
           <RoleBadge role={"ROLE_USER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_MEMBER"} currentUser={currentUser} />
           <RoleBadge role={"ROLE_ADMIN"} currentUser={currentUser} />
+          <RoleBadge role={"ROLE_MODERATOR"} currentUser={currentUser} />
         </Col>
       </Row>
+
       <Row className="text-left">
         <Col md={12}>
           <Form onSubmit={handleSubmit(onSubmit)}>
@@ -79,17 +89,19 @@ const ProfilePage = () => {
                 {errors.alias?.message}
               </Form.Control.Feedback>
             </Form.Group>
+
             <Button
               variant="primary"
               type="submit"
               disabled={mutation.isLoading}
             >
-              {"Update Alias"}
+              Update Alias
             </Button>
+
             <Row className="mt-5">
               <Col md={12}>
                 <h4>Your Current User Information</h4>
-                <UsersTable users={[currentUser.root.user]} />
+                <UsersTable users={[profileUser]} />
               </Col>
             </Row>
           </Form>
@@ -98,4 +110,5 @@ const ProfilePage = () => {
     </BasicLayout>
   );
 };
+
 export default ProfilePage;

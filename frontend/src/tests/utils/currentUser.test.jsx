@@ -72,9 +72,10 @@ describe("utils/currentUser tests", () => {
 
       const { result } = renderHook(() => useCurrentUser(), { wrapper });
 
-      await waitFor(() => result.current.isFetched);
+      await waitFor(() => {
+        expect(result.current.data).toEqual(currentUserFixtures.userOnly);
+      });
 
-      expect(result.current.data).toEqual(currentUserFixtures.userOnly);
       queryClient.clear();
     });
 
