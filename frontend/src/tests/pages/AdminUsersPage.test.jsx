@@ -1,4 +1,4 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import AdminUsersPage from "main/pages/AdminUsersPage";
@@ -28,7 +28,11 @@ describe("AdminUsersPage tests", () => {
 
   test("renders without crashing on three users", async () => {
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    axiosMock.onGet("/api/admin/users").reply(200, {
+      content: usersFixtures.threeUsers,
+      totalPages: 1,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -37,6 +41,7 @@ describe("AdminUsersPage tests", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
+
     await screen.findByText("Users");
   });
 
@@ -71,7 +76,11 @@ describe("AdminUsersPage tests", () => {
 
   test("fetches users from correct API endpoint", async () => {
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    axiosMock.onGet("/api/admin/users").reply(200, {
+      content: usersFixtures.threeUsers,
+      totalPages: 1,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -87,16 +96,25 @@ describe("AdminUsersPage tests", () => {
       expect(axiosMock.history.get.length).toBeGreaterThanOrEqual(3);
     });
 
-    // Verify the correct endpoint was called
     const apiCall = axiosMock.history.get.find(
       (call) => call.url === "/api/admin/users",
     );
+
     expect(apiCall).toBeDefined();
+    expect(apiCall.params).toEqual({
+      page: 0,
+      size: 50,
+      sort: "id",
+    });
   });
 
   test("renders users table with data", async () => {
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
+
+    axiosMock.onGet("/api/admin/users").reply(200, {
+      content: usersFixtures.threeUsers,
+      totalPages: 1,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -116,5 +134,59 @@ describe("AdminUsersPage tests", () => {
         screen.getByTestId(`${testId}-cell-row-0-col-id`),
       ).toHaveTextContent("1");
     });
+  });
+
+  test("pagination changes backend page correctly", async () => {
+    const queryClient = new QueryClient();
+
+    axiosMock.onGet("/api/admin/users").reply((config) => {
+      if (config.params.page === 0) {
+        return [
+          200,
+          {
+            content: [usersFixtures.threeUsers[0]],
+            totalPages: 2,
+          },
+        ];
+      }
+
+      return [
+        200,
+        {
+          content: [usersFixtures.threeUsers[1]],
+          totalPages: 2,
+        },
+      ];
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminUsersPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("Users");
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-id`),
+      ).toHaveTextContent("1");
+    });
+
+    fireEvent.click(screen.getByText("2"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`${testId}-cell-row-0-col-id`),
+      ).toHaveTextContent("2");
+    });
+
+    const secondPageCall = axiosMock.history.get.find(
+      (call) => call.url === "/api/admin/users" && call.params?.page === 1,
+    );
+
+    expect(secondPageCall).toBeDefined();
   });
 });

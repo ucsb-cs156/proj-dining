@@ -16,17 +16,23 @@ vi.mock("react-toastify", () => ({
 
 describe("ProfilePage tests", () => {
   const queryClient = new QueryClient();
+
   beforeEach(() => {
     queryClient.clear();
   });
+
+  const setupSystemInfo = (axiosMock) => {
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
+  };
+
   test("renders correctly for regular logged in user", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
+    setupSystemInfo(axiosMock);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -40,6 +46,9 @@ describe("ProfilePage tests", () => {
     expect(
       screen.getByText("Welcome, pconrad.cis@gmail.com"),
     ).toBeInTheDocument();
+
+    expect(screen.getByText("NewAlias")).toBeInTheDocument();
+    expect(screen.getAllByText("false").length).toBeGreaterThanOrEqual(2);
   });
 
   test("renders correctly for admin user", async () => {
@@ -47,9 +56,7 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.adminUser);
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
+    setupSystemInfo(axiosMock);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -64,6 +71,8 @@ describe("ProfilePage tests", () => {
     expect(screen.getByTestId("role-badge-user")).toBeInTheDocument();
     expect(screen.getByTestId("role-badge-admin")).toBeInTheDocument();
     expect(screen.getByTestId("role-badge-member")).toBeInTheDocument();
+
+    expect(screen.getByText("true")).toBeInTheDocument();
   });
 
   test("handles alias submission successfully and sends correct params", async () => {
@@ -72,6 +81,8 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
+    setupSystemInfo(axiosMock);
+
     axiosMock.onPost("/api/currentUser/updateAlias").reply(200, {
       proposedAlias: "NewPropAlias",
     });
@@ -110,6 +121,7 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
+    setupSystemInfo(axiosMock);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -128,7 +140,8 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
-    const queryClient = new QueryClient();
+    setupSystemInfo(axiosMock);
+
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -144,5 +157,28 @@ describe("ProfilePage tests", () => {
 
     const errorMessage = await screen.findByText("Alias is required.");
     expect(errorMessage).toBeInTheDocument();
+  });
+
+  test("renders correctly for moderator user", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock
+      .onGet("/api/currentUser")
+      .reply(200, apiCurrentUserFixtures.moderatorUser);
+    setupSystemInfo(axiosMock);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ProfilePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("role-badge-moderator");
+
+    expect(screen.getByTestId("role-badge-moderator")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-moderator"),
+    ).toHaveTextContent("true");
   });
 });
