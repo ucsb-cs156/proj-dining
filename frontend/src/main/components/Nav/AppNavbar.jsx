@@ -78,9 +78,59 @@ export default function AppNavbar({
               )}
 
               {currentUser && currentUser.loggedIn ? (
-                <Nav.Link as={Link} to="/myreviews">
-                  My Reviews
-                </Nav.Link>
+               <>
+                  <Nav.Link as={Link} to="/myreviews">
+                    My Reviews
+                  </Nav.Link>
+                  <NavDropdown
+                    title="Statistics"
+                    id="appnavbar-statistics-dropdown"
+                    data-testid="appnavbar-statistics-dropdown"
+                  >
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics"
+                      data-testid="appnavbar-statistics-overview"
+                    >
+                      Overview
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/items/best"
+                      data-testid="appnavbar-statistics-best-items"
+                    >
+                      Best Rated Items
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/items/worst"
+                      data-testid="appnavbar-statistics-worst-items"
+                    >
+                      Worst Rated Items
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/commons/averages"
+                      data-testid="appnavbar-statistics-commons-averages"
+                    >
+                      Commons Averages
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/commons/overtime"
+                      data-testid="appnavbar-statistics-commons-overtime"
+                    >
+                      Commons Over Time
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/statistics/commons/meals"
+                      data-testid="appnavbar-statistics-commons-meals"
+                    >
+                      Commons Meal Averages
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </>
               ) : (
                 <></>
               )}
