@@ -165,7 +165,7 @@ public class CustomMenuItemRepositoryImplIT {
                 Entree.builder().name("fake").station("fake").build()));
 
     assertEquals(1, dlgItems.size());
-    assertEquals(4.0, dlgItems.get(0).reviewScore());
+    assertEquals(4.0, dlgItems.getFirst().reviewScore());
 
     List<MenuItemDto> carrilloItems =
         menuItemRepository.projectExistingEntrees(
@@ -174,7 +174,7 @@ public class CustomMenuItemRepositoryImplIT {
             List.of(Entree.builder().name("pizza").station("station 1").build()));
 
     assertEquals(1, carrilloItems.size());
-    assertEquals(1.0, carrilloItems.get(0).reviewScore());
+    assertEquals(1.0, carrilloItems.getFirst().reviewScore());
   }
 
   @Test
@@ -201,6 +201,6 @@ public class CustomMenuItemRepositoryImplIT {
             List.of(Entree.builder().name("waffles").station("self-serve").build()));
 
     assertEquals(1, menuItemDtos.size());
-    assertNull(menuItemDtos.get(0).reviewScore());
+    assertNull(menuItemDtos.getFirst().reviewScore());
   }
 }
