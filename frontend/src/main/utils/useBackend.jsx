@@ -84,7 +84,15 @@ export function useBackendMutation(
     },
     // Stryker disable all: Not sure how to set up the complex behavior needed to test this
     onSettled: () => {
-      if (queryKey !== null) queryClient.invalidateQueries(queryKey);
+      if (queryKey !== null) {
+        // Handle array of query keys for cache invalidation
+        // this is unlike native React behavior, but was implemented for parity with proj-frontiers
+        if (Array.isArray(queryKey)) {
+          queryKey.forEach((key) => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+          });
+        }
+      }
     },
     // Stryker restore all
     retry: false,
