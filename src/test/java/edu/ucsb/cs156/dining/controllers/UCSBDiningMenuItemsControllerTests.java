@@ -69,6 +69,8 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
     assertEquals(1, jsonList.size());
     assertEquals("waffles", jsonList.get(0).get("name"));
+    assertEquals("self-serve", jsonList.get(0).get("station"));
+    assertEquals(4.5, jsonList.get(0).get("reviewScore"));
   }
 
   @Test
@@ -111,6 +113,23 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
 
     // Should contain both existing and new items
     assertEquals(2, jsonList.size());
+
+    // Verify the items are present (order may vary)
+    boolean hasPizza = false;
+    boolean hasPancakes = false;
+    for (Map<String, Object> item : jsonList) {
+      if ("pizza".equals(item.get("name"))) {
+        hasPizza = true;
+        assertEquals("main", item.get("station"));
+        assertEquals(3.0, item.get("reviewScore"));
+      }
+      if ("pancakes".equals(item.get("name"))) {
+        hasPancakes = true;
+        assertEquals("station-1", item.get("station"));
+      }
+    }
+    assertEquals(true, hasPizza, "Pizza item should be in response");
+    assertEquals(true, hasPancakes, "Pancakes item should be in response");
   }
 
   @Test
