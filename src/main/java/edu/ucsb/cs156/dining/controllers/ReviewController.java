@@ -7,6 +7,7 @@ import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.models.EditedReview;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
@@ -52,6 +53,8 @@ public class ReviewController extends ApiController {
   @Autowired ReviewRepository reviewRepository;
 
   @Autowired MenuItemRepository menuItemRepository;
+
+  @Autowired AdminRepository adminRepository;
 
   /**
    * This method returns a list of all Reviews.
@@ -210,7 +213,8 @@ public class ReviewController extends ApiController {
             .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
 
     User current = getCurrentUser().getUser();
-    if (current.getId() != review.getReviewer().getId() && !current.isAdmin()) {
+    if (current.getId() != review.getReviewer().getId()
+        && !adminRepository.existsByEmail(current.getEmail())) {
       throw new AccessDeniedException("No permission to delete review");
     }
 
