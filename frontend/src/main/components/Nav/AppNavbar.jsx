@@ -78,7 +78,7 @@ export default function AppNavbar({
               )}
 
               {currentUser && currentUser.loggedIn ? (
-               <>
+                <>
                   <Nav.Link as={Link} to="/myreviews">
                     My Reviews
                   </Nav.Link>
