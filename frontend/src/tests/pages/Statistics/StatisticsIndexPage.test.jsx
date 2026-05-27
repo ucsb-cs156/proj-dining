@@ -96,13 +96,13 @@ describe("StatisticsIndexPage tests", () => {
     expect(STATISTICS_PAGES.map((p) => p.comingSoon)).toEqual([
       false,
       false,
-      true,
-      true,
+      false,
+      false,
       false,
     ]);
   });
 
-  test("renders View links for implemented statistics cards", async () => {
+  test("renders View links for all statistics cards", async () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -119,28 +119,14 @@ describe("StatisticsIndexPage tests", () => {
       screen.getByTestId("StatisticsIndexPage-worst-items"),
     ).toHaveAttribute("href", "/statistics/items/worst");
     expect(
+      screen.getByTestId("StatisticsIndexPage-commons-averages"),
+    ).toHaveAttribute("href", "/statistics/commons/averages");
+    expect(
+      screen.getByTestId("StatisticsIndexPage-commons-overtime"),
+    ).toHaveAttribute("href", "/statistics/commons/overtime");
+    expect(
       screen.getByTestId("StatisticsIndexPage-commons-meals"),
     ).toHaveAttribute("href", "/statistics/commons/meals");
-  });
-
-  test("renders Coming Soon buttons for not-yet-implemented cards", async () => {
-    const queryClient = new QueryClient();
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <StatisticsIndexPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    for (const testid of [
-      "StatisticsIndexPage-commons-averages",
-      "StatisticsIndexPage-commons-overtime",
-    ]) {
-      const button = await screen.findByTestId(testid);
-      expect(button).toBeDisabled();
-      expect(button).toHaveTextContent("Coming Soon");
-    }
   });
 
   test("renders a wrapping column testid for each card", async () => {

@@ -39,6 +39,12 @@ describe("AppNavbar tests", () => {
       screen.getByTestId("appnavbar-statistics-worst-items"),
     ).toHaveAttribute("href", "/statistics/items/worst");
     expect(
+      screen.getByTestId("appnavbar-statistics-commons-averages"),
+    ).toHaveAttribute("href", "/statistics/commons/averages");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-overtime"),
+    ).toHaveAttribute("href", "/statistics/commons/overtime");
+    expect(
       screen.getByTestId("appnavbar-statistics-commons-meals"),
     ).toHaveAttribute("href", "/statistics/commons/meals");
     expect(

@@ -19,6 +19,8 @@ import ModerateAliases from "main/pages/ModerateAliasesPage";
 import StatisticsIndexPage from "main/pages/Statistics/StatisticsIndexPage";
 import BestItemsPage from "main/pages/Statistics/BestItemsPage";
 import WorstItemsPage from "main/pages/Statistics/WorstItemsPage";
+import CommonsAveragesPage from "main/pages/Statistics/CommonsAveragesPage";
+import CommonsAveragesOverTimePage from "main/pages/Statistics/CommonsAveragesOverTimePage";
 import CommonsMealAveragesPage from "main/pages/Statistics/CommonsMealAveragesPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
@@ -72,6 +74,16 @@ function App() {
               exact
               path="/statistics/items/worst"
               element={<WorstItemsPage />}
+            />
+            <Route
+              exact
+              path="/statistics/commons/averages"
+              element={<CommonsAveragesPage />}
+            />
+            <Route
+              exact
+              path="/statistics/commons/overtime"
+              element={<CommonsAveragesOverTimePage />}
             />
             <Route
               exact
