@@ -9,9 +9,12 @@ import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ public class UCSBDiningMenuItemsController extends ApiController {
   @GetMapping(
       value = "/{date-time}/{dining-commons-code}/{meal-code}",
       produces = "application/json")
+  @Transactional
   public ResponseEntity<List<MenuItemDto>> get_menu_items(
       @Parameter(
               description =
@@ -51,15 +55,16 @@ public class UCSBDiningMenuItemsController extends ApiController {
     List<MenuItemDto> menuitems =
         menuItemRepository.projectExistingEntrees(diningcommoncode, mealcode, body);
 
+    Map<String, MenuItemDto> existingMenuItemsMap =
+        menuitems.stream()
+            .collect(Collectors.toMap(m -> m.name() + "/" + m.station(), Function.identity()));
+
     List<MenuItem> newMenuItems = new ArrayList<>();
 
     for (Entree entree : body) {
-      if (menuitems.stream()
-          .anyMatch(
-              m -> m.name().equals(entree.getName()) && m.station().equals(entree.getStation())))
-        continue;
+      if (existingMenuItemsMap.containsKey(entree.getName() + "/" + entree.getStation())) continue;
 
-      MenuItem newMenuItem = (new MenuItem());
+      MenuItem newMenuItem = new MenuItem();
       newMenuItem.setDiningCommonsCode(diningcommoncode);
       newMenuItem.setMealCode(mealcode);
       newMenuItem.setName(entree.getName());
