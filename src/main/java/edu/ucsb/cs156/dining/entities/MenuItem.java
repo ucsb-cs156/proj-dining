@@ -17,6 +17,10 @@ import org.hibernate.annotations.FetchMode;
 @NoArgsConstructor
 @Builder
 @Entity(name = "menuitem")
+@Table(
+    uniqueConstraints =
+        @UniqueConstraint(columnNames = {"diningCommonsCode", "mealCode", "name", "station"}),
+    indexes = @Index(columnList = "diningCommonsCode, mealCode"))
 public class MenuItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

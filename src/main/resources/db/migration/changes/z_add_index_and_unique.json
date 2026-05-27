@@ -1,0 +1,56 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "menu-item-add-index-unique",
+        "author": "Division7",
+        "changes": [
+          {
+            "createIndex": {
+              "tableName": "menuitem",
+              "indexName": "menuitem_index",
+              "columns": [
+                {
+                  "column": {
+                    "name": "DINING_COMMONS_CODE"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "MEAL_CODE"
+                  }
+                }
+              ]
+            },
+            "addUniqueConstraint": {
+              "tableName": "menuitem",
+              "constraintName": "menuitem_unique",
+              "columnNames": "DINING_COMMONS_CODE, MEAL_CODE, NAME, STATION"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "reviews-add-fk-index",
+        "author": "Division7",
+        "changes": [
+          {
+            "createIndex": {
+              "tableName": "reviews",
+              "indexName": "reviews_fk_index",
+              "columns": [
+                {
+                  "column": {
+                    "name": "item_id"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

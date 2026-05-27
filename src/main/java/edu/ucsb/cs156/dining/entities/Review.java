@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Builder
 @Entity(name = "reviews")
+@Table(indexes = @Index(columnList = "item_id"))
 @EntityListeners(AuditingEntityListener.class)
 public class Review {
   @Id

@@ -3,6 +3,7 @@ package edu.ucsb.cs156.dining.controllers;
 import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.models.MenuItemDto;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,7 @@ public class UCSBDiningMenuItemsController extends ApiController {
   @GetMapping(
       value = "/{date-time}/{dining-commons-code}/{meal-code}",
       produces = "application/json")
-  public ResponseEntity<List<MenuItem>> get_menu_items(
+  public ResponseEntity<List<MenuItemDto>> get_menu_items(
       @Parameter(
               description =
                   "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)")
@@ -46,23 +48,38 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);
 
-    List<MenuItem> menuitems = new ArrayList<>();
+    List<MenuItemDto> menuitems =
+        menuItemRepository.projectExistingEntrees(diningcommoncode, mealcode, body);
+
+    List<MenuItem> newMenuItems = new ArrayList<>();
 
     for (Entree entree : body) {
-      Optional<MenuItem> exists =
-          menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(
-              diningcommoncode, mealcode, entree.getName(), entree.getStation());
+      if (menuitems.stream()
+          .anyMatch(
+              m -> m.name().equals(entree.getName()) && m.station().equals(entree.getStation())))
+        continue;
 
-      MenuItem newMenuItem = exists.orElse(new MenuItem());
-      // MenuItem newMenuItem = new MenuItem();
+      MenuItem newMenuItem = (new MenuItem());
       newMenuItem.setDiningCommonsCode(diningcommoncode);
       newMenuItem.setMealCode(mealcode);
       newMenuItem.setName(entree.getName());
       newMenuItem.setStation(entree.getStation());
-
-      menuItemRepository.save(newMenuItem);
-      menuitems.add(newMenuItem);
+      newMenuItems.add(newMenuItem);
     }
+
+    menuItemRepository.saveAll(newMenuItems);
+    menuitems.addAll(
+        newMenuItems.stream()
+            .map(
+                menuItem ->
+                    new MenuItemDto(
+                        menuItem.getId(),
+                        menuItem.getDiningCommonsCode(),
+                        menuItem.getMealCode(),
+                        menuItem.getName(),
+                        menuItem.getStation(),
+                        null))
+            .collect(Collectors.toSet()));
 
     return ResponseEntity.ok().body(menuitems);
   }
