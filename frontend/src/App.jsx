@@ -15,6 +15,11 @@ import MealTimesPage from "main/pages/Meal/MealTimesPage";
 import ModerateReviews from "main/pages/ModerateReviewsPage";
 import ModerateAliases from "main/pages/ModerateAliasesPage";
 
+import AdminsCreatePage from "main/pages/Admin/AdminsCreatePage";
+import AdminsIndexPage from "main/pages/Admin/AdminsIndexPage";
+import ModeratorsCreatePage from "main/pages/Admin/ModeratorsCreatePage";
+import ModeratorsIndexPage from "main/pages/Admin/ModeratorsIndexPage";
+
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -35,7 +40,25 @@ function App() {
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
         {hasRole(currentUser, "ROLE_ADMIN") && (
-          <Route exact path="/admin/users" element={<AdminUsersPage />} />
+          <>
+            <Route exact path="/admin/users" element={<AdminUsersPage />} />
+            <Route exact path="/admin/admins/" element={<AdminsIndexPage />} />
+            <Route
+              exact
+              path="/admin/admins/create"
+              element={<AdminsCreatePage />}
+            />
+            <Route
+              exact
+              path="/admin/moderators"
+              element={<ModeratorsIndexPage />}
+            />
+            <Route
+              exact
+              path="/admin/moderators/create"
+              element={<ModeratorsCreatePage />}
+            />
+          </>
         )}
         {hasRole(currentUser, "ROLE_USER") && (
           <>
