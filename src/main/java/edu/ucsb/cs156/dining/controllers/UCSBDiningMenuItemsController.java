@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,32 +60,35 @@ public class UCSBDiningMenuItemsController extends ApiController {
         menuitems.stream()
             .collect(Collectors.toMap(m -> m.name() + "/" + m.station(), Function.identity()));
 
-    List<MenuItem> newMenuItems = new ArrayList<>();
+    List<MenuItem> newMenuItems = new ArrayList<>(50);
 
     for (Entree entree : body) {
-      if (existingMenuItemsMap.containsKey(entree.getName() + "/" + entree.getStation())) continue;
+      if (existingMenuItemsMap.containsKey(entree.getName() + "/" + entree.getStation())) {
+        continue;
+      }
 
-      MenuItem newMenuItem = new MenuItem();
-      newMenuItem.setDiningCommonsCode(diningcommoncode);
-      newMenuItem.setMealCode(mealcode);
-      newMenuItem.setName(entree.getName());
-      newMenuItem.setStation(entree.getStation());
+      MenuItem newMenuItem =
+          MenuItem.builder()
+              .diningCommonsCode(diningcommoncode)
+              .mealCode(mealcode)
+              .name(entree.getName())
+              .station(entree.getStation())
+              .build();
       newMenuItems.add(newMenuItem);
     }
 
-    menuItemRepository.saveAll(newMenuItems);
-    menuitems.addAll(
-        newMenuItems.stream()
-            .map(
-                menuItem ->
-                    new MenuItemDto(
-                        menuItem.getId(),
-                        menuItem.getDiningCommonsCode(),
-                        menuItem.getMealCode(),
-                        menuItem.getName(),
-                        menuItem.getStation(),
-                        null))
-            .collect(Collectors.toSet()));
+    Iterable<MenuItem> savedMenuItems = menuItemRepository.saveAll(newMenuItems);
+    StreamSupport.stream(savedMenuItems.spliterator(), false)
+        .map(
+            menuItem ->
+                new MenuItemDto(
+                    menuItem.getId(),
+                    menuItem.getDiningCommonsCode(),
+                    menuItem.getMealCode(),
+                    menuItem.getName(),
+                    menuItem.getStation(),
+                    null))
+        .forEach(menuitems::add);
 
     return ResponseEntity.ok().body(menuitems);
   }

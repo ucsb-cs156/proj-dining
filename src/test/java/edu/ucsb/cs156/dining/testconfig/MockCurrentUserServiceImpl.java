@@ -2,14 +2,14 @@ package edu.ucsb.cs156.dining.testconfig;
 
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.services.CurrentUserServiceImpl;
+import org.springframework.boot.test.context.TestComponent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.stereotype.Service;
 
-@Service("testingUser")
+@TestComponent("testingUser")
 public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
 
   public User getMockUser(SecurityContext securityContext, Authentication authentication) {

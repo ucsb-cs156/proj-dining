@@ -55,21 +55,22 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     MenuItemDto existingMenuItem =
         new MenuItemDto(1L, commons, mealCode, "waffles", "self-serve", 4.0);
 
+    MenuItem secondMenuItem =
+        MenuItem.builder()
+            .name("omelet")
+            .station("grill")
+            .id(2L)
+            .reviews(List.of())
+            .diningCommonsCode(commons)
+            .mealCode(mealCode)
+            .build();
+
     List<MenuItemDto> existingMenuItems = new ArrayList<>(List.of(existingMenuItem));
 
     when(ucsbDiningMenuItemsService.get(date, commons, mealCode)).thenReturn(entrees);
     when(menuItemRepository.projectExistingEntrees(eq(commons), eq(mealCode), eq(entrees)))
         .thenReturn(existingMenuItems);
-    when(menuItemRepository.saveAll(any()))
-        .thenAnswer(
-            invocation -> {
-              Iterable<MenuItem> items = invocation.getArgument(0);
-              long id = 2L;
-              for (MenuItem item : items) {
-                item.setId(id++);
-              }
-              return items;
-            });
+    when(menuItemRepository.saveAll(any())).thenReturn(List.of(secondMenuItem));
 
     MvcResult response =
         mockMvc

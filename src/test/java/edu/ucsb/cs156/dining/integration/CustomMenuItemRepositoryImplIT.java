@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("integration")
@@ -38,6 +39,7 @@ public class CustomMenuItemRepositoryImplIT {
 
   @Test
   @WithMockUser
+  @Transactional
   public void behaves_correctly_on_no_matches() {
     User user = cuService.getUser();
     user.setId(0);
@@ -101,6 +103,7 @@ public class CustomMenuItemRepositoryImplIT {
   }
 
   @Test
+  @Transactional
   @WithMockUser
   public void behaves_correctly_on_existing_entrees_and_nonexisting() {
     User user = cuService.getUser();
@@ -178,6 +181,7 @@ public class CustomMenuItemRepositoryImplIT {
   }
 
   @Test
+  @Transactional
   @WithMockUser
   public void behaves_on_no_reviews() {
     User user = cuService.getUser();
