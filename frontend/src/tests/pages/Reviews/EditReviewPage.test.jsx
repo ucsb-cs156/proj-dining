@@ -69,8 +69,10 @@ describe("EditReviewPage tests", () => {
     expect(
       await screen.findByTestId(/ReviewForm-review-item-name/),
     ).toHaveValue(ReviewFixtures.oneReview.item.name);
-    expect(screen.getByTestId(/ReviewForm-review-comments/)).toHaveValue("");
-    expect(screen.getByTestId(/ReviewForm-review-stars/)).toHaveValue("5");
+    expect(screen.getByTestId(/ReviewForm-review-comments/)).toHaveValue(
+      "good food",
+    );
+    expect(screen.getByTestId(/ReviewForm-review-stars/)).toHaveValue("4");
 
     fireEvent.change(screen.getByTestId(/ReviewForm-review-comments/), {
       target: { value: "updated comment" },
