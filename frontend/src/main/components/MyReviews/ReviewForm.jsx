@@ -1,6 +1,7 @@
 import { Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 export default function ReviewForm({
   initialItemName,
@@ -14,6 +15,7 @@ export default function ReviewForm({
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     defaultValues: {
       reviewerComments: initialReviewerComments || "",
@@ -22,6 +24,20 @@ export default function ReviewForm({
         initialDateItemServed || new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
     },
   });
+
+  useEffect(() => {
+    reset({
+      reviewerComments: initialReviewerComments || "",
+      itemsStars: initialItemsStars || 5,
+      dateItemServed:
+        initialDateItemServed || new Date().toISOString().slice(0, 16),
+    });
+  }, [
+    initialReviewerComments,
+    initialItemsStars,
+    initialDateItemServed,
+    reset,
+  ]);
 
   const navigate = useNavigate();
 
