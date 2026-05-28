@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UCSBDiningMenuItemsController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">UCSBDiningMenuItemsController.java</span></div><h1>UCSBDiningMenuItemsController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
+import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.models.MenuItemDto;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = &quot;UCSBDiningMenuItems&quot;)
+@RestController
+@RequestMapping(&quot;/api/diningcommons&quot;)
+<span class="fc" id="L31">@Slf4j</span>
+<span class="fc" id="L32">public class UCSBDiningMenuItemsController extends ApiController {</span>
+
+  @Autowired UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
+
+  @Autowired MenuItemRepository menuItemRepository;
+
+  @Operation(summary = &quot;Get list of entrees being served at given meal, dining common, and day&quot;)
+  @GetMapping(
+      value = &quot;/{date-time}/{dining-commons-code}/{meal-code}&quot;,
+      produces = &quot;application/json&quot;)
+  @Transactional
+  public ResponseEntity&lt;List&lt;MenuItemDto&gt;&gt; get_menu_items(
+      @Parameter(
+              description =
+                  &quot;date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)&quot;)
+          @PathVariable(&quot;date-time&quot;)
+          String datetime,
+      @PathVariable(&quot;dining-commons-code&quot;) String diningcommoncode,
+      @PathVariable(&quot;meal-code&quot;) String mealcode)
+      throws Exception {
+
+<span class="fc" id="L53">    List&lt;Entree&gt; body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);</span>
+
+<span class="fc" id="L55">    List&lt;MenuItemDto&gt; menuitems =</span>
+<span class="fc" id="L56">        menuItemRepository.projectExistingEntrees(diningcommoncode, mealcode, body);</span>
+
+<span class="fc" id="L58">    Map&lt;String, MenuItemDto&gt; existingMenuItemsMap =</span>
+<span class="fc" id="L59">        menuitems.stream()</span>
+<span class="fc" id="L60">            .collect(Collectors.toMap(m -&gt; m.name() + &quot;/&quot; + m.station(), Function.identity()));</span>
+
+<span class="fc" id="L62">    List&lt;MenuItem&gt; newMenuItems = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    for (Entree entree : body) {</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">      if (existingMenuItemsMap.containsKey(entree.getName() + &quot;/&quot; + entree.getStation())) continue;</span>
+
+<span class="fc" id="L67">      MenuItem newMenuItem = new MenuItem();</span>
+<span class="fc" id="L68">      newMenuItem.setDiningCommonsCode(diningcommoncode);</span>
+<span class="fc" id="L69">      newMenuItem.setMealCode(mealcode);</span>
+<span class="fc" id="L70">      newMenuItem.setName(entree.getName());</span>
+<span class="fc" id="L71">      newMenuItem.setStation(entree.getStation());</span>
+<span class="fc" id="L72">      newMenuItems.add(newMenuItem);</span>
+<span class="fc" id="L73">    }</span>
+
+<span class="fc" id="L75">    menuItemRepository.saveAll(newMenuItems);</span>
+<span class="fc" id="L76">    menuitems.addAll(</span>
+<span class="fc" id="L77">        newMenuItems.stream()</span>
+<span class="fc" id="L78">            .map(</span>
+                menuItem -&gt;
+<span class="fc" id="L80">                    new MenuItemDto(</span>
+<span class="fc" id="L81">                        menuItem.getId(),</span>
+<span class="fc" id="L82">                        menuItem.getDiningCommonsCode(),</span>
+<span class="fc" id="L83">                        menuItem.getMealCode(),</span>
+<span class="fc" id="L84">                        menuItem.getName(),</span>
+<span class="fc" id="L85">                        menuItem.getStation(),</span>
+                        null))
+<span class="fc" id="L87">            .collect(Collectors.toSet()));</span>
+
+<span class="fc" id="L89">    return ResponseEntity.ok().body(menuitems);</span>
+  }
+
+  @Operation(summary = &quot;Get a single menu item by ID&quot;)
+  @GetMapping(value = &quot;/menuitem&quot;, produces = &quot;application/json&quot;)
+  public ResponseEntity&lt;MenuItem&gt; get_menu_item_by_id(
+      @Parameter(description = &quot;ID of the menu item&quot;) @RequestParam long id) throws Exception {
+<span class="fc" id="L96">    Optional&lt;MenuItem&gt; menuItem = menuItemRepository.findById(id);</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">    if (menuItem.isEmpty()) {</span>
+<span class="fc" id="L98">      throw new EntityNotFoundException(MenuItem.class, id);</span>
+    }
+<span class="fc" id="L100">    return ResponseEntity.ok().body(menuItem.get());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
