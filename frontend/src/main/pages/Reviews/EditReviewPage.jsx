@@ -32,7 +32,7 @@ export default function EditReviewPage() {
       await axios.put(
         "/api/reviews/reviewer",
         {
-          itemsStars: formData.itemsStars,
+          itemStars: formData.itemsStars,
           reviewerComments: formData.reviewerComments,
           dateItemServed: formData.dateItemServed,
         },

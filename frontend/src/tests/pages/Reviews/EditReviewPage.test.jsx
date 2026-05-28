@@ -92,7 +92,7 @@ describe("EditReviewPage tests", () => {
     const put = axiosMock.history.put[0];
     expect(put.params).toEqual({ id: "1" });
     expect(JSON.parse(put.data)).toEqual({
-      itemsStars: 4,
+      itemStars: 4,
       reviewerComments: "updated comment",
       dateItemServed: "2024-05-01T10:00",
     });
