@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
+import { useQueryClient } from "react-query";
 import { useBackendMutation } from "main/utils/useBackend";
 import {
   cellToAxiosParamsDelete,
@@ -16,6 +17,7 @@ export default function ReviewsTable({
   moderatorOptions,
 }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [modalShow, setModalShow] = useState(false);
   const [pendingStatus, setPendingStatus] = useState(null);
   const [pendingCell, setPendingCell] = useState(null);
@@ -24,12 +26,17 @@ export default function ReviewsTable({
     navigate(`/reviews/edit/${cell.row.original.id}`);
   };
 
+  // added multiple-query invalidation to fix lack of cache invalidation/refresh upon hitting delete
+  const deleteSuccess = (message) => {
+    onDeleteSuccess(message);
+    queryClient.invalidateQueries(["/api/reviews/userReviews"]);
+    queryClient.invalidateQueries(["/api/reviews/needsmoderation"]);
+  };
+
   // Stryker disable all
-  const deleteMutation = useBackendMutation(
-    cellToAxiosParamsDelete,
-    { onSuccess: onDeleteSuccess },
-    ["/api/reviews/userReviews", "/api/reviews/needsmoderation"],
-  );
+  const deleteMutation = useBackendMutation(cellToAxiosParamsDelete, {
+    onSuccess: deleteSuccess,
+  });
   // Stryker restore all
 
   // Stryker disable next-line all
