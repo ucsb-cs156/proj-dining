@@ -771,4 +771,48 @@ describe("MenuItemTable Tests", () => {
       expect(mockedNavigate).toHaveBeenCalledWith("/reviews/1"),
     );
   });
+
+  test("Search bar works correctly", () => {
+    const items = [
+      { id: 1, name: "Spicy Chicken", station: "Grill (Cafe)", reviews: [] },
+      { id: 2, name: "Veggie Burger", station: "Grill (Cafe)", reviews: [] },
+      { id: 3, name: "Pasta Salad", station: "Salad Bar", reviews: [] },
+    ];
+
+    render(
+      <MemoryRouter>
+        <MenuItemTable
+          menuItems={items}
+          currentUser={currentUserFixtures.notLoggedIn}
+        />
+      </MemoryRouter>,
+    );
+
+    const searchInput = screen.getByPlaceholderText(
+      "Search by keywords (separated by space or comma)",
+    );
+
+    // Search by item name
+    fireEvent.change(searchInput, { target: { value: "veggie,,,," } });
+    expect(screen.getByText("Veggie Burger")).toBeInTheDocument();
+    expect(screen.queryByText("Spicy Chicken")).not.toBeInTheDocument();
+    expect(screen.queryByText("Pasta Salad")).not.toBeInTheDocument();
+
+    // Search by station name
+    fireEvent.change(searchInput, { target: { value: ", salad " } });
+    expect(screen.getByText("Pasta Salad")).toBeInTheDocument();
+    expect(screen.queryByText("Veggie Burger")).not.toBeInTheDocument();
+
+    // Search by multiple keywords
+    fireEvent.change(searchInput, { target: { value: "spiCy gRill " } });
+    expect(screen.getByText("Spicy Chicken")).toBeInTheDocument();
+    expect(screen.queryByText("Veggie Burger")).not.toBeInTheDocument();
+    expect(screen.queryByText("Pasta Salad")).not.toBeInTheDocument();
+
+    // Empty search should show all items again
+    fireEvent.change(searchInput, { target: { value: " ," } });
+    expect(screen.getByText("Spicy Chicken")).toBeInTheDocument();
+    expect(screen.getByText("Veggie Burger")).toBeInTheDocument();
+    expect(screen.getByText("Pasta Salad")).toBeInTheDocument();
+  });
 });

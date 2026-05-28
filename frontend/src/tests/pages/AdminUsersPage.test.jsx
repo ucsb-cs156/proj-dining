@@ -24,6 +24,9 @@ describe("AdminUsersPage tests", () => {
     axiosMock
       .onGet("/api/systemInfo")
       .reply(200, systemInfoFixtures.showingNeither);
+    axiosMock
+      .onGet("/api/admin/defaultAdminEmails")
+      .reply(200, ["phtcon@ucsb.edu"]);
   });
 
   test("renders without crashing on three users", async () => {
@@ -117,7 +120,8 @@ describe("AdminUsersPage tests", () => {
       ).toHaveTextContent("1");
     });
   });
-  test("renders toggle role buttons for each user row", async () => {
+
+  test("Toggle Admin button is disabled for default admin and enabled for others", async () => {
     const queryClient = new QueryClient();
     axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
 

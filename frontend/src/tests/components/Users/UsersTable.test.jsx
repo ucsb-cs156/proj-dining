@@ -146,6 +146,9 @@ describe("UserTable tests", () => {
       />,
     );
 
+    expect(
+      screen.getByTestId("UsersTable-header-Toggle Admin"),
+    ).toHaveTextContent("Toggle Admin");
     const adminBtn = screen.getByTestId(
       "UsersTable-cell-row-0-col-Toggle Admin-button",
     );
@@ -256,6 +259,38 @@ describe("UserTable tests", () => {
     expect(axiosMock.history.put[0].url).toBe("/api/admin/toggleAdmin");
     expect(axiosMock.history.put[0].params).toEqual({ id: 1 });
     expect(mockedNavigate).toHaveBeenCalledWith("/");
+  });
+
+  test("Toggle Admin button is disabled for a default admin email", () => {
+    wrap(
+      <UsersTable
+        users={usersFixtures.threeUsers}
+        showToggleRoleButtons={true}
+        defaultAdminEmails={["phtcon@ucsb.edu"]}
+      />,
+    );
+
+    const btn = screen.getByTestId(
+      "UsersTable-cell-row-0-col-Toggle Admin-button",
+    );
+    expect(btn).toBeDisabled();
+    expect(
+      screen.getByTestId("UsersTable-cell-row-1-col-Toggle Admin-button"),
+    ).not.toBeDisabled();
+  });
+
+  test("Toggle Admin button is enabled when email not in defaultAdminEmails", () => {
+    wrap(
+      <UsersTable
+        users={usersFixtures.threeUsers}
+        showToggleRoleButtons={true}
+        defaultAdminEmails={["someone@else.com"]}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-Toggle Admin-button"),
+    ).not.toBeDisabled();
   });
 
   test("Toggle Admin with currentUser missing root fires PUT without modal", async () => {

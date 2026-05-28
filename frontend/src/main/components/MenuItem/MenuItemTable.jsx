@@ -1,10 +1,12 @@
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { hasRole } from "main/utils/currentUser";
 import { useNavigate } from "react-router";
+import React, { useState } from "react";
 
 export default function MenuItemTable({ menuItems, currentUser }) {
   const testid = "MenuItemTable";
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
   const reviewCallback = async (_cell) => {
     const itemId = _cell.row.original.id;
     navigate(`/reviews/post/${itemId}`);
@@ -51,5 +53,28 @@ export default function MenuItemTable({ menuItems, currentUser }) {
     columns.push(ButtonColumn("All Reviews", "warning", viewCallback, testid));
   }
 
-  return <OurTable columns={columns} data={menuItems} testid={testid} />;
+  // split input (delimiters: space, comma) into non-empty keywords
+  // Stryker disable all : equivalent mutation problem (but this is more optimal than its equivalent mutant without the +)
+  const keywords = searchTerm.toLowerCase().split(/[\s,]+/);
+  // Stryker restore all
+  const searchedItems = menuItems.filter((item) => {
+    return keywords.every(
+      (kw) =>
+        item.name.toLowerCase().includes(kw) ||
+        item.station.toLowerCase().includes(kw),
+    );
+  });
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Search by keywords (separated by space or comma)"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="form-control mb-3"
+      />
+      <OurTable columns={columns} data={searchedItems} testid={testid} />
+    </>
+  );
 }

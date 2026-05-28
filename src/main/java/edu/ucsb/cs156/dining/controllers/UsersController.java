@@ -138,6 +138,18 @@ public class UsersController extends ApiController {
   }
 
   /**
+   * This method returns the list of default admin emails from the environment configuration.
+   *
+   * @return list of default admin emails
+   */
+  @Operation(summary = "Get list of default admin emails")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/admin/defaultAdminEmails")
+  public List<String> getDefaultAdminEmails() {
+    return adminEmails;
+  }
+
+  /**
    * This method allows an admin to toggle the admin status of a user. Will not toggle status of
    * admin in adminEmails.
    *
