@@ -24,7 +24,7 @@ export default function PostReviewPage() {
     [],
   );
 
-  const itemName = menuItems.name;
+  const itemName = menuItems?.name;
 
   const submitReview = async (formData) => {
     try {

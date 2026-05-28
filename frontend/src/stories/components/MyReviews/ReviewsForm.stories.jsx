@@ -14,5 +14,8 @@ const Template = (args) => {
 export const RegView = Template.bind({});
 RegView.args = {
   initialItemName: ReviewFixtures.oneReview.item.name,
+  initialReviewerComments: ReviewFixtures.oneReview.reviewerComments,
+  initialItemsStars: ReviewFixtures.oneReview.itemsStars,
+  initialDateItemServed: ReviewFixtures.oneReview.dateItemServed,
   submitAction: () => {},
 };

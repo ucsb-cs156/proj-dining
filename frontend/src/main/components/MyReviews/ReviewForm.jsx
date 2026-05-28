@@ -1,9 +1,13 @@
 import { Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 export default function ReviewForm({
   initialItemName,
+  initialReviewerComments,
+  initialItemsStars,
+  initialDateItemServed,
   submitAction,
   buttonLabel = "Submit Review",
 }) {
@@ -11,13 +15,29 @@ export default function ReviewForm({
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     defaultValues: {
-      reviewerComments: "",
-      itemsStars: 5,
-      dateItemServed: new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
+      reviewerComments: initialReviewerComments || "",
+      itemsStars: initialItemsStars || 5,
+      dateItemServed:
+        initialDateItemServed || new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
     },
   });
+
+  useEffect(() => {
+    reset({
+      reviewerComments: initialReviewerComments || "",
+      itemsStars: initialItemsStars || 5,
+      dateItemServed:
+        initialDateItemServed || new Date().toISOString().slice(0, 16),
+    });
+  }, [
+    initialReviewerComments,
+    initialItemsStars,
+    initialDateItemServed,
+    reset,
+  ]);
 
   const navigate = useNavigate();
 
@@ -29,7 +49,7 @@ export default function ReviewForm({
           data-testid="ReviewForm-review-item-name"
           id="review-item-name"
           type="text"
-          value={initialItemName}
+          value={initialItemName ?? ""}
           disabled
         />
       </Form.Group>
