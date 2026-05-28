@@ -144,4 +144,15 @@ describe("EditReviewPage tests", () => {
 
     expect(await screen.findByText(/date is required/i)).toBeInTheDocument();
   });
+
+  test("handles review with no item gracefully", async () => {
+    axiosMock.onGet("/api/reviews/1").reply(200, {
+      ...existingReview,
+      item: null,
+    });
+    renderPage();
+
+    const itemName = await screen.findByLabelText(/item name/i);
+    expect(itemName).toHaveValue(""); // should show empty string, not crash
+  });
 });
