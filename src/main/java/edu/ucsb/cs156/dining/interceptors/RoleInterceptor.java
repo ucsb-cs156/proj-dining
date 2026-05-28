@@ -1,6 +1,8 @@
 package edu.ucsb.cs156.dining.interceptors;
 
 import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +26,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class RoleInterceptor implements HandlerInterceptor {
 
   @Autowired UserRepository userRepository;
+  @Autowired AdminRepository adminRepository;
+  @Autowired ModeratorRepository moderatorRepository;
 
   @Override
   public boolean preHandle(
@@ -35,7 +39,6 @@ public class RoleInterceptor implements HandlerInterceptor {
       String email = principal.getAttribute("email");
       Optional<User> optionalUser = userRepository.findByEmail(email);
       if (optionalUser.isPresent()) {
-        User user = optionalUser.get();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Set<GrantedAuthority> revisedAuthorities =
             authorities.stream()
@@ -44,10 +47,10 @@ public class RoleInterceptor implements HandlerInterceptor {
                         !grantedAuth.getAuthority().equals("ROLE_ADMIN")
                             && !grantedAuth.getAuthority().equals("ROLE_MODERATOR"))
                 .collect(Collectors.toSet());
-        if (user.isAdmin()) {
+        if (adminRepository.existsByEmail(email)) {
           revisedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
-        if (user.isModerator()) {
+        if (moderatorRepository.existsByEmail(email)) {
           revisedAuthorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
         }
         Authentication newAuth =

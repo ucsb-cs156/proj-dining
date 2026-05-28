@@ -1,0 +1,51 @@
+{
+    "databaseChangeLog": [
+      {
+        "changeSet": {
+          "id": "admin-2",
+          "author": "ethan",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "tableExists": {
+                "tableName": "admins"
+              }
+            },
+            {
+              "columnExists": {
+                "tableName": "admins",
+                "columnName": "ID"
+              }
+            }
+          ],
+          "changes": [
+            {
+              "dropTable": {
+                "tableName": "admins"
+              }
+            },
+            {
+              "createTable": {
+                "columns": [
+                  {
+                    "column": {
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "ADMINS_PK",
+                        "nullable": false
+                      },
+                      "name": "EMAIL",
+                      "type": "VARCHAR(255)"
+                    }
+                  }
+                ],
+                "tableName": "admins"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
