@@ -153,11 +153,19 @@ describe("MenuItemTable Tests", () => {
       </MemoryRouter>,
     );
 
+    const reviewItemButton = screen.getByTestId(
+      "MenuItemTable-cell-row-0-col-Review Item-button",
+    );
     const firstItemButton = screen.getByTestId(
       "MenuItemTable-cell-row-0-col-All Reviews-button",
     );
     const secondItemButton = screen.getByTestId(
       "MenuItemTable-cell-row-1-col-All Reviews-button",
+    );
+
+    fireEvent.click(reviewItemButton);
+    await waitFor(() =>
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/post/42"),
     );
 
     fireEvent.click(firstItemButton);
