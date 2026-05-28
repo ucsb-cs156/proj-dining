@@ -317,6 +317,92 @@ describe("UserTable tests", () => {
     expect(axiosMock.history.put[0].url).toBe("/api/admin/toggleAdmin");
   });
 
+  test("Users are sorted with default admins first, then by id ascending", () => {
+    const unsortedUsers = [
+      { id: 5, email: "e@test.com", givenName: "E", familyName: "E" },
+      { id: 2, email: "admin2@ucsb.edu", givenName: "B", familyName: "B" },
+      { id: 3, email: "c@test.com", givenName: "C", familyName: "C" },
+      { id: 1, email: "admin1@ucsb.edu", givenName: "A", familyName: "A" },
+      { id: 4, email: "d@test.com", givenName: "D", familyName: "D" },
+    ];
+
+    wrap(
+      <UsersTable
+        users={unsortedUsers}
+        showToggleRoleButtons={true}
+        defaultAdminEmails={["admin1@ucsb.edu", "admin2@ucsb.edu"]}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-id"),
+    ).toHaveTextContent("1");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-1-col-id"),
+    ).toHaveTextContent("2");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-2-col-id"),
+    ).toHaveTextContent("3");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-3-col-id"),
+    ).toHaveTextContent("4");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-4-col-id"),
+    ).toHaveTextContent("5");
+  });
+
+  test("Sorting is stable: same input produces same output regardless of initial order", () => {
+    const usersOrderA = [
+      { id: 3, email: "c@test.com", givenName: "C", familyName: "C" },
+      { id: 1, email: "admin@ucsb.edu", givenName: "A", familyName: "A" },
+      { id: 2, email: "b@test.com", givenName: "B", familyName: "B" },
+    ];
+
+    const { unmount } = wrap(
+      <UsersTable
+        users={usersOrderA}
+        showToggleRoleButtons={false}
+        defaultAdminEmails={["admin@ucsb.edu"]}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-id"),
+    ).toHaveTextContent("1");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-1-col-id"),
+    ).toHaveTextContent("2");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-2-col-id"),
+    ).toHaveTextContent("3");
+
+    unmount();
+
+    const usersOrderB = [
+      { id: 2, email: "b@test.com", givenName: "B", familyName: "B" },
+      { id: 3, email: "c@test.com", givenName: "C", familyName: "C" },
+      { id: 1, email: "admin@ucsb.edu", givenName: "A", familyName: "A" },
+    ];
+
+    wrap(
+      <UsersTable
+        users={usersOrderB}
+        showToggleRoleButtons={false}
+        defaultAdminEmails={["admin@ucsb.edu"]}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-id"),
+    ).toHaveTextContent("1");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-1-col-id"),
+    ).toHaveTextContent("2");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-2-col-id"),
+    ).toHaveTextContent("3");
+  });
+
   test("Toggle Moderator button fires PUT to /api/admin/toggleModerator with user id", async () => {
     axiosMock
       .onPut("/api/admin/toggleModerator")
