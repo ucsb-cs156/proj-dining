@@ -1,4 +1,4 @@
-import { render, waitFor, screen, act } from "@testing-library/react";
+import { render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import ModerateAliases from "main/pages/ModerateAliasesPage";
@@ -24,12 +24,12 @@ vi.mock("react-toastify", async () => {
 
 describe("ModerateAliases Page Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
+  const testId = "Aliasapprovaltable";
+  const moderationEndpoint = "/api/admin/users/needsmoderation";
 
   beforeEach(() => {
     mockToast.mockClear();
   });
-
-  const testId = "Aliasapprovaltable";
 
   const setupModerator = () => {
     axiosMock.reset();
@@ -68,9 +68,7 @@ describe("ModerateAliases Page Tests", () => {
     setupModerator();
 
     const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
+    axiosMock.onGet(moderationEndpoint).reply(200, AliasFixtures.threeAliases);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -105,9 +103,7 @@ describe("ModerateAliases Page Tests", () => {
     setupAdmin();
 
     const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
+    axiosMock.onGet(moderationEndpoint).reply(200, AliasFixtures.threeAliases);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -140,8 +136,9 @@ describe("ModerateAliases Page Tests", () => {
 
   test("handles error when backend is unavailable for moderator", async () => {
     setupModerator();
+
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/usersWithProposedAlias").timeout();
+    axiosMock.onGet(moderationEndpoint).timeout();
     const restoreConsole = mockConsole();
 
     render(
@@ -158,8 +155,9 @@ describe("ModerateAliases Page Tests", () => {
 
     const errorMessage = console.error.mock.calls[0][0];
     expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/admin/usersWithProposedAlias",
+      "Error communicating with backend via GET on /api/admin/users/needsmoderation",
     );
+
     restoreConsole();
 
     expect(
@@ -169,10 +167,9 @@ describe("ModerateAliases Page Tests", () => {
 
   test("does NOT render approve/reject buttons for regular user", async () => {
     setupUserOnly();
+
     const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
+    axiosMock.onGet(moderationEndpoint).reply(200, AliasFixtures.threeAliases);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -198,10 +195,9 @@ describe("ModerateAliases Page Tests", () => {
 
   test("approve button calls mutation and shows success for correct data", async () => {
     setupAdmin();
+
     const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
+    axiosMock.onGet(moderationEndpoint).reply(200, AliasFixtures.threeAliases);
     axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);
 
     render(
@@ -218,11 +214,9 @@ describe("ModerateAliases Page Tests", () => {
       ).toBeInTheDocument();
     });
 
-    await act(async () => {
-      userEvent.click(
-        screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
-      );
-    });
+    await userEvent.click(
+      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
+    );
 
     await waitFor(() => {
       expect(axiosMock.history.put.length).toBe(1);
@@ -232,11 +226,9 @@ describe("ModerateAliases Page Tests", () => {
 
   test("reject button calls mutation and shows success for correct data", async () => {
     setupAdmin();
-    const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
 
+    const queryClient = new QueryClient();
+    axiosMock.onGet(moderationEndpoint).reply(200, AliasFixtures.threeAliases);
     axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);
 
     render(
@@ -253,67 +245,13 @@ describe("ModerateAliases Page Tests", () => {
       ).toBeInTheDocument();
     });
 
-    await act(async () => {
-      userEvent.click(
-        screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
-      );
-    });
+    await userEvent.click(
+      screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
+    );
 
     await waitFor(() => {
       expect(axiosMock.history.put.length).toBe(1);
       expect(mockToast).toHaveBeenCalledWith("Moderation success");
-    });
-  });
-
-  test("renders approve/reject buttons for ROLE_MODERATOR", async () => {
-    setupModerator();
-
-    const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <ModerateAliases />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
-      ).toBeInTheDocument();
-    });
-  });
-
-  test("renders approve/reject buttons for ROLE_ADMIN", async () => {
-    setupAdmin();
-
-    const queryClient = new QueryClient();
-    axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
-      .reply(200, AliasFixtures.threeAliases);
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <ModerateAliases />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
-      ).toBeInTheDocument();
     });
   });
 });

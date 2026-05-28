@@ -23,6 +23,11 @@ vi.mock("react-toastify", async () => {
 
 describe("ModerateReviews Page Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
+
+  beforeEach(() => {
+    mockToast.mockClear();
+  });
+
   afterAll(() => {
     axiosMock.restore(); 
   });
