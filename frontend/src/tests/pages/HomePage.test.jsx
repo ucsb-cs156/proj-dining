@@ -389,4 +389,22 @@ describe("HomePage meals offered today tests", () => {
       screen.queryByTestId("DiningCommonsTable-cell-row-0-col-code"),
     ).not.toBeInTheDocument();
   });
+
+  test("renders without crashing before data loads", async () => {
+    const axiosMock = new AxiosMockAdapter(axios);
+    axiosMock.onGet("/api/dining/all").reply(200, []);
+
+    const queryClient = new QueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(
+      screen.getByTestId("DiningCommonsTable-header-group-0"),
+    ).toBeInTheDocument();
+  });
 });

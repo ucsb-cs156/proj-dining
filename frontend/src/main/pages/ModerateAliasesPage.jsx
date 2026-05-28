@@ -17,9 +17,9 @@ const ModerateAliases = () => {
   //
   const { data: aliases } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/admin/users/needsmoderation"],
+    ["/api/admin/usersWithProposedAlias"],
     // Stryker disable next-line all : don't test internal caching of React Query
-    { method: "GET", url: "/api/admin/users/needsmoderation" },
+    { method: "GET", url: "/api/admin/usersWithProposedAlias" },
     // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );

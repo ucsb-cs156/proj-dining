@@ -85,4 +85,16 @@ describe("OurTable tests", () => {
     fireEvent.click(col1Header);
     await screen.findByText("🔽");
   });
+
+  it("should render header cells with correct data-testid attributes", () => {
+    const { getByTestId } = render(
+      <OurTable testid="my-table" columns={columns} data={threeRows} />,
+    );
+
+    columns.forEach((col) => {
+      const columnId = col.id ?? col.accessor;
+      const header = getByTestId(`my-table-header-${columnId}`);
+      expect(header).toBeInTheDocument();
+    });
+  });
 });

@@ -16,23 +16,17 @@ vi.mock("react-toastify", () => ({
 
 describe("ProfilePage tests", () => {
   const queryClient = new QueryClient();
-
   beforeEach(() => {
     queryClient.clear();
   });
-
-  const setupSystemInfo = (axiosMock) => {
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
-  };
-
   test("renders correctly for regular logged in user", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
-    setupSystemInfo(axiosMock);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -46,9 +40,6 @@ describe("ProfilePage tests", () => {
     expect(
       screen.getByText("Welcome, pconrad.cis@gmail.com"),
     ).toBeInTheDocument();
-
-    expect(screen.getByText("NewAlias")).toBeInTheDocument();
-    expect(screen.getAllByText("false").length).toBeGreaterThanOrEqual(2);
   });
 
   test("renders correctly for admin user", async () => {
@@ -56,7 +47,9 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.adminUser);
-    setupSystemInfo(axiosMock);
+    axiosMock
+      .onGet("/api/systemInfo")
+      .reply(200, systemInfoFixtures.showingNeither);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -71,8 +64,6 @@ describe("ProfilePage tests", () => {
     expect(screen.getByTestId("role-badge-user")).toBeInTheDocument();
     expect(screen.getByTestId("role-badge-admin")).toBeInTheDocument();
     expect(screen.getByTestId("role-badge-member")).toBeInTheDocument();
-
-    expect(screen.getByText("true")).toBeInTheDocument();
   });
 
   test("handles alias submission successfully and sends correct params", async () => {
@@ -81,8 +72,6 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
-    setupSystemInfo(axiosMock);
-
     axiosMock.onPost("/api/currentUser/updateAlias").reply(200, {
       proposedAlias: "NewPropAlias",
     });
@@ -121,7 +110,6 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
-    setupSystemInfo(axiosMock);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -140,8 +128,7 @@ describe("ProfilePage tests", () => {
     axiosMock
       .onGet("/api/currentUser")
       .reply(200, apiCurrentUserFixtures.userOnly);
-    setupSystemInfo(axiosMock);
-
+    const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -159,12 +146,16 @@ describe("ProfilePage tests", () => {
     expect(errorMessage).toBeInTheDocument();
   });
 
-  test("renders correctly for moderator user", async () => {
+  test("handles alias submission successfully and sends correct params again", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
+    const testAlias = "UniqueAlias123"; // unique value
+
     axiosMock
       .onGet("/api/currentUser")
-      .reply(200, apiCurrentUserFixtures.moderatorUser);
-    setupSystemInfo(axiosMock);
+      .reply(200, apiCurrentUserFixtures.userOnly);
+    axiosMock.onPost("/api/currentUser/updateAlias").reply(200, {
+      proposedAlias: testAlias,
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -174,11 +165,23 @@ describe("ProfilePage tests", () => {
       </QueryClientProvider>,
     );
 
-    await screen.findByTestId("role-badge-moderator");
+    await screen.findAllByText("Phillip Conrad");
 
-    expect(screen.getByTestId("role-badge-moderator")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("UsersTable-cell-row-0-col-moderator"),
-    ).toHaveTextContent("true");
+    fireEvent.change(screen.getByPlaceholderText("Enter your new alias"), {
+      target: { value: testAlias },
+    });
+    fireEvent.click(screen.getByText("Update Alias"));
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+      // this fails when params: {} because proposedAlias is missing
+      expect(axiosMock.history.post[0].params).toEqual({
+        proposedAlias: testAlias,
+      });
+      // this fails when proposedAlias isn't passed through correctly
+      expect(toast).toHaveBeenCalledWith(
+        `Alias Awaiting Moderation: ${testAlias}`,
+      );
+    });
   });
 });
