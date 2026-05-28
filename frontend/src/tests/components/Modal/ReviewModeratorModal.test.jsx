@@ -17,7 +17,7 @@ describe("ReviewModeratorModal tests", () => {
     vi.clearAllMocks();
   });
 
-  // ── Visibility ────────────────────────────────────────────────────────────
+  // ── Visibility
 
   test("renders modal when isOpen is true", () => {
     render(<ReviewModeratorModal {...defaultProps} />);
@@ -30,8 +30,6 @@ describe("ReviewModeratorModal tests", () => {
       screen.queryByTestId("review-moderator-modal"),
     ).not.toBeInTheDocument();
   });
-
-  // ── Initial state ─────────────────────────────────────────────────────────
 
   test("moderator comment textarea starts empty", () => {
     render(<ReviewModeratorModal {...defaultProps} />);
@@ -46,8 +44,6 @@ describe("ReviewModeratorModal tests", () => {
       screen.getByPlaceholderText("Enter moderator comment..."),
     ).toBeInTheDocument();
   });
-
-  // ── Status label ──────────────────────────────────────────────────────────
 
   test("shows APPROVE in label when status is APPROVED", () => {
     render(<ReviewModeratorModal {...defaultProps} status="APPROVED" />);
@@ -68,8 +64,6 @@ describe("ReviewModeratorModal tests", () => {
     render(<ReviewModeratorModal {...defaultProps} status="APPROVED" />);
     expect(screen.queryByText("REJECT")).not.toBeInTheDocument();
   });
-
-  // ── Submit button label ───────────────────────────────────────────────────
 
   test("submit button says Approve when status is APPROVED", () => {
     render(<ReviewModeratorModal {...defaultProps} status="APPROVED" />);
@@ -99,8 +93,6 @@ describe("ReviewModeratorModal tests", () => {
     ).not.toHaveTextContent("Approve");
   });
 
-  // ── Submit button variant ─────────────────────────────────────────────────
-
   test("submit button has success variant when status is APPROVED", () => {
     render(<ReviewModeratorModal {...defaultProps} status="APPROVED" />);
     expect(screen.getByTestId("review-moderation-modal-submit")).toHaveClass(
@@ -129,7 +121,7 @@ describe("ReviewModeratorModal tests", () => {
     ).not.toHaveClass("btn-success");
   });
 
-  // ── Textarea interaction ──────────────────────────────────────────────────
+  // ── Textarea interaction
 
   test("textarea updates when user types", () => {
     render(<ReviewModeratorModal {...defaultProps} />);
@@ -145,7 +137,7 @@ describe("ReviewModeratorModal tests", () => {
     expect(textarea).toHaveValue("unique-value-xyz");
   });
 
-  // ── handleSubmit with APPROVED ────────────────────────────────────────────
+  // ── handleSubmit with APPROVED
 
   test("calls onSubmit with status APPROVED and moderatorComment", () => {
     render(<ReviewModeratorModal {...defaultProps} status="APPROVED" />);
@@ -171,7 +163,7 @@ describe("ReviewModeratorModal tests", () => {
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  // ── handleSubmit with REJECTED ────────────────────────────────────────────
+  // ── handleSubmit with REJECTED
 
   test("calls onSubmit with status REJECTED and moderatorComment", () => {
     render(<ReviewModeratorModal {...defaultProps} status="REJECTED" />);
@@ -197,7 +189,7 @@ describe("ReviewModeratorModal tests", () => {
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  // ── handleSubmit with unknown status ──────────────────────────────────────
+  // ── handleSubmit with unknown status
 
   test("does not call onSubmit when status is PENDING", () => {
     render(<ReviewModeratorModal {...defaultProps} status="PENDING" />);
@@ -217,7 +209,7 @@ describe("ReviewModeratorModal tests", () => {
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  // ── onSubmit payload correctness ──────────────────────────────────────────
+  // ── onSubmit payload correctness
 
   test("passes the exact comment typed to onSubmit for APPROVED", () => {
     render(<ReviewModeratorModal {...defaultProps} status="APPROVED" />);
@@ -273,8 +265,6 @@ describe("ReviewModeratorModal tests", () => {
     );
   });
 
-  // ── Cancel button ─────────────────────────────────────────────────────────
-
   test("cancel button calls onClose", () => {
     render(<ReviewModeratorModal {...defaultProps} />);
     fireEvent.click(screen.getByTestId("review-moderator-modal-cancel"));
@@ -296,7 +286,7 @@ describe("ReviewModeratorModal tests", () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  // ── Structure ─────────────────────────────────────────────────────────────
+  // ── Structure
 
   test("renders footer with cancel and submit buttons", () => {
     render(<ReviewModeratorModal {...defaultProps} />);
