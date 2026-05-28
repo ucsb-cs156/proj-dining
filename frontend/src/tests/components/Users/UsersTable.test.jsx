@@ -413,12 +413,7 @@ describe("UserTable tests", () => {
       { id: 10, email: "admin@test.com", givenName: "A", familyName: "A" },
     ];
 
-    wrap(
-      <UsersTable
-        users={users}
-        defaultAdminEmails={["admin@test.com"]}
-      />,
-    );
+    wrap(<UsersTable users={users} defaultAdminEmails={["admin@test.com"]} />);
 
     expect(
       screen.getByTestId("UsersTable-cell-row-0-col-id"),
