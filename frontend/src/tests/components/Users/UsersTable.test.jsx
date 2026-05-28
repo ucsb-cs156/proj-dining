@@ -407,7 +407,7 @@ describe("UserTable tests", () => {
     wrap(<UsersTable users={undefined} />);
     expect(
       screen.queryByTestId("UsersTable-cell-row-0-col-id"),
-    ).not.toBeInTheDocument();    
+    ).not.toBeInTheDocument();
   });
 
   test("default admins are sorted before non-default admins even when they have higher ids", () => {
