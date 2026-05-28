@@ -1,0 +1,51 @@
+{
+    "databaseChangeLog": [
+      {
+        "changeSet": {
+          "id": "moderator-2",
+          "author": "ethan",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "tableExists": {
+                "tableName": "moderators"
+              }
+            },
+            {
+              "columnExists": {
+                "tableName": "moderators",
+                "columnName": "ID"
+              }
+            }
+          ],
+          "changes": [
+            {
+              "dropTable": {
+                "tableName": "moderators"
+              }
+            },
+            {
+              "createTable": {
+                "columns": [
+                  {
+                    "column": {
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "MODERATORS_PK",
+                        "nullable": false
+                      },
+                      "name": "EMAIL",
+                      "type": "VARCHAR(255)"
+                    }
+                  }
+                ],
+                "tableName": "moderators"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
