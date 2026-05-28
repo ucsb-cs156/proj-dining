@@ -27,8 +27,8 @@ describe("AdminUsersPage tests", () => {
   });
 
   afterAll(() => {
-  axiosMock.restore(); // removes the adapter entirely after all tests in this file
-});
+    axiosMock.restore(); // removes the adapter entirely after all tests in this file
+  });
 
   test("renders without crashing on three users", async () => {
     const queryClient = new QueryClient();
