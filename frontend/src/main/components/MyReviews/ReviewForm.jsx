@@ -18,7 +18,8 @@ export default function ReviewForm({
     defaultValues: {
       reviewerComments: initialReviewerComments || "",
       itemsStars: initialItemsStars || 5,
-      dateItemServed: initialDateItemServed || new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
+      dateItemServed:
+        initialDateItemServed || new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
     },
   });
 
