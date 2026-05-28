@@ -10,12 +10,14 @@ export default function AppNavbar({
   currentUrl = window.location.href,
 }) {
   var oauthLogin = systemInfo?.oauthLogin || "/oauth2/authorization/google";
+
   return (
     <>
       {(currentUrl.startsWith("http://localhost:3000") ||
         currentUrl.startsWith("http://127.0.0.1:3000")) && (
         <AppNavbarLocalhost url={currentUrl} />
       )}
+
       <Navbar
         expand="xl"
         variant="dark"
@@ -32,50 +34,49 @@ export default function AppNavbar({
 
           <Nav className="me-auto">
             {systemInfo?.springH2ConsoleEnabled && (
-              <>
-                <Nav.Link href="/h2-console">H2Console</Nav.Link>
-              </>
+              <Nav.Link href="/h2-console">H2Console</Nav.Link>
             )}
+
             {systemInfo?.showSwaggerUILink && (
-              <>
-                <Nav.Link href="/swagger-ui/index.html">Swagger</Nav.Link>
-              </>
+              <Nav.Link href="/swagger-ui/index.html">Swagger</Nav.Link>
             )}
           </Nav>
 
           <>
-            {/* be sure that each NavDropdown has a unique id and data-testid  */}
+            {/* be sure that each NavDropdown has a unique id and data-testid */}
           </>
 
           <Navbar.Collapse className="justify-content-between">
             <Nav className="mr-auto">
               {hasRole(currentUser, "ROLE_ADMIN") && (
-                <>
-                  <NavDropdown
-                    title="Admin"
-                    id="appnavbar-admin-dropdown"
-                    data-testid="appnavbar-admin-dropdown"
-                  >
-                    <NavDropdown.Item href="/admin/users">
-                      Users
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </>
+                <NavDropdown
+                  title="Admin"
+                  id="appnavbar-admin-dropdown"
+                  data-testid="appnavbar-admin-dropdown"
+                >
+                  <NavDropdown.Item as={Link} to="/admin/users">
+                    Users
+                  </NavDropdown.Item>
+                </NavDropdown>
               )}
+
               {(hasRole(currentUser, "ROLE_ADMIN") ||
                 hasRole(currentUser, "ROLE_MODERATOR")) && (
-                <>
-                  <NavDropdown
-                    title="Moderate"
-                    id="appnavbar-moderate-dropdown"
-                    data-testid="appnavbar-moderate-dropdown"
-                  >
-                    <NavDropdown.Item href="/moderation">
-                      Moderator Page
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </>
+                <NavDropdown
+                  title="Moderate"
+                  id="appnavbar-moderate-dropdown"
+                  data-testid="appnavbar-moderate-dropdown"
+                >
+                  <NavDropdown.Item as={Link} to="/moderate/aliases">
+                    Moderator Page
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item as={Link} to="/moderate">
+                    Moderate Reviews
+                  </NavDropdown.Item>
+                </NavDropdown>
               )}
+
               {currentUser && currentUser.loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/myreviews">
@@ -141,6 +142,7 @@ export default function AppNavbar({
                   <Navbar.Text className="me-3" as={Link} to="/profile">
                     Welcome, {currentUser.root.user.email}
                   </Navbar.Text>
+
                   <Button onClick={doLogout}>Log Out</Button>
                 </>
               ) : (
