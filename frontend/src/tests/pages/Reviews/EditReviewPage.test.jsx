@@ -153,6 +153,17 @@ describe("EditReviewPage tests", () => {
     renderPage();
 
     const itemName = await screen.findByLabelText(/item name/i);
-    expect(itemName).toHaveValue(""); // should show empty string, not crash
+    expect(itemName).toHaveValue("");
+  });
+
+  test("date field is pre-populated with sliced date", async () => {
+    axiosMock.onGet("/api/reviews/1").reply(200, {
+      ...existingReview,
+      dateItemServed: "2024-04-01T12:00:00.000Z",
+    });
+    renderPage();
+
+    const dateField = await screen.findByLabelText(/date and time/i);
+    expect(dateField).toHaveValue("2024-04-01T12:00");
   });
 });
