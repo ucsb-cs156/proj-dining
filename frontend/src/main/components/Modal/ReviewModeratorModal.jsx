@@ -23,10 +23,6 @@ const ReviewModeratorModal = ({ isOpen, onClose, status, onSubmit }) => {
 
   const isApproved = status === "APPROVED";
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
     <Modal
       data-testid={"review-moderator-modal"}
