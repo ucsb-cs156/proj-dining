@@ -27,8 +27,6 @@ describe("ReviewsTable tests", () => {
     mockedNavigate.mockClear();
   });
 
-  // ── Helper to render with moderator options ───────────────────────────────
-
   const renderModerator = () => {
     axiosMock
       .onGet("/api/reviews/needsmoderation")
@@ -47,8 +45,6 @@ describe("ReviewsTable tests", () => {
     );
   };
 
-  // ── Base column headers and content ───────────────────────────────────────
-
   test("Has the base column headers and content", () => {
     render(
       <QueryClientProvider client={queryClient}>
@@ -57,6 +53,7 @@ describe("ReviewsTable tests", () => {
           userOptions={false}
           moderatorOptions={false}
         />
+        ,
       </QueryClientProvider>,
     );
     expect(screen.getByText("Moderation Status")).toBeInTheDocument();
@@ -68,45 +65,51 @@ describe("ReviewsTable tests", () => {
     expect(screen.getByText("Dining Commons Code")).toBeInTheDocument();
 
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-status"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-status`),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-item.id"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-item.id`),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-item.name"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-item.name`),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-itemsStars"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-itemsStars`),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-reviewerComments"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-reviewerComments`),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-dateItemServed"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-dateItemServed`),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-item.diningCommonsCode"),
+      screen.getByTestId(`Reviewstable-cell-row-0-col-item.diningCommonsCode`),
     ).toBeInTheDocument();
 
     const statusCell = screen.getByTestId("Reviewstable-cell-row-0-col-status");
-    expect(statusCell).toHaveTextContent(ReviewFixtures.threeReviews[0].status);
+    const expectedStatus = ReviewFixtures.threeReviews[0].status;
+    expect(statusCell).toHaveTextContent(expectedStatus);
 
-    expect(
-      screen.queryByTestId("Reviewstable-cell-row-0-col-Edit-button"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("Reviewstable-cell-row-0-col-Delete-button"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("Reviewstable-cell-row-0-col-Approve-button"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("Reviewstable-cell-row-0-col-Reject-button"),
-    ).not.toBeInTheDocument();
+    const editButton = screen.queryByTestId(
+      `Reviewstable-cell-row-0-col-Edit-button`,
+    );
+    expect(editButton).not.toBeInTheDocument();
+
+    const deleteButton = screen.queryByTestId(
+      `Reviewstable-cell-row-0-col-Delete-button`,
+    );
+    expect(deleteButton).not.toBeInTheDocument();
+
+    const acceptButton = screen.queryByTestId(
+      `Reviewstable-cell-row-0-col-Accept-button`,
+    );
+    expect(acceptButton).not.toBeInTheDocument();
+
+    const rejectButton = screen.queryByTestId(
+      `Reviewstable-cell-row-0-col-Reject-button`,
+    );
+    expect(rejectButton).not.toBeInTheDocument();
   });
-
-  // ── User options ──────────────────────────────────────────────────────────
 
   test("Regular user buttons appear and work properly", async () => {
     render(
@@ -116,22 +119,26 @@ describe("ReviewsTable tests", () => {
           userOptions={true}
           moderatorOptions={false}
         />
+        ,
       </QueryClientProvider>,
     );
 
+    //edit button
     const editButton = screen.getByTestId(
-      "Reviewstable-cell-row-0-col-Edit-button",
+      `Reviewstable-cell-row-0-col-Edit-button`,
     );
     expect(editButton).toBeInTheDocument();
     expect(editButton).toHaveClass("btn-primary");
 
     fireEvent.click(editButton);
+
     await waitFor(() =>
       expect(mockedNavigate).toHaveBeenCalledWith("/reviews/edit/1"),
     );
 
+    //delete button
     const deleteButton = screen.getByTestId(
-      "Reviewstable-cell-row-0-col-Delete-button",
+      `Reviewstable-cell-row-0-col-Delete-button`,
     );
     expect(deleteButton).toBeInTheDocument();
     expect(deleteButton).toHaveClass("btn-danger");
@@ -139,10 +146,45 @@ describe("ReviewsTable tests", () => {
     axiosMock
       .onDelete("/api/reviews/reviewer")
       .reply(200, { message: "Review deleted" });
+
     fireEvent.click(deleteButton);
 
     await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
     expect(axiosMock.history.delete[0].params).toEqual({ id: 1 });
+  });
+
+  test("Moderator buttons appear and work properly", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`Reviewstable-cell-row-0-col-Approve-button`),
+      ).toBeInTheDocument();
+    });
+
+    const approveButton = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-Approve-button`,
+    );
+    expect(approveButton).toBeInTheDocument();
+    expect(approveButton).toHaveClass("btn-primary");
+
+    fireEvent.click(approveButton);
+
+    const rejectButton = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-Reject-button`,
+    );
+    expect(rejectButton).toBeInTheDocument();
+    expect(rejectButton).toHaveClass("btn-danger");
+
+    fireEvent.click(rejectButton);
   });
 
   test("moderator buttons do not appear when userOptions=true moderatorOptions=false", () => {
@@ -178,47 +220,33 @@ describe("ReviewsTable tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  // ── editCallback ──────────────────────────────────────────────────────────
-
-  test("editCallback navigates to /reviews/edit/:id", async () => {
+  test("Renders stars icons and formatted date correctly", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ReviewsTable
           reviews={ReviewFixtures.threeReviews}
-          userOptions={true}
+          userOptions={false}
           moderatorOptions={false}
         />
       </QueryClientProvider>,
     );
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("Reviewstable-cell-row-0-col-Edit-button"),
-      ).toBeInTheDocument();
-    });
-    fireEvent.click(
-      screen.getByTestId("Reviewstable-cell-row-0-col-Edit-button"),
+
+    const scoreCell = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-itemsStars`,
     );
-    expect(mockedNavigate).toHaveBeenCalledWith("/reviews/edit/1");
+    expect(scoreCell).toHaveTextContent("⭐⭐⭐⭐");
+
+    const review = ReviewFixtures.threeReviews[0];
+    const formattedDate = new Date(review.dateItemServed).toLocaleDateString(
+      "en-US",
+    );
+    const dateCell = screen.getByTestId(
+      `Reviewstable-cell-row-0-col-dateItemServed`,
+    );
+    expect(dateCell).toHaveTextContent(formattedDate);
   });
 
-  // ── Moderator buttons ─────────────────────────────────────────────────────
-
-  test("Moderator buttons appear with correct variants", async () => {
-    renderModerator();
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("Reviewstable-cell-row-0-col-Approve-button"),
-      ).toBeInTheDocument();
-    });
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-Approve-button"),
-    ).toHaveClass("btn-primary");
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-Reject-button"),
-    ).toHaveClass("btn-danger");
-  });
-
-  // ── Modal initial state (kills useState(false) mutant) ───────────────────
+  // ── Modal
 
   test("modal is not visible on initial render", async () => {
     renderModerator();
@@ -231,8 +259,6 @@ describe("ReviewsTable tests", () => {
       screen.queryByTestId("review-moderator-modal"),
     ).not.toBeInTheDocument();
   });
-
-  // ── approveCallback (kills setPendingStatus("APPROVED") and setShow(true)) ─
 
   test("clicking Approve opens modal with APPROVED status", async () => {
     renderModerator();
@@ -254,8 +280,6 @@ describe("ReviewsTable tests", () => {
     );
   });
 
-  // ── rejectCallback (kills setPendingStatus("REJECTED") and setShow(true)) ──
-
   test("clicking Reject opens modal with REJECTED status", async () => {
     renderModerator();
     await waitFor(() => {
@@ -275,8 +299,6 @@ describe("ReviewsTable tests", () => {
       "btn-danger",
     );
   });
-
-  // ── handleClose (kills setShow(false), setPendingCell(null), setPendingStatus(null)) ─
 
   test("cancel button closes the modal", async () => {
     renderModerator();
@@ -354,8 +376,6 @@ describe("ReviewsTable tests", () => {
     ).toHaveTextContent("Reject");
   });
 
-  // ── handleSubmit APPROVED payload ─────────────────────────────────────────
-
   test("handleSubmit sends correct payload for approve", async () => {
     renderModerator();
     await waitFor(() => {
@@ -402,8 +422,6 @@ describe("ReviewsTable tests", () => {
     expect(axiosMock.history.put[0].params.status).not.toBe("REJECTED");
   });
 
-  // ── handleSubmit REJECTED payload ─────────────────────────────────────────
-
   test("handleSubmit sends correct payload for reject", async () => {
     renderModerator();
     await waitFor(() => {
@@ -449,8 +467,6 @@ describe("ReviewsTable tests", () => {
     expect(axiosMock.history.put[0].params.status).toBe("REJECTED");
     expect(axiosMock.history.put[0].params.status).not.toBe("APPROVED");
   });
-
-  // ── handleSubmit closes modal (kills handleClose() call) ──────────────────
 
   test("modal closes after approve submit", async () => {
     renderModerator();
@@ -500,8 +516,6 @@ describe("ReviewsTable tests", () => {
     });
   });
 
-  // ── moderatorComment passed correctly ─────────────────────────────────────
-
   test("moderatorComments value is passed from modal comment field for approve", async () => {
     renderModerator();
     await waitFor(() => {
@@ -547,56 +561,6 @@ describe("ReviewsTable tests", () => {
       );
     });
   });
-
-  // ── Rendering ─────────────────────────────────────────────────────────────
-
-  test("Renders stars icons and formatted date correctly", () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReviewsTable
-          reviews={ReviewFixtures.threeReviews}
-          userOptions={false}
-          moderatorOptions={false}
-        />
-      </QueryClientProvider>,
-    );
-
-    const scoreCell = screen.getByTestId(
-      "Reviewstable-cell-row-0-col-itemsStars",
-    );
-    expect(scoreCell).toHaveTextContent("⭐⭐⭐⭐");
-
-    const review = ReviewFixtures.threeReviews[0];
-    const formattedDate = new Date(review.dateItemServed).toLocaleDateString(
-      "en-US",
-    );
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-dateItemServed"),
-    ).toHaveTextContent(formattedDate);
-  });
-
-  test("renders all three review rows", () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReviewsTable
-          reviews={ReviewFixtures.threeReviews}
-          userOptions={false}
-          moderatorOptions={false}
-        />
-      </QueryClientProvider>,
-    );
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-0-col-status"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-1-col-status"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("Reviewstable-cell-row-2-col-status"),
-    ).toBeInTheDocument();
-  });
-
-  // whitespace tests
 
   test("renders moderatorComments column header", () => {
     render(
@@ -651,6 +615,42 @@ describe("ReviewsTable tests", () => {
 
     // cancel closes modal
     fireEvent.click(screen.getByTestId("review-moderator-modal-cancel"));
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("review-moderator-modal"),
+      ).not.toBeInTheDocument();
+    });
+
+    // reopen modal — textarea must be empty (kills setModeratorComment("") mutant)
+    fireEvent.click(
+      screen.getByTestId("Reviewstable-cell-row-0-col-Approve-button"),
+    );
+    expect(screen.getByTestId("review-moderation-modal-comment")).toHaveValue(
+      "",
+    );
+  });
+
+  test("textarea is empty when modal is reopened after Approve", async () => {
+    renderModerator();
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("Reviewstable-cell-row-0-col-Approve-button"),
+      ).toBeInTheDocument();
+    });
+
+    // open modal and type a comment
+    fireEvent.click(
+      screen.getByTestId("Reviewstable-cell-row-0-col-Approve-button"),
+    );
+    fireEvent.change(screen.getByTestId("review-moderation-modal-comment"), {
+      target: { value: "some comment" },
+    });
+    expect(screen.getByTestId("review-moderation-modal-comment")).toHaveValue(
+      "some comment",
+    );
+
+    // Approve closes modal
+    fireEvent.click(screen.getByTestId("review-moderation-modal-submit"));
     await waitFor(() => {
       expect(
         screen.queryByTestId("review-moderator-modal"),
