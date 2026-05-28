@@ -86,13 +86,13 @@ describe("EditReviewPage tests", () => {
     fireEvent.change(screen.getByTestId(/ReviewForm-review-date/), {
       target: { value: "2024-05-01T10:00" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+    fireEvent.click(screen.getByRole("button", { name: /update review/i }));
 
     await waitFor(() => expect(axiosMock.history.put.length).toBe(1));
     const put = axiosMock.history.put[0];
     expect(put.params).toEqual({ id: "1" });
     expect(JSON.parse(put.data)).toEqual({
-      itemStars: 4,
+      itemsStars: 4,
       reviewerComments: "updated comment",
       dateItemServed: "2024-05-01T10:00",
     });
@@ -139,7 +139,7 @@ describe("EditReviewPage tests", () => {
     fireEvent.change(await screen.findByTestId(/ReviewForm-review-date/), {
       target: { value: "2024-05-01T10:00" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+    fireEvent.click(screen.getByRole("button", { name: /update review/i }));
 
     expect(
       await screen.findByText(/Error updating review: Server error/i),
@@ -155,7 +155,7 @@ describe("EditReviewPage tests", () => {
     fireEvent.change(await screen.findByTestId(/ReviewForm-review-date/), {
       target: { value: "2024-05-01T10:00" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+    fireEvent.click(screen.getByRole("button", { name: /update review/i }));
 
     expect(
       await screen.findByText(
@@ -173,7 +173,7 @@ describe("EditReviewPage tests", () => {
     fireEvent.change(await screen.findByTestId(/ReviewForm-review-date/), {
       target: { value: "2024-05-01T10:00" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /submit review/i }));
+    fireEvent.click(screen.getByRole("button", { name: /update review/i }));
 
     expect(
       await screen.findByText(/Error updating review: Network Error/i),

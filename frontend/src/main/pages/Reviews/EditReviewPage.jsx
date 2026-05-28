@@ -32,7 +32,7 @@ export default function EditReviewPage() {
       await axios.put(
         "/api/reviews/reviewer",
         {
-          itemStars: formData.itemsStars,
+          itemsStars: formData.itemsStars,
           reviewerComments: formData.reviewerComments,
           dateItemServed: formData.dateItemServed,
         },
@@ -81,7 +81,7 @@ export default function EditReviewPage() {
           initialItemsStars={review.itemsStars}
           initialDateItemServed={review.dateItemServed}
           submitAction={submitReview}
-          submitButtonText="Update Review"
+          buttonLabel="Update Review"
         />
       </div>
     </BasicLayout>

@@ -1,7 +1,7 @@
 import { Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export default function ReviewForm({
   initialItemName,
@@ -11,33 +11,28 @@ export default function ReviewForm({
   submitAction,
   buttonLabel = "Submit Review",
 }) {
+  const initialNow = useRef(new Date().toISOString().slice(0, 16));
+  const formDefaults = useMemo(
+    () => ({
+      reviewerComments: initialReviewerComments ?? "",
+      itemsStars: initialItemsStars ?? 5,
+      dateItemServed: initialDateItemServed ?? initialNow.current,
+    }),
+    [initialReviewerComments, initialItemsStars, initialDateItemServed],
+  );
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm({
-    defaultValues: {
-      reviewerComments: initialReviewerComments || "",
-      itemsStars: initialItemsStars || 5,
-      dateItemServed:
-        initialDateItemServed || new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
-    },
+    defaultValues: formDefaults,
   });
 
   useEffect(() => {
-    reset({
-      reviewerComments: initialReviewerComments || "",
-      itemsStars: initialItemsStars || 5,
-      dateItemServed:
-        initialDateItemServed || new Date().toISOString().slice(0, 16),
-    });
-  }, [
-    initialReviewerComments,
-    initialItemsStars,
-    initialDateItemServed,
-    reset,
-  ]);
+    reset(formDefaults);
+  }, [reset, formDefaults]);
 
   const navigate = useNavigate();
 

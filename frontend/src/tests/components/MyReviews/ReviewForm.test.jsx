@@ -119,4 +119,38 @@ describe("ReviewForm tests", () => {
 
     expect(reviewDateField.value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
   });
+
+  test("updates form values when props change", async () => {
+    const { rerender } = render(
+      <Router>
+        <ReviewForm
+          initialReviewerComments="first"
+          initialItemsStars={2}
+          initialDateItemServed="2024-01-01T12:34"
+        />
+      </Router>,
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-comments")).toHaveValue(
+      "first",
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-stars")).toHaveValue("2");
+
+    rerender(
+      <Router>
+        <ReviewForm
+          initialReviewerComments="second"
+          initialItemsStars={5}
+          initialDateItemServed="2025-05-05T09:45"
+        />
+      </Router>,
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-comments")).toHaveValue(
+      "second",
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-stars")).toHaveValue("5");
+  });
 });
