@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
@@ -121,6 +121,20 @@ export default function UsersTable({
     setPendingCell(null);
   };
 
+  const sortedUsers = useMemo(() => {
+    if (!Array.isArray(users)) return [];
+    const defaultEmails = Array.isArray(defaultAdminEmails)
+      ? defaultAdminEmails
+      : // Stryker disable next-line ArrayDeclaration
+        [];
+    return [...users].sort((a, b) => {
+      const aIsDefault = defaultEmails.includes(a.email);
+      const bIsDefault = defaultEmails.includes(b.email);
+      if (aIsDefault !== bIsDefault) return aIsDefault ? -1 : 1;
+      return a.id - b.id;
+    });
+  }, [users, defaultAdminEmails]);
+
   const columns = [...baseColumns];
 
   if (showToggleRoleButtons) {
@@ -155,7 +169,7 @@ export default function UsersTable({
 
   return (
     <>
-      <OurTable data={users} columns={columns} testid={"UsersTable"} />
+      <OurTable data={sortedUsers} columns={columns} testid={"UsersTable"} />
       {showModal && (
         <Modal
           show
