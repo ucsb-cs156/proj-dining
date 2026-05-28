@@ -1,4 +1,4 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import ModerateReviews from "main/pages/ModerateReviewsPage";
@@ -173,5 +173,44 @@ describe("ModerateReviews Page Tests", () => {
     expect(
       screen.queryByTestId(`${testId}-cell-row-0-col-Reject-button`),
     ).not.toBeInTheDocument();
+  });
+
+  test("HandleClose hides modal and clears pending state (setupModerator view)", async () => {
+    setupModerator();
+
+    axiosMock
+      .onGet("/api/reviews/needsmoderation")
+      .reply(200, ReviewFixtures.threeReviews);
+
+    const queryClient = new QueryClient();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ModerateReviews />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // wait for approve button to appear
+    const approveButton = await screen.findByTestId(
+      "Reviewstable-cell-row-0-col-Approve-button",
+    );
+
+    fireEvent.click(approveButton);
+    const reviewModal = await screen.findByTestId("review-moderator-modal");
+
+    expect(reviewModal).toBeInTheDocument();
+
+    const reviewModalCancel = await screen.findByTestId(
+      `review-moderator-modal-cancel`,
+    );
+
+    expect(reviewModalCancel).toBeInTheDocument();
+
+    fireEvent.click(reviewModalCancel);
+
+    expect(reviewModal).not.toBeInTheDocument();
+    expect(reviewModalCancel).not.toBeInTheDocument();
   });
 });

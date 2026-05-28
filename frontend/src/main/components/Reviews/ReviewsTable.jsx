@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
+import ReviewModeratorModal from "main/components/Modal/ReviewModeratorModal";
 import { useBackendMutation } from "main/utils/useBackend";
 import {
   cellToAxiosParamsDelete,
@@ -16,6 +17,16 @@ export default function ReviewsTable({
 }) {
   const navigate = useNavigate();
 
+  const [show, setShow] = useState(false);
+  const [pendingCell, setPendingCell] = useState(null);
+  const [pendingStatus, setPendingStatus] = useState(null);
+
+  const handleClose = () => {
+    setShow(false);
+    setPendingCell(null);
+    setPendingStatus(null);
+  };
+
   const editCallback = (cell) => {
     navigate(`/reviews/edit/${cell.row.original.id}`);
   };
@@ -26,6 +37,20 @@ export default function ReviewsTable({
     { onSuccess: onDeleteSuccess },
     ["/api/reviews/userReviews", "/api/reviews/needsmoderation"],
   );
+
+  const approveMutation = useBackendMutation(
+    ({ cell, moderatorComments }) =>
+      cellToAxiosParamsModerate(cell, "APPROVED", moderatorComments),
+    { onSuccess: onModerateSuccess },
+    ["/api/reviews/needsmoderation"],
+  );
+
+  const rejectMutation = useBackendMutation(
+    ({ cell, moderatorComments }) =>
+      cellToAxiosParamsModerate(cell, "REJECTED", moderatorComments),
+    { onSuccess: onModerateSuccess },
+    ["/api/reviews/needsmoderation"],
+  );
   // Stryker restore all
 
   // Stryker disable next-line all
@@ -33,31 +58,42 @@ export default function ReviewsTable({
     deleteMutation.mutate(cell);
   };
 
-  // Stryker disable all
-  const approveMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
-
-  const rejectMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
-
-  const approveCallback = async (cell) => {
-    approveMutation.mutate(cell);
+  const approveCallback = (cell) => {
+    setPendingCell(cell);
+    setPendingStatus("APPROVED");
+    setShow(true);
   };
 
-  const rejectCallback = async (cell) => {
-    rejectMutation.mutate(cell);
+  const rejectCallback = (cell) => {
+    setPendingCell(cell);
+    setPendingStatus("REJECTED");
+    setShow(true);
+  };
+
+  const handleSubmit = ({ moderatorComment }) => {
+    if (pendingStatus === "APPROVED") {
+      approveMutation.mutate({
+        cell: pendingCell,
+        moderatorComments: moderatorComment,
+      });
+    } else {
+      rejectMutation.mutate({
+        cell: pendingCell,
+        moderatorComments: moderatorComment,
+      });
+    }
+    handleClose();
   };
 
   const columns = [
     {
       Header: "Moderation Status",
       accessor: "status",
+      Cell: ({ value }) => value,
+    },
+    {
+      Header: "Moderator Comment",
+      accessor: "moderatorComments",
       Cell: ({ value }) => value,
     },
     {
@@ -107,5 +143,15 @@ export default function ReviewsTable({
     );
   }
 
-  return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
+  return (
+    <div>
+      <ReviewModeratorModal
+        isOpen={show}
+        onClose={handleClose}
+        status={pendingStatus}
+        onSubmit={handleSubmit}
+      />
+      <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />
+    </div>
+  );
 }
