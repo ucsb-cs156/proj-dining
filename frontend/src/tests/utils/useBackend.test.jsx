@@ -253,5 +253,102 @@ describe("utils/useBackend tests", () => {
       const errorMessage2 = console.error.mock.calls[2][0];
       expect(errorMessage2).toMatch(/onError from mutation.mutate called!/);
     });
+
+    test("useBackendMutation invalidates queries for composite query key as multiple independent keys", async () => {
+      // this is unlike native React behavior, but was implemented for parity with proj-frontiers
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+      const wrapper = ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock.onPost("/api/test/post").reply(200, { id: 1, name: "test" });
+
+      const objectToAxiosParams = (request) => ({
+        url: "/api/test/post",
+        method: "POST",
+        data: request,
+      });
+
+      const onSuccess = vi.fn();
+      const invalidateQuerySpy = vi.spyOn(queryClient, "invalidateQueries");
+
+      const { result } = renderHook(
+        () =>
+          useBackendMutation(objectToAxiosParams, { onSuccess }, [
+            "/api/users",
+            "/api/posts",
+            "/api/comments",
+          ]),
+        { wrapper },
+      );
+
+      const mutation = result.current;
+      act(() => mutation.mutate({ name: "test" }));
+
+      await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+
+      expect(invalidateQuerySpy).toHaveBeenCalledTimes(3);
+      expect(invalidateQuerySpy).toHaveBeenNthCalledWith(1, {
+        queryKey: ["/api/users"],
+      });
+      expect(invalidateQuerySpy).toHaveBeenNthCalledWith(2, {
+        queryKey: ["/api/posts"],
+      });
+      expect(invalidateQuerySpy).toHaveBeenNthCalledWith(3, {
+        queryKey: ["/api/comments"],
+      });
+
+      invalidateQuerySpy.mockRestore();
+    });
+
+    test("useBackendMutation does NOT invalidate non-array keys", async () => {
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+      const wrapper = ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock.onPost("/api/test/post").reply(200, { id: 1, name: "test" });
+
+      const objectToAxiosParams = (request) => ({
+        url: "/api/test/post",
+        method: "POST",
+        data: request,
+      });
+
+      const onSuccess = vi.fn();
+      const invalidateQuerySpy = vi.spyOn(queryClient, "invalidateQueries");
+
+      const { result } = renderHook(
+        () =>
+          useBackendMutation(objectToAxiosParams, { onSuccess }, "/api/users"),
+        { wrapper },
+      );
+
+      const mutation = result.current;
+      act(() => mutation.mutate({ name: "test" }));
+
+      await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+      expect(invalidateQuerySpy).not.toHaveBeenCalled();
+
+      invalidateQuerySpy.mockRestore();
+    });
   });
 });
