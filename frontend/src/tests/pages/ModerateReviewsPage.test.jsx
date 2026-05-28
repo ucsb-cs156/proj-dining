@@ -23,7 +23,9 @@ vi.mock("react-toastify", async () => {
 
 describe("ModerateReviews Page Tests", () => {
   const axiosMock = new AxiosMockAdapter(axios);
-
+  afterAll(() => {
+    axiosMock.restore(); 
+  });
   const testId = "Reviewstable";
 
   const setupModerator = () => {
