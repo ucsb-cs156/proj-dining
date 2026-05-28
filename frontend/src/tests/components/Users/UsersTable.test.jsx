@@ -405,6 +405,9 @@ describe("UserTable tests", () => {
 
   test("does not crash when users is not an array", () => {
     wrap(<UsersTable users={undefined} />);
+    expect(
+      screen.queryByTestId("UsersTable-cell-row-0-col-id"),
+    ).not.toBeInTheDocument();    
   });
 
   test("default admins are sorted before non-default admins even when they have higher ids", () => {
