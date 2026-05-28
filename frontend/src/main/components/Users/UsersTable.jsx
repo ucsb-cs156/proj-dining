@@ -73,6 +73,7 @@ export default function UsersTable({
   users,
   showToggleRoleButtons,
   currentUser,
+  defaultAdminEmails,
 }) {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -123,14 +124,25 @@ export default function UsersTable({
   const columns = [...baseColumns];
 
   if (showToggleRoleButtons) {
-    columns.push(
-      ButtonColumn(
-        "Toggle Admin",
-        "primary",
-        toggleAdminCallback,
-        "UsersTable",
-      ),
-    );
+    columns.push({
+      Header: "Toggle Admin",
+      //id: "Toggle Admin",
+      Cell: ({ cell }) => {
+        const isDefaultAdmin =
+          Array.isArray(defaultAdminEmails) &&
+          defaultAdminEmails.includes(cell.row.values.email);
+        return (
+          <Button
+            variant="primary"
+            onClick={() => toggleAdminCallback(cell)}
+            disabled={isDefaultAdmin}
+            data-testid={`UsersTable-cell-row-${cell.row.index}-col-Toggle Admin-button`}
+          >
+            Toggle Admin
+          </Button>
+        );
+      },
+    });
     columns.push(
       ButtonColumn(
         "Toggle Moderator",

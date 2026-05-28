@@ -136,7 +136,7 @@ describe("utils/currentUser tests", () => {
     });
   });
   describe("useLogout tests", () => {
-    test("useLogout", async () => {
+    test("useLogout navigates to root before resetting queries", async () => {
       const queryClient = new QueryClient();
       const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
@@ -147,10 +147,17 @@ describe("utils/currentUser tests", () => {
       const axiosMock = new AxiosMockAdapter(axios);
       axiosMock.onPost("/logout").reply(200);
 
-      const navigateSpy = vi.fn();
+      const callOrder = [];
+      const navigateSpy = vi
+        .fn()
+        .mockImplementation(() => callOrder.push("navigate"));
       useNavigate.mockImplementation(() => navigateSpy);
 
-      const resetQueriesSpy = vi.spyOn(queryClient, "resetQueries");
+      const resetQueriesSpy = vi
+        .spyOn(queryClient, "resetQueries")
+        .mockImplementation(async () => {
+          callOrder.push("resetQueries");
+        });
 
       const { result } = renderHook(() => useLogout(), { wrapper });
 
@@ -164,6 +171,8 @@ describe("utils/currentUser tests", () => {
           exact: true,
         }),
       );
+
+      expect(callOrder).toEqual(["navigate", "resetQueries"]);
 
       queryClient.clear();
     });

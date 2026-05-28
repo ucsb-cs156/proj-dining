@@ -32,8 +32,8 @@ export function useLogout() {
   const navigate = useNavigate();
   const mutation = useMutation(async () => {
     await axios.post("/logout");
-    await queryClient.resetQueries("current user", { exact: true });
     navigate("/");
+    await queryClient.resetQueries("current user", { exact: true });
   });
   return mutation;
 }
