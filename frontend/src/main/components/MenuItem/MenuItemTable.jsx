@@ -16,11 +16,11 @@ export default function MenuItemTable({ menuItems, currentUser }) {
   };
 
   const calculateAverageRating = (reviewScore) => {
-     if(!reviewScore){
-       return "No ratings";
-     }else{
-       return reviewScore.toFixed(1);
-     }
+    if (!reviewScore) {
+      return "No ratings";
+    } else {
+      return reviewScore.toFixed(1);
+    }
   };
 
   const columns = [

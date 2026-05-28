@@ -29,9 +29,9 @@ describe("MenuItemTable Tests", () => {
     expect(screen.getByTestId("MenuItemTable-header-name")).toHaveTextContent(
       "Item Name",
     );
-    expect(screen.getByTestId("MenuItemTable-header-station")).toHaveTextContent(
-      "Station",
-    );
+    expect(
+      screen.getByTestId("MenuItemTable-header-station"),
+    ).toHaveTextContent("Station");
     expect(
       screen.getByTestId("MenuItemTable-header-averageRating"),
     ).toHaveTextContent("Average Rating");
@@ -74,9 +74,9 @@ describe("MenuItemTable Tests", () => {
     ).toHaveTextContent("No ratings");
 
     for (let i = 0; i < fiveMenuItems.length; i++) {
-      expect(screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`)).toHaveTextContent(
-        fiveMenuItems[i].name,
-      );
+      expect(
+        screen.getByTestId(`MenuItemTable-cell-row-${i}-col-name`),
+      ).toHaveTextContent(fiveMenuItems[i].name);
       expect(
         screen.getByTestId(`MenuItemTable-cell-row-${i}-col-station`),
       ).toHaveTextContent(fiveMenuItems[i].station);
@@ -149,7 +149,10 @@ describe("MenuItemTable Tests", () => {
 
     render(
       <MemoryRouter>
-        <MenuItemTable menuItems={items} currentUser={currentUserFixtures.userOnly} />
+        <MenuItemTable
+          menuItems={items}
+          currentUser={currentUserFixtures.userOnly}
+        />
       </MemoryRouter>,
     );
 
@@ -169,10 +172,14 @@ describe("MenuItemTable Tests", () => {
     );
 
     fireEvent.click(firstItemButton);
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith("/reviews/42"));
+    await waitFor(() =>
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/42"),
+    );
 
     fireEvent.click(secondItemButton);
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith("/reviews/43"));
+    await waitFor(() =>
+      expect(mockedNavigate).toHaveBeenCalledWith("/reviews/43"),
+    );
   });
 
   test("does not show buttons when user is not logged in", () => {
@@ -204,13 +211,16 @@ describe("MenuItemTable Tests", () => {
 
     render(
       <MemoryRouter>
-        <MenuItemTable menuItems={items} currentUser={currentUserFixtures.userOnly} />
+        <MenuItemTable
+          menuItems={items}
+          currentUser={currentUserFixtures.userOnly}
+        />
       </MemoryRouter>,
     );
 
     expect(
       screen.getByTestId("MenuItemTable-cell-row-0-col-Review Item-button"),
-    ).toBeInTheDocument();
+    ).toHaveClass("btn-warning");
     expect(
       screen.getByTestId("MenuItemTable-cell-row-0-col-All Reviews-button"),
     ).toBeInTheDocument();
