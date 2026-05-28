@@ -107,4 +107,16 @@ describe("ReviewForm tests", () => {
 
     await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith(-1));
   });
+
+  test("uses correctly formatted default datetime when no initial date is provided", async () => {
+    render(
+      <Router>
+        <ReviewForm />
+      </Router>,
+    );
+
+    const reviewDateField = await screen.findByTestId("ReviewForm-review-date");
+
+    expect(reviewDateField.value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+  });
 });

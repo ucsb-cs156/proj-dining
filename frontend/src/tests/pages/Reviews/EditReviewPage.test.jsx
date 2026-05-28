@@ -73,6 +73,9 @@ describe("EditReviewPage tests", () => {
       "good food",
     );
     expect(screen.getByTestId(/ReviewForm-review-stars/)).toHaveValue("4");
+    expect(screen.getByTestId(/ReviewForm-review-date/)).toHaveValue(
+      ReviewFixtures.oneReview.dateItemServed.slice(0, 16),
+    );
 
     fireEvent.change(screen.getByTestId(/ReviewForm-review-comments/), {
       target: { value: "updated comment" },
@@ -175,5 +178,76 @@ describe("EditReviewPage tests", () => {
     expect(
       await screen.findByText(/Error updating review: Network Error/i),
     ).toBeInTheDocument();
+  });
+
+  test("updates initial form values with previous submission", async () => {
+    const { rerender } = render(
+      <QueryClientProvider client={new QueryClient()}>
+        <BrowserRouter>
+          <EditReviewPage />
+          <ToastContainer />
+        </BrowserRouter>
+      </QueryClientProvider>,
+    );
+
+    vi.spyOn(useBackendModule, "useBackend").mockReturnValue({
+      data: {
+        ...ReviewFixtures.oneReview,
+        reviewerComments: "first comment",
+        itemsStars: 2,
+        dateItemServed: "2024-01-01T12:34",
+      },
+      isLoading: false,
+      isError: false,
+    });
+
+    rerender(
+      <QueryClientProvider client={new QueryClient()}>
+        <BrowserRouter>
+          <EditReviewPage />
+          <ToastContainer />
+        </BrowserRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-comments")).toHaveValue(
+      "first comment",
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-stars")).toHaveValue("2");
+
+    expect(screen.getByTestId("ReviewForm-review-date")).toHaveValue(
+      "2024-01-01T12:34",
+    );
+
+    vi.spyOn(useBackendModule, "useBackend").mockReturnValue({
+      data: {
+        ...ReviewFixtures.oneReview,
+        reviewerComments: "updated comment",
+        itemsStars: 5,
+        dateItemServed: "2025-05-05T09:45",
+      },
+      isLoading: false,
+      isError: false,
+    });
+
+    rerender(
+      <QueryClientProvider client={new QueryClient()}>
+        <BrowserRouter>
+          <EditReviewPage />
+          <ToastContainer />
+        </BrowserRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-comments")).toHaveValue(
+      "updated comment",
+    );
+
+    expect(screen.getByTestId("ReviewForm-review-stars")).toHaveValue("5");
+
+    expect(screen.getByTestId("ReviewForm-review-date")).toHaveValue(
+      "2025-05-05T09:45",
+    );
   });
 });
