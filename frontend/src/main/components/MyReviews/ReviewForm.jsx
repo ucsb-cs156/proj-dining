@@ -4,6 +4,9 @@ import { useNavigate } from "react-router";
 
 export default function ReviewForm({
   initialItemName,
+  initialReviewerComments,
+  initialItemsStars,
+  initialDateItemServed,
   submitAction,
   buttonLabel = "Submit Review",
 }) {
@@ -13,9 +16,9 @@ export default function ReviewForm({
     handleSubmit,
   } = useForm({
     defaultValues: {
-      reviewerComments: "",
-      itemsStars: 5,
-      dateItemServed: new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
+      reviewerComments: initialReviewerComments || "",
+      itemsStars: initialItemsStars || 5,
+      dateItemServed: initialDateItemServed || new Date().toISOString().slice(0, 16), // default to now, in YYYY-MM-DDTHH:mm format (UTC)
     },
   });
 
