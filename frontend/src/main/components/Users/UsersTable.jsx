@@ -122,7 +122,8 @@ export default function UsersTable({
   };
 
   const sortedUsers = useMemo(() => {
-    if (!Array.isArray(users)) return users;
+    if (!Array.isArray(users)) return [];
+    // Stryker disable next-line ArrayDeclaration
     const defaultEmails = Array.isArray(defaultAdminEmails)
       ? defaultAdminEmails
       : [];

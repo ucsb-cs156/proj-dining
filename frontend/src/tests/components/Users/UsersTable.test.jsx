@@ -403,6 +403,31 @@ describe("UserTable tests", () => {
     ).toHaveTextContent("3");
   });
 
+  test("does not crash when users is not an array", () => {
+    wrap(<UsersTable users={undefined} />);
+  });
+
+  test("default admins are sorted before non-default admins even when they have higher ids", () => {
+    const users = [
+      { id: 1, email: "regular@test.com", givenName: "R", familyName: "R" },
+      { id: 10, email: "admin@test.com", givenName: "A", familyName: "A" },
+    ];
+
+    wrap(
+      <UsersTable
+        users={users}
+        defaultAdminEmails={["admin@test.com"]}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("UsersTable-cell-row-0-col-id"),
+    ).toHaveTextContent("10");
+    expect(
+      screen.getByTestId("UsersTable-cell-row-1-col-id"),
+    ).toHaveTextContent("1");
+  });
+
   test("Toggle Moderator button fires PUT to /api/admin/toggleModerator with user id", async () => {
     axiosMock
       .onPut("/api/admin/toggleModerator")
