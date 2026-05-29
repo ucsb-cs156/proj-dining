@@ -26,9 +26,7 @@ export default function ReviewForm({
     formState: { errors },
     handleSubmit,
     reset,
-  } = useForm({
-    defaultValues: formDefaults,
-  });
+  } = useForm();
 
   useEffect(() => {
     reset(formDefaults);

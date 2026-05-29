@@ -7,7 +7,7 @@ export default function ModeratorCommentsModal({
   status,
   onSubmit,
 }) {
-  const [comments, setComments] = useState("");
+  const [comments, setComments] = useState(null);
 
   const handleSubmit = () => {
     onSubmit(comments);
