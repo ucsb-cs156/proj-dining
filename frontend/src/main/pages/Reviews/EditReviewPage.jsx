@@ -81,7 +81,7 @@ export default function EditReviewPage() {
           initialItemsStars={review.itemsStars}
           initialDateItemServed={review.dateItemServed}
           submitAction={submitReview}
-          submitButtonText="Update Review"
+          buttonLabel="Update Review"
         />
       </div>
     </BasicLayout>
