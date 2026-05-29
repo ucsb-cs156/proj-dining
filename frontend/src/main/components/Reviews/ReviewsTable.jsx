@@ -17,6 +17,7 @@ export default function ReviewsTable({
 }) {
   const navigate = useNavigate();
   const [showModerationModal, setShowModerationModal] = useState(false);
+
   const [pendingCell, setPendingCell] = useState(null);
   const [moderationStatus, setModerationStatus] = useState(null);
   // Stryker disable next-line StringLiteral: value is reset whenever the modal opens

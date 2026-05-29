@@ -159,6 +159,24 @@ describe("ReviewsTable tests", () => {
     fireEvent.click(rejectButton);
   });
 
+  test("moderation modal is hidden on initial render", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reject Review")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("moderation-modal-comments"),
+    ).not.toBeInTheDocument();
+  });
+
   test("Renders stars icons and formatted date correctly", () => {
     render(
       <QueryClientProvider client={queryClient}>
@@ -183,6 +201,27 @@ describe("ReviewsTable tests", () => {
       `Reviewstable-cell-row-0-col-dateItemServed`,
     );
     expect(dateCell).toHaveTextContent(formattedDate);
+  });
+
+  test("moderation modal is closed on initial render", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reject Review")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("moderation-modal-comments"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("moderation-modal-submit"),
+    ).not.toBeInTheDocument();
   });
 
   test("opens moderation modal and submits approve review comments", async () => {
