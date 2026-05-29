@@ -185,6 +185,27 @@ describe("ReviewsTable tests", () => {
     expect(dateCell).toHaveTextContent(formattedDate);
   });
 
+  test("moderation modal is closed on initial render", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reject Review")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("moderation-modal-comments"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("moderation-modal-submit"),
+    ).not.toBeInTheDocument();
+  });
+
   test("opens moderation modal and submits approve review comments", async () => {
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock.onPut("/api/reviews/moderate").reply(200, {
