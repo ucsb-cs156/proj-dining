@@ -159,6 +159,24 @@ describe("ReviewsTable tests", () => {
     fireEvent.click(rejectButton);
   });
 
+  test("moderation modal is hidden on initial render", () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ReviewsTable
+          reviews={ReviewFixtures.threeReviews}
+          userOptions={false}
+          moderatorOptions={true}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText("Approve Review")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reject Review")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("moderation-modal-comments"),
+    ).not.toBeInTheDocument();
+  });
+
   test("Renders stars icons and formatted date correctly", () => {
     render(
       <QueryClientProvider client={queryClient}>
