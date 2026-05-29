@@ -1,6 +1,6 @@
 package edu.ucsb.cs156.dining.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -53,7 +53,7 @@ public class Review {
 
   @LastModifiedDate private LocalDateTime dateEdited;
 
-  @JsonIgnore
+  @JsonIgnoreProperties("reviews")
   @ManyToOne
   @JoinColumn(name = "item_id", nullable = false)
   private MenuItem item;
