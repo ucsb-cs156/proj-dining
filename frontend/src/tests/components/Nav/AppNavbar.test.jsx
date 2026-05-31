@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router";
 import { currentUserFixtures } from "fixtures/currentUserFixtures";
@@ -24,6 +24,49 @@ describe("AppNavbar tests", () => {
 
     await screen.findByText("Welcome, pconrad.cis@gmail.com");
     expect(screen.queryByText("Moderate")).not.toBeInTheDocument();
+    const statisticsMenu = screen.getByTestId("appnavbar-statistics-dropdown");
+    expect(statisticsMenu).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Statistics"));
+
+    expect(
+      await screen.findByTestId("appnavbar-statistics-overview"),
+    ).toHaveAttribute("href", "/statistics");
+    expect(
+      screen.getByTestId("appnavbar-statistics-best-items"),
+    ).toHaveAttribute("href", "/statistics/items/best");
+    expect(
+      screen.getByTestId("appnavbar-statistics-worst-items"),
+    ).toHaveAttribute("href", "/statistics/items/worst");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-averages"),
+    ).toHaveAttribute("href", "/statistics/commons/averages");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-overtime"),
+    ).toHaveAttribute("href", "/statistics/commons/overtime");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-meals"),
+    ).toHaveAttribute("href", "/statistics/commons/meals");
+    expect(
+      screen.getByTestId("appnavbar-statistics-commons-meals"),
+    ).toHaveTextContent("Commons Meal Averages");
+  });
+
+  test("does not render the Statistics dropdown when user is not logged in", async () => {
+    const currentUser = currentUserFixtures.notLoggedIn;
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AppNavbar currentUser={currentUser} />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText("UCSB Dining");
+    expect(
+      screen.queryByTestId("appnavbar-statistics-dropdown"),
+    ).not.toBeInTheDocument();
   });
 
   test("renders correctly for admin user", async () => {
