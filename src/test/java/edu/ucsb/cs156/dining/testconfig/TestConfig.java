@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 
 @TestConfiguration
 @Import(SecurityConfig.class)
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Import;
 public class TestConfig {
 
   @Bean
+  @Primary
   public CurrentUserService currentUserService() {
     return new MockCurrentUserServiceImpl();
   }
