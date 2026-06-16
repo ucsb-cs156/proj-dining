@@ -236,6 +236,59 @@ public class ReviewControllerTests extends ControllerTestCase {
 
   @WithMockUser(roles = {"USER"})
   @Test
+  public void test_whitespaceString_on_creating_new_review() throws Exception {
+
+    LocalDateTime now = LocalDateTime.now();
+
+    User user = currentUserService.getUser();
+    MenuItem menuItem = MenuItem.builder().id(1L).build();
+
+    Review review =
+        Review.builder()
+            .itemsStars(1l)
+            .reviewerComments(null)
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+            .reviewer(user)
+            .status(ModerationStatus.APPROVED)
+            .item(menuItem)
+            .build();
+
+    Review reviewReturn =
+        Review.builder()
+            .dateCreated(now)
+            .dateEdited(now)
+            .itemsStars(1l)
+            .reviewerComments(null)
+            .dateItemServed(LocalDateTime.of(2021, 12, 12, 8, 8, 8))
+            .reviewer(user)
+            .status(ModerationStatus.APPROVED)
+            .item(menuItem)
+            .id(0L)
+            .build();
+    when(reviewRepository.save(eq(review))).thenReturn(reviewReturn);
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                post("/api/reviews/post")
+                    .param("itemId", "1")
+                    .param("reviewerComments", "   ")
+                    .param("itemsStars", "1")
+                    .param("dateItemServed", "2021-12-12T08:08:08")
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    String jsonReview = mapper.writeValueAsString(reviewReturn);
+
+    verify(reviewRepository).save(any(Review.class));
+    String responseJson = response.getResponse().getContentAsString();
+
+    assertEquals(jsonReview, responseJson);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
   public void test_no_string_on_creating_new_review() throws Exception {
 
     // Arrange
@@ -1329,5 +1382,59 @@ public class ReviewControllerTests extends ControllerTestCase {
 
     Map<String, Object> json = responseToJson(response);
     assertEquals("Review with id 5 not found", json.get("message"));
+  }
+
+  /**
+   * Regression test: verifies that the item field is NOT stripped from the GET /api/reviews/{id}
+   * response. If @JsonIgnore is ever accidentally added to Review.item, this test will fail.
+   */
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void getReviewById_response_includes_item_field() throws Exception {
+    User owner = currentUserService.getUser();
+    MenuItem item = MenuItem.builder().id(1L).name("Waffle").diningCommonsCode("carrillo").build();
+    Review review = Review.builder().id(5L).reviewer(owner).item(item).itemsStars(4L).build();
+
+    when(reviewRepository.findById(5L)).thenReturn(Optional.of(review));
+
+    mockMvc
+        .perform(get("/api/reviews/5").with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.item").exists())
+        .andExpect(jsonPath("$.item.id").value(1))
+        .andExpect(jsonPath("$.item.name").value("Waffle"))
+        .andExpect(jsonPath("$.item.diningCommonsCode").value("carrillo"));
+  }
+
+  /**
+   * Regression test: verifies that the item field is NOT stripped from the GET
+   * /api/reviews/userReviews response. If @JsonIgnore is ever accidentally added to Review.item,
+   * this test will fail.
+   */
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void user_reviews_response_includes_item_field() throws Exception {
+    User owner = currentUserService.getUser();
+    MenuItem item = MenuItem.builder().id(2L).name("Oatmeal").diningCommonsCode("ortega").build();
+    Review review =
+        Review.builder()
+            .id(7L)
+            .reviewer(owner)
+            .item(item)
+            .itemsStars(3L)
+            .status(ModerationStatus.APPROVED)
+            .dateItemServed(LocalDateTime.of(2024, 1, 1, 12, 0))
+            .build();
+
+    when(reviewRepository.findByReviewer(eq(owner)))
+        .thenReturn(new ArrayList<>(Arrays.asList(review)));
+
+    mockMvc
+        .perform(get("/api/reviews/userReviews").with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].item").exists())
+        .andExpect(jsonPath("$[0].item.id").value(2))
+        .andExpect(jsonPath("$[0].item.name").value("Oatmeal"))
+        .andExpect(jsonPath("$[0].item.diningCommonsCode").value("ortega"));
   }
 }

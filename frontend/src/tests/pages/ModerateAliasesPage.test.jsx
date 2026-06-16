@@ -69,7 +69,7 @@ describe("ModerateAliases Page Tests", () => {
 
     const queryClient = new QueryClient();
     axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
+      .onGet("/api/admin/users/needsmoderation")
       .reply(200, AliasFixtures.threeAliases);
 
     render(
@@ -92,13 +92,6 @@ describe("ModerateAliases Page Tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
     ).toBeInTheDocument();
-
-    await userEvent.click(
-      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
-    );
-    await userEvent.click(
-      screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
-    );
   });
 
   test("renders aliases with approve/reject buttons for admin", async () => {
@@ -106,7 +99,7 @@ describe("ModerateAliases Page Tests", () => {
 
     const queryClient = new QueryClient();
     axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
+      .onGet("/api/admin/users/needsmoderation")
       .reply(200, AliasFixtures.threeAliases);
 
     render(
@@ -129,19 +122,12 @@ describe("ModerateAliases Page Tests", () => {
     expect(
       screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
     ).toBeInTheDocument();
-
-    await userEvent.click(
-      screen.getByTestId(`${testId}-cell-row-0-col-Approve-button`),
-    );
-    await userEvent.click(
-      screen.getByTestId(`${testId}-cell-row-0-col-Reject-button`),
-    );
   });
 
   test("handles error when backend is unavailable for moderator", async () => {
     setupModerator();
     const queryClient = new QueryClient();
-    axiosMock.onGet("/api/admin/usersWithProposedAlias").timeout();
+    axiosMock.onGet("/api/admin/users/needsmoderation").timeout();
     const restoreConsole = mockConsole();
 
     render(
@@ -158,7 +144,7 @@ describe("ModerateAliases Page Tests", () => {
 
     const errorMessage = console.error.mock.calls[0][0];
     expect(errorMessage).toMatch(
-      "Error communicating with backend via GET on /api/admin/usersWithProposedAlias",
+      "Error communicating with backend via GET on /api/admin/users/needsmoderation",
     );
     restoreConsole();
 
@@ -171,7 +157,7 @@ describe("ModerateAliases Page Tests", () => {
     setupUserOnly();
     const queryClient = new QueryClient();
     axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
+      .onGet("/api/admin/users/needsmoderation")
       .reply(200, AliasFixtures.threeAliases);
 
     render(
@@ -200,7 +186,7 @@ describe("ModerateAliases Page Tests", () => {
     setupAdmin();
     const queryClient = new QueryClient();
     axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
+      .onGet("/api/admin/users/needsmoderation")
       .reply(200, AliasFixtures.threeAliases);
     axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);
 
@@ -234,7 +220,7 @@ describe("ModerateAliases Page Tests", () => {
     setupAdmin();
     const queryClient = new QueryClient();
     axiosMock
-      .onGet("/api/admin/usersWithProposedAlias")
+      .onGet("/api/admin/users/needsmoderation")
       .reply(200, AliasFixtures.threeAliases);
 
     axiosMock.onPut("/api/currentUser/updateAliasModeration").reply(200);

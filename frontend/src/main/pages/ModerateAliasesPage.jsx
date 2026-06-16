@@ -17,9 +17,9 @@ const ModerateAliases = () => {
   //
   const { data: aliases } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/admin/usersWithProposedAlias"],
+    ["/api/admin/users/needsmoderation"],
     // Stryker disable next-line all : don't test internal caching of React Query
-    { method: "GET", url: "/api/admin/usersWithProposedAlias" },
+    { method: "GET", url: "/api/admin/users/needsmoderation" },
     // Stryker disable next-line all : don't test internal caching of React Query
     [],
   );
@@ -32,7 +32,7 @@ const ModerateAliases = () => {
     // On success: invalidate both relevant query keys
     { onSuccess: onModerateSuccess },
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/admin/usersWithProposedAlias"],
+    ["/api/admin/users/needsmoderation"],
   );
 
   //
@@ -42,7 +42,7 @@ const ModerateAliases = () => {
     cellToAxiosParamsReject,
     { onSuccess: onModerateSuccess },
     // Stryker disable next-line all : don't test internal caching of React Query
-    ["/api/admin/usersWithProposedAlias"],
+    ["/api/admin/users/needsmoderation"],
   );
 
   //

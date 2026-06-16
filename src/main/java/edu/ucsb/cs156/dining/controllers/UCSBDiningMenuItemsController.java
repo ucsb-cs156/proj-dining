@@ -1,10 +1,13 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +32,8 @@ public class UCSBDiningMenuItemsController extends ApiController {
   @Autowired UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
 
   @Autowired MenuItemRepository menuItemRepository;
+
+  @Autowired ReviewRepository reviewRepository;
 
   @Operation(summary = "Get list of entrees being served at given meal, dining common, and day")
   @GetMapping(
@@ -61,6 +66,12 @@ public class UCSBDiningMenuItemsController extends ApiController {
       newMenuItem.setStation(entree.getStation());
 
       menuItemRepository.save(newMenuItem);
+
+      List<Review> approvedReviews =
+          (List<Review>)
+              reviewRepository.findByItemAndStatus(newMenuItem, ModerationStatus.APPROVED);
+      newMenuItem.setReviews(approvedReviews);
+
       menuitems.add(newMenuItem);
     }
 

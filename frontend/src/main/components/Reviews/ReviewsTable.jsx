@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router";
 import { useBackendMutation } from "main/utils/useBackend";
@@ -8,6 +8,7 @@ import {
   cellToAxiosParamsModerate,
   onModerateSuccess,
 } from "main/utils/Reviews";
+import ModerationModal from "main/components/Moderation/ModerationModal";
 
 export default function ReviewsTable({
   reviews,
@@ -15,6 +16,12 @@ export default function ReviewsTable({
   moderatorOptions,
 }) {
   const navigate = useNavigate();
+  const [showModerationModal, setShowModerationModal] = useState(false);
+
+  const [pendingCell, setPendingCell] = useState(null);
+  const [moderationStatus, setModerationStatus] = useState(null);
+  // Stryker disable next-line StringLiteral: value is reset whenever the modal opens
+  const [moderatorComments, setModeratorComments] = useState("");
 
   const editCallback = (cell) => {
     navigate(`/reviews/edit/${cell.row.original.id}`);
@@ -34,24 +41,51 @@ export default function ReviewsTable({
   };
 
   // Stryker disable all
-  const approveMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "APPROVED"),
+  const moderationMutation = useBackendMutation(
+    ({ cell, status, moderatorComments }) =>
+      cellToAxiosParamsModerate(cell, status, moderatorComments),
     { onSuccess: onModerateSuccess },
     ["/api/reviews/needsmoderation"],
   );
 
-  const rejectMutation = useBackendMutation(
-    (cell) => cellToAxiosParamsModerate(cell, "REJECTED"),
-    { onSuccess: onModerateSuccess },
-    ["/api/reviews/needsmoderation"],
-  );
+  const openModerationModal = (cell, status) => {
+    setPendingCell(cell);
+    setModerationStatus(status);
+    setModeratorComments("");
+    setShowModerationModal(true);
+  };
 
   const approveCallback = async (cell) => {
-    approveMutation.mutate(cell);
+    openModerationModal(cell, "APPROVED");
   };
 
   const rejectCallback = async (cell) => {
-    rejectMutation.mutate(cell);
+    openModerationModal(cell, "REJECTED");
+  };
+
+  const handleModerationSubmit = () => {
+    /* istanbul ignore if */
+    if (!pendingCell || !moderationStatus) {
+      return;
+    }
+
+    moderationMutation.mutate({
+      cell: pendingCell,
+      status: moderationStatus,
+      moderatorComments,
+    });
+
+    setShowModerationModal(false);
+    setPendingCell(null);
+    setModerationStatus(null);
+    setModeratorComments("");
+  };
+
+  const handleCloseModerationModal = () => {
+    setShowModerationModal(false);
+    setPendingCell(null);
+    setModerationStatus(null);
+    setModeratorComments("");
   };
 
   const columns = [
@@ -107,5 +141,18 @@ export default function ReviewsTable({
     );
   }
 
-  return <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />;
+  return (
+    <>
+      <OurTable data={reviews} columns={columns} testid={"Reviewstable"} />
+      <ModerationModal
+        show={showModerationModal}
+        onHide={handleCloseModerationModal}
+        status={moderationStatus}
+        moderatorComments={moderatorComments}
+        onModeratorCommentsChange={setModeratorComments}
+        onSubmit={handleModerationSubmit}
+        review={pendingCell?.row.original}
+      />
+    </>
+  );
 }
