@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserInfoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">UserInfoController.java</span></div><h1>UserInfoController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
 
+import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.models.CurrentUserDTO;
+import edu.ucsb.cs156.dining.models.UserDTO;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = &quot;Current User Information&quot;)
 @RequestMapping(&quot;/api/currentUser&quot;)
 @RestController
-<span class="fc" id="L15">public class UserInfoController extends ApiController {</span>
+<span class="fc" id="L24">public class UserInfoController extends ApiController {</span>
+
+<span class="fc" id="L26">  @Value(&quot;#{'${app.admin.emails}'.split(',')}&quot;)</span>
+  private final List&lt;String&gt; adminEmails = new ArrayList&lt;&gt;();
+
+  @Autowired AdminRepository adminRepository;
+
+  @Autowired ModeratorRepository moderatorRepository;
 
   /**
    * This method returns the current user.
@@ -22,8 +38,15 @@ import org.springframework.web.bind.annotation.RestController;
   @Operation(summary = &quot;Get information about current user&quot;)
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;&quot;)
-  public CurrentUser getCurrentUser() {
-<span class="fc" id="L26">    return super.getCurrentUser();</span>
+  public CurrentUserDTO currentUser() {
+<span class="fc" id="L42">    CurrentUser currentUser = super.getCurrentUser();</span>
+<span class="fc" id="L43">    User user = currentUser.getUser();</span>
+<span class="fc" id="L44">    UserDTO userDTO =</span>
+        new UserDTO(
+            user,
+<span class="fc bfc" id="L47" title="All 4 branches covered.">            adminEmails.contains(user.getEmail()) || adminRepository.existsByEmail(user.getEmail()),</span>
+<span class="fc" id="L48">            moderatorRepository.existsByEmail(user.getEmail()));</span>
+<span class="fc" id="L49">    return new CurrentUserDTO(userDTO, currentUser.getRoles());</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

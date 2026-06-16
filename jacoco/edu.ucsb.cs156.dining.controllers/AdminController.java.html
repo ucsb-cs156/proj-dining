@@ -81,15 +81,15 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
   @DeleteMapping(&quot;/delete&quot;)
   public Object deleteAdmin(@Parameter(name = &quot;email&quot;) @RequestParam String email) {
-<span class="fc" id="L84">    Admin admin =</span>
-        adminRepository
-<span class="fc" id="L86">            .findByEmail(email)</span>
-<span class="fc" id="L87">            .orElseThrow(() -&gt; new EntityNotFoundException(Admin.class, email));</span>
+<span class="fc" id="L84">    List&lt;Admin&gt; admins = adminRepository.findAllByEmail(email);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">    if (admins.isEmpty()) {</span>
+<span class="fc" id="L86">      throw new EntityNotFoundException(Admin.class, email);</span>
+    }
 <span class="fc bfc" id="L88" title="All 2 branches covered.">    if (adminEmails.contains(email)) {</span>
 <span class="fc" id="L89">      throw new UnsupportedOperationException(</span>
           &quot;Forbidden to delete an admin from ADMIN_EMAILS list&quot;);
     }
-<span class="fc" id="L92">    adminRepository.delete(admin);</span>
+<span class="fc" id="L92">    adminRepository.deleteByEmail(email);</span>
 <span class="fc" id="L93">    return genericMessage(&quot;Admin with id %s deleted&quot;.formatted(email));</span>
   }
 }

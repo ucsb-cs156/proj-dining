@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.models</a> &gt; <span class="el_source">UserDTO.java</span></div><h1>UserDTO.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.models;
+
+import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
+import java.time.LocalDate;
+
+/** Response model for user data with computed role flags. */
+<span class="fc" id="L8">public record UserDTO(</span>
+    long id,
+    String email,
+    String googleSub,
+    String pictureUrl,
+    String fullName,
+    String givenName,
+    String familyName,
+    boolean emailVerified,
+    String locale,
+    String hostedDomain,
+    boolean admin,
+    boolean moderator,
+    String alias,
+    String proposedAlias,
+    ModerationStatus status,
+    LocalDate dateApproved) {
+
+  public UserDTO(User user, boolean admin, boolean moderator) {
+<span class="fc" id="L27">    this(</span>
+<span class="fc" id="L28">        user.getId(),</span>
+<span class="fc" id="L29">        user.getEmail(),</span>
+<span class="fc" id="L30">        user.getGoogleSub(),</span>
+<span class="fc" id="L31">        user.getPictureUrl(),</span>
+<span class="fc" id="L32">        user.getFullName(),</span>
+<span class="fc" id="L33">        user.getGivenName(),</span>
+<span class="fc" id="L34">        user.getFamilyName(),</span>
+<span class="fc" id="L35">        user.getEmailVerified(),</span>
+<span class="fc" id="L36">        user.getLocale(),</span>
+<span class="fc" id="L37">        user.getHostedDomain(),</span>
+        admin,
+        moderator,
+<span class="fc" id="L40">        user.getAlias(),</span>
+<span class="fc" id="L41">        user.getProposedAlias(),</span>
+<span class="fc" id="L42">        user.getStatus(),</span>
+<span class="fc" id="L43">        user.getDateApproved());</span>
+<span class="fc" id="L44">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
