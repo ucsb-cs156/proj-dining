@@ -28,6 +28,10 @@ vi.mock("main/pages/AdminUsersPage", () => ({
   default: () => <div>Admin Users Page</div>,
 }));
 
+vi.mock("main/pages/DeveloperPage", () => ({
+  default: () => <div>Developer Page</div>,
+}));
+
 vi.mock("main/pages/Reviews/ReviewsPage", () => ({
   default: () => <div>Reviews Page</div>,
 }));
@@ -83,6 +87,20 @@ describe("App tests", () => {
     window.history.pushState({}, "", "/admin/users");
     render(<App />);
     expect(screen.queryByText("Admin Users Page")).not.toBeInTheDocument();
+  });
+
+  test("renders developer page for admin users", () => {
+    mockCurrentUser.value = currentUserFixtures.adminUser;
+    window.history.pushState({}, "", "/admin/developer");
+    render(<App />);
+    expect(screen.getByText("Developer Page")).toBeInTheDocument();
+  });
+
+  test("does not render developer page for regular users", () => {
+    mockCurrentUser.value = currentUserFixtures.userOnly;
+    window.history.pushState({}, "", "/admin/developer");
+    render(<App />);
+    expect(screen.queryByText("Developer Page")).not.toBeInTheDocument();
   });
 
   test("renders user review routes for regular users", () => {
