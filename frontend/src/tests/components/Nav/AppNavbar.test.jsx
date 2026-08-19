@@ -86,6 +86,12 @@ describe("AppNavbar tests", () => {
     expect(adminMenu).toBeInTheDocument();
     const moderatorMenu = screen.getByText("Moderate");
     expect(moderatorMenu).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Admin"));
+    expect(await screen.findByText("Developer Info")).toHaveAttribute(
+      "href",
+      "/admin/developer",
+    );
   });
 
   test("renders correctly for moderator user", async () => {

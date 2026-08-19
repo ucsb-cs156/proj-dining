@@ -3,6 +3,7 @@ import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminUsersPage from "main/pages/AdminUsersPage";
 import ModeratorsCreatePage from "main/pages/Admin/ModeratorsCreatePage";
+import DeveloperPage from "main/pages/DeveloperPage";
 
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
 
@@ -45,6 +46,7 @@ function App() {
               path="/admin/moderators/create"
               element={<ModeratorsCreatePage />}
             />
+            <Route exact path="/admin/developer" element={<DeveloperPage />} />
           </>
         )}
         {hasRole(currentUser, "ROLE_USER") && (
