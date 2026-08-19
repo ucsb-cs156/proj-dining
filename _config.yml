@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156/proj-dining
 owner: ucsb-cs156
 repo_name: proj-dining
-pull_requests: [{"author":{"is_bot":true,"login":"app/copilot-swe-agent"},"headRefName":"copilot/feature-create-admin-developer-page","number":133,"title":"Add Admin Developer Info page","url":"https://github.com/ucsb-cs156/proj-dining/pull/133"},{"author":{"id":"MDQ6VXNlcjI2MzQ3ODk3","is_bot":false,"login":"Division7","name":"Daniel Jensen"},"headRefName":"dj-mealOptimize","number":123,"title":"Dj meal optimize","url":"https://github.com/ucsb-cs156/proj-dining/pull/123"}]
+pull_requests: [{"author":{"id":"MDQ6VXNlcjI2MzQ3ODk3","is_bot":false,"login":"Division7","name":"Daniel Jensen"},"headRefName":"dj-mealOptimize","number":123,"title":"Dj meal optimize","url":"https://github.com/ucsb-cs156/proj-dining/pull/123"}]
