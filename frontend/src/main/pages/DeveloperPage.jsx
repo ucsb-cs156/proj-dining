@@ -42,7 +42,7 @@ const DeveloperPage = () => {
           dokku deployment. For example:
         </p>
         <pre>
-          {`dokku config:set my-deployment SOURCE_REPO=https://github.com/ucsb-cs156-s26/proj-happycows-s26-17
+          {`dokku config:set my-deployment SOURCE_REPO=https://github.com/ucsb-cs156-s26/proj-dining-s26-17
 `}
         </pre>
       </blockquote>
