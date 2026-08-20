@@ -24,6 +24,9 @@ public class UCSBDiningMenuService {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
+  @Value("${app.ucsb.api.host}")
+  private String apiHost;
+
   private RestTemplate restTemplate = new RestTemplate();
 
   public UCSBDiningMenuService(RestTemplateBuilder restTemplateBuilder) throws Exception {
@@ -31,7 +34,7 @@ public class UCSBDiningMenuService {
   }
 
   public static final String ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT =
-      "https://api.ucsb.edu/dining/menu/v1/{date-time}/{dining-common-code}";
+      "{apiHost}/dining/menu/v1/{date-time}/{dining-common-code}";
 
   @Cacheable("menu")
   public String getJSON(String dateTime, String diningCommonCode) throws Exception {
@@ -45,8 +48,9 @@ public class UCSBDiningMenuService {
     HttpEntity<String> entity = new HttpEntity<>("body", headers);
 
     String url = ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT;
-    url.replace("{date-time}", dateTime);
-    url.replace("{dining-common-code}", diningCommonCode);
+    url = url.replace("{apiHost}", apiHost);
+    url = url.replace("{date-time}", dateTime);
+    url = url.replace("{dining-common-code}", diningCommonCode);
 
     log.info("url=" + url);
 
@@ -55,9 +59,7 @@ public class UCSBDiningMenuService {
     HttpStatus statusCode = null;
 
     try {
-      ResponseEntity<String> re =
-          restTemplate.exchange(
-              url, HttpMethod.GET, entity, String.class, dateTime, diningCommonCode);
+      ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
       contentType = re.getHeaders().getContentType();
       statusCode = (HttpStatus) re.getStatusCode();
       retVal = re.getBody();
