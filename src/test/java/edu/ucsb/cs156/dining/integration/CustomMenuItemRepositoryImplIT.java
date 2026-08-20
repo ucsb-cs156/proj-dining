@@ -168,7 +168,7 @@ public class CustomMenuItemRepositoryImplIT {
                 Entree.builder().name("fake").station("fake").build()));
 
     assertEquals(1, dlgItems.size());
-    assertEquals(4.0, dlgItems.getFirst().reviewScore());
+    assertEquals(5.0, dlgItems.getFirst().reviewScore());
 
     List<MenuItemDto> carrilloItems =
         menuItemRepository.projectExistingEntrees(
