@@ -223,6 +223,6 @@ describe("MenuItemTable Tests", () => {
     ).toHaveClass("btn-warning");
     expect(
       screen.getByTestId("MenuItemTable-cell-row-0-col-All Reviews-button"),
-    ).toBeInTheDocument();
+    ).toHaveClass("btn-warning");
   });
 });

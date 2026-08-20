@@ -177,7 +177,7 @@ public class CustomMenuItemRepositoryImplIT {
             List.of(Entree.builder().name("pizza").station("station 1").build()));
 
     assertEquals(1, carrilloItems.size());
-    assertEquals(1.0, carrilloItems.getFirst().reviewScore());
+    assertNull(carrilloItems.getFirst().reviewScore());
   }
 
   @Test
