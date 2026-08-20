@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,9 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -52,25 +49,15 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
     Entree newEntree = Entree.builder().name("omelet").station("grill").build();
     List<Entree> entrees = List.of(existingEntree, newEntree);
 
-    MenuItemDto existingMenuItem =
-        new MenuItemDto(1L, commons, mealCode, "waffles", "self-serve", 4.0);
-
-    MenuItem secondMenuItem =
-        MenuItem.builder()
-            .name("omelet")
-            .station("grill")
-            .id(2L)
-            .reviews(List.of())
-            .diningCommonsCode(commons)
-            .mealCode(mealCode)
-            .build();
-
-    List<MenuItemDto> existingMenuItems = new ArrayList<>(List.of(existingMenuItem));
+    List<MenuItemDto> projectedMenuItems =
+        new ArrayList<>(
+            List.of(
+                new MenuItemDto(1L, commons, mealCode, "waffles", "self-serve", 4.0),
+                new MenuItemDto(2L, commons, mealCode, "omelet", "grill", null)));
 
     when(ucsbDiningMenuItemsService.get(date, commons, mealCode)).thenReturn(entrees);
     when(menuItemRepository.projectExistingEntrees(eq(commons), eq(mealCode), eq(entrees)))
-        .thenReturn(existingMenuItems);
-    when(menuItemRepository.saveAll(any())).thenReturn(List.of(secondMenuItem));
+        .thenReturn(projectedMenuItems);
 
     MvcResult response =
         mockMvc
@@ -78,21 +65,11 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
             .andExpect(status().isOk())
             .andReturn();
 
-    ArgumentCaptor<Iterable<MenuItem>> savedItemsCaptor = ArgumentCaptor.forClass(Iterable.class);
-    verify(menuItemRepository, times(1)).saveAll(savedItemsCaptor.capture());
-    List<MenuItem> savedItems =
-        StreamSupport.stream(savedItemsCaptor.getValue().spliterator(), false).toList();
-    assertEquals(1, savedItems.size());
-    MenuItem savedItem = savedItems.getFirst();
-    assertEquals(commons, savedItem.getDiningCommonsCode());
-    assertEquals(mealCode, savedItem.getMealCode());
-    assertEquals("omelet", savedItem.getName());
-    assertEquals("grill", savedItem.getStation());
+    verify(menuItemRepository, times(1))
+        .insertIfNotExists(commons, mealCode, "waffles", "self-serve");
+    verify(menuItemRepository, times(1)).insertIfNotExists(commons, mealCode, "omelet", "grill");
 
-    List<MenuItemDto> expected =
-        List.of(existingMenuItem, new MenuItemDto(2L, commons, mealCode, "omelet", "grill", null));
-
-    String expectedJson = mapper.writeValueAsString(expected);
+    String expectedJson = mapper.writeValueAsString(projectedMenuItems);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }

@@ -10,13 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,42 +48,13 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);
 
-    List<MenuItemDto> menuitems =
-        menuItemRepository.projectExistingEntrees(diningcommoncode, mealcode, body);
-
-    Map<String, MenuItemDto> existingMenuItemsMap =
-        menuitems.stream()
-            .collect(Collectors.toMap(m -> m.name() + "/" + m.station(), Function.identity()));
-
-    List<MenuItem> newMenuItems = new ArrayList<>(50);
-
     for (Entree entree : body) {
-      if (existingMenuItemsMap.containsKey(entree.getName() + "/" + entree.getStation())) {
-        continue;
-      }
-
-      MenuItem newMenuItem =
-          MenuItem.builder()
-              .diningCommonsCode(diningcommoncode)
-              .mealCode(mealcode)
-              .name(entree.getName())
-              .station(entree.getStation())
-              .build();
-      newMenuItems.add(newMenuItem);
+      menuItemRepository.insertIfNotExists(
+          diningcommoncode, mealcode, entree.getName(), entree.getStation());
     }
 
-    Iterable<MenuItem> savedMenuItems = menuItemRepository.saveAll(newMenuItems);
-    StreamSupport.stream(savedMenuItems.spliterator(), false)
-        .map(
-            menuItem ->
-                new MenuItemDto(
-                    menuItem.getId(),
-                    menuItem.getDiningCommonsCode(),
-                    menuItem.getMealCode(),
-                    menuItem.getName(),
-                    menuItem.getStation(),
-                    null))
-        .forEach(menuitems::add);
+    List<MenuItemDto> menuitems =
+        menuItemRepository.projectExistingEntrees(diningcommoncode, mealcode, body);
 
     return ResponseEntity.ok().body(menuitems);
   }
