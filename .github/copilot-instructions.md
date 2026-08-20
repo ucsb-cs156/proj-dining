@@ -63,6 +63,18 @@ Always reference these instructions first and fallback to search or bash command
   - Frontend: unit tests, coverage, mutation testing (stryker), linting, formatting
   - Documentation: javadoc, storybook/chromatic
 
+### GitHub Actions Workflow Policy (REQUIRED)
+
+Any work by Copilot on this repo is **NOT finished** unless and until all GitHub Actions workflows pass (green).
+
+A Copilot agent **must not** stop and ask for a code review until the agent has:
+
+1. **Monitored** the status of all GitHub Actions workflows triggered by the latest push (use the GitHub MCP `actions_list` tool with `list_workflow_runs` filtered to the PR branch, then `get_job_logs` for any failures).
+2. **Taken steps** to address any workflow failures (fix code, formatting, test failures, etc., then push a new commit).
+3. **Either:**
+   - **(a)** Iterated over steps 1 and 2 until all workflows pass, **OR**
+   - **(b)** Determined that it is unable to continue for some reason, and stated that reason in a comment on the PR.
+
 ## Common Tasks
 
 ### Testing Commands
