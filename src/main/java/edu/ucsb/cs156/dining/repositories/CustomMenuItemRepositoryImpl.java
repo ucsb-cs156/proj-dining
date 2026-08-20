@@ -4,6 +4,7 @@ import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.models.MenuItemDto;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -32,6 +33,7 @@ public class CustomMenuItemRepositoryImpl implements CustomMenuItemRepository {
     CriteriaQuery<MenuItemDto> cq = cb.createQuery(MenuItemDto.class);
     Root<MenuItem> mi = cq.from(MenuItem.class);
     Join<MenuItem, Review> revJoin = mi.join("reviews", JoinType.LEFT);
+    revJoin.on(cb.equal(revJoin.get("status"), ModerationStatus.APPROVED));
 
     cq.multiselect(
             mi.get("id"),
