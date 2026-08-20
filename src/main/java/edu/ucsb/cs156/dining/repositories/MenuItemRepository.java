@@ -39,14 +39,8 @@ public interface MenuItemRepository
   @Query(
       value =
           "INSERT INTO menuitem (dining_commons_code, meal_code, name, station)"
-              + " SELECT :diningCommonsCode, :mealCode, :name, :station"
-              + " WHERE NOT EXISTS ("
-              + "   SELECT 1 FROM menuitem"
-              + "   WHERE dining_commons_code = :diningCommonsCode"
-              + "     AND meal_code = :mealCode"
-              + "     AND name = :name"
-              + "     AND station = :station"
-              + " )",
+              + " VALUES (:diningCommonsCode, :mealCode, :name, :station)"
+              + " ON CONFLICT (dining_commons_code, meal_code, name, station) DO NOTHING",
       nativeQuery = true)
   void insertIfNotExists(
       @Param("diningCommonsCode") String diningCommonsCode,
