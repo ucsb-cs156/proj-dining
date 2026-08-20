@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +50,12 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
     List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);
 
+    Set<Entree> seenEntrees = new HashSet<>();
     for (Entree entree : body) {
-      menuItemRepository.insertIfNotExists(
-          diningcommoncode, mealcode, entree.getName(), entree.getStation());
+      if (seenEntrees.add(entree)) {
+        menuItemRepository.insertIfNotExists(
+            diningcommoncode, mealcode, entree.getName(), entree.getStation());
+      }
     }
 
     List<MenuItemDto> menuitems =
