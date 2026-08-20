@@ -11,7 +11,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
+import edu.ucsb.cs156.dining.entities.Admin;
+import edu.ucsb.cs156.dining.entities.Moderator;
 import edu.ucsb.cs156.dining.entities.User;
+import edu.ucsb.cs156.dining.models.UserDTO;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
@@ -32,10 +37,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 @WebMvcTest(controllers = UsersController.class)
 @Import(TestConfig.class)
-@TestPropertySource(properties = {"ADMIN_EMAILS=superadmin@example.org"})
+@TestPropertySource(properties = {"app.admin.emails=superadmin@example.org"})
 public class UsersControllerTests extends ControllerTestCase {
 
   @MockBean UserRepository userRepository;
+  @MockBean AdminRepository adminRepository;
+  @MockBean ModeratorRepository moderatorRepository;
 
   @Test
   public void users__logged_out() throws Exception {
@@ -52,15 +59,26 @@ public class UsersControllerTests extends ControllerTestCase {
   @Test
   public void users__admin_logged_in() throws Exception {
     // arrange
-    User u1 = User.builder().id(1L).build();
-    User u2 = User.builder().id(2L).build();
+    User u1 = User.builder().id(1L).email("user1@example.org").build();
+    User u2 = User.builder().id(2L).email("user2@example.org").build();
     User u = currentUserService.getCurrentUser().getUser();
 
     ArrayList<User> expectedUsers = new ArrayList<>();
     expectedUsers.addAll(Arrays.asList(u1, u2, u));
 
     when(userRepository.findAll()).thenReturn(expectedUsers);
-    String expectedJson = mapper.writeValueAsString(expectedUsers);
+    when(adminRepository.existsByEmail(u1.getEmail())).thenReturn(false);
+    when(moderatorRepository.existsByEmail(u1.getEmail())).thenReturn(false);
+    when(adminRepository.existsByEmail(u2.getEmail())).thenReturn(true);
+    when(moderatorRepository.existsByEmail(u2.getEmail())).thenReturn(false);
+    when(adminRepository.existsByEmail(u.getEmail())).thenReturn(false);
+    when(moderatorRepository.existsByEmail(u.getEmail())).thenReturn(true);
+    List<UserDTO> expectedUserDTOs =
+        Arrays.asList(
+            new UserDTO(u1, false, false),
+            new UserDTO(u2, true, false),
+            new UserDTO(u, false, true));
+    String expectedJson = mapper.writeValueAsString(expectedUserDTOs);
 
     // act
     MvcResult response =
@@ -68,6 +86,12 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     verify(userRepository, times(1)).findAll();
+    verify(adminRepository, times(1)).existsByEmail(u1.getEmail());
+    verify(moderatorRepository, times(1)).existsByEmail(u1.getEmail());
+    verify(adminRepository, times(1)).existsByEmail(u2.getEmail());
+    verify(moderatorRepository, times(1)).existsByEmail(u2.getEmail());
+    verify(adminRepository, times(1)).existsByEmail(u.getEmail());
+    verify(moderatorRepository, times(1)).existsByEmail(u.getEmail());
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
@@ -88,7 +112,6 @@ public class UsersControllerTests extends ControllerTestCase {
             .emailVerified(true)
             .locale("")
             .hostedDomain("example.org")
-            .admin(true)
             .alias("Anonymous User")
             .proposedAlias("Chipotle")
             .status(ModerationStatus.AWAITING_REVIEW)
@@ -347,13 +370,14 @@ public class UsersControllerTests extends ControllerTestCase {
 
   @Test
   @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_toggle_admin_of_user() throws Exception {
+  public void admin_can_add_user_to_admin_table() throws Exception {
     // arrange
-    User userOrig = User.builder().id(7L).email("user@example.org").admin(false).build();
+    User user = User.builder().id(7L).email("user@example.org").build();
+    Admin admin = new Admin("user@example.org");
 
-    User userUpdated = User.builder().id(7L).email("user@example.org").admin(true).build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
+    when(adminRepository.existsByEmail("user@example.org")).thenReturn(false, true);
+    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(false);
 
     // act
     MvcResult response =
@@ -364,21 +388,22 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUpdated);
+    verify(adminRepository, times(2)).existsByEmail("user@example.org");
+    verify(adminRepository, times(1)).save(admin);
     String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUpdated);
+    String expectedJson = mapper.writeValueAsString(new UserDTO(user, true, false));
     assertEquals(expectedJson, responseString);
   }
 
   @Test
   @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_toggle_admin_of_basic_admin() throws Exception {
+  public void admin_can_remove_user_from_admin_table() throws Exception {
     // arrange
-    User userOrig = User.builder().id(7L).email("user@example.org").admin(true).build();
+    User user = User.builder().id(7L).email("user@example.org").build();
 
-    User userUpdated = User.builder().id(7L).email("user@example.org").admin(false).build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
+    when(adminRepository.existsByEmail("user@example.org")).thenReturn(true, false);
+    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(false);
 
     // act
     MvcResult response =
@@ -389,9 +414,10 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUpdated);
+    verify(adminRepository, times(2)).existsByEmail("user@example.org");
+    verify(adminRepository, times(1)).deleteByEmail("user@example.org");
     String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUpdated);
+    String expectedJson = mapper.writeValueAsString(new UserDTO(user, false, false));
     assertEquals(expectedJson, responseString);
   }
 
@@ -399,11 +425,10 @@ public class UsersControllerTests extends ControllerTestCase {
   @WithMockUser(roles = {"ADMIN"})
   public void admin_cannot_toggle_admin_of_super_admin() throws Exception {
     // arrange
-    User userOrig = User.builder().id(7L).email("superadmin@example.org").admin(true).build();
+    User user = User.builder().id(7L).email("superadmin@example.org").build();
 
-    User userUpdated = User.builder().id(7L).email("superadmin@example.org").admin(true).build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
+    when(moderatorRepository.existsByEmail("superadmin@example.org")).thenReturn(false);
 
     // act
     MvcResult response =
@@ -414,9 +439,8 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUpdated);
     String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUpdated);
+    String expectedJson = mapper.writeValueAsString(new UserDTO(user, true, false));
     assertEquals(expectedJson, responseString);
   }
 
@@ -441,13 +465,14 @@ public class UsersControllerTests extends ControllerTestCase {
 
   @Test
   @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_toggle_moderator_of_user() throws Exception {
+  public void admin_can_add_user_to_moderator_table() throws Exception {
     // arrange
-    User userOrig = User.builder().id(7L).email("user@example.org").moderator(false).build();
+    User user = User.builder().id(7L).email("user@example.org").build();
+    Moderator moderator = new Moderator("user@example.org");
 
-    User userUpdated = User.builder().id(7L).email("user@example.org").moderator(true).build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
+    when(adminRepository.existsByEmail("user@example.org")).thenReturn(false);
+    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(false, true);
 
     // act
     MvcResult response =
@@ -458,21 +483,23 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUpdated);
+    verify(moderatorRepository, times(2)).existsByEmail("user@example.org");
+    verify(moderatorRepository, times(1)).save(moderator);
     String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUpdated);
+    String expectedJson = mapper.writeValueAsString(new UserDTO(user, false, true));
     assertEquals(expectedJson, responseString);
   }
 
   @Test
   @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_toggle_moderator_of_moderator() throws Exception {
+  public void admin_can_remove_user_from_moderator_table() throws Exception {
     // arrange
-    User userOrig = User.builder().id(7L).email("user@example.org").moderator(true).build();
+    User user = User.builder().id(7L).email("user@example.org").build();
+    Moderator moderator = new Moderator("user@example.org");
 
-    User userUpdated = User.builder().id(7L).email("user@example.org").moderator(false).build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(userOrig));
+    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
+    when(adminRepository.existsByEmail("user@example.org")).thenReturn(false);
+    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(true, false);
 
     // act
     MvcResult response =
@@ -483,9 +510,10 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     verify(userRepository, times(1)).findById(7L);
-    verify(userRepository, times(1)).save(userUpdated);
+    verify(moderatorRepository, times(2)).existsByEmail("user@example.org");
+    verify(moderatorRepository, times(1)).deleteByEmail("user@example.org");
     String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(userUpdated);
+    String expectedJson = mapper.writeValueAsString(new UserDTO(user, false, false));
     assertEquals(expectedJson, responseString);
   }
 

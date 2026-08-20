@@ -34,6 +34,9 @@ class DiningCommonsServiceTests {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
+  @Value("${app.ucsb.api.host}")
+  private String apiHost;
+
   private static final String NAME = "NAME";
   private static final String CODE = "CODE";
   private static final Boolean HASDININGCAM = false;
@@ -45,7 +48,7 @@ class DiningCommonsServiceTests {
   @Test
   void get_returns_a_list_of_commons() throws Exception {
 
-    String expectedURL = DiningCommonsService.ENDPOINT;
+    String expectedURL = DiningCommonsService.ENDPOINT.replace("{apiHost}", apiHost);
 
     String expectedResult =
         String.format(

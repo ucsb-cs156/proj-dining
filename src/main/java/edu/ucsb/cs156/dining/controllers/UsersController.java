@@ -2,9 +2,14 @@ package edu.ucsb.cs156.dining.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsb.cs156.dining.entities.Admin;
+import edu.ucsb.cs156.dining.entities.Moderator;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.CurrentUser;
+import edu.ucsb.cs156.dining.models.UserDTO;
+import edu.ucsb.cs156.dining.repositories.AdminRepository;
+import edu.ucsb.cs156.dining.repositories.ModeratorRepository;
 import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -33,10 +39,14 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class UsersController extends ApiController {
 
-  @Value("${app.admin.emails}")
+  @Value("#{'${app.admin.emails}'.split(',')}")
   private final List<String> adminEmails = new ArrayList<>();
 
   @Autowired UserRepository userRepository;
+
+  @Autowired AdminRepository adminRepository;
+
+  @Autowired ModeratorRepository moderatorRepository;
 
   @Autowired ObjectMapper mapper;
 
@@ -52,7 +62,9 @@ public class UsersController extends ApiController {
   public ResponseEntity<String> users() throws JsonProcessingException {
 
     Iterable<User> users = userRepository.findAll();
-    String body = mapper.writeValueAsString(users);
+    List<UserDTO> userDTOs =
+        StreamSupport.stream(users.spliterator(), false).map(this::userDTO).toList();
+    String body = mapper.writeValueAsString(userDTOs);
     return ResponseEntity.ok().body(body);
   }
 
@@ -138,45 +150,52 @@ public class UsersController extends ApiController {
   }
 
   /**
-   * This method allows an admin to toggle the admin status of a user. Will not toggle status of
-   * admin in adminEmails.
+   * This method allows an admin to toggle whether a user's email appears in the admin table. Will
+   * not toggle emails from adminEmails.
    *
    * @param id the id of the user to toggle
    * @return the updated user
    */
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PutMapping("/admin/toggleAdmin")
-  public User toggleAdminStatus(@RequestParam long id) {
+  public UserDTO toggleAdminStatus(@RequestParam long id) {
 
     User user =
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
     if (!adminEmails.contains(user.getEmail())) {
-      user.setAdmin(!user.isAdmin());
+      boolean isAdmin = adminRepository.existsByEmail(user.getEmail());
+      if (isAdmin) adminRepository.deleteByEmail(user.getEmail());
+      else adminRepository.save(new Admin(user.getEmail()));
     }
 
-    userRepository.save(user);
-
-    return user;
+    return userDTO(user);
   }
 
   /**
-   * This method allows an admin to toggle the moderator status of a user.
+   * This method allows an admin to toggle whether a user's email appears in the moderator table.
    *
    * @param id the id of the user to toggle
    * @return the updated user
    */
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PutMapping("/admin/toggleModerator")
-  public User toggleModeratorStatus(@RequestParam long id) {
+  public UserDTO toggleModeratorStatus(@RequestParam long id) {
 
     User user =
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
-    user.setModerator(!user.isModerator());
+    boolean isModerator = moderatorRepository.existsByEmail(user.getEmail());
+    if (isModerator) moderatorRepository.deleteByEmail(user.getEmail());
+    else moderatorRepository.save(new Moderator(user.getEmail()));
 
-    userRepository.save(user);
+    return userDTO(user);
+  }
 
-    return user;
+  private UserDTO userDTO(User user) {
+    String email = user.getEmail();
+    boolean isAdmin = adminEmails.contains(email) || adminRepository.existsByEmail(email);
+    boolean isModerator = moderatorRepository.existsByEmail(email);
+    return new UserDTO(user, isAdmin, isModerator);
   }
 }

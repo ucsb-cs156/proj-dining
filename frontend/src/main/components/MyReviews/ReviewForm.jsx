@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 
-export default function ReviewForm({ initialItemName, submitAction }) {
-  const [comments, setComments] = React.useState("");
-  const [stars, setStars] = React.useState(5);
-  const [dateServed, setDateServed] = React.useState(() => {
-    return new Date().toISOString().slice(0, 16); // Default to now, in YYYY-MM-DDTHH:mm format
-  });
+function dateTimeLocalValue(dateTime) {
+  return dateTime
+    ? dateTime.slice(0, 16)
+    : new Date().toISOString().slice(0, 16);
+}
+
+export default function ReviewForm({
+  initialItemName = "",
+  initialComments = "",
+  initialStars = 5,
+  initialDateServed,
+  submitAction,
+  submitButtonText = "Submit Review",
+}) {
+  const [comments, setComments] = React.useState(initialComments);
+  const [stars, setStars] = React.useState(initialStars);
+  const [dateServed, setDateServed] = React.useState(() =>
+    dateTimeLocalValue(initialDateServed),
+  );
+
+  useEffect(() => {
+    setComments(initialComments);
+    setStars(initialStars);
+    if (initialDateServed) {
+      setDateServed(dateTimeLocalValue(initialDateServed));
+    }
+  }, [initialComments, initialDateServed, initialStars]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,7 +88,7 @@ export default function ReviewForm({ initialItemName, submitAction }) {
         />
       </Form.Group>
 
-      <Button type="submit">Submit Review</Button>
+      <Button type="submit">{submitButtonText}</Button>
     </Form>
   );
 }

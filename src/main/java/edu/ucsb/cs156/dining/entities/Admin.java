@@ -1,5 +1,6 @@
 package edu.ucsb.cs156.dining.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,17 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Entity(name = "admins")
+@Entity
+@Table(name = "admins")
 public class Admin {
-  @Id private String email;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonIgnore
+  private Long id;
+
+  private String email;
+
+  public Admin(String email) {
+    this.email = email;
+  }
 }

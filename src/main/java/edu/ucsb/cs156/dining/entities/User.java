@@ -29,8 +29,6 @@ public class User {
   private boolean emailVerified;
   private String locale;
   private String hostedDomain;
-  private boolean admin;
-  private boolean moderator;
   private String alias;
   private String proposedAlias;
 
@@ -50,13 +48,5 @@ public class User {
       this.alias = "Anonymous User";
     }
     return this.alias;
-  }
-
-  public boolean isAdmin() {
-    return admin;
-  }
-
-  public boolean isModerator() {
-    return moderator;
   }
 }

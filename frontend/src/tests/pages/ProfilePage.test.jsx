@@ -40,6 +40,12 @@ describe("ProfilePage tests", () => {
     expect(
       screen.getByText("Welcome, pconrad.cis@gmail.com"),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Toggle Admin" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Toggle Moderator" }),
+    ).not.toBeInTheDocument();
   });
 
   test("renders correctly for admin user", async () => {

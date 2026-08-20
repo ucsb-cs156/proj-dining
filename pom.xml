@@ -160,9 +160,23 @@
       <version>4.29.2</version>
     </dependency>
 
+    <!-- Shared async jobs system: https://github.com/ucsb-cs156/lib-jobs -->
+    <dependency>
+      <groupId>com.github.ucsb-cs156</groupId>
+      <artifactId>lib-jobs</artifactId>
+      <version>v0.2.0</version>
+    </dependency>
+
   </dependencies>
 
   <!-- (24) <repositories/> -->
+  <repositories>
+    <!-- JitPack builds lib-jobs straight from its git tags -->
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
   <!-- (25) <pluginRepositories/> -->
   <!-- (26) <build/> -->
 
@@ -474,6 +488,7 @@
                 </goals>
                 <configuration>
                   <nodeVersion>${node.version}</nodeVersion>
+                  <skip>${frontend.dependency.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -483,6 +498,7 @@
                 </goals>
                 <configuration>
                   <arguments>ci</arguments>
+                  <skip>${frontend.dependency.skip}</skip>
                 </configuration>
               </execution>
               <execution>
@@ -492,6 +508,7 @@
                 </goals>
                 <configuration>
                   <arguments>run build</arguments>
+                  <skip>${frontend.build.skip}</skip>
                 </configuration>
               </execution>
             </executions>
@@ -501,6 +518,62 @@
             <version>${maven-antrun-plugin.version}</version>
             <executions>
               <execution>
+                <id>check-frontend-up-to-date</id>
+                <phase>initialize</phase>
+                <configuration>
+                  <exportAntProperties>true</exportAntProperties>
+                  <target>
+                    <mkdir dir="${project.build.directory}/frontend" />
+                    <uptodate property="frontend.dependency.skip"
+                              targetfile="${project.build.directory}/frontend/dependencies.timestamp">
+                      <srcfiles dir="${project.basedir}/frontend">
+                        <include name="package.json" />
+                        <include name="package-lock.json" />
+                      </srcfiles>
+                    </uptodate>
+
+                    <uptodate property="frontend.build.skip"
+                              targetfile="${project.build.directory}/frontend/build.timestamp">
+                      <srcfiles dir="${project.basedir}/frontend">
+                        <include name="src/**/*" />
+                        <include name="index.html" />
+                        <include name="package.json" />
+                        <include name="package-lock.json" />
+                        <include name="vite.config.js" />
+                      </srcfiles>
+                    </uptodate>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>touch-dependencies-timestamp</id>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <target unless="frontend.dependency.skip">
+                    <touch file="${project.build.directory}/frontend/dependencies.timestamp" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>touch-build-timestamp</id>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <target unless="frontend.build.skip">
+                    <touch file="${project.build.directory}/frontend/build.timestamp" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>copy-frontend-build</id>
                 <phase>generate-resources</phase>
                 <configuration>
                   <target>

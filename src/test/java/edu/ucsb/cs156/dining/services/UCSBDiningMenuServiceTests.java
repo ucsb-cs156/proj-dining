@@ -29,6 +29,9 @@ public class UCSBDiningMenuServiceTests {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
+  @Value("${app.ucsb.api.host}")
+  private String apiHost;
+
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
   @MockBean private WiremockService wiremockService;
@@ -45,6 +48,7 @@ public class UCSBDiningMenuServiceTests {
     String diningCommonCode = "ortega";
 
     String expectedURL = UCSBDiningMenuService.ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT;
+    expectedURL = expectedURL.replace("{apiHost}", apiHost);
     expectedURL = expectedURL.replace("{date-time}", dateTime);
     expectedURL = expectedURL.replace("{dining-common-code}", diningCommonCode);
 
@@ -67,6 +71,7 @@ public class UCSBDiningMenuServiceTests {
     String diningCommonCode = "carrillo";
 
     String expectedURL = UCSBDiningMenuService.ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT;
+    expectedURL = expectedURL.replace("{apiHost}", apiHost);
     expectedURL = expectedURL.replace("{date-time}", dateTime);
     expectedURL = expectedURL.replace("{dining-common-code}", diningCommonCode);
 
@@ -89,6 +94,7 @@ public class UCSBDiningMenuServiceTests {
     String diningCommonCode = "carrillo";
 
     String expectedURL = UCSBDiningMenuService.ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT;
+    expectedURL = expectedURL.replace("{apiHost}", apiHost);
     expectedURL = expectedURL.replace("{date-time}", dateTime);
     expectedURL = expectedURL.replace("{dining-common-code}", diningCommonCode);
 
@@ -111,6 +117,7 @@ public class UCSBDiningMenuServiceTests {
     String diningCommonCode = "carrillo";
 
     String expectedURL = UCSBDiningMenuService.ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT;
+    expectedURL = expectedURL.replace("{apiHost}", apiHost);
     expectedURL = expectedURL.replace("{date-time}", dateTime);
     expectedURL = expectedURL.replace("{dining-common-code}", diningCommonCode);
 

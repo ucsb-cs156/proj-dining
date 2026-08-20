@@ -23,6 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 public class ReviewController extends ApiController {
+
+  private boolean hasReviewerComments(String reviewerComments) {
+    return reviewerComments != null && !reviewerComments.trim().isEmpty();
+  }
 
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Map<String, String>> handleValidationExceptions(
@@ -118,9 +123,10 @@ public class ReviewController extends ApiController {
     Review review = new Review();
     review.setDateItemServed(dateItemServed);
 
-    // Ensures content of truly empty and sets to null if so
-    if (reviewerComments != null && !reviewerComments.trim().isEmpty()) {
+    if (hasReviewerComments(reviewerComments)) {
       review.setReviewerComments(reviewerComments);
+    } else {
+      review.setStatus(ModerationStatus.APPROVED);
     }
 
     // Ensure user inputs rating 1-5
@@ -134,10 +140,6 @@ public class ReviewController extends ApiController {
         menuItemRepository
             .findById(itemId)
             .orElseThrow(() -> new EntityNotFoundException(MenuItem.class, itemId));
-
-    if (review.getReviewerComments() == null) {
-      review.setStatus(ModerationStatus.APPROVED);
-    }
 
     review.setItem(reviewedItem);
     CurrentUser user = getCurrentUser();
@@ -182,8 +184,7 @@ public class ReviewController extends ApiController {
       oldReview.setItemsStars(incoming.getItemStars());
     }
 
-    if (incoming.getReviewerComments() != null
-        && !incoming.getReviewerComments().trim().isEmpty()) {
+    if (hasReviewerComments(incoming.getReviewerComments())) {
       oldReview.setReviewerComments(incoming.getReviewerComments());
       oldReview.setStatus(ModerationStatus.AWAITING_REVIEW);
     } else {
@@ -209,8 +210,13 @@ public class ReviewController extends ApiController {
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException(Review.class, id));
 
-    User current = getCurrentUser().getUser();
-    if (current.getId() != review.getReviewer().getId() && !current.isAdmin()) {
+    CurrentUser currentUser = getCurrentUser();
+    User current = currentUser.getUser();
+    boolean currentUserIsAdmin =
+        currentUser.getRoles().stream()
+            .map(GrantedAuthority::getAuthority)
+            .anyMatch("ROLE_ADMIN"::equals);
+    if (current.getId() != review.getReviewer().getId() && !currentUserIsAdmin) {
       throw new AccessDeniedException("No permission to delete review");
     }
 

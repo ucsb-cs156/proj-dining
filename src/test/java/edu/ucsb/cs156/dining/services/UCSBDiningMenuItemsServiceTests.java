@@ -28,6 +28,9 @@ public class UCSBDiningMenuItemsServiceTests {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
+  @Value("${app.ucsb.api.host}")
+  private String apiHost;
+
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
   @MockBean private WiremockService wiremockService;
@@ -47,6 +50,7 @@ public class UCSBDiningMenuItemsServiceTests {
     String mealCode = "lunch";
 
     String expectedURL = UCSBDiningMenuItemsService.ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;
+    expectedURL = expectedURL.replace("{apiHost}", apiHost);
     expectedURL = expectedURL.replace("{date-time}", dateTime);
     expectedURL = expectedURL.replace("{dining-common-code}", diningCommonCode);
     expectedURL = expectedURL.replace("{meal-code}", mealCode);

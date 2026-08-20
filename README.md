@@ -31,6 +31,8 @@ will likely see an error such as:
 
 You will also need a value for `UCSB_API_KEY`; you can obtain a value for that by following the instructions at this link: <https://ucsb-cs156.github.io/topics/apis/apis_ucsb_developer_api.html>
 
+Optionally, you can set `UCSB_DINING_API_HOST` to override the host used for the UCSB Dining API (default: `https://api.ucsb.edu`), e.g. to point at a caching proxy instead of the UCSB API directly.
+
 # Getting Started on localhost
 
 * Open *two separate terminal windows*  
@@ -154,3 +156,23 @@ To run full mutation test coverage, as usual, use:
 ```
 mvn pitest:mutationCoverage
 ```
+
+## Setting the Node version
+
+The `frontend/nvm-pj.sh` script reads the required Node version from `frontend/package.json` and uses [nvm](https://github.com/nvm-sh/nvm) to switch to that version.
+
+Because the script modifies your current shell environment, you **must source it** rather than run it directly:
+
+```
+cd frontend
+source ./nvm-pj.sh
+```
+
+or equivalently:
+
+```
+cd frontend
+. ./nvm-pj.sh
+```
+
+Running it without sourcing (e.g. `./nvm-pj.sh`) will not affect your current shell session.

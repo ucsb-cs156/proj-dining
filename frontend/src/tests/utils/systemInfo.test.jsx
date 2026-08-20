@@ -8,13 +8,19 @@ import { waitFor } from "@testing-library/react";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import { vi } from "vitest";
+import { vi, afterEach } from "vitest";
 
 vi.mock("react-router");
 const { _MemoryRouter } = await vi.importActual("react-router");
 
 describe("utils/systemInfo tests", () => {
   describe("useSystemInfo tests", () => {
+    let axiosMock;
+
+    afterEach(() => {
+      axiosMock?.reset();
+    });
+
     test("useSystemInfo retrieves initial data", async () => {
       const queryClient = new QueryClient({
         defaultOptions: {
@@ -30,7 +36,7 @@ describe("utils/systemInfo tests", () => {
         </QueryClientProvider>
       );
 
-      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
       axiosMock.onGet("/api/systemInfo").timeoutOnce();
       axiosMock
         .onGet("/api/systemInfo")
@@ -59,16 +65,17 @@ describe("utils/systemInfo tests", () => {
         </QueryClientProvider>
       );
 
-      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
       axiosMock
         .onGet("/api/systemInfo")
         .reply(200, systemInfoFixtures.showingBoth);
 
       const { result } = renderHook(() => useSystemInfo(), { wrapper });
 
-      await waitFor(() => result.current.isFetched);
+      await waitFor(() => {
+        expect(result.current.data).toEqual(systemInfoFixtures.showingBoth);
+      });
 
-      expect(result.current.data).toEqual(systemInfoFixtures.showingBoth);
       queryClient.clear();
     });
 
@@ -80,7 +87,7 @@ describe("utils/systemInfo tests", () => {
         </QueryClientProvider>
       );
 
-      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
       axiosMock.onGet("/api/systemInfo").reply(404);
 
       const restoreConsole = mockConsole();

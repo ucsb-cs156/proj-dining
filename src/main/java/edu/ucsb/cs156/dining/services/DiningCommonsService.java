@@ -36,7 +36,10 @@ public class DiningCommonsService {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
-  public static final String ENDPOINT = "https://api.ucsb.edu/dining/commons/v1/";
+  @Value("${app.ucsb.api.host}")
+  private String apiHost;
+
+  public static final String ENDPOINT = "{apiHost}/dining/commons/v1/";
 
   private final RestTemplate restTemplate;
 
@@ -54,9 +57,10 @@ public class DiningCommonsService {
 
     log.info("Fetching dining commons from UCSB API");
 
+    String url = ENDPOINT.replace("{apiHost}", apiHost);
+
     HttpEntity<String> entity = new HttpEntity<>(headers);
-    ResponseEntity<String> re =
-        restTemplate.exchange(ENDPOINT, HttpMethod.GET, entity, String.class);
+    ResponseEntity<String> re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
     String retBody = re.getBody();
     List<DiningCommons> commons =

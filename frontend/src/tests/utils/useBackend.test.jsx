@@ -17,17 +17,58 @@ vi.mock("react-toastify", async (importOriginal) => {
 });
 
 describe("utils/useBackend tests", () => {
+  let axiosMock;
+
   beforeEach(() => {
     vi.spyOn(console, "error");
     console.error.mockImplementation(() => null);
   });
 
   afterEach(() => {
+    axiosMock?.restore();
+    axiosMock = undefined;
     console.error.mockRestore();
     mockToast.mockClear();
   });
 
   describe("utils/useBackend useBackend tests", () => {
+    test("useBackend returns data and status from a successful request", async () => {
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+      const wrapper = ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      axiosMock = new AxiosMockAdapter(axios);
+      const users = [{ id: 1, email: "cgaucho@ucsb.edu" }];
+
+      axiosMock.onGet("/api/admin/users").reply(200, users);
+
+      const { result } = renderHook(
+        () =>
+          useBackend(
+            ["/api/admin/users"],
+            { method: "GET", url: "/api/admin/users" },
+            [],
+          ),
+        { wrapper },
+      );
+
+      // initialData [] makes isSuccess true before the fetch completes; wait for data
+      await waitFor(() => {
+        expect(result.current.data).toEqual(users);
+      });
+
+      expect(result.current.status).toBe(200);
+    });
+
     test("useBackend handles 404 error correctly", async () => {
       // See: https://react-query.tanstack.com/guides/testing#turn-off-retries
       const queryClient = new QueryClient({
@@ -44,7 +85,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      var axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
 
       axiosMock.onGet("/api/admin/users").reply(404, {});
 
@@ -86,7 +127,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      var axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
 
       axiosMock.onPost("/api/recommendationrequest/post").reply(202, {
         id: 17,
@@ -164,7 +205,7 @@ describe("utils/useBackend tests", () => {
         </QueryClientProvider>
       );
 
-      const axiosMock = new AxiosMockAdapter(axios);
+      axiosMock = new AxiosMockAdapter(axios);
       axiosMock.onPost("/api/recommendationrequest/post").reply(404);
 
       const objectToAxiosParams = (request) => ({

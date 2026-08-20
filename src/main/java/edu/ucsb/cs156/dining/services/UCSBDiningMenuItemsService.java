@@ -27,6 +27,9 @@ public class UCSBDiningMenuItemsService {
   @Value("${app.ucsb.api.consumer_key}")
   private String apiKey;
 
+  @Value("${app.ucsb.api.host}")
+  private String apiHost;
+
   private RestTemplate restTemplate = new RestTemplate();
 
   public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {
@@ -34,7 +37,7 @@ public class UCSBDiningMenuItemsService {
   }
 
   public static final String ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT =
-      "https://api.ucsb.edu/dining/menu/v1/{date-time}/{dining-common-code}/{meal-code}";
+      "{apiHost}/dining/menu/v1/{date-time}/{dining-common-code}/{meal-code}";
 
   /**
    * Create a List of Entree from json representation
@@ -55,6 +58,7 @@ public class UCSBDiningMenuItemsService {
 
     HttpEntity<String> entity = new HttpEntity<>(headers);
     String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;
+    url = url.replace("{apiHost}", apiHost);
     url = url.replace("{date-time}", dateTime);
     url = url.replace("{dining-common-code}", diningCommonCode);
     url = url.replace("{meal-code}", mealCode);
