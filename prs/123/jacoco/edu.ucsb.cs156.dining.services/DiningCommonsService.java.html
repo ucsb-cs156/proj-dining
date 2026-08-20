@@ -36,33 +36,37 @@ public class DiningCommonsService {
   @Value(&quot;${app.ucsb.api.consumer_key}&quot;)
   private String apiKey;
 
-  public static final String ENDPOINT = &quot;https://api.ucsb.edu/dining/commons/v1/&quot;;
+  @Value(&quot;${app.ucsb.api.host}&quot;)
+  private String apiHost;
+
+  public static final String ENDPOINT = &quot;{apiHost}/dining/commons/v1/&quot;;
 
   private final RestTemplate restTemplate;
 
-<span class="fc" id="L43">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {</span>
-<span class="fc" id="L44">    restTemplate = restTemplateBuilder.build();</span>
-<span class="fc" id="L45">  }</span>
+<span class="fc" id="L46">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {</span>
+<span class="fc" id="L47">    restTemplate = restTemplateBuilder.build();</span>
+<span class="fc" id="L48">  }</span>
 
   @Cacheable(&quot;diningCommons&quot;)
   public List&lt;DiningCommons&gt; get() throws JsonProcessingException {
 
-<span class="fc" id="L50">    HttpHeaders headers = new HttpHeaders();</span>
-<span class="fc" id="L51">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
-<span class="fc" id="L52">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
-<span class="fc" id="L53">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L53">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L54">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L55">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L56">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
 
-<span class="fc" id="L55">    log.info(&quot;Fetching dining commons from UCSB API&quot;);</span>
+<span class="fc" id="L58">    log.info(&quot;Fetching dining commons from UCSB API&quot;);</span>
 
-<span class="fc" id="L57">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
-<span class="fc" id="L58">    ResponseEntity&lt;String&gt; re =</span>
-<span class="fc" id="L59">        restTemplate.exchange(ENDPOINT, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L60">    String url = ENDPOINT.replace(&quot;{apiHost}&quot;, apiHost);</span>
 
-<span class="fc" id="L61">    String retBody = re.getBody();</span>
-<span class="fc" id="L62">    List&lt;DiningCommons&gt; commons =</span>
-<span class="fc" id="L63">        mapper.readValue(retBody, new TypeReference&lt;List&lt;DiningCommons&gt;&gt;() {});</span>
+<span class="fc" id="L62">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
+<span class="fc" id="L63">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
 
-<span class="fc" id="L65">    return commons;</span>
+<span class="fc" id="L65">    String retBody = re.getBody();</span>
+<span class="fc" id="L66">    List&lt;DiningCommons&gt; commons =</span>
+<span class="fc" id="L67">        mapper.readValue(retBody, new TypeReference&lt;List&lt;DiningCommons&gt;&gt;() {});</span>
+
+<span class="fc" id="L69">    return commons;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

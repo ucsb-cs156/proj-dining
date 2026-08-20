@@ -29,8 +29,6 @@ public class User {
   private boolean emailVerified;
   private String locale;
   private String hostedDomain;
-  private boolean admin;
-  private boolean moderator;
   private String alias;
   private String proposedAlias;
 
@@ -46,18 +44,10 @@ public class User {
   private List&lt;Review&gt; reviews;
 
   public String getAlias() {
-<span class="fc bfc" id="L49" title="All 2 branches covered.">    if (this.alias == null) {</span>
-<span class="fc" id="L50">      this.alias = &quot;Anonymous User&quot;;</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">    if (this.alias == null) {</span>
+<span class="fc" id="L48">      this.alias = &quot;Anonymous User&quot;;</span>
     }
-<span class="fc" id="L52">    return this.alias;</span>
-  }
-
-  public boolean isAdmin() {
-<span class="fc" id="L56">    return admin;</span>
-  }
-
-  public boolean isModerator() {
-<span class="fc" id="L60">    return moderator;</span>
+<span class="fc" id="L50">    return this.alias;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

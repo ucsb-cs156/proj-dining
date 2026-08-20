@@ -64,16 +64,14 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
   @DeleteMapping(&quot;/delete&quot;)
   public ResponseEntity&lt;String&gt; deleteInstructor(@RequestParam String email) {
-<span class="fc" id="L67">    Moderator moderator = moderatorRepository.findById(email).orElse(null);</span>
-
-<span class="fc bfc" id="L69" title="All 2 branches covered.">    if (moderator == null) {</span>
-<span class="fc" id="L70">      return ResponseEntity.status(404)</span>
-<span class="fc" id="L71">          .body(String.format(&quot;Moderator with email %s not found.&quot;, email));</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    if (!moderatorRepository.existsByEmail(email)) {</span>
+<span class="fc" id="L68">      return ResponseEntity.status(404)</span>
+<span class="fc" id="L69">          .body(String.format(&quot;Moderator with email %s not found.&quot;, email));</span>
     }
 
-<span class="fc" id="L74">    moderatorRepository.delete(moderator);</span>
-<span class="fc" id="L75">    return ResponseEntity.status(200)</span>
-<span class="fc" id="L76">        .body(String.format(&quot;Moderator with email %s deleted.&quot;, email));</span>
+<span class="fc" id="L72">    moderatorRepository.deleteByEmail(email);</span>
+<span class="fc" id="L73">    return ResponseEntity.status(200)</span>
+<span class="fc" id="L74">        .body(String.format(&quot;Moderator with email %s deleted.&quot;, email));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
