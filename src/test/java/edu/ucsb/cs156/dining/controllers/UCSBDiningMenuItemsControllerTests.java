@@ -75,6 +75,37 @@ public class UCSBDiningMenuItemsControllerTests extends ControllerTestCase {
   }
 
   @Test
+  public void get_menu_items_deduplicates_duplicate_entrees() throws Exception {
+    String date = "2026-03-11";
+    String commons = "de-la-guerra";
+    String mealCode = "breakfast";
+
+    Entree entree = Entree.builder().name("waffles").station("self-serve").build();
+    List<Entree> entrees = List.of(entree, entree);
+
+    List<MenuItemDto> projectedMenuItems =
+        new ArrayList<>(
+            List.of(new MenuItemDto(1L, commons, mealCode, "waffles", "self-serve", 4.0)));
+
+    when(ucsbDiningMenuItemsService.get(date, commons, mealCode)).thenReturn(entrees);
+    when(menuItemRepository.projectExistingEntrees(eq(commons), eq(mealCode), eq(entrees)))
+        .thenReturn(projectedMenuItems);
+
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/diningcommons/" + date + "/" + commons + "/" + mealCode))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(menuItemRepository, times(1))
+        .insertIfNotExists(commons, mealCode, "waffles", "self-serve");
+
+    String expectedJson = mapper.writeValueAsString(projectedMenuItems);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @Test
   public void get_menu_item_by_id_returns_item_when_present() throws Exception {
     MenuItem menuItem =
         MenuItem.builder()
