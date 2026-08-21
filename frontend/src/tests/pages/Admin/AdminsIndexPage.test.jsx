@@ -56,6 +56,7 @@ describe("AdminsIndexPage tests", () => {
     expect(screen.getByTestId("AdminsIndexPage-add-button")).toHaveStyle({
       float: "right",
     });
+    expect(screen.queryByTestId("RoleEmailAddModal")).not.toBeInTheDocument();
   });
 
   test("clicking Add Admin opens the modal, and a successful post shows a toast and closes it", async () => {
