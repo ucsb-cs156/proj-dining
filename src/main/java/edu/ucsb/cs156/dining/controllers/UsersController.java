@@ -2,8 +2,6 @@ package edu.ucsb.cs156.dining.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.ucsb.cs156.dining.entities.Admin;
-import edu.ucsb.cs156.dining.entities.Moderator;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.CurrentUser;
@@ -147,49 +145,6 @@ public class UsersController extends ApiController {
     userRepository.save(user);
 
     return user;
-  }
-
-  /**
-   * This method allows an admin to toggle whether a user's email appears in the admin table. Will
-   * not toggle emails from adminEmails.
-   *
-   * @param id the id of the user to toggle
-   * @return the updated user
-   */
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @PutMapping("/admin/toggleAdmin")
-  public UserDTO toggleAdminStatus(@RequestParam long id) {
-
-    User user =
-        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
-
-    if (!adminEmails.contains(user.getEmail())) {
-      boolean isAdmin = adminRepository.existsByEmail(user.getEmail());
-      if (isAdmin) adminRepository.deleteByEmail(user.getEmail());
-      else adminRepository.save(new Admin(user.getEmail()));
-    }
-
-    return userDTO(user);
-  }
-
-  /**
-   * This method allows an admin to toggle whether a user's email appears in the moderator table.
-   *
-   * @param id the id of the user to toggle
-   * @return the updated user
-   */
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @PutMapping("/admin/toggleModerator")
-  public UserDTO toggleModeratorStatus(@RequestParam long id) {
-
-    User user =
-        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
-
-    boolean isModerator = moderatorRepository.existsByEmail(user.getEmail());
-    if (isModerator) moderatorRepository.deleteByEmail(user.getEmail());
-    else moderatorRepository.save(new Moderator(user.getEmail()));
-
-    return userDTO(user);
   }
 
   private UserDTO userDTO(User user) {

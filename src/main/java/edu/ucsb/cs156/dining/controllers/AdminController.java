@@ -8,12 +8,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +51,9 @@ public class AdminController extends ApiController {
   @PostMapping("/post")
   public Admin postAdmin(@Parameter(name = "email") @RequestParam String email) {
     String convertedEmail = CanonicalFormConverter.convertToValidEmail(email);
+    if (adminRepository.findByEmail(convertedEmail).isPresent()) {
+      throw new IllegalArgumentException("%s is already an admin".formatted(convertedEmail));
+    }
     Admin admin = new Admin(convertedEmail);
     Admin savedAdmin = adminRepository.save(admin);
     return savedAdmin;
@@ -91,5 +97,11 @@ public class AdminController extends ApiController {
     }
     adminRepository.deleteByEmail(email);
     return genericMessage("Admin with id %s deleted".formatted(email));
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<Map<String, String>> handleIllegalArgumentException(
+      IllegalArgumentException ex) {
+    return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
   }
 }

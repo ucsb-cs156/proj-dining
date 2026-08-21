@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -102,6 +104,23 @@ public class AdminControllerTests extends ControllerTestCase {
     String expectedJson = mapper.writeValueAsString(admin);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void an_admin_user_cannot_post_a_duplicate_admin() throws Exception {
+    Admin admin = Admin.builder().email("acdamstedt@ucsb.edu").build();
+    when(adminRepository.findByEmail("acdamstedt@ucsb.edu")).thenReturn(Optional.of(admin));
+
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/admin/post?email=acdamstedt@ucsb.edu").with(csrf()))
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+    verify(adminRepository, times(0)).save(any());
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("acdamstedt@ucsb.edu is already an admin", json.get("message"));
   }
 
   @WithMockUser(roles = {"ADMIN"})

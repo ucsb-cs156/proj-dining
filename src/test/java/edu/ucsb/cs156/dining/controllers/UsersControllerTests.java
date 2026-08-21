@@ -11,8 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
-import edu.ucsb.cs156.dining.entities.Admin;
-import edu.ucsb.cs156.dining.entities.Moderator;
 import edu.ucsb.cs156.dining.entities.User;
 import edu.ucsb.cs156.dining.models.UserDTO;
 import edu.ucsb.cs156.dining.repositories.AdminRepository;
@@ -61,22 +59,25 @@ public class UsersControllerTests extends ControllerTestCase {
     // arrange
     User u1 = User.builder().id(1L).email("user1@example.org").build();
     User u2 = User.builder().id(2L).email("user2@example.org").build();
+    User u3 = User.builder().id(3L).email("superadmin@example.org").build();
     User u = currentUserService.getCurrentUser().getUser();
 
     ArrayList<User> expectedUsers = new ArrayList<>();
-    expectedUsers.addAll(Arrays.asList(u1, u2, u));
+    expectedUsers.addAll(Arrays.asList(u1, u2, u3, u));
 
     when(userRepository.findAll()).thenReturn(expectedUsers);
     when(adminRepository.existsByEmail(u1.getEmail())).thenReturn(false);
     when(moderatorRepository.existsByEmail(u1.getEmail())).thenReturn(false);
     when(adminRepository.existsByEmail(u2.getEmail())).thenReturn(true);
     when(moderatorRepository.existsByEmail(u2.getEmail())).thenReturn(false);
+    when(moderatorRepository.existsByEmail(u3.getEmail())).thenReturn(false);
     when(adminRepository.existsByEmail(u.getEmail())).thenReturn(false);
     when(moderatorRepository.existsByEmail(u.getEmail())).thenReturn(true);
     List<UserDTO> expectedUserDTOs =
         Arrays.asList(
             new UserDTO(u1, false, false),
             new UserDTO(u2, true, false),
+            new UserDTO(u3, true, false),
             new UserDTO(u, false, true));
     String expectedJson = mapper.writeValueAsString(expectedUserDTOs);
 
@@ -90,6 +91,8 @@ public class UsersControllerTests extends ControllerTestCase {
     verify(moderatorRepository, times(1)).existsByEmail(u1.getEmail());
     verify(adminRepository, times(1)).existsByEmail(u2.getEmail());
     verify(moderatorRepository, times(1)).existsByEmail(u2.getEmail());
+    verify(moderatorRepository, times(1)).existsByEmail(u3.getEmail());
+    verify(adminRepository, times(0)).existsByEmail(u3.getEmail());
     verify(adminRepository, times(1)).existsByEmail(u.getEmail());
     verify(moderatorRepository, times(1)).existsByEmail(u.getEmail());
     String responseString = response.getResponse().getContentAsString();
@@ -347,174 +350,6 @@ public class UsersControllerTests extends ControllerTestCase {
 
     // assert
     assertEquals("Chipo", user.getAlias());
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_cannot_toggle_admin_of_nonexistent_user() throws Exception {
-    // arrange
-    when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(1L)).with(csrf()))
-            .andExpect(status().isNotFound())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(1L);
-    Map<String, Object> json = responseToJson(response);
-    assertEquals("User with id 1 not found", json.get("message"));
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_add_user_to_admin_table() throws Exception {
-    // arrange
-    User user = User.builder().id(7L).email("user@example.org").build();
-    Admin admin = new Admin("user@example.org");
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
-    when(adminRepository.existsByEmail("user@example.org")).thenReturn(false, true);
-    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(false);
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(7L)).with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    verify(adminRepository, times(2)).existsByEmail("user@example.org");
-    verify(adminRepository, times(1)).save(admin);
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(new UserDTO(user, true, false));
-    assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_remove_user_from_admin_table() throws Exception {
-    // arrange
-    User user = User.builder().id(7L).email("user@example.org").build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
-    when(adminRepository.existsByEmail("user@example.org")).thenReturn(true, false);
-    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(false);
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(7L)).with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    verify(adminRepository, times(2)).existsByEmail("user@example.org");
-    verify(adminRepository, times(1)).deleteByEmail("user@example.org");
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(new UserDTO(user, false, false));
-    assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_cannot_toggle_admin_of_super_admin() throws Exception {
-    // arrange
-    User user = User.builder().id(7L).email("superadmin@example.org").build();
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
-    when(moderatorRepository.existsByEmail("superadmin@example.org")).thenReturn(false);
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleAdmin").param("id", String.valueOf(7L)).with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(new UserDTO(user, true, false));
-    assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_cannot_toggle_moderator_of_nonexistent_user() throws Exception {
-    // arrange
-    when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleModerator").param("id", String.valueOf(1L)).with(csrf()))
-            .andExpect(status().isNotFound())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(1L);
-    Map<String, Object> json = responseToJson(response);
-    assertEquals("User with id 1 not found", json.get("message"));
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_add_user_to_moderator_table() throws Exception {
-    // arrange
-    User user = User.builder().id(7L).email("user@example.org").build();
-    Moderator moderator = new Moderator("user@example.org");
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
-    when(adminRepository.existsByEmail("user@example.org")).thenReturn(false);
-    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(false, true);
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleModerator").param("id", String.valueOf(7L)).with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    verify(moderatorRepository, times(2)).existsByEmail("user@example.org");
-    verify(moderatorRepository, times(1)).save(moderator);
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(new UserDTO(user, false, true));
-    assertEquals(expectedJson, responseString);
-  }
-
-  @Test
-  @WithMockUser(roles = {"ADMIN"})
-  public void admin_can_remove_user_from_moderator_table() throws Exception {
-    // arrange
-    User user = User.builder().id(7L).email("user@example.org").build();
-    Moderator moderator = new Moderator("user@example.org");
-
-    when(userRepository.findById(7L)).thenReturn(Optional.of(user));
-    when(adminRepository.existsByEmail("user@example.org")).thenReturn(false);
-    when(moderatorRepository.existsByEmail("user@example.org")).thenReturn(true, false);
-
-    // act
-    MvcResult response =
-        mockMvc
-            .perform(put("/api/admin/toggleModerator").param("id", String.valueOf(7L)).with(csrf()))
-            .andExpect(status().isOk())
-            .andReturn();
-
-    // assert
-    verify(userRepository, times(1)).findById(7L);
-    verify(moderatorRepository, times(2)).existsByEmail("user@example.org");
-    verify(moderatorRepository, times(1)).deleteByEmail("user@example.org");
-    String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(new UserDTO(user, false, false));
-    assertEquals(expectedJson, responseString);
   }
 
   @Test

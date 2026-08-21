@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
-import AdminUsersPage from "main/pages/AdminUsersPage";
-import ModeratorsCreatePage from "main/pages/Admin/ModeratorsCreatePage";
+import AdminsIndexPage from "main/pages/Admin/AdminsIndexPage";
+import ModeratorsIndexPage from "main/pages/Admin/ModeratorsIndexPage";
 import DeveloperPage from "main/pages/DeveloperPage";
 
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
@@ -40,11 +40,11 @@ function App() {
         <Route exact path="/profile" element={<ProfilePage />} />
         {hasRole(currentUser, "ROLE_ADMIN") && (
           <>
-            <Route exact path="/admin/users" element={<AdminUsersPage />} />
+            <Route exact path="/admin/admins" element={<AdminsIndexPage />} />
             <Route
               exact
-              path="/admin/moderators/create"
-              element={<ModeratorsCreatePage />}
+              path="/admin/moderators"
+              element={<ModeratorsIndexPage />}
             />
             <Route exact path="/admin/developer" element={<DeveloperPage />} />
           </>

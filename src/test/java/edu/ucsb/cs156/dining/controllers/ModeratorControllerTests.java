@@ -7,10 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import edu.ucsb.cs156.dining.ControllerTestCase;
 import edu.ucsb.cs156.dining.entities.Moderator;
@@ -19,6 +17,9 @@ import edu.ucsb.cs156.dining.repositories.UserRepository;
 import edu.ucsb.cs156.dining.testconfig.TestConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -31,140 +32,168 @@ import org.springframework.test.web.servlet.MvcResult;
 public class ModeratorControllerTests extends ControllerTestCase {
 
   @MockitoBean ModeratorRepository moderatorRepository;
+
   @MockitoBean UserRepository userRepository;
 
-  // Tests for the POST endpoint
+  // Authorization tests for post
+
   @Test
   public void logged_out_users_cannot_post() throws Exception {
-    mockMvc
-        .perform(post("/api/admin/moderators/post"))
-        .andExpect(status().is(403)); // logged out users cannot post
+    mockMvc.perform(post("/api/admin/moderators/post")).andExpect(status().is(403));
   }
 
   @WithMockUser(roles = {"USER"})
   @Test
-  public void logged_in_users_cannot_post() throws Exception {
-    mockMvc
-        .perform(post("/api/admin/moderators/post"))
-        .andExpect(status().is(403)); // logged in users cannot post
+  public void logged_in_regular_users_cannot_post() throws Exception {
+    mockMvc.perform(post("/api/admin/moderators/post")).andExpect(status().is(403));
+  }
+
+  // Authorization tests for get all
+
+  @Test
+  public void logged_out_users_cannot_get_all() throws Exception {
+    mockMvc.perform(get("/api/admin/moderators/all")).andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_users_cannot_get_all() throws Exception {
+    mockMvc.perform(get("/api/admin/moderators/all")).andExpect(status().is(403));
   }
 
   @WithMockUser(roles = {"ADMIN"})
   @Test
-  public void logged_in_admins_can_post() throws Exception {
-    // arrage
-    Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
-    when(moderatorRepository.findAll()).thenReturn(new ArrayList<>(Arrays.asList(moderator)));
+  public void logged_in_admin_can_get_all() throws Exception {
+    mockMvc.perform(get("/api/admin/moderators/all")).andExpect(status().is(200));
+  }
 
-    // act
+  // Authorization tests for delete
+
+  @Test
+  public void logged_out_users_cannot_delete() throws Exception {
+    mockMvc
+        .perform(delete("/api/admin/moderators/delete?email=someone@gmail.com"))
+        .andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_regular_users_cannot_delete() throws Exception {
+    mockMvc
+        .perform(delete("/api/admin/moderators/delete?email=someone@gmail.com"))
+        .andExpect(status().is(403));
+  }
+
+  // Functionality tests
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void an_admin_user_can_post_a_new_moderator() throws Exception {
+    Moderator moderator = Moderator.builder().email("newmod@ucsb.edu").build();
+    when(moderatorRepository.save(eq(moderator))).thenReturn(moderator);
+
     MvcResult response =
         mockMvc
-            .perform(post("/api/admin/moderators/post?email=ins@ucsb.edu").with(csrf()))
+            .perform(post("/api/admin/moderators/post?email=newmod@ucsb.edu").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
-    // assert
-    verify(moderatorRepository, times(1)).save(eq(moderator));
+    verify(moderatorRepository, times(1)).save(moderator);
     String expectedJson = mapper.writeValueAsString(moderator);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
 
-  // Tests for the GET endpoint
+  @WithMockUser(roles = {"ADMIN"})
   @Test
-  public void logged_out_users_cannot_get() throws Exception {
-    mockMvc
-        .perform(get("/api/admin/moderators/get"))
-        .andExpect(status().is(403)); // logged out users cannot get
-  }
+  public void an_admin_user_cannot_post_a_duplicate_moderator() throws Exception {
+    Moderator moderator = Moderator.builder().email("newmod@ucsb.edu").build();
+    when(moderatorRepository.findByEmail("newmod@ucsb.edu")).thenReturn(Optional.of(moderator));
 
-  @WithMockUser(roles = {"USER"})
-  @Test
-  public void logged_in_users_cannot_get() throws Exception {
-    mockMvc
-        .perform(get("/api/admin/moderators/get"))
-        .andExpect(status().is(403)); // logged in users cannot get
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/admin/moderators/post?email=newmod@ucsb.edu").with(csrf()))
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+    verify(moderatorRepository, times(0)).save(any());
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("newmod@ucsb.edu is already a moderator", json.get("message"));
   }
 
   @WithMockUser(roles = {"ADMIN"})
   @Test
-  public void logged_in_admins_can_get() throws Exception {
-    // arrage
-    Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
-    ArrayList<Moderator> expectedModerators = new ArrayList<>();
-    expectedModerators.addAll(Arrays.asList(moderator));
-    when(moderatorRepository.findAll()).thenReturn(new ArrayList<>(Arrays.asList(moderator)));
+  public void logged_in_admin_can_get_all_moderators() throws Exception {
+    Moderator moderator1 = Moderator.builder().email("mod1@ucsb.edu").build();
+    Moderator moderator2 = Moderator.builder().email("mod2@ucsb.edu").build();
 
-    // act
+    ArrayList<Moderator> expectedModerators =
+        new ArrayList<>(Arrays.asList(moderator1, moderator2));
+
+    when(moderatorRepository.findAll()).thenReturn(expectedModerators);
+
     MvcResult response =
-        mockMvc.perform(get("/api/admin/moderators/get")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/admin/moderators/all")).andExpect(status().isOk()).andReturn();
 
-    // assert
     verify(moderatorRepository, times(1)).findAll();
     String expectedJson = mapper.writeValueAsString(expectedModerators);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
 
-  // Tests for the DELETE endpoint
-  @Test
-  public void logged_out_users_cannot_delete() throws Exception {
-    mockMvc
-        .perform(delete("/api/admin/moderators/delete"))
-        .andExpect(status().is(403)); // logged out users cannot delete
-  }
-
-  @WithMockUser(roles = {"USER"})
-  @Test
-  public void logged_in_users_cannot_delete() throws Exception {
-    mockMvc
-        .perform(delete("/api/admin/moderators/delete"))
-        .andExpect(status().is(403)); // logged in users cannot delete
-  }
-
   @WithMockUser(roles = {"ADMIN"})
   @Test
-  public void logged_in_admins_can_delete() throws Exception {
-    // Arrange
-    Moderator moderator = Moderator.builder().email("ins@ucsb.edu").build();
-    when(moderatorRepository.existsByEmail(eq("ins@ucsb.edu"))).thenReturn(true);
+  public void admin_can_delete_a_moderator() throws Exception {
+    Moderator moderator = Moderator.builder().email("someone@gmail.com").build();
+    when(moderatorRepository.findAllByEmail("someone@gmail.com")).thenReturn(List.of(moderator));
 
-    // Act
     MvcResult response =
         mockMvc
-            .perform(
-                delete("/api/admin/moderators/delete").param("email", "ins@ucsb.edu").with(csrf()))
+            .perform(delete("/api/admin/moderators/delete?email=someone@gmail.com").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
-    // Assert
-    verify(moderatorRepository, times(1)).existsByEmail("ins@ucsb.edu");
-    verify(moderatorRepository, times(1)).deleteByEmail("ins@ucsb.edu");
-    String expectedMessage =
-        String.format("Moderator with email %s deleted.", moderator.getEmail());
-    String responseString = response.getResponse().getContentAsString();
-    assertEquals(expectedMessage, responseString);
+    verify(moderatorRepository, times(1)).findAllByEmail("someone@gmail.com");
+    verify(moderatorRepository, times(1)).deleteByEmail("someone@gmail.com");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Moderator with id someone@gmail.com deleted", json.get("message"));
   }
 
   @WithMockUser(roles = {"ADMIN"})
   @Test
-  public void admin_try_to_delete_a_moderator_not_found() throws Exception {
-    // Arrange
-    String email = "nonexistent@ucsb.edu";
-    when(moderatorRepository.existsByEmail(eq(email))).thenReturn(false);
+  public void admin_tries_to_delete_non_existant_moderator_and_gets_right_error_message()
+      throws Exception {
+    when(moderatorRepository.findAllByEmail("nobody@gmail.com")).thenReturn(List.of());
 
-    // Act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/admin/moderators/delete").param("email", email).with(csrf()))
+            .perform(delete("/api/admin/moderators/delete?email=nobody@gmail.com").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
-    // Assert
-    verify(moderatorRepository, times(1)).existsByEmail(email);
-    verify(moderatorRepository, times(0)).deleteByEmail(any());
-    String expectedMessage = String.format("Moderator with email %s not found.", email);
-    String responseString = response.getResponse().getContentAsString();
-    assertEquals(expectedMessage, responseString);
+    verify(moderatorRepository, times(1)).findAllByEmail("nobody@gmail.com");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Moderator with id nobody@gmail.com not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN"})
+  @Test
+  public void admin_can_delete_duplicate_moderator_emails() throws Exception {
+    Moderator moderator1 = Moderator.builder().email("testmod@ucsb.edu").build();
+    Moderator moderator2 = Moderator.builder().email("testmod@ucsb.edu").build();
+
+    when(moderatorRepository.findAllByEmail("testmod@ucsb.edu"))
+        .thenReturn(List.of(moderator1, moderator2));
+
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/admin/moderators/delete?email=testmod@ucsb.edu").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(moderatorRepository, times(1)).findAllByEmail("testmod@ucsb.edu");
+    verify(moderatorRepository, times(1)).deleteByEmail("testmod@ucsb.edu");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Moderator with id testmod@ucsb.edu deleted", json.get("message"));
   }
 }
