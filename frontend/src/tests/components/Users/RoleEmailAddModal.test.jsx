@@ -20,6 +20,21 @@ describe("RoleEmailAddModal tests", () => {
     );
   });
 
+  test("uses default title and button label when not provided", () => {
+    render(
+      <RoleEmailAddModal
+        show={true}
+        onHide={vi.fn()}
+        onSubmitEmail={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Add Email")).toBeInTheDocument();
+    expect(screen.getByTestId("RoleEmailAddModal-submit")).toHaveTextContent(
+      "Add",
+    );
+  });
+
   test("clicking cancel calls onHide", () => {
     const onHide = vi.fn();
     render(
@@ -46,6 +61,9 @@ describe("RoleEmailAddModal tests", () => {
       await screen.findByText("A valid email is required."),
     ).toBeInTheDocument();
     expect(onSubmitEmail).not.toHaveBeenCalled();
+    expect(screen.getByTestId("RoleEmailAddModal-email")).toHaveClass(
+      "is-invalid",
+    );
   });
 
   test("submitting a badly formatted email shows an error and does not call onSubmitEmail", async () => {
@@ -115,6 +133,24 @@ describe("RoleEmailAddModal tests", () => {
     expect(
       screen.queryByTestId("RoleEmailAddModal-error"),
     ).not.toBeInTheDocument();
+    expect(screen.getByTestId("RoleEmailAddModal-email")).not.toHaveClass(
+      "is-invalid",
+    );
+  });
+
+  test("a serverError alone (no validation error) marks the input invalid", () => {
+    render(
+      <RoleEmailAddModal
+        show={true}
+        onHide={vi.fn()}
+        onSubmitEmail={vi.fn()}
+        serverError="admin@ucsb.edu is already an admin"
+      />,
+    );
+
+    expect(screen.getByTestId("RoleEmailAddModal-email")).toHaveClass(
+      "is-invalid",
+    );
   });
 
   test("resets the form when the modal is reopened", () => {

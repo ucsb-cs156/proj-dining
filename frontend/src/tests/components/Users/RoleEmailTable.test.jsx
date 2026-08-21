@@ -23,6 +23,8 @@ vi.mock("react-toastify", async () => {
 
 describe("RoleEmailTable tests", () => {
   const testIdPrefix = "RoleEmailTable";
+  const deleteEndpoint = "/api/admin/delete";
+  const getEndpoint = "/api/admin/all";
 
   const threeEmails = [
     { email: "admin1@ucsb.edu", isInAdminEmails: false },
@@ -30,18 +32,29 @@ describe("RoleEmailTable tests", () => {
     { email: "superadmin@ucsb.edu", isInAdminEmails: true },
   ];
 
-  test("renders the Email column header and content", () => {
+  test("renders the Email and Delete column headers and content", () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
-        <RoleEmailTable data={threeEmails} testIdPrefix={testIdPrefix} />
+        <RoleEmailTable
+          data={threeEmails}
+          deleteEndpoint={deleteEndpoint}
+          getEndpoint={getEndpoint}
+          testIdPrefix={testIdPrefix}
+        />
       </QueryClientProvider>,
     );
 
     expect(screen.getByText("Email")).toBeInTheDocument();
     expect(
+      screen.getByTestId(`${testIdPrefix}-header-delete`),
+    ).toHaveTextContent("Delete");
+    expect(
       screen.getByTestId(`${testIdPrefix}-cell-row-0-col-email`),
     ).toHaveTextContent("admin1@ucsb.edu");
+    expect(
+      screen.queryByTestId("RoleEmailDeleteModal"),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByTestId(`${testIdPrefix}-cell-row-1-col-email`),
     ).toHaveTextContent("admin2@ucsb.edu");
@@ -54,7 +67,12 @@ describe("RoleEmailTable tests", () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
-        <RoleEmailTable data={undefined} testIdPrefix={testIdPrefix} />
+        <RoleEmailTable
+          data={undefined}
+          deleteEndpoint={deleteEndpoint}
+          getEndpoint={getEndpoint}
+          testIdPrefix={testIdPrefix}
+        />
       </QueryClientProvider>,
     );
 
@@ -67,7 +85,12 @@ describe("RoleEmailTable tests", () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
-        <RoleEmailTable data={threeEmails} testIdPrefix={testIdPrefix} />
+        <RoleEmailTable
+          data={threeEmails}
+          deleteEndpoint={deleteEndpoint}
+          getEndpoint={getEndpoint}
+          testIdPrefix={testIdPrefix}
+        />
       </QueryClientProvider>,
     );
 
@@ -83,7 +106,12 @@ describe("RoleEmailTable tests", () => {
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
-        <RoleEmailTable data={threeEmails} testIdPrefix={testIdPrefix} />
+        <RoleEmailTable
+          data={threeEmails}
+          deleteEndpoint={deleteEndpoint}
+          getEndpoint={getEndpoint}
+          testIdPrefix={testIdPrefix}
+        />
       </QueryClientProvider>,
     );
 
@@ -106,15 +134,15 @@ describe("RoleEmailTable tests", () => {
     const queryClient = new QueryClient();
     const axiosMock = new AxiosMockAdapter(axios);
     axiosMock
-      .onDelete("/api/admin/delete")
+      .onDelete(deleteEndpoint)
       .reply(200, { message: "Admin with id admin1@ucsb.edu deleted" });
 
     render(
       <QueryClientProvider client={queryClient}>
         <RoleEmailTable
           data={threeEmails}
-          deleteEndpoint="/api/admin/delete"
-          getEndpoint="/api/admin/all"
+          deleteEndpoint={deleteEndpoint}
+          getEndpoint={getEndpoint}
           testIdPrefix={testIdPrefix}
         />
       </QueryClientProvider>,
@@ -139,13 +167,14 @@ describe("RoleEmailTable tests", () => {
   test("uses a default toast message when the response has no message", async () => {
     const queryClient = new QueryClient();
     const axiosMock = new AxiosMockAdapter(axios);
-    axiosMock.onDelete("/api/admin/delete").reply(200, {});
+    axiosMock.onDelete(deleteEndpoint).reply(200);
 
     render(
       <QueryClientProvider client={queryClient}>
         <RoleEmailTable
           data={threeEmails}
-          deleteEndpoint="/api/admin/delete"
+          deleteEndpoint={deleteEndpoint}
+          getEndpoint={getEndpoint}
           testIdPrefix={testIdPrefix}
         />
       </QueryClientProvider>,

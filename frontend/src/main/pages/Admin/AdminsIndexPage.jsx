@@ -14,6 +14,7 @@ export default function AdminsIndexPage() {
 
   const { data: admins } = useBackend(
     [getEndpoint],
+    // Stryker disable next-line StringLiteral: axios treats a falsy method as "GET"
     { method: "GET", url: getEndpoint },
     [],
   );
@@ -31,11 +32,19 @@ export default function AdminsIndexPage() {
         setAddServerError(null);
       },
       onError: (error) => {
-        setAddServerError(
-          error?.response?.data?.message ?? "Unable to add admin.",
-        );
+        let message = "Unable to add admin.";
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          message = error.response.data.message;
+        }
+        setAddServerError(message);
       },
     },
+    // Stryker disable next-line ArrayDeclaration: invalidateQueries([]) invalidates every
+    // query, which is behaviorally identical here since this is the only active query.
     [getEndpoint],
   );
 

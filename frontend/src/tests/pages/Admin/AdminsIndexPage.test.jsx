@@ -53,6 +53,9 @@ describe("AdminsIndexPage tests", () => {
       screen.getByTestId("AdminsIndexPage-cell-row-0-col-email"),
     ).toHaveTextContent("admin1@ucsb.edu");
     expect(screen.getByText(/cannot be deleted/)).toBeInTheDocument();
+    expect(screen.getByTestId("AdminsIndexPage-add-button")).toHaveStyle({
+      float: "right",
+    });
   });
 
   test("clicking Add Admin opens the modal, and a successful post shows a toast and closes it", async () => {
@@ -90,6 +93,11 @@ describe("AdminsIndexPage tests", () => {
     );
     await waitFor(() =>
       expect(screen.queryByTestId("RoleEmailAddModal")).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        axiosMock.history.get.filter((r) => r.url === "/api/admin/all").length,
+      ).toBe(2),
     );
   });
 
@@ -144,6 +152,87 @@ describe("AdminsIndexPage tests", () => {
     expect(
       await screen.findByTestId("RoleEmailAddModal-error"),
     ).toHaveTextContent("Unable to add admin.");
+  });
+
+  test("a response with no body at all still falls back to a default message", async () => {
+    setupAdmin();
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/admin/all").reply(200, []);
+    axiosMock.onPost("/api/admin/post").reply(400, undefined);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminsIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    fireEvent.click(await screen.findByTestId("AdminsIndexPage-add-button"));
+    fireEvent.change(screen.getByTestId("RoleEmailAddModal-email"), {
+      target: { value: "newadmin@ucsb.edu" },
+    });
+    fireEvent.click(screen.getByTestId("RoleEmailAddModal-submit"));
+
+    expect(
+      await screen.findByTestId("RoleEmailAddModal-error"),
+    ).toHaveTextContent("Unable to add admin.");
+  });
+
+  test("a post with no HTTP response at all still falls back to a default message", async () => {
+    setupAdmin();
+    const queryClient = new QueryClient();
+    axiosMock.onGet("/api/admin/all").reply(200, []);
+    axiosMock.onPost("/api/admin/post").networkError();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminsIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    fireEvent.click(await screen.findByTestId("AdminsIndexPage-add-button"));
+    fireEvent.change(screen.getByTestId("RoleEmailAddModal-email"), {
+      target: { value: "newadmin@ucsb.edu" },
+    });
+    fireEvent.click(screen.getByTestId("RoleEmailAddModal-submit"));
+
+    expect(
+      await screen.findByTestId("RoleEmailAddModal-error"),
+    ).toHaveTextContent("Unable to add admin.");
+  });
+
+  test("deleting an admin refetches the admin list", async () => {
+    setupAdmin();
+    const queryClient = new QueryClient();
+    axiosMock
+      .onGet("/api/admin/all")
+      .reply(200, [{ email: "admin1@ucsb.edu", isInAdminEmails: false }]);
+    axiosMock
+      .onDelete("/api/admin/delete")
+      .reply(200, { message: "Admin with id admin1@ucsb.edu deleted" });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <AdminsIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    fireEvent.click(
+      await screen.findByTestId("AdminsIndexPage-cell-row-0-col-delete-button"),
+    );
+    fireEvent.click(screen.getByTestId("RoleEmailDeleteModal-confirm"));
+
+    await waitFor(() => expect(axiosMock.history.delete.length).toBe(1));
+    await waitFor(() =>
+      expect(
+        axiosMock.history.get.filter((r) => r.url === "/api/admin/all").length,
+      ).toBe(2),
+    );
   });
 
   test("clicking Cancel in the add modal closes it without posting", async () => {

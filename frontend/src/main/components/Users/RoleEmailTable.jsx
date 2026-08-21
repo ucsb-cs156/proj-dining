@@ -8,9 +8,9 @@ import PropTypes from "prop-types";
 
 export default function RoleEmailTable({
   data,
-  deleteEndpoint = "/api/admin/delete",
-  getEndpoint = "/api/admin/all",
-  testIdPrefix = "RoleEmailTable",
+  deleteEndpoint,
+  getEndpoint,
+  testIdPrefix,
 }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [pendingEmail, setPendingEmail] = useState(null);
@@ -26,6 +26,8 @@ export default function RoleEmailTable({
         toast(deleted?.message ?? "Deleted");
       },
     },
+    // Stryker disable next-line ArrayDeclaration: invalidateQueries([]) invalidates every
+    // query, which is behaviorally identical here since this is the only active query.
     [getEndpoint],
   );
 
@@ -94,6 +96,6 @@ export default function RoleEmailTable({
 
 RoleEmailTable.propTypes = Object.create(null);
 RoleEmailTable.propTypes.data = PropTypes.array;
-RoleEmailTable.propTypes.deleteEndpoint = PropTypes.string;
-RoleEmailTable.propTypes.getEndpoint = PropTypes.string;
-RoleEmailTable.propTypes.testIdPrefix = PropTypes.string;
+RoleEmailTable.propTypes.deleteEndpoint = PropTypes.string.isRequired;
+RoleEmailTable.propTypes.getEndpoint = PropTypes.string.isRequired;
+RoleEmailTable.propTypes.testIdPrefix = PropTypes.string.isRequired;

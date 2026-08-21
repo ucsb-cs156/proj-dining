@@ -23,10 +23,10 @@ export default function RoleEmailAddModal({
     formState: { errors },
   } = useForm();
 
-  // Clear the form each time the modal is (re)opened, so a previous
+  // Clear the form each time the modal opens or closes, so a previous
   // submission's value/errors don't linger.
   useEffect(() => {
-    if (show) reset();
+    reset();
   }, [show, reset]);
 
   const onSubmit = (data) => {
