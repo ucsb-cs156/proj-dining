@@ -21,8 +21,7 @@ public class DiningStartup {
   @Autowired AdminRepository adminRepository;
 
   /**
-   * Called once at application startup time. Loads all emails in ADMIN_EMAILS into the Admin
-   * table.
+   * Called once at application startup time. Loads all emails in ADMIN_EMAILS into the Admin table.
    */
   @EventListener(ApplicationReadyEvent.class)
   public void alwaysRunOnStartup() {
