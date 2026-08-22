@@ -4,12 +4,12 @@
 {{ $listen_port := index $port_map_list 1 }}
 {{ $upstream_port := index $port_map_list 2 }}
 
+limit_req_zone $binary_remote_addr zone=ratelimiter{{ $.APP }}:10m rate=10r/s;
 {{ if or (eq $scheme "http") (eq $scheme "https") }}
 {{ $is_ssl := eq $scheme "https" }}
 {{ $is_redirect := and (not $is_ssl) (eq $listen_port "80") $.SSL_INUSE }}
 server {
-  limit_req_zone $binary_remote_addr zone=ratelimiter:10m rate=10r/s;
-  limit_req zone=ratelimiter burst=20 nodelay;
+  limit_req zone=ratelimiter{{ $.APP }} burst=20 nodelay;
   limit_req_status 429;
   {{ if $is_ssl }}
   {{ if eq $.HTTP2_DIRECTIVE_SUPPORTED "true" }}
