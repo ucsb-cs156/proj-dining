@@ -1,16 +1,16 @@
-
-geo $limit-{{ $.APP }} {
+{{ $APP_VAR := $.APP | replace "-" "_" }}
+geo $limit-{{ $APP_VAR }} {
   default 1;
   128.111.0.0/16 0;
   169.231.0.0/15 0;
 }
 
-map $limit-{{ $.APP }} $limit-{{ $.APP }}-key {
+map $limit-{{ $APP_VAR }} $limit-{{ $APP_VAR }}-key {
   0 "";
   1 $binary_remote_addr;
 }
 
-limit_req_zone $limit-{{ $.APP }}-key zone=ratelimiter-{{ $.APP }}:10m rate=5r/s;
+limit_req_zone $limit-{{ $APP_VAR }}-key zone=ratelimiter-{{ $.APP }}:10m rate=5r/s;
 
 {{ range $port_map := .PROXY_PORT_MAP | split " " }}
 {{ $port_map_list := $port_map | split ":" }}
