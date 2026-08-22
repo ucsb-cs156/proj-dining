@@ -19,6 +19,7 @@ proj-dining,edu.ucsb.cs156.dining.controllers,ApiController,0,32,0,0,0,8,0,6,0,6
 proj-dining,edu.ucsb.cs156.dining.controllers,UCSBDiningMenuController,0,29,0,6,0,6,0,6,0,3
 proj-dining,edu.ucsb.cs156.dining.controllers,ModeratorController,0,82,0,4,0,15,0,8,0,6
 proj-dining,edu.ucsb.cs156.dining.utilities,CanonicalFormConverter,0,17,0,0,0,4,0,3,0,3
+proj-dining,edu.ucsb.cs156.dining.startup,DiningStartup,0,38,0,2,0,12,0,5,0,4
 proj-dining,edu.ucsb.cs156.dining.errors,EntityNotFoundException,0,17,0,0,0,2,0,1,0,1
 proj-dining,edu.ucsb.cs156.dining.statuses,ModerationStatus,0,21,0,0,0,4,0,1,0,1
 proj-dining,edu.ucsb.cs156.dining.models,DiningCommons,0,13,0,0,0,3,0,1,0,1
