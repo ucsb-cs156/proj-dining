@@ -1,4 +1,17 @@
-limit_req_zone $binary_remote_addr zone=ratelimiter-{{ $.APP }}:10m rate=10r/s;
+
+geo $limit-{{ $.APP }} {
+  default 1;
+  128.111.0.0/16 0;
+  169.231.0.0/15 0;
+}
+
+map $limit-{{ $.APP }} $limit-{{ $.APP }}-key {
+  0 "";
+  1 $binary_remote_addr;
+}
+
+limit_req_zone $limit-{{ $.APP }}-key zone=ratelimiter-{{ $.APP }}:10m rate=5r/s;
+
 {{ range $port_map := .PROXY_PORT_MAP | split " " }}
 {{ $port_map_list := $port_map | split ":" }}
 {{ $scheme := index $port_map_list 0 }}
