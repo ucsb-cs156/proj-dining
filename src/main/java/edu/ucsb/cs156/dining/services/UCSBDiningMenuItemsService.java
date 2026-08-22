@@ -30,6 +30,12 @@ public class UCSBDiningMenuItemsService {
   @Value("${app.ucsb.api.host}")
   private String apiHost;
 
+  @Value("${app.name}")
+  private String appName;
+
+  @Value("${app.hostname}")
+  private String appHostname;
+
   private RestTemplate restTemplate = new RestTemplate();
 
   public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {
@@ -55,6 +61,7 @@ public class UCSBDiningMenuItemsService {
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("ucsb-api-key", this.apiKey);
+    headers.set("X-Requesting-App", this.appName + "." + this.appHostname);
 
     HttpEntity<String> entity = new HttpEntity<>(headers);
     String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;

@@ -37,6 +37,12 @@ class DiningCommonsServiceTests {
   @Value("${app.ucsb.api.host}")
   private String apiHost;
 
+  @Value("${app.name}")
+  private String appName;
+
+  @Value("${app.hostname}")
+  private String appHostname;
+
   private static final String NAME = "NAME";
   private static final String CODE = "CODE";
   private static final Boolean HASDININGCAM = false;
@@ -85,6 +91,7 @@ class DiningCommonsServiceTests {
         .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("ucsb-api-key", apiKey))
+        .andExpect(header("X-Requesting-App", appName + "." + appHostname))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
     List<DiningCommons> actualResult = diningCommonsService.get();

@@ -39,6 +39,12 @@ public class DiningCommonsService {
   @Value("${app.ucsb.api.host}")
   private String apiHost;
 
+  @Value("${app.name}")
+  private String appName;
+
+  @Value("${app.hostname}")
+  private String appHostname;
+
   public static final String ENDPOINT = "{apiHost}/dining/commons/v1/";
 
   private final RestTemplate restTemplate;
@@ -54,6 +60,7 @@ public class DiningCommonsService {
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("ucsb-api-key", this.apiKey);
+    headers.set("X-Requesting-App", this.appName + "." + this.appHostname);
 
     log.info("Fetching dining commons from UCSB API");
 
