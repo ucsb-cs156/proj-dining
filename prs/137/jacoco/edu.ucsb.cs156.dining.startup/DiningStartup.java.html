@@ -28,17 +28,17 @@ import org.springframework.stereotype.Component;
   public void alwaysRunOnStartup() {
 <span class="fc" id="L29">    log.info(&quot;alwaysRunOnStartup called&quot;);</span>
 
-    try {
-<span class="fc" id="L32">      adminEmails.forEach(</span>
-          (email) -&gt; {
+<span class="fc" id="L31">    adminEmails.forEach(</span>
+        (email) -&gt; {
+          try {
 <span class="fc bfc" id="L34" title="All 2 branches covered.">            if (!adminRepository.existsByEmail(email)) {</span>
 <span class="fc" id="L35">              Admin admin = new Admin(email);</span>
 <span class="fc" id="L36">              adminRepository.save(admin);</span>
             }
-<span class="fc" id="L38">          });</span>
-<span class="fc" id="L39">    } catch (Exception e) {</span>
-<span class="fc" id="L40">      log.error(&quot;Error in loading all ADMIN_EMAILS:&quot;, e);</span>
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L38">          } catch (Exception e) {</span>
+<span class="fc" id="L39">            log.error(&quot;Error saving admin email {}: {}&quot;, email, e.getMessage());</span>
+<span class="fc" id="L40">          }</span>
+<span class="fc" id="L41">        });</span>
 <span class="fc" id="L42">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
