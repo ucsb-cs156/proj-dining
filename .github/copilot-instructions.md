@@ -4,6 +4,17 @@ UCSB Dining Review Application is a Spring Boot backend + React frontend web app
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
+## Workflow Monitoring
+
+Every time you are assigned an issue or asked to make changes:
+
+* Do not stop and ask for a code review until you have monitored the
+  workflows on GitHub Actions for your commits, and ensured that every
+  single one is green.
+* When any workflow fails, take the steps necessary to make it pass,
+  either by running a formatter, adding more tests, fixing the code, or
+  otherwise addressing the root cause of the failure.
+
 ## Working Effectively
 
 ### Bootstrap, Build, and Test the Repository
