@@ -7,7 +7,7 @@ limit_req_zone $binary_remote_addr zone=ratelimiter-{{ $.APP }}:10m rate=10r/s;
 
 {{ if eq $scheme "http" }}
 server {
-  limit_req zone=ratelimiter{{ $.APP }} burst=20 nodelay;
+  limit_req zone=ratelimiter-{{ $.APP }} burst=20 nodelay;
   limit_req_status 429;
   listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }};
   listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }};
@@ -71,7 +71,7 @@ server {
 }
 {{ else if eq $scheme "https"}}
 server {
-  limit_req zone=ratelimiter{{ $.APP }} burst=20 nodelay;
+  limit_req zone=ratelimiter-{{ $.APP }} burst=20 nodelay;
   limit_req_status 429;
   listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }} ssl {{ if eq $.HTTP2_SUPPORTED "true" }}http2{{ end }};
   listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }} ssl {{ if eq $.HTTP2_SUPPORTED "true" }}http2{{ end }};
