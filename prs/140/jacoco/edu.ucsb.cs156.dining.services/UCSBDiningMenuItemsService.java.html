@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UCSBDiningMenuItemsService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.services</a> &gt; <span class="el_source">UCSBDiningMenuItemsService.java</span></div><h1>UCSBDiningMenuItemsService.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.services;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsb.cs156.dining.models.Entree;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+<span class="fc" id="L22">@Slf4j</span>
+public class UCSBDiningMenuItemsService {
+
+  @Autowired private ObjectMapper objectMapper;
+
+  @Value(&quot;${app.ucsb.api.consumer_key}&quot;)
+  private String apiKey;
+
+  @Value(&quot;${app.ucsb.api.host}&quot;)
+  private String apiHost;
+
+  @Value(&quot;${app.name}&quot;)
+  private String appName;
+
+  @Value(&quot;${app.hostname}&quot;)
+  private String appHostname;
+
+<span class="fc" id="L39">  private RestTemplate restTemplate = new RestTemplate();</span>
+
+<span class="fc" id="L41">  public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {</span>
+<span class="fc" id="L42">    restTemplate = restTemplateBuilder.build();</span>
+<span class="fc" id="L43">  }</span>
+
+  public static final String ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT =
+      &quot;{apiHost}/dining/menu/v1/{date-time}/{dining-common-code}/{meal-code}&quot;;
+
+  /**
+   * Create a List of Entree from json representation
+   *
+   * @param dateTime String of date in iso format
+   * @param diningCommonCode String of dining common
+   * @param mealCode String of meal code
+   * @return a list of menu items
+   */
+  @Cacheable(&quot;menuItem&quot;)
+  public List&lt;Entree&gt; get(String dateTime, String diningCommonCode, String mealCode)
+      throws JsonProcessingException {
+
+<span class="fc" id="L60">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L61">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L62">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L63">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L64">    headers.set(&quot;X-Requesting-App&quot;, this.appName + &quot;.&quot; + this.appHostname);</span>
+
+<span class="fc" id="L66">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
+<span class="fc" id="L67">    String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;</span>
+<span class="fc" id="L68">    url = url.replace(&quot;{apiHost}&quot;, apiHost);</span>
+<span class="fc" id="L69">    url = url.replace(&quot;{date-time}&quot;, dateTime);</span>
+<span class="fc" id="L70">    url = url.replace(&quot;{dining-common-code}&quot;, diningCommonCode);</span>
+<span class="fc" id="L71">    url = url.replace(&quot;{meal-code}&quot;, mealCode);</span>
+
+<span class="fc" id="L73">    log.info(</span>
+        &quot;Fetching menu items for date: {}, dining common: {}, meal: {}&quot;,
+        dateTime,
+        diningCommonCode,
+        mealCode);
+
+<span class="fc" id="L79">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L80">    String retBody = re.getBody();</span>
+
+<span class="fc" id="L82">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
+
+<span class="fc" id="L84">    return menuItems;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
