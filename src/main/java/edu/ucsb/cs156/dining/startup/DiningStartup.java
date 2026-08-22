@@ -28,16 +28,16 @@ public class DiningStartup {
   public void alwaysRunOnStartup() {
     log.info("alwaysRunOnStartup called");
 
-    try {
-      adminEmails.forEach(
-          (email) -> {
+    adminEmails.forEach(
+        (email) -> {
+          try {
             if (!adminRepository.existsByEmail(email)) {
               Admin admin = new Admin(email);
               adminRepository.save(admin);
             }
-          });
-    } catch (Exception e) {
-      log.error("Error in loading all ADMIN_EMAILS:", e);
-    }
+          } catch (Exception e) {
+            log.error("Error saving admin email {}: {}", email, e.getMessage());
+          }
+        });
   }
 }

@@ -51,6 +51,7 @@ class DiningStartupTests {
 
     diningStartup.alwaysRunOnStartup();
 
-    verify(adminRepository, times(1)).save(any(Admin.class));
+    // Both emails are attempted despite the exception on the first one
+    verify(adminRepository, times(2)).save(any(Admin.class));
   }
 }
