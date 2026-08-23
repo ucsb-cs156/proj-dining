@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for pages/Admin/ModeratorsCreatePage.jsx</title>
+    <title>Code coverage report for components/Users/RoleEmailDeleteModal.jsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">pages/Admin</a> ModeratorsCreatePage.jsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/Users</a> RoleEmailDeleteModal.jsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/9</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
-                <span class="quiet">Branches</span>
                 <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -105,36 +105,12 @@
 <a name='L40'></a><a href='#L40'>40</a>
 <a name='L41'></a><a href='#L41'>41</a>
 <a name='L42'></a><a href='#L42'>42</a>
-<a name='L43'></a><a href='#L43'>43</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -147,48 +123,87 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import RoleEmailForm from "main/components/Users/RoleEmailForm";
-import { Navigate } from "react-router";
-import { useBackendMutation } from "main/utils/useBackend";
-import { toast } from "react-toastify";
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Modal, Button } from "react-bootstrap";
+import PropTypes from "prop-types";
 &nbsp;
-export default function ModeratorsCreatePage({ storybook = false }) {
-  const objectToAxiosParams = (moderator) =&gt; ({
-    url: "/api/admin/moderators/post",
-    method: "POST",
-    params: {
-      email: moderator.email,
-    },
-  });
-&nbsp;
-  const onSuccess = (moderator) =&gt; {
-    toast(`New moderator added - email: ${moderator.email}`);
-  };
-&nbsp;
-  const mutation = useBackendMutation(objectToAxiosParams, { onSuccess }, [
-    "/api/admin/moderators/get",
-  ]);
-&nbsp;
-  const { isSuccess } = mutation;
-&nbsp;
-  const onSubmit = async (data) =&gt; {
-    mutation.mutate(data);
-  };
-&nbsp;
-  if (isSuccess &amp;&amp; !storybook) {
-    return &lt;Navigate to="/" /&gt;;
-  }
-&nbsp;
+export default function RoleEmailDeleteModal({
+  show,
+  onHide,
+  email,
+  onConfirm,
+}) {
   return (
-    &lt;BasicLayout&gt;
-      &lt;div className="pt-2"&gt;
-        &lt;h1&gt;Add New Moderator&lt;/h1&gt;
-        &lt;RoleEmailForm submitAction={onSubmit} /&gt;
-      &lt;/div&gt;
-    &lt;/BasicLayout&gt;
+    &lt;Modal
+      show={show}
+      onHide={onHide}
+      centered
+      data-testid="RoleEmailDeleteModal"
+    &gt;
+      &lt;Modal.Header closeButton&gt;
+        &lt;Modal.Title&gt;Confirm Delete&lt;/Modal.Title&gt;
+      &lt;/Modal.Header&gt;
+      &lt;Modal.Body&gt;
+        Are you sure you want to delete &lt;strong&gt;{email}&lt;/strong&gt;?
+      &lt;/Modal.Body&gt;
+      &lt;Modal.Footer&gt;
+        &lt;Button
+          variant="secondary"
+          onClick={onHide}
+          data-testid="RoleEmailDeleteModal-cancel"
+        &gt;
+          No, take me back
+        &lt;/Button&gt;
+        &lt;Button
+          variant="danger"
+          onClick={onConfirm}
+          data-testid="RoleEmailDeleteModal-confirm"
+        &gt;
+          Yes, delete
+        &lt;/Button&gt;
+      &lt;/Modal.Footer&gt;
+    &lt;/Modal&gt;
   );
 }
+&nbsp;
+RoleEmailDeleteModal.propTypes = Object.create(null);
+RoleEmailDeleteModal.propTypes.show = PropTypes.bool.isRequired;
+RoleEmailDeleteModal.propTypes.onHide = PropTypes.func.isRequired;
+RoleEmailDeleteModal.propTypes.email = PropTypes.string;
+RoleEmailDeleteModal.propTypes.onConfirm = PropTypes.func.isRequired;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -196,7 +211,7 @@ export default function ModeratorsCreatePage({ storybook = false }) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-08-19T19:02:40.463Z
+                at 2026-08-23T18:22:07.048Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
