@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Footer from "main/components/Nav/Footer";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
@@ -56,9 +56,12 @@ describe("Footer tests", () => {
         <Footer />
       </QueryClientProvider>,
     );
-    expect(
-      screen.queryByTestId("footer-feedback-link"),
-    ).not.toBeInTheDocument();
+    // Wait for the component to settle after receiving API response
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("footer-feedback-link"),
+      ).not.toBeInTheDocument();
+    });
   });
 
   test("Feedback button is shown when feedbackUrl is set", async () => {
