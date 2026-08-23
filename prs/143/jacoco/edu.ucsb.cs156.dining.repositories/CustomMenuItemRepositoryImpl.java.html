@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomMenuItemRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.repositories</a> &gt; <span class="el_source">CustomMenuItemRepositoryImpl.java</span></div><h1>CustomMenuItemRepositoryImpl.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.repositories;
+
+import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.models.Entree;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.List;
+
+/*
+ * Custom repository implementation for MenuItem entity
+ * We don't want to start h2 for unit testing; Should be thoroughly tested in integration tests
+ */
+public class CustomMenuItemRepositoryImpl implements CustomMenuItemRepository {
+
+  private final EntityManager manager;
+
+<span class="fc" id="L21">  public CustomMenuItemRepositoryImpl(EntityManager manager) {</span>
+<span class="fc" id="L22">    this.manager = manager;</span>
+<span class="fc" id="L23">  }</span>
+
+  @Override
+  public List&lt;MenuItem&gt; findExistingEntrees(
+      String diningCommonCode, String mealCode, List&lt;Entree&gt; entrees) {
+<span class="fc" id="L28">    CriteriaBuilder cb = manager.getCriteriaBuilder();</span>
+<span class="fc" id="L29">    CriteriaQuery&lt;MenuItem&gt; cq = cb.createQuery(MenuItem.class);</span>
+<span class="fc" id="L30">    Root&lt;MenuItem&gt; mi = cq.from(MenuItem.class);</span>
+<span class="fc" id="L31">    mi.fetch(&quot;reviews&quot;, JoinType.LEFT);</span>
+<span class="fc" id="L32">    cq.select(mi)</span>
+<span class="fc" id="L33">        .distinct(true)</span>
+<span class="fc" id="L34">        .where(</span>
+<span class="fc" id="L35">            cb.and(</span>
+<span class="fc" id="L36">                cb.equal(mi.get(&quot;diningCommonsCode&quot;), diningCommonCode),</span>
+<span class="fc" id="L37">                cb.equal(mi.get(&quot;mealCode&quot;), mealCode),</span>
+<span class="fc" id="L38">                cb.or(</span>
+<span class="fc" id="L39">                    entrees.stream()</span>
+<span class="fc" id="L40">                        .map(</span>
+                            entree -&gt;
+<span class="fc" id="L42">                                cb.and(</span>
+<span class="fc" id="L43">                                    cb.equal(mi.get(&quot;name&quot;), entree.getName()),</span>
+<span class="fc" id="L44">                                    cb.equal(mi.get(&quot;station&quot;), entree.getStation())))</span>
+<span class="fc" id="L45">                        .toArray(Predicate[]::new))));</span>
+
+<span class="fc" id="L47">    return manager.createQuery(cq).getResultList();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
