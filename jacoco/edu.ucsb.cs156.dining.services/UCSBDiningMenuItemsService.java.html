@@ -30,11 +30,17 @@ public class UCSBDiningMenuItemsService {
   @Value(&quot;${app.ucsb.api.host}&quot;)
   private String apiHost;
 
-<span class="fc" id="L33">  private RestTemplate restTemplate = new RestTemplate();</span>
+  @Value(&quot;${app.name}&quot;)
+  private String appName;
 
-<span class="fc" id="L35">  public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {</span>
-<span class="fc" id="L36">    restTemplate = restTemplateBuilder.build();</span>
-<span class="fc" id="L37">  }</span>
+  @Value(&quot;${app.hostname}&quot;)
+  private String appHostname;
+
+<span class="fc" id="L39">  private RestTemplate restTemplate = new RestTemplate();</span>
+
+<span class="fc" id="L41">  public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {</span>
+<span class="fc" id="L42">    restTemplate = restTemplateBuilder.build();</span>
+<span class="fc" id="L43">  }</span>
 
   public static final String ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT =
       &quot;{apiHost}/dining/menu/v1/{date-time}/{dining-common-code}/{meal-code}&quot;;
@@ -51,30 +57,31 @@ public class UCSBDiningMenuItemsService {
   public List&lt;Entree&gt; get(String dateTime, String diningCommonCode, String mealCode)
       throws JsonProcessingException {
 
-<span class="fc" id="L54">    HttpHeaders headers = new HttpHeaders();</span>
-<span class="fc" id="L55">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
-<span class="fc" id="L56">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
-<span class="fc" id="L57">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L60">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L61">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L62">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L63">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L64">    headers.set(&quot;X-Requesting-App&quot;, this.appName + &quot;.&quot; + this.appHostname);</span>
 
-<span class="fc" id="L59">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
-<span class="fc" id="L60">    String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;</span>
-<span class="fc" id="L61">    url = url.replace(&quot;{apiHost}&quot;, apiHost);</span>
-<span class="fc" id="L62">    url = url.replace(&quot;{date-time}&quot;, dateTime);</span>
-<span class="fc" id="L63">    url = url.replace(&quot;{dining-common-code}&quot;, diningCommonCode);</span>
-<span class="fc" id="L64">    url = url.replace(&quot;{meal-code}&quot;, mealCode);</span>
+<span class="fc" id="L66">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
+<span class="fc" id="L67">    String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;</span>
+<span class="fc" id="L68">    url = url.replace(&quot;{apiHost}&quot;, apiHost);</span>
+<span class="fc" id="L69">    url = url.replace(&quot;{date-time}&quot;, dateTime);</span>
+<span class="fc" id="L70">    url = url.replace(&quot;{dining-common-code}&quot;, diningCommonCode);</span>
+<span class="fc" id="L71">    url = url.replace(&quot;{meal-code}&quot;, mealCode);</span>
 
-<span class="fc" id="L66">    log.info(</span>
+<span class="fc" id="L73">    log.info(</span>
         &quot;Fetching menu items for date: {}, dining common: {}, meal: {}&quot;,
         dateTime,
         diningCommonCode,
         mealCode);
 
-<span class="fc" id="L72">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
-<span class="fc" id="L73">    String retBody = re.getBody();</span>
+<span class="fc" id="L79">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L80">    String retBody = re.getBody();</span>
 
-<span class="fc" id="L75">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
+<span class="fc" id="L82">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
 
-<span class="fc" id="L77">    return menuItems;</span>
+<span class="fc" id="L84">    return menuItems;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
