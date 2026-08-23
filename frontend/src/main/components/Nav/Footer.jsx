@@ -1,6 +1,10 @@
-import { Container } from "react-bootstrap";
+import { Container, Button } from "react-bootstrap";
+import { useSystemInfo } from "main/utils/systemInfo";
 
 export default function Footer() {
+  const { data: systemInfo } = useSystemInfo();
+  const feedbackUrl = systemInfo?.feedbackUrl;
+
   return (
     <footer className="bg-light pt-3 pt-md-4 pb-4 pb-md-5" data-testid="Footer">
       <Container>
@@ -41,7 +45,19 @@ export default function Footer() {
         >
           here
         </a>
-        .
+        .{" "}
+        {feedbackUrl && (
+          <Button
+            data-testid="footer-feedback-link"
+            href={feedbackUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="primary"
+            size="sm"
+          >
+            Provide Feedback
+          </Button>
+        )}
       </Container>
     </footer>
   );

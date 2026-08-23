@@ -17,6 +17,12 @@ const systemInfoFixtures = {
     springH2ConsoleEnabled: false,
     showSwaggerUILink: false,
   },
+  showingFeedbackUrl: {
+    springH2ConsoleEnabled: false,
+    showSwaggerUILink: false,
+    oauthLogin: "/oauth2/authorization/google",
+    feedbackUrl: "https://docs.google.com/forms/example",
+  },
 };
 
 export { systemInfoFixtures };

@@ -23,4 +23,5 @@ public class SystemInfo {
   private String commitMessage;
   private String commitId;
   private String githubUrl; // URL to the commit in the source repository
+  private String feedbackUrl; // user configured URL for feedback form
 }
