@@ -1,25 +1,26 @@
 package edu.ucsb.cs156.dining.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.services.wiremock.WiremockService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
 
 @RestClientTest(UCSBDiningMenuItemsService.class)
 @AutoConfigureDataJpa
@@ -39,11 +40,11 @@ public class UCSBDiningMenuItemsServiceTests {
 
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
-  @MockBean private WiremockService wiremockService;
-
-  @Mock private RestTemplate restTemplate;
+  @MockitoBean private WiremockService wiremockService;
 
   @Autowired private UCSBDiningMenuItemsService ucsbDiningMenuItemsService;
+
+  @MockitoBean private MenuItemRepository miRepository;
 
   private static final String NAME = "NAME";
   private static final String STATION = "STATION";
@@ -88,5 +89,33 @@ public class UCSBDiningMenuItemsServiceTests {
     List<Entree> expectedList = new ArrayList<>();
     expectedList.addAll(Arrays.asList(expectedEntree));
     assertEquals(expectedList, actualResult);
+  }
+
+  @Test
+  public void getOrCreateTest() {
+    Entree exists = Entree.builder().name(NAME).station(STATION).build();
+    Entree doesNotExist = Entree.builder().name("doesNotExist").station("doesNotExist").build();
+    ArrayList<Entree> returnedEntrees = new ArrayList<>(List.of(exists, doesNotExist));
+    MenuItem existsMi =
+        MenuItem.builder()
+            .id(1L)
+            .name(NAME)
+            .station(STATION)
+            .diningCommonsCode("ortega")
+            .mealCode("lunch")
+            .build();
+    MenuItem createdMi =
+        MenuItem.builder()
+            .name("doesNotExist")
+            .station("doesNotExist")
+            .diningCommonsCode("ortega")
+            .mealCode("lunch")
+            .build();
+    when(miRepository.findExistingEntrees("ortega", "lunch", returnedEntrees))
+        .thenReturn(new ArrayList<>(List.of(existsMi)));
+    when(miRepository.save(createdMi)).thenReturn(createdMi);
+    List<MenuItem> actualResult =
+        ucsbDiningMenuItemsService.getOrCreateMenuItems("ortega", "lunch", returnedEntrees);
+    assertEquals(new ArrayList<>(List.of(existsMi, createdMi)), actualResult);
   }
 }

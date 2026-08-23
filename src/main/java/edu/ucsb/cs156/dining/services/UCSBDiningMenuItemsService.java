@@ -3,8 +3,14 @@ package edu.ucsb.cs156.dining.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsb.cs156.dining.entities.MenuItem;
 import edu.ucsb.cs156.dining.models.Entree;
+import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +43,7 @@ public class UCSBDiningMenuItemsService {
   private String appHostname;
 
   private RestTemplate restTemplate = new RestTemplate();
+  @Autowired private MenuItemRepository menuItemRepository;
 
   public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {
     restTemplate = restTemplateBuilder.build();
@@ -82,5 +89,35 @@ public class UCSBDiningMenuItemsService {
     List<Entree> menuItems = objectMapper.readValue(retBody, new TypeReference<List<Entree>>() {});
 
     return menuItems;
+  }
+
+  @Transactional
+  public List<MenuItem> getOrCreateMenuItems(
+      String diningCommonCode, String mealCode, List<Entree> entrees) {
+    List<MenuItem> existingItems =
+        menuItemRepository.findExistingEntrees(diningCommonCode, mealCode, entrees);
+    Map<String, MenuItem> existingItemsMap =
+        existingItems.stream()
+            .collect(
+                Collectors.toMap(
+                    (item) -> item.getStation() + ":" + item.getName(), Function.identity()));
+
+    for (Entree selected : entrees) {
+      if (existingItemsMap.containsKey(selected.getStation() + ":" + selected.getName())) {
+        continue;
+      } else {
+        MenuItem created =
+            MenuItem.builder()
+                .diningCommonsCode(diningCommonCode)
+                .mealCode(mealCode)
+                .station(selected.getStation())
+                .name(selected.getName())
+                .build();
+        menuItemRepository.save(created);
+        existingItems.add(created);
+      }
+    }
+
+    return existingItems;
   }
 }

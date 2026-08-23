@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.dining.entities;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -29,5 +30,6 @@ public class MenuItem {
   @ToString.Exclude
   @OneToMany(mappedBy = "item")
   @Fetch(FetchMode.JOIN)
-  private List<Review> reviews;
+  @Builder.Default
+  private List<Review> reviews = new ArrayList<>();
 }
