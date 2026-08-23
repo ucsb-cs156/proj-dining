@@ -6,7 +6,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MenuItemRepository extends CrudRepository<MenuItem, Long> {
+public interface MenuItemRepository
+    extends CrudRepository<MenuItem, Long>, CustomMenuItemRepository {
   /**
    * This method returns a MenuItem entity with a given id.
    *
