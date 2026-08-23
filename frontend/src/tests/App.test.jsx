@@ -24,8 +24,12 @@ vi.mock("main/pages/ProfilePage", () => ({
   default: () => <div>Profile Page</div>,
 }));
 
-vi.mock("main/pages/AdminUsersPage", () => ({
-  default: () => <div>Admin Users Page</div>,
+vi.mock("main/pages/Admin/AdminsIndexPage", () => ({
+  default: () => <div>Admins Page</div>,
+}));
+
+vi.mock("main/pages/Admin/ModeratorsIndexPage", () => ({
+  default: () => <div>Moderators Page</div>,
 }));
 
 vi.mock("main/pages/DeveloperPage", () => ({
@@ -75,18 +79,32 @@ describe("App tests", () => {
     expect(screen.getByText("Home Page")).toBeInTheDocument();
   });
 
-  test("renders admin users page for admin users", () => {
+  test("renders admins page for admin users", () => {
     mockCurrentUser.value = currentUserFixtures.adminUser;
-    window.history.pushState({}, "", "/admin/users");
+    window.history.pushState({}, "", "/admin/admins");
     render(<App />);
-    expect(screen.getByText("Admin Users Page")).toBeInTheDocument();
+    expect(screen.getByText("Admins Page")).toBeInTheDocument();
   });
 
-  test("does not render admin users page for regular users", () => {
+  test("does not render admins page for regular users", () => {
     mockCurrentUser.value = currentUserFixtures.userOnly;
-    window.history.pushState({}, "", "/admin/users");
+    window.history.pushState({}, "", "/admin/admins");
     render(<App />);
-    expect(screen.queryByText("Admin Users Page")).not.toBeInTheDocument();
+    expect(screen.queryByText("Admins Page")).not.toBeInTheDocument();
+  });
+
+  test("renders moderators page for admin users", () => {
+    mockCurrentUser.value = currentUserFixtures.adminUser;
+    window.history.pushState({}, "", "/admin/moderators");
+    render(<App />);
+    expect(screen.getByText("Moderators Page")).toBeInTheDocument();
+  });
+
+  test("does not render moderators page for regular users", () => {
+    mockCurrentUser.value = currentUserFixtures.userOnly;
+    window.history.pushState({}, "", "/admin/moderators");
+    render(<App />);
+    expect(screen.queryByText("Moderators Page")).not.toBeInTheDocument();
   });
 
   test("renders developer page for admin users", () => {
