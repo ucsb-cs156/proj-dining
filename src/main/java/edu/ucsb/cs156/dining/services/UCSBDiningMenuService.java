@@ -27,6 +27,12 @@ public class UCSBDiningMenuService {
   @Value("${app.ucsb.api.host}")
   private String apiHost;
 
+  @Value("${app.name}")
+  private String appName;
+
+  @Value("${app.hostname}")
+  private String appHostname;
+
   private RestTemplate restTemplate = new RestTemplate();
 
   public UCSBDiningMenuService(RestTemplateBuilder restTemplateBuilder) throws Exception {
@@ -44,6 +50,7 @@ public class UCSBDiningMenuService {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("ucsb-api-version", "1.0");
     headers.set("ucsb-api-key", this.apiKey);
+    headers.set("X-Requesting-App", this.appName + "." + this.appHostname);
 
     HttpEntity<String> entity = new HttpEntity<>("body", headers);
 

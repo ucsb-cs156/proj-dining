@@ -31,6 +31,12 @@ public class UCSBDiningMenuItemsServiceTests {
   @Value("${app.ucsb.api.host}")
   private String apiHost;
 
+  @Value("${app.name}")
+  private String appName;
+
+  @Value("${app.hostname}")
+  private String appHostname;
+
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
   @MockBean private WiremockService wiremockService;
@@ -74,6 +80,7 @@ public class UCSBDiningMenuItemsServiceTests {
         .andExpect(header("Accept", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("ucsb-api-key", apiKey))
+        .andExpect(header("X-Requesting-App", appName + "." + appHostname))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
     List<Entree> actualResult =

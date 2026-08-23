@@ -32,6 +32,12 @@ public class UCSBDiningMenuServiceTests {
   @Value("${app.ucsb.api.host}")
   private String apiHost;
 
+  @Value("${app.name}")
+  private String appName;
+
+  @Value("${app.hostname}")
+  private String appHostname;
+
   @Autowired private MockRestServiceServer mockRestServiceServer;
 
   @MockBean private WiremockService wiremockService;
@@ -58,6 +64,7 @@ public class UCSBDiningMenuServiceTests {
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("ucsb-api-version", "1.0"))
         .andExpect(header("ucsb-api-key", apiKey))
+        .andExpect(header("X-Requesting-App", appName + "." + appHostname))
         .andRespond(withSuccess(expectedResult, MediaType.APPLICATION_JSON));
 
     String result = ucs.getJSON(dateTime, diningCommonCode);
@@ -81,6 +88,7 @@ public class UCSBDiningMenuServiceTests {
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("ucsb-api-version", "1.0"))
         .andExpect(header("ucsb-api-key", apiKey))
+        .andExpect(header("X-Requesting-App", appName + "." + appHostname))
         .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
     String result = ucs.getJSON(dateTime, diningCommonCode);
@@ -104,6 +112,7 @@ public class UCSBDiningMenuServiceTests {
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("ucsb-api-version", "1.0"))
         .andExpect(header("ucsb-api-key", apiKey))
+        .andExpect(header("X-Requesting-App", appName + "." + appHostname))
         .andRespond(withBadRequest());
 
     String result = ucs.getJSON(dateTime, diningCommonCode);
@@ -127,6 +136,7 @@ public class UCSBDiningMenuServiceTests {
         .andExpect(header("Content-Type", MediaType.APPLICATION_JSON.toString()))
         .andExpect(header("ucsb-api-version", "1.0"))
         .andExpect(header("ucsb-api-key", apiKey))
+        .andExpect(header("X-Requesting-App", appName + "." + appHostname))
         .andRespond(withServerError());
 
     String result = ucs.getJSON(dateTime, diningCommonCode);
