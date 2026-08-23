@@ -1,17 +1,14 @@
 package edu.ucsb.cs156.dining.controllers;
 
 import edu.ucsb.cs156.dining.entities.MenuItem;
-import edu.ucsb.cs156.dining.entities.Review;
 import edu.ucsb.cs156.dining.errors.EntityNotFoundException;
 import edu.ucsb.cs156.dining.models.Entree;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
-import edu.ucsb.cs156.dining.repositories.ReviewRepository;
 import edu.ucsb.cs156.dining.services.UCSBDiningMenuItemsService;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +30,6 @@ public class UCSBDiningMenuItemsController extends ApiController {
 
   @Autowired MenuItemRepository menuItemRepository;
 
-  @Autowired ReviewRepository reviewRepository;
-
   @Operation(summary = "Get list of entrees being served at given meal, dining common, and day")
   @GetMapping(
       value = "/{date-time}/{dining-commons-code}/{meal-code}",
@@ -45,37 +40,23 @@ public class UCSBDiningMenuItemsController extends ApiController {
                   "date (in iso format, e.g. YYYY-mm-dd) or date-time (in iso format e.g. YYYY-mm-ddTHH:MM:SS)")
           @PathVariable("date-time")
           String datetime,
-      @PathVariable("dining-commons-code") String diningcommoncode,
-      @PathVariable("meal-code") String mealcode)
+      @PathVariable("dining-commons-code") String diningCommonsCode,
+      @PathVariable("meal-code") String mealCode)
       throws Exception {
 
-    List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningcommoncode, mealcode);
+    List<Entree> body = ucsbDiningMenuItemsService.get(datetime, diningCommonsCode, mealCode);
 
-    List<MenuItem> menuitems = new ArrayList<>();
+    List<MenuItem> menuItems =
+        ucsbDiningMenuItemsService.getOrCreateMenuItems(diningCommonsCode, mealCode, body);
 
-    for (Entree entree : body) {
-      Optional<MenuItem> exists =
-          menuItemRepository.findByDiningCommonsCodeAndMealCodeAndNameAndStation(
-              diningcommoncode, mealcode, entree.getName(), entree.getStation());
-
-      MenuItem newMenuItem = exists.orElse(new MenuItem());
-      // MenuItem newMenuItem = new MenuItem();
-      newMenuItem.setDiningCommonsCode(diningcommoncode);
-      newMenuItem.setMealCode(mealcode);
-      newMenuItem.setName(entree.getName());
-      newMenuItem.setStation(entree.getStation());
-
-      menuItemRepository.save(newMenuItem);
-
-      List<Review> approvedReviews =
-          (List<Review>)
-              reviewRepository.findByItemAndStatus(newMenuItem, ModerationStatus.APPROVED);
-      newMenuItem.setReviews(approvedReviews);
-
-      menuitems.add(newMenuItem);
-    }
-
-    return ResponseEntity.ok().body(menuitems);
+    menuItems.forEach(
+        (item) -> {
+          item.setReviews(
+              item.getReviews().stream()
+                  .filter((review) -> review.getStatus() == ModerationStatus.APPROVED)
+                  .toList());
+        });
+    return ResponseEntity.ok().body(menuItems);
   }
 
   @Operation(summary = "Get a single menu item by ID")
