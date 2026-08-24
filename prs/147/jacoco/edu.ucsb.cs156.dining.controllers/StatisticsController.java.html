@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatisticsController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">proj-dining</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.dining.controllers</a> &gt; <span class="el_source">StatisticsController.java</span></div><h1>StatisticsController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.dining.controllers;
+
+import edu.ucsb.cs156.dining.entities.MenuItem;
+import edu.ucsb.cs156.dining.entities.Review;
+import edu.ucsb.cs156.dining.models.CommonsAverage;
+import edu.ucsb.cs156.dining.models.CommonsAverageOverTime;
+import edu.ucsb.cs156.dining.models.ItemStatistic;
+import edu.ucsb.cs156.dining.models.MealAverage;
+import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+import edu.ucsb.cs156.dining.statuses.ModerationStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * REST controller that exposes aggregated review statistics. These endpoints power the &quot;Review
+ * Statistics&quot; pages of the frontend (see issue #18).
+ *
+ * &lt;p&gt;Only reviews with moderation status {@link ModerationStatus#APPROVED} (or reviews that have no
+ * comments and were therefore auto-approved) are considered when computing the statistics, so that
+ * unmoderated user content does not influence what we publish.
+ */
+@Tag(name = &quot;Statistics&quot;)
+@RequestMapping(&quot;/api/statistics&quot;)
+@RestController
+<span class="fc" id="L44">@Slf4j</span>
+<span class="fc" id="L45">public class StatisticsController extends ApiController {</span>
+
+  @Autowired ReviewRepository reviewRepository;
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleValidationExceptions(
+      IllegalArgumentException ex) {
+<span class="fc" id="L52">    Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L53">    errors.put(&quot;error&quot;, ex.getMessage());</span>
+<span class="fc" id="L54">    return ResponseEntity.badRequest().body(errors);</span>
+  }
+
+  /** Supported time-period filters for the best/worst items endpoints. */
+  public static final String PERIOD_ALL = &quot;ALL&quot;;
+
+  public static final String PERIOD_6M = &quot;6M&quot;;
+  public static final String PERIOD_1M = &quot;1M&quot;;
+  public static final String PERIOD_1W = &quot;1W&quot;;
+
+<span class="fc" id="L64">  private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern(&quot;yyyy-MM&quot;);</span>
+
+  /**
+   * Returns the cutoff {@link LocalDateTime} for the supplied period. {@code ALL} (or any
+   * unrecognised value) maps to {@code null}, meaning no lower bound.
+   */
+  static LocalDateTime cutoffForPeriod(String period, LocalDateTime now) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">    if (period == null) {</span>
+<span class="fc" id="L72">      return null;</span>
+    }
+<span class="fc bfc" id="L74" title="All 4 branches covered.">    switch (period) {</span>
+      case PERIOD_6M:
+<span class="fc" id="L76">        return now.minusMonths(6);</span>
+      case PERIOD_1M:
+<span class="fc" id="L78">        return now.minusMonths(1);</span>
+      case PERIOD_1W:
+<span class="fc" id="L80">        return now.minusWeeks(1);</span>
+      case PERIOD_ALL:
+      default:
+<span class="fc" id="L83">        return null;</span>
+    }
+  }
+
+  /** Loads only approved reviews from the repository (the only ones we expose in statistics). */
+  private List&lt;Review&gt; approvedReviews() {
+<span class="fc" id="L89">    List&lt;Review&gt; approved = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">    for (Review r : reviewRepository.findByStatus(ModerationStatus.APPROVED)) {</span>
+<span class="fc" id="L91">      approved.add(r);</span>
+<span class="fc" id="L92">    }</span>
+<span class="fc" id="L93">    return approved;</span>
+  }
+
+  /** Applies a &quot;served on or after the cutoff&quot; filter (if a cutoff was given). */
+  private List&lt;Review&gt; filterByCutoff(List&lt;Review&gt; reviews, LocalDateTime cutoff) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">    if (cutoff == null) {</span>
+<span class="fc" id="L99">      return reviews;</span>
+    }
+<span class="fc" id="L101">    List&lt;Review&gt; filtered = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">    for (Review r : reviews) {</span>
+<span class="fc bfc" id="L103" title="All 4 branches covered.">      if (r.getDateItemServed() != null &amp;&amp; !r.getDateItemServed().isBefore(cutoff)) {</span>
+<span class="fc" id="L104">        filtered.add(r);</span>
+      }
+<span class="fc" id="L106">    }</span>
+<span class="fc" id="L107">    return filtered;</span>
+  }
+
+  /** Groups reviews by their associated menu item id and computes aggregate statistics. */
+  private List&lt;ItemStatistic&gt; aggregateByItem(List&lt;Review&gt; reviews) {
+<span class="fc" id="L112">    Map&lt;Long, List&lt;Review&gt;&gt; byItem = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">    for (Review r : reviews) {</span>
+<span class="fc" id="L114">      MenuItem item = r.getItem();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">      if (item == null) {</span>
+<span class="fc" id="L116">        continue;</span>
+      }
+<span class="fc" id="L118">      byItem.computeIfAbsent(item.getId(), k -&gt; new ArrayList&lt;&gt;()).add(r);</span>
+<span class="fc" id="L119">    }</span>
+<span class="fc" id="L120">    List&lt;ItemStatistic&gt; stats = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">    for (Map.Entry&lt;Long, List&lt;Review&gt;&gt; entry : byItem.entrySet()) {</span>
+<span class="fc" id="L122">      List&lt;Review&gt; itemReviews = entry.getValue();</span>
+<span class="fc" id="L123">      MenuItem item = itemReviews.get(0).getItem();</span>
+<span class="fc" id="L124">      double total = 0.0;</span>
+<span class="fc" id="L125">      long count = 0L;</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">      for (Review r : itemReviews) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if (r.getItemsStars() != null) {</span>
+<span class="fc" id="L128">          total += r.getItemsStars();</span>
+<span class="fc" id="L129">          count++;</span>
+        }
+<span class="fc" id="L131">      }</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">      if (count == 0L) {</span>
+<span class="fc" id="L133">        continue;</span>
+      }
+<span class="fc" id="L135">      stats.add(</span>
+<span class="fc" id="L136">          ItemStatistic.builder()</span>
+<span class="fc" id="L137">              .itemId(entry.getKey())</span>
+<span class="fc" id="L138">              .itemName(item.getName())</span>
+<span class="fc" id="L139">              .diningCommonsCode(item.getDiningCommonsCode())</span>
+<span class="fc" id="L140">              .mealCode(item.getMealCode())</span>
+<span class="fc" id="L141">              .station(item.getStation())</span>
+<span class="fc" id="L142">              .averageStars(total / count)</span>
+<span class="fc" id="L143">              .reviewCount(count)</span>
+<span class="fc" id="L144">              .build());</span>
+<span class="fc" id="L145">    }</span>
+<span class="fc" id="L146">    return stats;</span>
+  }
+
+  /** Rejects negative limits before they reach {@code Stream.limit}, which throws. */
+  private void validateLimit(int limit) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    if (limit &lt; 0) {</span>
+<span class="fc" id="L152">      throw new IllegalArgumentException(&quot;limit must be non-negative&quot;);</span>
+    }
+<span class="fc" id="L154">  }</span>
+
+  /** Best items endpoint, supports a time period filter and a maximum result count. */
+  @Operation(summary = &quot;Best rated items, optionally restricted to a recent time period&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/items/best&quot;)
+  public List&lt;ItemStatistic&gt; bestItems(
+      @Parameter(name = &quot;period&quot;, description = &quot;ALL, 6M, 1M, or 1W&quot;)
+          @RequestParam(name = &quot;period&quot;, defaultValue = PERIOD_ALL)
+          String period,
+      @Parameter(name = &quot;limit&quot;, description = &quot;Maximum number of items to return&quot;)
+          @RequestParam(name = &quot;limit&quot;, defaultValue = &quot;5&quot;)
+          int limit) {
+<span class="fc" id="L167">    log.info(&quot;statistics.bestItems period={} limit={}&quot;, period, limit);</span>
+<span class="fc" id="L168">    validateLimit(limit);</span>
+<span class="fc" id="L169">    LocalDateTime cutoff = cutoffForPeriod(period, LocalDateTime.now());</span>
+<span class="fc" id="L170">    List&lt;ItemStatistic&gt; stats = aggregateByItem(filterByCutoff(approvedReviews(), cutoff));</span>
+<span class="fc" id="L171">    stats.sort(</span>
+<span class="fc" id="L172">        Comparator.comparingDouble(ItemStatistic::getAverageStars)</span>
+<span class="fc" id="L173">            .reversed()</span>
+<span class="fc" id="L174">            .thenComparing(Comparator.comparingLong(ItemStatistic::getReviewCount).reversed())</span>
+<span class="fc" id="L175">            .thenComparing(Comparator.comparing(ItemStatistic::getItemId)));</span>
+<span class="fc" id="L176">    return stats.stream().limit(limit).collect(Collectors.toCollection(ArrayList::new));</span>
+  }
+
+  /** Worst items endpoint, supports a time period filter and a maximum result count. */
+  @Operation(summary = &quot;Worst rated items, optionally restricted to a recent time period&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/items/worst&quot;)
+  public List&lt;ItemStatistic&gt; worstItems(
+      @Parameter(name = &quot;period&quot;, description = &quot;ALL, 6M, 1M, or 1W&quot;)
+          @RequestParam(name = &quot;period&quot;, defaultValue = PERIOD_ALL)
+          String period,
+      @Parameter(name = &quot;limit&quot;, description = &quot;Maximum number of items to return&quot;)
+          @RequestParam(name = &quot;limit&quot;, defaultValue = &quot;5&quot;)
+          int limit) {
+<span class="fc" id="L190">    log.info(&quot;statistics.worstItems period={} limit={}&quot;, period, limit);</span>
+<span class="fc" id="L191">    validateLimit(limit);</span>
+<span class="fc" id="L192">    LocalDateTime cutoff = cutoffForPeriod(period, LocalDateTime.now());</span>
+<span class="fc" id="L193">    List&lt;ItemStatistic&gt; stats = aggregateByItem(filterByCutoff(approvedReviews(), cutoff));</span>
+<span class="fc" id="L194">    stats.sort(</span>
+<span class="fc" id="L195">        Comparator.comparingDouble(ItemStatistic::getAverageStars)</span>
+<span class="fc" id="L196">            .thenComparing(Comparator.comparingLong(ItemStatistic::getReviewCount).reversed())</span>
+<span class="fc" id="L197">            .thenComparing(Comparator.comparing(ItemStatistic::getItemId)));</span>
+<span class="fc" id="L198">    return stats.stream().limit(limit).collect(Collectors.toCollection(ArrayList::new));</span>
+  }
+
+  /** Average review score for each dining commons. */
+  @Operation(summary = &quot;Average review score for each dining commons&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/commons/averages&quot;)
+  public List&lt;CommonsAverage&gt; commonsAverages() {
+<span class="fc" id="L206">    log.info(&quot;statistics.commonsAverages&quot;);</span>
+<span class="fc" id="L207">    Map&lt;String, double[]&gt; byCommons = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">    for (Review r : approvedReviews()) {</span>
+<span class="fc" id="L209">      MenuItem item = r.getItem();</span>
+<span class="fc bfc" id="L210" title="All 6 branches covered.">      if (item == null || item.getDiningCommonsCode() == null || r.getItemsStars() == null) {</span>
+<span class="fc" id="L211">        continue;</span>
+      }
+<span class="fc" id="L213">      double[] acc = byCommons.computeIfAbsent(item.getDiningCommonsCode(), k -&gt; new double[2]);</span>
+<span class="fc" id="L214">      acc[0] += r.getItemsStars();</span>
+<span class="fc" id="L215">      acc[1] += 1.0;</span>
+<span class="fc" id="L216">    }</span>
+<span class="fc" id="L217">    List&lt;CommonsAverage&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">    for (Map.Entry&lt;String, double[]&gt; entry : byCommons.entrySet()) {</span>
+<span class="fc" id="L219">      double[] acc = entry.getValue();</span>
+<span class="fc" id="L220">      long count = (long) acc[1];</span>
+<span class="fc" id="L221">      result.add(</span>
+<span class="fc" id="L222">          CommonsAverage.builder()</span>
+<span class="fc" id="L223">              .diningCommonsCode(entry.getKey())</span>
+<span class="fc" id="L224">              .averageStars(acc[0] / acc[1])</span>
+<span class="fc" id="L225">              .reviewCount(count)</span>
+<span class="fc" id="L226">              .build());</span>
+<span class="fc" id="L227">    }</span>
+<span class="fc" id="L228">    result.sort(Comparator.comparing(CommonsAverage::getDiningCommonsCode));</span>
+<span class="fc" id="L229">    return result;</span>
+  }
+
+  /** Average review score for each dining commons grouped by month (used to draw a graph). */
+  @Operation(summary = &quot;Average review score for each dining commons grouped by month&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/commons/averages/overtime&quot;)
+  public List&lt;CommonsAverageOverTime&gt; commonsAveragesOverTime() {
+<span class="fc" id="L237">    log.info(&quot;statistics.commonsAveragesOverTime&quot;);</span>
+<span class="fc" id="L238">    Map&lt;String, double[]&gt; buckets = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L239">    Map&lt;String, String[]&gt; labels = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">    for (Review r : approvedReviews()) {</span>
+<span class="fc" id="L241">      MenuItem item = r.getItem();</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">      if (item == null</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">          || item.getDiningCommonsCode() == null</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">          || r.getItemsStars() == null</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">          || r.getDateItemServed() == null) {</span>
+<span class="fc" id="L246">        continue;</span>
+      }
+<span class="fc" id="L248">      String code = item.getDiningCommonsCode();</span>
+<span class="fc" id="L249">      String period = r.getDateItemServed().format(MONTH_FORMATTER);</span>
+<span class="fc" id="L250">      String key = code + &quot;|&quot; + period;</span>
+<span class="fc" id="L251">      double[] acc = buckets.computeIfAbsent(key, k -&gt; new double[2]);</span>
+<span class="fc" id="L252">      acc[0] += r.getItemsStars();</span>
+<span class="fc" id="L253">      acc[1] += 1.0;</span>
+<span class="fc" id="L254">      labels.computeIfAbsent(key, k -&gt; new String[] {code, period});</span>
+<span class="fc" id="L255">    }</span>
+<span class="fc" id="L256">    List&lt;CommonsAverageOverTime&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">    for (Map.Entry&lt;String, double[]&gt; entry : buckets.entrySet()) {</span>
+<span class="fc" id="L258">      String[] label = labels.get(entry.getKey());</span>
+<span class="fc" id="L259">      double[] acc = entry.getValue();</span>
+<span class="fc" id="L260">      long count = (long) acc[1];</span>
+<span class="fc" id="L261">      result.add(</span>
+<span class="fc" id="L262">          CommonsAverageOverTime.builder()</span>
+<span class="fc" id="L263">              .diningCommonsCode(label[0])</span>
+<span class="fc" id="L264">              .period(label[1])</span>
+<span class="fc" id="L265">              .averageStars(acc[0] / acc[1])</span>
+<span class="fc" id="L266">              .reviewCount(count)</span>
+<span class="fc" id="L267">              .build());</span>
+<span class="fc" id="L268">    }</span>
+<span class="fc" id="L269">    result.sort(</span>
+<span class="fc" id="L270">        Comparator.comparing(CommonsAverageOverTime::getDiningCommonsCode)</span>
+<span class="fc" id="L271">            .thenComparing(CommonsAverageOverTime::getPeriod));</span>
+<span class="fc" id="L272">    return result;</span>
+  }
+
+  /** Average review score for each meal slot at the supplied dining commons. */
+  @Operation(summary = &quot;Average review score grouped by meal for a single dining commons&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/commons/{code}/meals/averages&quot;)
+  public List&lt;MealAverage&gt; commonsMealAverages(
+      @Parameter(name = &quot;code&quot;, description = &quot;dining commons code, e.g. 'carrillo'&quot;)
+          @PathVariable(&quot;code&quot;)
+          String code) {
+<span class="fc" id="L283">    log.info(&quot;statistics.commonsMealAverages code={}&quot;, code);</span>
+<span class="fc" id="L284">    Map&lt;String, double[]&gt; byMeal = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">    for (Review r : approvedReviews()) {</span>
+<span class="fc" id="L286">      MenuItem item = r.getItem();</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">      if (item == null</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">          || item.getMealCode() == null</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">          || r.getItemsStars() == null</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">          || !code.equals(item.getDiningCommonsCode())) {</span>
+<span class="fc" id="L291">        continue;</span>
+      }
+<span class="fc" id="L293">      double[] acc = byMeal.computeIfAbsent(item.getMealCode(), k -&gt; new double[2]);</span>
+<span class="fc" id="L294">      acc[0] += r.getItemsStars();</span>
+<span class="fc" id="L295">      acc[1] += 1.0;</span>
+<span class="fc" id="L296">    }</span>
+<span class="fc" id="L297">    List&lt;MealAverage&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">    for (Map.Entry&lt;String, double[]&gt; entry : byMeal.entrySet()) {</span>
+<span class="fc" id="L299">      double[] acc = entry.getValue();</span>
+<span class="fc" id="L300">      long count = (long) acc[1];</span>
+<span class="fc" id="L301">      result.add(</span>
+<span class="fc" id="L302">          MealAverage.builder()</span>
+<span class="fc" id="L303">              .diningCommonsCode(code)</span>
+<span class="fc" id="L304">              .mealCode(entry.getKey())</span>
+<span class="fc" id="L305">              .averageStars(acc[0] / acc[1])</span>
+<span class="fc" id="L306">              .reviewCount(count)</span>
+<span class="fc" id="L307">              .build());</span>
+<span class="fc" id="L308">    }</span>
+<span class="fc" id="L309">    result.sort(Comparator.comparing(MealAverage::getMealCode));</span>
+<span class="fc" id="L310">    return result;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
