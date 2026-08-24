@@ -1,5 +1,6 @@
 package edu.ucsb.cs156.dining.services;
 
+import java.time.Duration;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,10 +34,23 @@ public class UCSBDiningMenuService {
   @Value("${app.hostname}")
   private String appHostname;
 
+  /*
+   * A RestTemplate built with no timeout blocks its calling thread forever on a hung external
+   * call. That's a real incident lib-jobs' single-threaded jobsExecutor hit on another app
+   * (proj-scaffold): a job stuck this way permanently wedged the executor, with no way to recover
+   * short of restarting the app (see lib-jobs DESIGN.md 9 -- cooperative job cancellation only
+   * helps a job that reaches another checkpoint, which a truly hung thread never will). Generous
+   * but finite: long enough to never trip on legitimate slowness, short enough to guarantee a job
+   * can't hang forever.
+   */
+  private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
+  private static final Duration READ_TIMEOUT = Duration.ofSeconds(60);
+
   private RestTemplate restTemplate = new RestTemplate();
 
   public UCSBDiningMenuService(RestTemplateBuilder restTemplateBuilder) throws Exception {
-    restTemplate = restTemplateBuilder.build();
+    restTemplate =
+        restTemplateBuilder.connectTimeout(CONNECT_TIMEOUT).readTimeout(READ_TIMEOUT).build();
   }
 
   public static final String ALL_MEAL_TIMES_AT_A_DINING_COMMON_ENDPOINT =
