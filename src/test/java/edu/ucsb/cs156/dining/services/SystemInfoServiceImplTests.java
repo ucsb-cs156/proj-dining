@@ -30,6 +30,7 @@ class SystemInfoServiceImplTests {
     assertTrue(si.getGithubUrl().startsWith(si.getSourceRepo()));
     assertTrue(si.getGithubUrl().endsWith(si.getCommitId()));
     assertTrue(si.getGithubUrl().contains("/commit/"));
+    assertNull(si.getFeedbackUrl());
   }
 
   @Test
@@ -41,5 +42,21 @@ class SystemInfoServiceImplTests {
     assertNull(SystemInfoServiceImpl.githubUrl(null, null));
     assertNull(SystemInfoServiceImpl.githubUrl("x", null));
     assertNull(SystemInfoServiceImpl.githubUrl(null, "x"));
+  }
+
+  @ExtendWith(SpringExtension.class)
+  @EnableConfigurationProperties(value = SystemInfoServiceImpl.class)
+  @TestPropertySource(
+      locations = "classpath:application-development.properties",
+      properties = "app.feedbackUrl=https://docs.google.com/forms/example")
+  static class WithFeedbackUrl {
+
+    @Autowired private SystemInfoService systemInfoService;
+
+    @Test
+    void test_getSystemInfo_withFeedbackUrl() {
+      SystemInfo si = systemInfoService.getSystemInfo();
+      assertEquals("https://docs.google.com/forms/example", si.getFeedbackUrl());
+    }
   }
 }
