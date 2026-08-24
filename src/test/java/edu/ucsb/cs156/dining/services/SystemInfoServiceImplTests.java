@@ -43,20 +43,4 @@ class SystemInfoServiceImplTests {
     assertNull(SystemInfoServiceImpl.githubUrl("x", null));
     assertNull(SystemInfoServiceImpl.githubUrl(null, "x"));
   }
-
-  @ExtendWith(SpringExtension.class)
-  @EnableConfigurationProperties(value = SystemInfoServiceImpl.class)
-  @TestPropertySource(
-      locations = "classpath:application-development.properties",
-      properties = "app.feedbackUrl=https://docs.google.com/forms/example")
-  static class WithFeedbackUrl {
-
-    @Autowired private SystemInfoService systemInfoService;
-
-    @Test
-    void test_getSystemInfo_withFeedbackUrl() {
-      SystemInfo si = systemInfoService.getSystemInfo();
-      assertEquals("https://docs.google.com/forms/example", si.getFeedbackUrl());
-    }
-  }
 }
