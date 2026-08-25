@@ -138,6 +138,48 @@ describe("UsersIndexPage tests", () => {
     expect(screen.getByTestId("UsersIndexPage-next")).toBeDisabled();
   });
 
+  test("prev from page 3 goes to page 2 (not page 1)", async () => {
+    setup();
+    const queryClient = new QueryClient();
+    // 21 users → 3 pages at default page size of 10
+    const manyUsers = Array.from({ length: 21 }, (_, i) => ({
+      id: i + 1,
+      email: `user${i + 1}@ucsb.edu`,
+      givenName: `First${i + 1}`,
+      familyName: `Last${i + 1}`,
+      admin: false,
+      moderator: false,
+    }));
+    axiosMock.onGet("/api/admin/users").reply(200, manyUsers);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <UsersIndexPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    await screen.findByTestId("UsersIndexPage-page-info");
+
+    // advance to page 3
+    fireEvent.click(screen.getByTestId("UsersIndexPage-next"));
+    fireEvent.click(screen.getByTestId("UsersIndexPage-next"));
+    expect(screen.getByTestId("UsersIndexPage-page-info")).toHaveTextContent(
+      "Page 3 of 3",
+    );
+    expect(screen.getByText("user21@ucsb.edu")).toBeInTheDocument();
+
+    // prev from page 3 should go to page 2, not page 1
+    fireEvent.click(screen.getByTestId("UsersIndexPage-prev"));
+    expect(screen.getByTestId("UsersIndexPage-page-info")).toHaveTextContent(
+      "Page 2 of 3",
+    );
+    expect(screen.getByText("user11@ucsb.edu")).toBeInTheDocument();
+    expect(screen.queryByText("user1@ucsb.edu")).not.toBeInTheDocument();
+    expect(screen.queryByText("user21@ucsb.edu")).not.toBeInTheDocument();
+  });
+
   test("changing page size resets to first page", async () => {
     setup();
     const queryClient = new QueryClient();
