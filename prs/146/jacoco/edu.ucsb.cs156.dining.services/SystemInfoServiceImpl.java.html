@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
   private String commitId;
 
   @Value(&quot;${app.feedbackUrl:}&quot;)
-  private String feedbackUrl;
+  private String appFeedbackUrl;
 
   public static String githubUrl(String repo, String commit) {
 <span class="fc bfc" id="L45" title="All 4 branches covered.">    return commit != null &amp;&amp; repo != null ? repo + &quot;/commit/&quot; + commit : null;</span>
@@ -61,7 +61,7 @@ import org.springframework.stereotype.Service;
 <span class="fc" id="L61">            .commitMessage(this.commitMessage)</span>
 <span class="fc" id="L62">            .commitId(this.commitId)</span>
 <span class="fc" id="L63">            .githubUrl(githubUrl(this.sourceRepo, this.commitId))</span>
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            .feedbackUrl(this.feedbackUrl.isEmpty() ? null : this.feedbackUrl)</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            .appFeedbackUrl(this.appFeedbackUrl.isEmpty() ? null : this.appFeedbackUrl)</span>
 <span class="fc" id="L65">            .build();</span>
 <span class="fc" id="L66">    log.info(&quot;getSystemInfo returns {}&quot;, si);</span>
 <span class="fc" id="L67">    return si;</span>

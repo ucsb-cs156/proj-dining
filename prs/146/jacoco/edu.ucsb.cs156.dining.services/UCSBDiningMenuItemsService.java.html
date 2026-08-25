@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.models.Entree;
+import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-<span class="fc" id="L22">@Slf4j</span>
+<span class="fc" id="L23">@Slf4j</span>
 public class UCSBDiningMenuItemsService {
 
   @Autowired private ObjectMapper objectMapper;
@@ -36,11 +37,24 @@ public class UCSBDiningMenuItemsService {
   @Value(&quot;${app.hostname}&quot;)
   private String appHostname;
 
-<span class="fc" id="L39">  private RestTemplate restTemplate = new RestTemplate();</span>
+  /*
+   * A RestTemplate built with no timeout blocks its calling thread forever on a hung external
+   * call. That's a real incident lib-jobs' single-threaded jobsExecutor hit on another app
+   * (proj-scaffold): a job stuck this way permanently wedged the executor, with no way to recover
+   * short of restarting the app (see lib-jobs DESIGN.md 9 -- cooperative job cancellation only
+   * helps a job that reaches another checkpoint, which a truly hung thread never will). Generous
+   * but finite: long enough to never trip on legitimate slowness, short enough to guarantee a job
+   * can't hang forever.
+   */
+<span class="fc" id="L49">  private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);</span>
+<span class="fc" id="L50">  private static final Duration READ_TIMEOUT = Duration.ofSeconds(60);</span>
 
-<span class="fc" id="L41">  public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {</span>
-<span class="fc" id="L42">    restTemplate = restTemplateBuilder.build();</span>
-<span class="fc" id="L43">  }</span>
+<span class="fc" id="L52">  private RestTemplate restTemplate = new RestTemplate();</span>
+
+<span class="fc" id="L54">  public UCSBDiningMenuItemsService(RestTemplateBuilder restTemplateBuilder) throws Exception {</span>
+<span class="fc" id="L55">    restTemplate =</span>
+<span class="fc" id="L56">        restTemplateBuilder.connectTimeout(CONNECT_TIMEOUT).readTimeout(READ_TIMEOUT).build();</span>
+<span class="fc" id="L57">  }</span>
 
   public static final String ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT =
       &quot;{apiHost}/dining/menu/v1/{date-time}/{dining-common-code}/{meal-code}&quot;;
@@ -57,31 +71,31 @@ public class UCSBDiningMenuItemsService {
   public List&lt;Entree&gt; get(String dateTime, String diningCommonCode, String mealCode)
       throws JsonProcessingException {
 
-<span class="fc" id="L60">    HttpHeaders headers = new HttpHeaders();</span>
-<span class="fc" id="L61">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
-<span class="fc" id="L62">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
-<span class="fc" id="L63">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
-<span class="fc" id="L64">    headers.set(&quot;X-Requesting-App&quot;, this.appName + &quot;.&quot; + this.appHostname);</span>
+<span class="fc" id="L74">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L75">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L76">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L77">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L78">    headers.set(&quot;X-Requesting-App&quot;, this.appName + &quot;.&quot; + this.appHostname);</span>
 
-<span class="fc" id="L66">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
-<span class="fc" id="L67">    String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;</span>
-<span class="fc" id="L68">    url = url.replace(&quot;{apiHost}&quot;, apiHost);</span>
-<span class="fc" id="L69">    url = url.replace(&quot;{date-time}&quot;, dateTime);</span>
-<span class="fc" id="L70">    url = url.replace(&quot;{dining-common-code}&quot;, diningCommonCode);</span>
-<span class="fc" id="L71">    url = url.replace(&quot;{meal-code}&quot;, mealCode);</span>
+<span class="fc" id="L80">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
+<span class="fc" id="L81">    String url = ALL_MEAL_ITEMS_AT_A_DINING_COMMON_ENDPOINT;</span>
+<span class="fc" id="L82">    url = url.replace(&quot;{apiHost}&quot;, apiHost);</span>
+<span class="fc" id="L83">    url = url.replace(&quot;{date-time}&quot;, dateTime);</span>
+<span class="fc" id="L84">    url = url.replace(&quot;{dining-common-code}&quot;, diningCommonCode);</span>
+<span class="fc" id="L85">    url = url.replace(&quot;{meal-code}&quot;, mealCode);</span>
 
-<span class="fc" id="L73">    log.info(</span>
+<span class="fc" id="L87">    log.info(</span>
         &quot;Fetching menu items for date: {}, dining common: {}, meal: {}&quot;,
         dateTime,
         diningCommonCode,
         mealCode);
 
-<span class="fc" id="L79">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
-<span class="fc" id="L80">    String retBody = re.getBody();</span>
+<span class="fc" id="L93">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L94">    String retBody = re.getBody();</span>
 
-<span class="fc" id="L82">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
+<span class="fc" id="L96">    List&lt;Entree&gt; menuItems = objectMapper.readValue(retBody, new TypeReference&lt;List&lt;Entree&gt;&gt;() {});</span>
 
-<span class="fc" id="L84">    return menuItems;</span>
+<span class="fc" id="L98">    return menuItems;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
