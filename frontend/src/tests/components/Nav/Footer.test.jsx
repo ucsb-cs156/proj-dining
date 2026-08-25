@@ -1,33 +1,14 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import Footer from "main/components/Nav/Footer";
+import { fireEvent, render, screen } from "@testing-library/react";
+import Footer, { space } from "main/components/Nav/Footer";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import axios from "axios";
-import AxiosMockAdapter from "axios-mock-adapter";
 
 describe("Footer tests", () => {
-  let axiosMock;
-  let queryClient;
-
-  beforeEach(() => {
-    axiosMock = new AxiosMockAdapter(axios);
-    queryClient = new QueryClient();
+  test("space is a space character", () => {
+    expect(space).toBe(" ");
   });
 
-  afterEach(() => {
-    axiosMock.reset();
-    queryClient.clear();
-  });
-
-  test("Links are correct", async () => {
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Footer />
-      </QueryClientProvider>,
-    );
+  test("Links are correct", () => {
+    render(<Footer />);
     expect(screen.getByTestId("footer-class-website-link")).toHaveAttribute(
       "href",
       "https://ucsb-cs156.github.io",
@@ -40,43 +21,108 @@ describe("Footer tests", () => {
       "href",
       "https://github.com/ucsb-cs156/proj-dining",
     );
-
     expect(screen.getByTestId("footer-dining-search-link")).toHaveAttribute(
       "href",
       "https://apps.dining.ucsb.edu/menu/day",
     );
   });
 
-  test("Feedback button is not shown when feedbackUrl is not set", async () => {
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingNeither);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Footer />
-      </QueryClientProvider>,
-    );
-    // Wait for the component to settle after receiving API response
-    await waitFor(() => {
-      expect(
-        screen.queryByTestId("footer-feedback-link"),
-      ).not.toBeInTheDocument();
-    });
+  test("Feedback button is not shown when systemInfo.appFeedbackUrl is not defined", () => {
+    render(<Footer />);
+
+    expect(
+      screen.queryByTestId("footer-feedback-button"),
+    ).not.toBeInTheDocument();
   });
 
-  test("Feedback button is shown when feedbackUrl is set", async () => {
-    axiosMock
-      .onGet("/api/systemInfo")
-      .reply(200, systemInfoFixtures.showingFeedbackUrl);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Footer />
-      </QueryClientProvider>,
-    );
-    const feedbackButton = await screen.findByTestId("footer-feedback-link");
-    expect(feedbackButton).toHaveAttribute(
+  test("Feedback button is not shown when systemInfo.appFeedbackUrl is empty", () => {
+    const systemInfo = {
+      ...systemInfoFixtures.showingBoth,
+      appFeedbackUrl: "",
+    };
+
+    render(<Footer systemInfo={systemInfo} />);
+
+    expect(
+      screen.queryByTestId("footer-feedback-button"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("Feedback button is shown when systemInfo.appFeedbackUrl is defined, and opens the feedback modal", () => {
+    const systemInfo = systemInfoFixtures.showingFeedbackUrl;
+
+    render(<Footer systemInfo={systemInfo} />);
+
+    expect(
+      screen.queryByTestId("footer-feedback-modal-link"),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("footer-feedback-button"));
+
+    expect(
+      screen.getByText(/Users with a UCSB Google Account are welcome/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/try logging into your UCSB Email\/Google account/),
+    ).toBeInTheDocument();
+
+    expect(screen.getByTestId("footer-feedback-modal-link")).toHaveAttribute(
       "href",
       "https://docs.google.com/forms/example",
     );
+    expect(screen.getByTestId("footer-feedback-modal-link")).toHaveAttribute(
+      "target",
+      "_blank",
+    );
+    expect(screen.getByTestId("footer-feedback-modal-link")).toHaveAttribute(
+      "rel",
+      "noopener noreferrer",
+    );
+  });
+
+  test("Feedback modal closes when the Cancel button is clicked", () => {
+    const systemInfo = systemInfoFixtures.showingFeedbackUrl;
+
+    render(<Footer systemInfo={systemInfo} />);
+
+    fireEvent.click(screen.getByTestId("footer-feedback-button"));
+    expect(screen.getByTestId("footer-feedback-modal-link")).toBeVisible();
+
+    fireEvent.click(screen.getByTestId("footer-feedback-modal-close-button"));
+
+    expect(
+      screen.queryByTestId("footer-feedback-modal-link"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("Feedback modal closes when the Open Feedback Form button is clicked", () => {
+    const systemInfo = systemInfoFixtures.showingFeedbackUrl;
+
+    render(<Footer systemInfo={systemInfo} />);
+
+    fireEvent.click(screen.getByTestId("footer-feedback-button"));
+    expect(screen.getByTestId("footer-feedback-modal-link")).toBeVisible();
+
+    fireEvent.click(screen.getByTestId("footer-feedback-modal-link"));
+
+    expect(
+      screen.queryByTestId("footer-feedback-modal-link"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("Feedback modal closes when the modal onHide is triggered", () => {
+    const systemInfo = systemInfoFixtures.showingFeedbackUrl;
+
+    render(<Footer systemInfo={systemInfo} />);
+
+    fireEvent.click(screen.getByTestId("footer-feedback-button"));
+    expect(screen.getByTestId("footer-feedback-modal-link")).toBeVisible();
+
+    // Trigger the modal's close button (X) in the header
+    fireEvent.click(screen.getByLabelText("Close"));
+
+    expect(
+      screen.queryByTestId("footer-feedback-modal-link"),
+    ).not.toBeInTheDocument();
   });
 });

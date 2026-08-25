@@ -21,7 +21,7 @@ const systemInfoFixtures = {
     springH2ConsoleEnabled: false,
     showSwaggerUILink: false,
     oauthLogin: "/oauth2/authorization/google",
-    feedbackUrl: "https://docs.google.com/forms/example",
+    appFeedbackUrl: "https://docs.google.com/forms/example",
   },
 };
 

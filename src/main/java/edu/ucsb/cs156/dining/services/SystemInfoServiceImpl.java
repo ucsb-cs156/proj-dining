@@ -39,7 +39,7 @@ public class SystemInfoServiceImpl extends SystemInfoService {
   private String commitId;
 
   @Value("${app.feedbackUrl:}")
-  private String feedbackUrl;
+  private String appFeedbackUrl;
 
   public static String githubUrl(String repo, String commit) {
     return commit != null && repo != null ? repo + "/commit/" + commit : null;
@@ -61,7 +61,7 @@ public class SystemInfoServiceImpl extends SystemInfoService {
             .commitMessage(this.commitMessage)
             .commitId(this.commitId)
             .githubUrl(githubUrl(this.sourceRepo, this.commitId))
-            .feedbackUrl(this.feedbackUrl.isEmpty() ? null : this.feedbackUrl)
+            .appFeedbackUrl(this.appFeedbackUrl.isEmpty() ? null : this.appFeedbackUrl)
             .build();
     log.info("getSystemInfo returns {}", si);
     return si;

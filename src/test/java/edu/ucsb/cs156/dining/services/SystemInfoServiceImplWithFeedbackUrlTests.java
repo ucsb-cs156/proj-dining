@@ -25,6 +25,6 @@ class SystemInfoServiceImplWithFeedbackUrlTests {
   @Test
   void test_getSystemInfo_withFeedbackUrl() {
     SystemInfo si = systemInfoService.getSystemInfo();
-    assertEquals("https://docs.google.com/forms/example", si.getFeedbackUrl());
+    assertEquals("https://docs.google.com/forms/example", si.getAppFeedbackUrl());
   }
 }
