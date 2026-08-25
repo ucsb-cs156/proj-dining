@@ -37,6 +37,7 @@ The fallback values, in this case being:
 | `GOOGLE_CLIENT_ID` | `client_id_unset` |
 | `GOOGLE_CLIENT_SECRET` | `client_secret_unset` |
 | `ADMIN_EMAILS` | `phtcon@ucsb.edu` |
+| `APP_FEEDBACK_URL` | unset (blank) | URL of an external feedback form; when set, shows a "Provide Feedback" button in the footer |
 
 While the values for `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` will not work in practice (i.e. with these values, OAuth login 
 will fail), having a default value:
