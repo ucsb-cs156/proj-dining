@@ -1,0 +1,11 @@
+.devcontainer/
+.github/
+docs/
+graphql-schemas/
+frontend/.storybook
+frontend/docs-index
+frontend/node_modules
+*.md
+.junie/
+Dockerfile
+.dockerignore
