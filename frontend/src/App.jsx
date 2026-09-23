@@ -3,6 +3,7 @@ import HomePage from "main/pages/HomePage";
 import ProfilePage from "main/pages/ProfilePage";
 import AdminsIndexPage from "main/pages/Admin/AdminsIndexPage";
 import ModeratorsIndexPage from "main/pages/Admin/ModeratorsIndexPage";
+import UsersIndexPage from "main/pages/Admin/UsersIndexPage";
 import DeveloperPage from "main/pages/DeveloperPage";
 
 import ReviewsPage from "main/pages/Reviews/ReviewsPage";
@@ -46,6 +47,7 @@ function App() {
               path="/admin/moderators"
               element={<ModeratorsIndexPage />}
             />
+            <Route exact path="/admin/users" element={<UsersIndexPage />} />
             <Route exact path="/admin/developer" element={<DeveloperPage />} />
           </>
         )}
