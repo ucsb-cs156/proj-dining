@@ -1,0 +1,8 @@
+.github/
+docs/
+frontend/.storybook
+frontend/docs-index
+frontend/node_modules
+*.md
+Dockerfile
+.dockerignore
