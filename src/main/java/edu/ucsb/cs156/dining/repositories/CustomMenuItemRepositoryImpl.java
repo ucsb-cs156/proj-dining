@@ -12,7 +12,7 @@ import java.util.List;
 
 /*
  * Custom repository implementation for MenuItem entity
- * We don't want to start h2 for unit testing; Should be thoroughly tested in integration tests
+ * Allows us to write a wider range of queries than those possible with Spring Data JPA
  */
 public class CustomMenuItemRepositoryImpl implements CustomMenuItemRepository {
 
