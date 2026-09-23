@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.dining.models.DiningCommons;
+import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 // Service for the dining commons page.
 // This service particularly utilizes an endpoint for getting all dining commons from the above api.
 
-<span class="fc" id="L30">@Slf4j</span>
+<span class="fc" id="L31">@Slf4j</span>
 @Service(&quot;DiningCommons&quot;)
 public class DiningCommonsService {
 
@@ -47,33 +48,46 @@ public class DiningCommonsService {
 
   public static final String ENDPOINT = &quot;{apiHost}/dining/commons/v1/&quot;;
 
+  /*
+   * A RestTemplate built with no timeout blocks its calling thread forever on a hung external
+   * call. That's a real incident lib-jobs' single-threaded jobsExecutor hit on another app
+   * (proj-scaffold): a job stuck this way permanently wedged the executor, with no way to recover
+   * short of restarting the app (see lib-jobs DESIGN.md 9 -- cooperative job cancellation only
+   * helps a job that reaches another checkpoint, which a truly hung thread never will). Generous
+   * but finite: long enough to never trip on legitimate slowness, short enough to guarantee a job
+   * can't hang forever.
+   */
+<span class="fc" id="L60">  private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);</span>
+<span class="fc" id="L61">  private static final Duration READ_TIMEOUT = Duration.ofSeconds(60);</span>
+
   private final RestTemplate restTemplate;
 
-<span class="fc" id="L52">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {</span>
-<span class="fc" id="L53">    restTemplate = restTemplateBuilder.build();</span>
-<span class="fc" id="L54">  }</span>
+<span class="fc" id="L65">  public DiningCommonsService(RestTemplateBuilder restTemplateBuilder) {</span>
+<span class="fc" id="L66">    restTemplate =</span>
+<span class="fc" id="L67">        restTemplateBuilder.connectTimeout(CONNECT_TIMEOUT).readTimeout(READ_TIMEOUT).build();</span>
+<span class="fc" id="L68">  }</span>
 
   @Cacheable(&quot;diningCommons&quot;)
   public List&lt;DiningCommons&gt; get() throws JsonProcessingException {
 
-<span class="fc" id="L59">    HttpHeaders headers = new HttpHeaders();</span>
-<span class="fc" id="L60">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
-<span class="fc" id="L61">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
-<span class="fc" id="L62">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
-<span class="fc" id="L63">    headers.set(&quot;X-Requesting-App&quot;, this.appName + &quot;.&quot; + this.appHostname);</span>
+<span class="fc" id="L73">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L74">    headers.setAccept(List.of(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L75">    headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L76">    headers.set(&quot;ucsb-api-key&quot;, this.apiKey);</span>
+<span class="fc" id="L77">    headers.set(&quot;X-Requesting-App&quot;, this.appName + &quot;.&quot; + this.appHostname);</span>
 
-<span class="fc" id="L65">    log.info(&quot;Fetching dining commons from UCSB API&quot;);</span>
+<span class="fc" id="L79">    log.info(&quot;Fetching dining commons from UCSB API&quot;);</span>
 
-<span class="fc" id="L67">    String url = ENDPOINT.replace(&quot;{apiHost}&quot;, apiHost);</span>
+<span class="fc" id="L81">    String url = ENDPOINT.replace(&quot;{apiHost}&quot;, apiHost);</span>
 
-<span class="fc" id="L69">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
-<span class="fc" id="L70">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
+<span class="fc" id="L83">    HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);</span>
+<span class="fc" id="L84">    ResponseEntity&lt;String&gt; re = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);</span>
 
-<span class="fc" id="L72">    String retBody = re.getBody();</span>
-<span class="fc" id="L73">    List&lt;DiningCommons&gt; commons =</span>
-<span class="fc" id="L74">        mapper.readValue(retBody, new TypeReference&lt;List&lt;DiningCommons&gt;&gt;() {});</span>
+<span class="fc" id="L86">    String retBody = re.getBody();</span>
+<span class="fc" id="L87">    List&lt;DiningCommons&gt; commons =</span>
+<span class="fc" id="L88">        mapper.readValue(retBody, new TypeReference&lt;List&lt;DiningCommons&gt;&gt;() {});</span>
 
-<span class="fc" id="L76">    return commons;</span>
+<span class="fc" id="L90">    return commons;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
