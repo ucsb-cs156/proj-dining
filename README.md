@@ -15,7 +15,7 @@ Sprint Planning Doc:
 * <https://docs.google.com/document/d/1VUmwQ6v9CETMAIM0KplYDxt7ZocQmSNv7fZM3tVoHfw/edit?usp=sharing>
 
 # Versions
-* Java: 21
+* Java: 25
 * node: 22.18.0
 See [docs/versions.md](docs/versions.md) for more information on upgrading versions.
 
