@@ -24,7 +24,7 @@ export default defineConfig([
         files: ["src/**/*.{js,jsx}"],
         extends: [
             js.configs.recommended,
-            reactHooks.configs["recommended-latest"],
+            reactHooks.configs.flat.recommended,
             reactRefresh.configs.vite,
             reactPlugin.configs.flat.recommended,
         ],
@@ -49,6 +49,12 @@ export default defineConfig([
             ],
             "react/prop-types": "off",
             "react/react-in-jsx-scope": "off",
+            // These rules were added in eslint-plugin-react-hooks 7 (derived
+            // from the React Compiler) and flag pre-existing code; turned off
+            // rather than refactoring as part of the dependency upgrade.
+            // See https://github.com/ucsb-cs156/proj-dining/issues/159
+            "react-hooks/set-state-in-effect": "off",
+            "react-hooks/immutability": "off",
         },
     },
     {

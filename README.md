@@ -16,7 +16,7 @@ Sprint Planning Doc:
 
 # Versions
 * Java: 25
-* node: 22.18.0
+* node: 24.21.0
 See [docs/versions.md](docs/versions.md) for more information on upgrading versions.
 
 # Setup before running application
