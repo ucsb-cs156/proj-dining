@@ -234,7 +234,7 @@ describe("utils/currentUser tests", () => {
       expect(
         hasRole({ data: { root: { rolesList: [] } } }, "ROLE_USER"),
       ).toBeFalsy();
+      expect(hasRole({ root: { rolesList: null } })).toBeFalsy();
     });
-    expect(hasRole({ root: { rolesList: null } })).toBeFalsy();
   });
 });

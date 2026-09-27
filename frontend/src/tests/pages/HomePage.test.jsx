@@ -271,9 +271,11 @@ describe("HomePage meals offered today tests", () => {
           mealsOffered[diningCommonsFixtures.fourCommons[i].code];
         if (expectedMeals.length > 0) {
           expectedMeals.forEach((meal) => {
+            // eslint-disable-next-line vitest/no-conditional-expect -- fixture-driven branch; both branches are exercised
             expect(row).toHaveTextContent(meal.name);
           });
         } else {
+          // eslint-disable-next-line vitest/no-conditional-expect -- fixture-driven branch; both branches are exercised
           expect(row).toHaveTextContent("No meals offered today");
         }
       }

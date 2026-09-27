@@ -43,6 +43,7 @@ describe("StatisticsIndexPage tests", () => {
 
     for (const page of STATISTICS_PAGES) {
       const control = screen.getByTestId(page.testid);
+      /* eslint-disable vitest/no-conditional-expect -- fixture-driven branch; both branches are exercised */
       if (page.comingSoon !== false) {
         expect(control).toBeDisabled();
         expect(control).toHaveTextContent("Coming Soon");
@@ -50,6 +51,7 @@ describe("StatisticsIndexPage tests", () => {
         expect(control).toHaveAttribute("href", page.to);
         expect(control).toHaveTextContent("View");
       }
+      /* eslint-enable vitest/no-conditional-expect */
       expect(screen.getByText(page.title)).toBeInTheDocument();
       expect(screen.getByText(page.description)).toBeInTheDocument();
     }

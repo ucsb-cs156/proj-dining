@@ -55,7 +55,7 @@
     <frontend-maven-plugin.version>1.15.1</frontend-maven-plugin.version>
     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
     <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
-    <node.version>v22.18.0</node.version>
+    <app.frontend.nodeVersion>v24.21.0</app.frontend.nodeVersion>
     <cache.use>false</cache.use>
   </properties>
 
@@ -489,7 +489,7 @@
                   <goal>install-node-and-npm</goal>
                 </goals>
                 <configuration>
-                  <nodeVersion>${node.version}</nodeVersion>
+                  <nodeVersion>${app.frontend.nodeVersion}</nodeVersion>
                   <skip>${frontend.dependency.skip}</skip>
                 </configuration>
               </execution>
@@ -541,7 +541,7 @@
                         <include name="index.html" />
                         <include name="package.json" />
                         <include name="package-lock.json" />
-                        <include name="vite.config.js" />
+                        <include name="vite.config.mjs" />
                       </srcfiles>
                     </uptodate>
                   </target>
@@ -628,7 +628,7 @@
                   <goal>install-node-and-npm</goal>
                 </goals>
                 <configuration>
-                  <nodeVersion>${node.version}</nodeVersion>
+                  <nodeVersion>${app.frontend.nodeVersion}</nodeVersion>
                   <skip>${cache.use}</skip>
                 </configuration>
               </execution>
