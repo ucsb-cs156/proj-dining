@@ -31,7 +31,13 @@ will likely see an error such as:
 
 You will also need a value for `UCSB_API_KEY`; you can obtain a value for that by following the instructions at this link: <https://ucsb-cs156.github.io/topics/apis/apis_ucsb_developer_api.html>
 
-Optionally, you can set `UCSB_DINING_API_HOST` to override the host used for the UCSB Dining API (default: `https://api.ucsb.edu`), e.g. to point at a caching proxy instead of the UCSB API directly.
+You **must** also set `UCSB_DINING_API_HOST` so the app gets dining data through the course's caching proxy instead of calling the UCSB API directly. Set it in your `.env` for localhost, and with `dokku config:set` on Dokku:
+
+```
+UCSB_DINING_API_HOST=https://dining-caching-proxy.dokku-00.cs.ucsb.edu
+```
+
+If it isn't set, the app falls back to `https://api.ucsb.edu`.
 
 # Getting Started on localhost
 

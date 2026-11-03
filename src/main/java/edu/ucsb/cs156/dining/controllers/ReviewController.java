@@ -9,6 +9,7 @@ import edu.ucsb.cs156.dining.models.CurrentUser;
 import edu.ucsb.cs156.dining.models.EditedReview;
 import edu.ucsb.cs156.dining.repositories.MenuItemRepository;
 import edu.ucsb.cs156.dining.repositories.ReviewRepository;
+import edu.ucsb.cs156.dining.services.ModeratorNotificationService;
 import edu.ucsb.cs156.dining.statuses.ModerationStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -57,6 +58,8 @@ public class ReviewController extends ApiController {
   @Autowired ReviewRepository reviewRepository;
 
   @Autowired MenuItemRepository menuItemRepository;
+
+  @Autowired ModeratorNotificationService moderatorNotificationService;
 
   /**
    * This method returns a list of all Reviews.
@@ -145,7 +148,11 @@ public class ReviewController extends ApiController {
     CurrentUser user = getCurrentUser();
     review.setReviewer(user.getUser());
     log.info("reviews={}", review);
+    boolean needsModeration = review.getStatus() == ModerationStatus.AWAITING_REVIEW;
     review = reviewRepository.save(review);
+    if (needsModeration) {
+      moderatorNotificationService.notifyModerators(review);
+    }
     return review;
   }
 
