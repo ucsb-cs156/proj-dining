@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156/proj-dining
 owner: ucsb-cs156
 repo_name: proj-dining
-pull_requests: [{"author":{"id":"U_kgDOB0qFUw","is_bot":false,"login":"vcnardi524","name":"victor Nardi"},"headRefName":"vcnardi524-moderatorContactSpike","number":167,"title":"This spike makes it so moderators are contacted when a review is sent.","url":"https://github.com/ucsb-cs156/proj-dining/pull/167"}]
+pull_requests: []
