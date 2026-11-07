@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156/proj-dining
 owner: ucsb-cs156
 repo_name: proj-dining
-pull_requests: [{"author":{"id":"MDQ6VXNlcjExMTkwMTc=","is_bot":false,"login":"pconrad","name":"Phill Conrad"},"headRefName":"pc-fix-github-pages-docs","number":170,"title":"Fix GitHub Pages setup docs: use 02-gh-pages-rebuild, fix step order","url":"https://github.com/ucsb-cs156/proj-dining/pull/170"}]
+pull_requests: [{"author":{"id":"MDQ6VXNlcjExMTkwMTc=","is_bot":false,"login":"pconrad","name":"Phill Conrad"},"headRefName":"pitest-gate-full-on-incremental","number":172,"title":"Run full pitest (14) only after incremental pitest (13) passes","url":"https://github.com/ucsb-cs156/proj-dining/pull/172"},{"author":{"id":"MDQ6VXNlcjExMTkwMTc=","is_bot":false,"login":"pconrad","name":"Phill Conrad"},"headRefName":"pc-fix-github-pages-docs","number":170,"title":"Fix GitHub Pages setup docs: use 02-gh-pages-rebuild, fix step order","url":"https://github.com/ucsb-cs156/proj-dining/pull/170"}]
