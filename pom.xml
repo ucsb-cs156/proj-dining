@@ -340,6 +340,7 @@
             <param>edu.ucsb.cs156.dining.services.wiremock.WiremockServiceDummy</param>
             <param>edu.ucsb.cs156.dining.services.wiremock.WiremockServiceImpl</param>
             <param>${app.package}.services.GrantedAuthoritiesService</param>
+            <param>${app.package}.startup.QAProfileEnabler</param>
           </excludedClasses>
           <excludedTestClasses>
             <param>edu.ucsb.cs156.dining.web.*</param>
