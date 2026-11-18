@@ -1,0 +1,34 @@
+name: "47-tear-down-app"
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  identify-data:
+    runs-on: ubuntu-latest
+    outputs:
+      default-dokku-url: ${{ steps.configure-vars.outputs.DOKKU_URL }}
+    steps:
+      - id: configure-vars
+        name: Configure Variables
+        run: |
+          MATCH_DOKKU="$(echo "$GITHUB_REPOSITORY" | grep -Po ".*\K\d{2}")"
+          DOKKU_URL="$(echo "dokku-{1}.cs.ucsb.edu" | sed "s/{1}/${MATCH_DOKKU}/")"
+          echo "DOKKU_URL=${DOKKU_URL}" >> "$GITHUB_OUTPUT"
+
+  tear-down-app:
+    name: Tear Down Deployment App
+    if: ${{ vars.REVIEW_APPS_ENABLED == 'true' }}
+    needs: identify-data
+    permissions: 
+      id-token: write
+      actions: read
+      contents: read
+      pull-requests: read
+      deployments: write
+    uses: ucsb-cs156/dokku-review-apps/.github/workflows/teardown-app.yml@main
+    with:
+      host_url: ${{ vars.HOST_URL || needs.identify-data.outputs.default-dokku-url }}
+    secrets:
+      PORT: ${{ secrets.PORT || 22 }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
