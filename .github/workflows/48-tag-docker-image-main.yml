@@ -1,10 +1,10 @@
-name: "46-tag-docker-image"
+name: "48-tag-docker-image-main"
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
-  pull_request:
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,9 +34,12 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha,format=long
-            type=ref,event=pr
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+
+      - name: flatten output for use with GHCR
+        id: configure-url
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker images
         id: push
@@ -46,5 +49,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ steps.configure-url.outputs.REPO }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.configure-url.outputs.REPO }}:buildcache,mode=max
