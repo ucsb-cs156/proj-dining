@@ -61,6 +61,8 @@ Failed to connect to the frontend server... On Dokku, be sure that PRODUCTION is
 
 See: [/docs/dokku.md](/docs/dokku.md)
 
+For keycloak-specific setup, see [here](https://ucsb-cs156.github.io/topics/keycloak/qa_deployment_with_keycloak.html#deploying-a-qa-app-with-keycloak)
+
 # Accessing swagger
 
 To access the swagger API endpoints, use:
