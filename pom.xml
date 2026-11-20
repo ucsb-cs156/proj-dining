@@ -245,6 +245,7 @@
             <exclude>**/${app.packagePath}/services/GrantedAuthoritiesService.*</exclude>
             <exclude>**/${app.packagePath}/ExampleApplication.*</exclude>
             <exclude>**/${app.packagePath}/services/wiremock/*</exclude>
+            <exclude>**/${app.packagePath}/startup/QAProfileEnabler.*</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -340,6 +341,7 @@
             <param>edu.ucsb.cs156.dining.services.wiremock.WiremockServiceDummy</param>
             <param>edu.ucsb.cs156.dining.services.wiremock.WiremockServiceImpl</param>
             <param>${app.package}.services.GrantedAuthoritiesService</param>
+            <param>${app.package}.startup.QAProfileEnabler</param>
           </excludedClasses>
           <excludedTestClasses>
             <param>edu.ucsb.cs156.dining.web.*</param>
